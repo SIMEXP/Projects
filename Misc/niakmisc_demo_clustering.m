@@ -28,7 +28,6 @@ vol_part = niak_part2vol(part,rois);
 hf = figure;
 niak_montage(vol_part)
 print('montage_scale10_sub00156.png','-dpng');
-close(hf)
 hdr.file_name = 'partition_scale10_sub00156.nii.gz';
 niak_write_vol(hdr,vol_part);
 
@@ -38,11 +37,9 @@ order = niak_hier2order(hier);
 hf = figure;
 niak_visu_part(part(order));
 print('partition_matrix_ordered_scale10_sub00156.png','-dpng');
-close(hf)
 hf = figure;
 niak_visu_matrix(abs(R(order,order)));
 print('abs_corr_matrix_ordered_sub00156.png','-dpng');
-close(hf);
 
 %% Let's run a k-means this time, trying a single random partition for the initial points
 psom_set_rand_seed(0); % let's seed the random number generator to get 100% reproducible clusters
@@ -74,6 +71,5 @@ vol_partxx = niak_part2vol(part_kmeansxx,rois);
 hf = figure;
 niak_montage(vol_partxx)
 print('montage_scale10_kmeansxx_sub00156.png','-dpng');
-close(hf)
 hdr.file_name = 'partition_scale10_kmeansxx_sub00156.nii.gz';
 niak_write_vol(hdr,vol_partxx);
