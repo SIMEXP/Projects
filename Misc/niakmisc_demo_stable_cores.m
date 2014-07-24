@@ -12,7 +12,7 @@ if ~psom_exist('cambridge_24_subjects_tseries')
 end
 
 if ~psom_exist('single_subject_cambridge_preprocessed_nii')
-    system('wget ')
+    system('wget http://www.nitrc.org/frs/download.php/6784/single_subject_cambridge_preprocessed_nii.zip')
     system('unzip single_subject_cambridge_preprocessed_nii.zip')
     psom_clean('single_subject_cambridge_preprocessed_nii.zip')
 end
