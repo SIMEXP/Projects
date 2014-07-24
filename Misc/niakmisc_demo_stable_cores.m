@@ -5,9 +5,16 @@ clear
 %% Please execute in a dedicated folder
 
 %% Download example time series
-if ~psom_exist('cambridge_24_subjects_tseries.zip')
+if ~psom_exist('cambridge_24_subjects_tseries')
     system('wget http://www.nitrc.org/frs/download.php/6779/cambridge_24_subjects_tseries.zip')
     system('unzip cambridge_24_subjects_tseries.zip')
+    psom_clean('cambridge_24_subjects_tseries.zip')
+end
+
+if ~psom_exist('single_subject_cambridge_preprocessed_nii')
+    system('wget ')
+    system('unzip single_subject_cambridge_preprocessed_nii.zip')
+    psom_clean('single_subject_cambridge_preprocessed_nii.zip')
 end
 
 %% build the average group connectome
@@ -75,3 +82,17 @@ niak_montage(vol_stab)
 print('montage_scale8_group.png','-dpng');
 hdr.file_name = 'partition_scale8_group.nii.gz'; % save the partition in a nifti file
 niak_write_vol(hdr,vol_part); 
+
+%% Now we have some group atlas, let's generate stability maps for 3D+t time series 
+[hdr,vol] = niak_read_vol([pwd filesep 'single_subject_cambridge_preprocessed_nii' filesep 'fmri_sub00156_session1_rest.nii.gz']); % read some preprocessed fmri data
+mask = vol_part>0; % extract a mask of the grey matter
+tseries_vox = niak_vol2tseries(vol,mask); % convert the 3D+t dataset into a 2D space x time array
+opt_scores.sampling.type = 'window'; % use a sliding-window resampling
+opt_scores.sampling.opt.length = 30; % use a short time window -- the demo time series are awfully short !
+res = niak_stability_scores_v2(tseries_vox,vol_part(mask),opt_scores); % estimate the stability maps
+vol_stab = niak_tseries2vol(res.stab_maps',mask); % build a volumetric version of the stability map
+hf = figure; % do a montage of the stability map for the default mode network
+niak_montage(vol_stab(:,:,:,8))
+print('stability_map_dmn_subject1_demoniak.png','-dpng');
+hdr.file_name = 'stability_map_subject1_demoniak.nii.gz'; % save the partition in a nifti file
+niak_write_vol(hdr,vol_stab); 
