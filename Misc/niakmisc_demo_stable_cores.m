@@ -79,11 +79,11 @@ res = niak_stability_scores_v2(tseries,part_g,opt_scores);
 vol_stab = niak_part2vol(res.stab_maps(:,8),rois); % build a volumetric version of the partition
 hf = figure; % do a montage of the partition
 niak_montage(vol_stab)
-print('montage_scale8_group.png','-dpng');
-hdr.file_name = 'partition_scale8_group.nii.gz'; % save the partition in a nifti file
+print('stability_map_dmn_subject1_roi_demoniak.png','-dpng');
+hdr.file_name = 'stability_map_subject1_roi_demoniak.nii.gz'; % save the partition in a nifti file
 niak_write_vol(hdr,vol_part); 
 
-%% Now we have some group atlas, let's generate stability maps for 3D+t time series 
+%% And do it again, but now on the voxel level instead of the ROI level for better maps
 [hdr,vol] = niak_read_vol([pwd filesep 'single_subject_cambridge_preprocessed_nii' filesep 'fmri_sub00156_session1_rest.nii.gz']); % read some preprocessed fmri data
 mask = vol_part>0; % extract a mask of the grey matter
 tseries_vox = niak_vol2tseries(vol,mask); % convert the 3D+t dataset into a 2D space x time array
@@ -93,6 +93,6 @@ res = niak_stability_scores_v2(tseries_vox,vol_part(mask),opt_scores); % estimat
 vol_stab = niak_tseries2vol(res.stab_maps',mask); % build a volumetric version of the stability map
 hf = figure; % do a montage of the stability map for the default mode network
 niak_montage(vol_stab(:,:,:,8))
-print('stability_map_dmn_subject1_demoniak.png','-dpng');
-hdr.file_name = 'stability_map_subject1_demoniak.nii.gz'; % save the partition in a nifti file
+print('stability_map_dmn_subject1_voxel_demoniak.png','-dpng');
+hdr.file_name = 'stability_map_subject1_voxel_demoniak.nii.gz'; % save the partition in a nifti file
 niak_write_vol(hdr,vol_stab); 
