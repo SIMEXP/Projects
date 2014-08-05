@@ -16,14 +16,17 @@ if ~psom_exist('cobre_glm_connectome_nii')
     psom_clean('cobre_glm_connectome_nii.zip')
 end
 
-%% build the average group connectome
+%% Select the scale and contrast
 scale = 'sci10_scg10_scf10'; % select scale
 contrast = 'szVScont_age_sex_FD'; % list the contrasts of interest
-list_connection = [ 9 5 ;
-                    9 7 ]; % list the connections. Each line is a pair of networks, 
-                           % and networks are labeled based on the file networks_sci10_scg10_scf10.nii.gz
-labels_connection = { 'PCC_x_aDMN' ;
-                      'PCC_x_sensorimotor'   }; % Labels for the connections. This has to be defined manually
+
+%% First read the networks and find a few significant seeds
+[hdr,netwk] = niak_read_vol([pwd filesep 'cobre_glm_connectome_nii' filesep scale filesep 'networks_' scale '.nii.gz']);
+[hdr,tmap1] = niak_read_vol([pwd filesep 'cobre_glm_connectome_nii' filesep scale filesep contrast filesep 'fdr_' contrast '_' scale '.nii.gz']);
+[hdr,tmap2] = niak_read_vol([pwd filesep 'cobre_glm_connectome_nii' filesep scale filesep 'szVScont_age' filesep 'fdr_szVScont_age_' scale '.nii.gz']);
+seed = 7; % that's a network numbered as in the file networks_sci10_scg10_scf10.nii.gz
+list_sig = unique(netwk((tmap1(:,:,:,7)~=0)&(tmap2(:,:,:,7)~=0)));
+
 %% Extract the info
 ly = { 'eff' , 'std_eff' , 'sig' };
 tab = zeros([length(labels_connection) 3]);
@@ -33,10 +36,11 @@ eff = niak_lvec2mat(data.eff);
 std_eff = niak_lvec2mat(data.std_eff);
 test_q = data.test_q;
 
-for cc = 1:length(labels_connection)
-    tab(cc,1) = eff(list_connection(cc,1),list_connection(cc,2));
-    tab(cc,2) = std_eff(list_connection(cc,1),list_connection(cc,2));
-    tab(cc,3) = test_q(list_connection(cc,1),list_connection(cc,2));
+for ss = 1:length(list_sig)
+    tab(ss,1) = eff(seed,list_sig(ss));
+    tab(ss,2) = std_eff(seed,list_sig(ss));
+    tab(ss,3) = test_q(seed,list_sig(ss));
+    labels_connection{ss} = sprintf('netwk_%i_x_%i',seed,list_sig(ss));
 end
 
 %% write the info
