@@ -75,7 +75,7 @@ print('partition_scale10_group_vs_ind.png','-dpng')
 %% Finally, let's estimate the stability of the individual DMN on sliding windows:
 opt_scores.sampling.type = 'window';
 opt_scores.sampling.opt.length = 30; % use a time window of the same length of the time series
-res = niak_stability_scores_v2(tseries,part_g,opt_scores);
+res = niak_stability_cores(tseries,part_g,opt_scores);
 vol_stab = niak_part2vol(res.stab_maps(:,8),rois); % build a volumetric version of the partition
 hf = figure; % do a montage of the partition
 niak_montage(vol_stab)
@@ -89,10 +89,23 @@ mask = vol_part>0; % extract a mask of the grey matter
 tseries_vox = niak_vol2tseries(vol,mask); % convert the 3D+t dataset into a 2D space x time array
 opt_scores.sampling.type = 'window'; % use a sliding-window resampling
 opt_scores.sampling.opt.length = 30; % use a short time window -- the demo time series are awfully short !
-res = niak_stability_scores_v2(tseries_vox,vol_part(mask),opt_scores); % estimate the stability maps
+res = niak_stability_cores(tseries_vox,vol_part(mask),opt_scores); % estimate the stability maps
 vol_stab = niak_tseries2vol(res.stab_maps',mask); % build a volumetric version of the stability map
 hf = figure; % do a montage of the stability map for the default mode network
 niak_montage(vol_stab(:,:,:,8))
 print('stability_map_dmn_subject1_voxel_demoniak.png','-dpng');
 hdr.file_name = 'stability_map_subject1_voxel_demoniak.nii.gz'; % save the partition in a nifti file
+niak_write_vol(hdr,vol_stab); 
+
+%% This time, instead of clustering the time series, only cluster based on connectivity maps inside the DMN
+%% Note that the ~500 group rois from the Cambridge analysis are used to reduce the dimension of the maps 
+%% being clustered (the stability analysis is still performed at voxel resolution). 
+%% This saves lots of time and memory, but is not necessary
+part_target = [vol_part(mask(:)) vol_part(mask(:))==8 rois(mask(:))]; % skip the third column to avoid using the ROIs reduction
+res = niak_stability_cores(tseries_vox,part_target,opt_scores); % estimate the stability maps
+vol_stab = niak_tseries2vol(res.stab_maps',mask); % build a volumetric version of the stability map
+hf = figure; % do a montage of the stability map for the default mode network
+niak_montage(vol_stab(:,:,:,8))
+print('stability_map_corr_dmn_subject1_voxel_demoniak.png','-dpng');
+hdr.file_name = 'stability_map_corr_subject1_voxel_demoniak.nii.gz'; % save the partition in a nifti file
 niak_write_vol(hdr,vol_stab); 
