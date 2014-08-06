@@ -49,7 +49,7 @@ tseries = data.tseries;
 % set the options for the s-cores
 opt_scores.sampling.type = 'window';
 opt_scores.sampling.opt.length = size(tseries,1); % use a time window of the same length of the time series
-res = niak_stability_scores_v2(tseries,part_g,opt_scores);
+res = niak_stability_cores(tseries,part_g,opt_scores);
 
 %% Let's make a figure with the average connectome of all subjects, the partition in ten clusters at the group level
 %% and then the connectome of subject 1, and the scores partition for this individual (based on the group)
