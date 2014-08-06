@@ -101,7 +101,12 @@ niak_write_vol(hdr,vol_stab);
 %% Note that the ~500 group rois from the Cambridge analysis are used to reduce the dimension of the maps 
 %% being clustered (the stability analysis is still performed at voxel resolution). 
 %% This saves lots of time and memory, but is not necessary
-part_target = [vol_part(mask(:)) vol_part(mask(:))==8 rois(mask(:))]; % skip the third column to avoid using the ROIs reduction
+
+% The following partition has three columns
+% The first one is the target (group) partition
+% the second one defines the set of voxels where a connectivity map will be derived. The clustering will be based on the similarity of these maps
+% The  third one defines a brain parcellation. This is used to reduce the dimensionality of the connectivity maps "a la Yeo". Skip the third column to avoid using the ROIs reduction.
+part_target = [vol_part(mask(:)) vol_part(mask(:))==8 rois(mask(:))]; 
 res = niak_stability_cores(tseries_vox,part_target,opt_scores); % estimate the stability maps
 vol_stab = niak_tseries2vol(res.stab_maps',mask); % build a volumetric version of the stability map
 hf = figure; % do a montage of the stability map for the default mode network
