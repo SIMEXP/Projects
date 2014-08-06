@@ -11,7 +11,7 @@ clear
 
 %% Download example time series
 if ~psom_exist('cobre_glm_connectome_nii')
-    system('wget http://www.nitrc.org/frs/download.php/6813/cobre_glm_connectome_nii.zip')
+    system('wget http://www.nitrc.org/frs/download.php/6814/cobre_glm_connectome_nii.zip')
     system('unzip cobre_glm_connectome_nii.zip')
     psom_clean('cobre_glm_connectome_nii.zip')
 end
@@ -29,7 +29,7 @@ list_sig = unique(netwk((tmap1(:,:,:,7)~=0)&(tmap2(:,:,:,7)~=0)));
 
 %% Extract the info
 ly = { 'eff' , 'std_eff' , 'sig' };
-tab = zeros([length(labels_connection) 3]);
+tab = zeros([length(list_sig) 3]);
 file = [pwd filesep 'cobre_glm_connectome_nii' filesep scale filesep contrast filesep 'glm_' contrast '_' scale '.mat'];
 data = load(file);
 eff = niak_lvec2mat(data.eff);
