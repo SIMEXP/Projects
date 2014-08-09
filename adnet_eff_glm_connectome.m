@@ -28,7 +28,7 @@ contrast3 = 'mcivsad';
 [hdr,tmap1] = niak_read_vol([pwd filesep 'glm17d_nii' filesep scale filesep contrast1 filesep 'fdr_' contrast1 '_' scale '.nii.gz']);
 [hdr,tmap2] = niak_read_vol([pwd filesep 'glm17d_nii' filesep scale filesep contrast2 filesep 'fdr_' contrast2 '_' scale '.nii.gz']);
 [hdr,tmap3] = niak_read_vol([pwd filesep 'glm17d_nii' filesep scale filesep contrast3 filesep 'fdr_' contrast3 '_' scale '.nii.gz']); 
-seed = 55; % select seed of interest
+seed = 39; % select seed of interest
 list_sig = unique(netwk((tmap1(:,:,:,seed)~=0) | (tmap2(:,:,:,seed)~=0) | (tmap3(:,:,:,seed)~=0)));  % conditions for list_sig; can also do list_sig = unique(netwk((tmap1(:,:,:,7)~=0)&(tmap2(:,:,:,7)~=0)));
 
 %% Extract the info for each contrast
@@ -49,14 +49,14 @@ for ss = 1:length(list_sig)
     tab(bb,1) = eff(seed,list_sig(ss));
     tab(bb,2) = std_eff(seed,list_sig(ss));
     tab(bb,3) = test_q(seed,list_sig(ss));
-    labels_connection{bb} = strcat((sprintf('netwk_%i_x_%i',seed,list_sig(ss))),'_',contrast{i});
+    labels_connection{bb} = strcat(contrast{i},(sprintf('_netwk_%i_x_%i',seed,list_sig(ss))));
 end
 
 end
 
 
 %% write the info
-file_write = 'glm17d_55_eff_connections.csv';
+file_write = 'glm17d_39_eff_connections.csv';
 opt_w.labels_x = labels_connection;
 opt_w.labels_y = ly;
 niak_write_csv(file_write,tab,opt_w);
