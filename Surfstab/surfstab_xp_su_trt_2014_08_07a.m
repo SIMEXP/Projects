@@ -15,7 +15,7 @@
 clear;
 %% Define the input data
 in_dir = '/data1/scores/all_out';
-out_dir = '/data1/scores/output';
+out_dir = '/data1/scores/corr_output';
 psom_mkdir(out_dir);
 out_fig = [out_dir filesep 'figures'];
 psom_mkdir(out_fig);
@@ -23,13 +23,15 @@ out_mat = [out_dir filesep 'matrices'];
 psom_mkdir(out_mat);
 out_vol = [out_dir filesep 'volumes'];
 psom_mkdir(out_vol);
+out_clu = [out_dir filesep 'cluster'];
+psom_mkdir(out_clu);
 
 mask_template = '/data1/scores/mask/part_sc10_resampled.nii.gz';
 [~,~,ext] = niak_fileparts(mask_template);
 [m_hdr, m_vol] = niak_read_vol(mask_template);
 mask = logical(m_vol);
 % clusters = [10, 50, 100];
-clusters = [50, 100];
+clusters = [10];
 % For each cluster, go and pick up all the files
 % Search for the files we need and build the structure
 for nclust_id = 1:length(clusters)
@@ -85,6 +87,7 @@ for nclust_id = 1:length(clusters)
         full_mat = [];
         icc_mat = zeros(num_clust, num_subs);
         for clust_id = 1:num_clust
+            sort_mat = [];
             clust_mat = [];
             for sub_id = 1:num_subs
                 sub_name = name_subs{sub_id};
@@ -98,44 +101,79 @@ for nclust_id = 1:length(clusters)
                     net_map = v_in(:,:,:,clust_id);
                     net_masked = net_map(mask);
                     net_vec = net_masked(:);
-                    clust_mat(sub_id, ses_id,:) = net_vec;
+                    sort_mat(sub_id, ses_id,:) = net_vec;
+                    clust_mat(:, end+1) = net_vec;
                 end
             end
             % Get the number of datapoints per subject and session
-            [n_sub, n_ses, n_data] = size(clust_mat);
-            icc_vec = zeros(1,n_data);
+            [n_sub, n_ses, n_data] = size(sort_mat);
+            % Set up a matrix with vectors for all three combinations of
+            % sessions
+            icc_mat = zeros(n_data, 3);
             % Iterate over each data point
             for d_id = 1:n_data
-                in_mat = clust_mat(:, :, d_id);
-                icc = IPN_icc(in_mat, 3, 'single');
-                if isnan(icc)
-                    icc = 0;
-                end
-                icc_vec(d_id) = icc;
+                in_mat = sort_mat(:, :, d_id);
+                % Session 1 + Session 2
+                ses_mat = in_mat(:, [1 2]);
+                icc_mat(d_id, 1) = niak_build_correlation(in_mat(:, [1 2]), true);
+                icc_mat(d_id, 2) = niak_build_correlation(in_mat(:, [1 3]), true);
+                icc_mat(d_id, 3) = niak_build_correlation(in_mat(:, [2 3]), true);
             end
-            % Return the ICC vector to volume dimensions and save it
-            icc_vol = niak_part2vol(icc_vec, mask);
-            icc_name = sprintf('icc_map_net_%d_sc_%d_%s%s', clust_id, num_clust, t_name, ext);
+            % Return all the ICC vectors to volume dimensions and save it
+            icc_vol12 = niak_part2vol(icc_mat(:,1), mask);
+            icc_name = sprintf('icc_map_12_net_%d_sc_%d_%s%s', clust_id, num_clust, t_name, ext);
             icc_path = [out_vol filesep icc_name];
             icc_hdr = m_hdr;
             icc_hdr.file_name = icc_path;
-            niak_write_vol(icc_hdr, icc_vol);
-            % Also make a montage out of the thing
-            img_name = sprintf('icc_map_net_%d_sc_%d_%s.png', clust_id, num_clust, t_name);
+            niak_write_vol(icc_hdr, icc_vol12);
+
+            icc_vol13 = niak_part2vol(icc_mat(:,2), mask);
+            icc_name = sprintf('icc_map_13_net_%d_sc_%d_%s%s', clust_id, num_clust, t_name, ext);
+            icc_path = [out_vol filesep icc_name];
+            icc_hdr = m_hdr;
+            icc_hdr.file_name = icc_path;
+            niak_write_vol(icc_hdr, icc_vol13);
+
+            icc_vol23 = niak_part2vol(icc_mat(:,3), mask);
+            icc_name = sprintf('icc_map_23_net_%d_sc_%d_%s%s', clust_id, num_clust, t_name, ext);
+            icc_path = [out_vol filesep icc_name];
+            icc_hdr = m_hdr;
+            icc_hdr.file_name = icc_path;
+            niak_write_vol(icc_hdr, icc_vol23);
+            
+            % Also make a montage out of the things
+            img_name = sprintf('icc_map_12_net_%d_sc_%d_%s.png', clust_id, num_clust, t_name);
             img_path = [out_fig filesep img_name];
             img_opt.type_color = 'hot_cold';
             clf;
-            niak_montage(icc_vol, img_opt);
-            title(sprintf('ICC map: net %d, scale %d, metric %s', clust_id, num_clust, t_name));
+            niak_montage(icc_vol12, img_opt);
+            title(sprintf('ICC map 12: net %d, scale %d, metric %s', clust_id, num_clust, t_name));
             print(gcf, '-dpng', img_path);
             
+            img_name = sprintf('icc_map_13_net_%d_sc_%d_%s.png', clust_id, num_clust, t_name);
+            img_path = [out_fig filesep img_name];
+            img_opt.type_color = 'hot_cold';
+            clf;
+            niak_montage(icc_vol13, img_opt);
+            title(sprintf('ICC map 13: net %d, scale %d, metric %s', clust_id, num_clust, t_name));
+            print(gcf, '-dpng', img_path);
+            
+            img_name = sprintf('icc_map_23_net_%d_sc_%d_%s.png', clust_id, num_clust, t_name);
+            img_path = [out_fig filesep img_name];
+            img_opt.type_color = 'hot_cold';
+            clf;
+            niak_montage(icc_vol23, img_opt);
+            title(sprintf('ICC map 23: net %d, scale %d, metric %s', clust_id, num_clust, t_name));
+            print(gcf, '-dpng', img_path);
+            
+            
             % Also save it into the full matrix
-            full_mat(clust_id, :) = icc_vec;
+%             full_mat(clust_id, :) = icc_mat;
         end
-        % Save the full matrix to disk so we can determine what to do with
-        % it later
-        mat_name = sprintf('full_mat_sc_%d_%s.mat', num_clust, t_name);
-        mat_path = [out_mat filesep mat_name];
-        save(mat_path, 'full_mat');
+%         % Save the full matrix to disk so we can determine what to do with
+%         % it later
+%         mat_name = sprintf('full_mat_sc_%d_%s.mat', num_clust, t_name);
+%         mat_path = [out_mat filesep mat_name];
+%         save(mat_path, 'full_mat');
     end
 end
