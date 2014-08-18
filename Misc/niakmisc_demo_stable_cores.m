@@ -1,10 +1,10 @@
 clear
 
 %% This script will download and extract some data in the current folder, if it can't find an archive called cambridge_24_subjects_tseries.zip
-%% It will also generate a number of figures and volumes
-%% Please execute in a dedicated folder
+%  It will also generate a number of figures and volumes
+%  Please execute in a dedicated folder
 
-%% Download example time series
+% Download example time series
 if ~psom_exist('cambridge_24_subjects_tseries')
     system('wget http://www.nitrc.org/frs/download.php/6779/cambridge_24_subjects_tseries.zip')
     system('unzip cambridge_24_subjects_tseries.zip')
@@ -52,9 +52,9 @@ opt_scores.sampling.opt.length = size(tseries,1); % use a time window of the sam
 res = niak_stability_cores(tseries,part_g,opt_scores);
 
 %% Let's make a figure with the average connectome of all subjects, the partition in ten clusters at the group level
-%% and then the connectome of subject 1, and the scores partition for this individual (based on the group)
-%% We'll first use the ordering based on the group hierarchy
-%% and then the ordering of the individual
+%  and then the connectome of subject 1, and the scores partition for this individual (based on the group)
+%  We'll first use the ordering based on the group hierarchy
+%  and then the ordering of the individual
 figure
 order_g = niak_hier2order(hier_g);
 R = corr(tseries);
@@ -98,15 +98,16 @@ hdr.file_name = 'stability_map_subject1_voxel_demoniak.nii.gz'; % save the parti
 niak_write_vol(hdr,vol_stab); 
 
 %% This time, instead of clustering the time series, only cluster based on connectivity maps inside the DMN
-%% Note that the ~500 group rois from the Cambridge analysis are used to reduce the dimension of the maps 
-%% being clustered (the stability analysis is still performed at voxel resolution). 
-%% This saves lots of time and memory, but is not necessary
+%  Note that the ~500 group rois from the Cambridge analysis are used to reduce the dimension of the maps 
+%  being clustered (the stability analysis is still performed at voxel resolution). 
+%  This saves lots of time and memory, but is not necessary
 
 % The following partition has three columns
 % The first one is the target (group) partition
 % the second one defines the set of voxels where a connectivity map will be derived. The clustering will be based on the similarity of these maps
 % The  third one defines a brain parcellation. This is used to reduce the dimensionality of the connectivity maps "a la Yeo". Skip the third column to avoid using the ROIs reduction.
 part_target = [vol_part(mask(:)) vol_part(mask(:))==8 rois(mask(:))]; 
+opt_scores.flag_target = true;
 res = niak_stability_cores(tseries_vox,part_target,opt_scores); % estimate the stability maps
 vol_stab = niak_tseries2vol(res.stab_maps',mask); % build a volumetric version of the stability map
 hf = figure; % do a montage of the stability map for the default mode network
@@ -114,3 +115,30 @@ niak_montage(vol_stab(:,:,:,8))
 print('stability_map_corr_dmn_subject1_voxel_demoniak.png','-dpng');
 hdr.file_name = 'stability_map_corr_subject1_voxel_demoniak.nii.gz'; % save the partition in a nifti file
 niak_write_vol(hdr,vol_stab); 
+
+%% As a last example, cluster a region of interest, based on the connectivity of
+% this region with a reference region
+% Here we use a higher scale partition to define the prior and the existing
+% partition at scale 8 to define the ROI and the reference
+hier_g = niak_hierarchical_clustering(Rg); % the hierarchical clustering
+opt_t.thresh = 40; % option to extract the partition (number of clusters)
+part_prior = niak_threshold_hierarchy(hier_g,opt_t); % extract the partition
+vol_prior = niak_part2vol(part_prior,rois);
+part_prior = vol_prior(mask(:));
+opt_t.thresh = 8; % option to extract the partition (number of clusters)
+part_temp = niak_threshold_hierarchy(hier_g,opt_t); % extract the partition
+vol_temp = niak_part2vol(part_temp,rois);
+part_temp = vol_temp(mask(:));
+part_roi = part_temp == 2;
+part_ref = part_temp == 6;
+% Assemble the partition
+part_in = [part_prior, part_roi, part_ref];
+opt_scores = struct;
+opt_scores.flag_focus = true;
+res = niak_stability_cores(tseries_vox,part_in,opt_scores);
+% Map the partition back into volume space and show what it looks like
+vol_part = niak_tseries2vol(res.part_cores',mask);
+niak_montage(vol_part);
+print('partition_of_roi_subject1_voxel_demoniak.png','-dpng');
+hdr.file_name = 'part_roi_subject1_voxel_demoniak.nii.gz'; % save the partition in a nifti file
+niak_write_vol(hdr,vol_part); 
