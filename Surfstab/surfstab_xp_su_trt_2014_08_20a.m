@@ -86,6 +86,9 @@ for nclust_id = 1:length(clusters)
     %% Generate the case by rater matrix for ICC
         
     % Loop through the different input files again
+    acc_mat = [];
+    tpr_mat = [];
+    spc_mat = [];
     for t_id = 1:num_templates
         t_name = t_names{t_id};
         fprintf('Running %s at scale %d now...\n', t_name, num_clust);
@@ -188,6 +191,32 @@ for nclust_id = 1:length(clusters)
             % similarity and a distance matrix from it
             mat_sim = niak_build_correlation(clust_mat);
             mat_dis = niak_build_distance(clust_mat);
+            % Calculate the ratio of within vs between similarity for each
+            % subject. We need these plots:
+            %   - are subjects worse for certain metrics? -> average across
+            %   all networks per subject over subjects, different colors
+            %   for metric
+            %   - are subjects worse for certain networks? -> average
+            %   across all subjects across networks, different colors for
+            %   metric
+            for m_id = [1:3:3*num_subs]
+                % Take a slice of the matrix
+                sub_sim = mat_sim(:,m_id:m_id+2);
+                within = sub_sim(m_id:m_id+2);
+                between = sub_sim([1:m_id-1 m_id+3:end]);
+            end
+            
+            
+            % Count how many scans were successfully computed per subject.
+            % Here we are looking for the specificity, sensitivity and
+            % accuracy:
+            %   - TPR = TP/(TP+FN)
+            %   - SPC = TN/(FP+TN)
+            %   - ACC = (TP + TN)/(P + N)
+            % Again, we can report these values in the same way as the
+            % ratios
+            
+            
             % Cluster the subjects based on these two matrices
             hier_sim = niak_hierarchical_clustering(mat_sim);
             hier_dis = niak_hierarchical_clustering(-mat_dis);
