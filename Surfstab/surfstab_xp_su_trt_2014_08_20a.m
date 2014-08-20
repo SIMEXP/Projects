@@ -94,7 +94,7 @@ for nclust_id = 1:length(clusters)
         fprintf('Running %s at scale %d now...\n', t_name, num_clust);
         name_subs = fieldnames(in_struct.(t_name));
         num_subs = length(name_subs);
-        full_mat = [];
+        full_mat = zeros(num_clust, num_subs);
         icc_mat = zeros(num_clust, num_subs);
         for clust_id = 1:num_clust
             sort_mat = [];
@@ -199,6 +199,7 @@ for nclust_id = 1:length(clusters)
             %   - are subjects worse for certain networks? -> average
             %   across all subjects across networks, different colors for
             %   metric
+            count = 1;
             for m_id = [1:3:3*num_subs]
                 % Take a slice of the matrix
                 sub_sim = mat_sim(:,m_id:m_id+2);
@@ -208,6 +209,8 @@ for nclust_id = 1:length(clusters)
                 between = sub_sim([1:m_id-1 m_id+3:end]);
                 between = between(:);
                 ratio = mean(within)/mean(between);
+                full_mat(clust_id, count);
+                count = count + 1;
             end
             
             
