@@ -202,8 +202,12 @@ for nclust_id = 1:length(clusters)
             for m_id = [1:3:3*num_subs]
                 % Take a slice of the matrix
                 sub_sim = mat_sim(:,m_id:m_id+2);
-                within = sub_sim(m_id:m_id+2);
+                within = sub_sim(m_id:m_id+2,:);
+                % Mask it
+                within = within(logical(tril(ones(3),-1)));
                 between = sub_sim([1:m_id-1 m_id+3:end]);
+                between = between(:);
+                ratio = mean(within)/mean(between);
             end
             
             
