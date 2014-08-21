@@ -116,7 +116,7 @@ for nclust_id = 1:length(clusters)
                     else
                         net_map = v_in;
                     end
-                    net_masked = net_map+(mask);
+                    net_masked = net_map(mask);
                     net_vec = net_masked(:);
                     sort_mat(sub_id, ses_id,:) = net_vec;
                     clust_mat(:, end+1) = net_vec;
@@ -162,22 +162,6 @@ for nclust_id = 1:length(clusters)
             clust_sim = niak_part2mat(part_sim);
             clust_dis = niak_part2mat(part_dis);
             
-            % Calculate the ratio of within vs between similarity for each
-            % subject. We need these plots:
-            %   - are subjects worse for certain metrics? -> average across
-            %   all networks per subject over subjects, different colors
-            %   for metric
-            %   - are subjects worse for certain networks? -> average
-            %   across all subjects across networks, different colors for
-            %   metric
-            % Count how many scans were successfully computed per subject.
-            % Here we are looking for the specificity, sensitivity and
-            % accuracy:
-            %   - TPR = TP/(TP+FN)
-            %   - SPC = TN/(FP+TN)
-            %   - ACC = (TP + TN)/(P + N)
-            % Again, we can report these values in the same way as the
-            % ratios
             count = 1;
             for m_id = 1:3:3*num_subs
                 % Take a slice of the similarity matrix
@@ -246,70 +230,63 @@ for nclust_id = 1:length(clusters)
             dump_folder = [out_net filesep sprintf('scale_%d', num_clust) filesep sprintf('netw_%d', clust_id)];
             psom_mkdir(dump_folder);
             
+            clf;
             img_name = sprintf('clust_map_net_%d_sc_%d_%s.png', clust_id, num_clust, t_name);
             img_path = [dump_folder filesep img_name];
-            f = figure('visible', 'off');
             vopt.color_map = niak_hot_cold();
             subplot(2,2,1), niak_visu_matrix(mat_sim, vopt);
             subplot(2,2,2), niak_visu_matrix(mat_dis, vopt);
             subplot(2,2,3), niak_visu_matrix(clust_sim);
             subplot(2,2,4), niak_visu_matrix(clust_dis);
-            
             suptitle(sprintf('Clustering of Network %d at scale %d with %s', clust_id, num_clust, t_name));
-            print(f, '-dpng', img_path);
-            
+            print(gcf, '-dpng', img_path);
             
             % Also make a montage out of the things
+            clf;
             img_name = sprintf('avg_map_%s.png', t_name);
             img_path = [dump_folder filesep img_name];
             img_opt.type_color = 'hot_cold';
-            close all;
-            f = figure('visible', 'off');
             niak_montage(avg_vol, img_opt);
             title(sprintf('AVG map: metric %s', t_name));
-            print(f, '-dpng', img_path);
+            print(gcf, '-dpng', img_path);
             
+            clf;
             img_name = sprintf('std_map_%s.png', t_name);
             img_path = [dump_folder filesep img_name];
             img_opt.type_color = 'hot_cold';
-            close all;
-            f = figure('visible', 'off');
             niak_montage(std_vol, img_opt);
             title(sprintf('STD map: metric %s', t_name));
-            print(f, '-dpng', img_path);
+            print(gcf, '-dpng', img_path);
             
+            clf;
             img_name = sprintf('icc_map_12_%s.png', t_name);
             img_path = [dump_folder filesep img_name];
             img_opt.type_color = 'hot_cold';
-            close all;
-            f = figure('visible', 'off');
             niak_montage(icc_vol12, img_opt);
             title(sprintf('ICC map 12: metric %s', t_name));
-            print(f, '-dpng', img_path);
+            print(gcf, '-dpng', img_path);
             
+            clf;
             img_name = sprintf('icc_map_13_%s.png', t_name);
             img_path = [dump_folder filesep img_name];
             img_opt.type_color = 'hot_cold';
-            close all;
-            f = figure('visible', 'off');
             niak_montage(icc_vol13, img_opt);
             title(sprintf('ICC map 13: metric %s', t_name));
-            print(f, '-dpng', img_path);
+            print(gcf, '-dpng', img_path);
             
+            clf;
             img_name = sprintf('icc_map_23_%s.png', t_name);
             img_path = [dump_folder filesep img_name];
             img_opt.type_color = 'hot_cold';
-            close all;
-            f = figure('visible', 'off');
             niak_montage(icc_vol23, img_opt);
             title(sprintf('ICC map 23: metric %s', t_name));
-            print(f, '-dpng', img_path);
-            close all;
+            print(gcf, '-dpng', img_path);
+            
         end
         % Map the temporary files back
-        tpr_sim_mat = cat(3, tpr_sim_mat, tpr_dis_tmp);
-        spc_sim_mat = cat(3, spc_sim_mat, spc_dis_tmp);
-        acc_sim_mat = cat(3, acc_sim_mat, acc_dis_tmp);
+        tpr_sim_mat = cat(3, tpr_sim_mat, tpr_sim_tmp);
+        spc_sim_mat = cat(3, spc_sim_mat, spc_sim_tmp);
+        acc_sim_mat = cat(3, acc_sim_mat, acc_sim_tmp);
         tpr_dis_mat = cat(3, tpr_dis_mat, tpr_dis_tmp);
         spc_dis_mat = cat(3, spc_dis_mat, spc_dis_tmp);
         acc_dis_mat = cat(3, acc_dis_mat, acc_dis_tmp);
@@ -319,7 +296,7 @@ for nclust_id = 1:length(clusters)
     end
     % 
     % Visualize the across network and across subject metrics
-    labels = {}
+    labels = {};
     for cell_id = 1:num_templates
         labels{end+1} = in_templates{cell_id}{2};
     end
@@ -334,14 +311,7 @@ for nclust_id = 1:length(clusters)
                 {spc_dis_mat, sprintf('SPC dist @ %d', num_clust)},...
                 {acc_dis_mat, sprintf('ACC dist @ %d', num_clust)},...
                };
-%     vis_mats = {
-%                 {sim, 'w/b sim'},...
-%                 {acc_sim_mat, 'ACC sim'},...
-%                 {dis, 'w/b dist'},...
-%                 {acc_dis_mat, 'ACC dist'},...
-%                };
-    % Across network
-    f = figure('visible', 'off');
+    clf;
     for vis_id = 1:length(vis_mats)
         vis = vis_mats{vis_id};
         sub_h = subplot(2,4,vis_id);
@@ -360,10 +330,10 @@ for nclust_id = 1:length(clusters)
     x_width=20;
     y_width=10;
     set(gcf, 'PaperPosition', [0 0 x_width y_width]); 
-    print(f, '-dpng', net_path);
+    print(gcf, '-dpng', net_path);
     
     % Across subjects
-    f = figure('visible', 'off');
+    clf;
     for vis_id = 1:length(vis_mats)
         vis = vis_mats{vis_id};
         sub_h = subplot(2,4,vis_id);
@@ -382,7 +352,7 @@ for nclust_id = 1:length(clusters)
     x_width=20;
     y_width=10;
     set(gcf, 'PaperPosition', [0 0 x_width y_width]); 
-    print(f, '-dpng', sub_path);
+    print(gcf, '-dpng', sub_path);
 
     all_path = [out_mat filesep sprintf('all_scale_%d.mat',num_clust)];
     save(all_path, 'tpr_sim_mat', 'spc_sim_mat', 'acc_sim_mat', 'tpr_dis_mat', 'spc_dis_mat', 'acc_dis_mat', 'sim', 'dis');
