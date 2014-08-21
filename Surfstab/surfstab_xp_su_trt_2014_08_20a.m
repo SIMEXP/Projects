@@ -15,7 +15,7 @@
 clear;
 %% Define the input data
 in_dir = '/data1/scores/all_out';
-out_dir = '/data1/scores/test_output_3';
+out_dir = '/data1/scores/test_output_4';
 psom_mkdir(out_dir);
 out_fig = [out_dir filesep 'figures'];
 psom_mkdir(out_fig);
@@ -86,17 +86,20 @@ for nclust_id = 1:length(clusters)
     %% Generate the case by rater matrix for ICC
         
     % Loop through the different input files again
-    acc_mat = [];
-    tpr_mat = [];
-    spc_mat = [];
+    [acc_sim_mat, tpr_sim_mat, spc_sim_mat] = deal([]);
+    [acc_dis_mat, tpr_dis_mat, spc_dis_mat] = deal([]);
+    [sim, dis] = deal([]);
     for t_id = 1:num_templates
         t_name = t_names{t_id};
         fprintf('Running %s at scale %d now...\n', t_name, num_clust);
         name_subs = fieldnames(in_struct.(t_name));
         num_subs = length(name_subs);
-        full_mat = zeros(num_clust, num_subs);
-        icc_mat = zeros(num_clust, num_subs);
+        [acc_sim_tmp, tpr_sim_tmp, spc_sim_tmp] = deal(zeros(num_clust, num_subs));
+        [acc_dis_tmp, tpr_dis_tmp, spc_dis_tmp] = deal(zeros(num_clust, num_subs));
+        [sim_tmp, dis_tmp, icc_mat] = deal(zeros(num_clust, num_subs));
+        
         for clust_id = 1:num_clust
+            fprintf('   Running cluster %d with %s now\n', clust_id, t_name);
             sort_mat = [];
             clust_mat = [];
             for sub_id = 1:num_subs
@@ -113,7 +116,7 @@ for nclust_id = 1:length(clusters)
                     else
                         net_map = v_in;
                     end
-                    net_masked = net_map(mask);
+                    net_masked = net_map+(mask);
                     net_vec = net_masked(:);
                     sort_mat(sub_id, ses_id,:) = net_vec;
                     clust_mat(:, end+1) = net_vec;
@@ -143,86 +146,11 @@ for nclust_id = 1:length(clusters)
             % Do the same for the average maps
             avg_vol = niak_part2vol(avg_map, mask);            
             std_vol = niak_part2vol(std_map, mask);
-            % Prepare a folder to keep these things in
-            dump_folder = [out_net filesep sprintf('scale_%d', num_clust) filesep sprintf('netw_%d', clust_id)];
-            psom_mkdir(dump_folder);
-            % Also make a montage out of the things
-            img_name = sprintf('avg_map_%s.png', t_name);
-            img_path = [dump_folder filesep img_name];
-            img_opt.type_color = 'hot_cold';
-            clf;
-            niak_montage(avg_vol, img_opt);
-            title(sprintf('AVG map: metric %s', t_name));
-            print(gcf, '-dpng', img_path);
-            
-            img_name = sprintf('std_map_%s.png', t_name);
-            img_path = [dump_folder filesep img_name];
-            img_opt.type_color = 'hot_cold';
-            clf;
-            niak_montage(std_vol, img_opt);
-            title(sprintf('STD map: metric %s', t_name));
-            print(gcf, '-dpng', img_path);
-            
-            img_name = sprintf('icc_map_12_%s.png', t_name);
-            img_path = [dump_folder filesep img_name];
-            img_opt.type_color = 'hot_cold';
-            clf;
-            niak_montage(icc_vol12, img_opt);
-            title(sprintf('ICC map 12: metric %s', t_name));
-            print(gcf, '-dpng', img_path);
-            
-            img_name = sprintf('icc_map_13_%s.png', t_name);
-            img_path = [dump_folder filesep img_name];
-            img_opt.type_color = 'hot_cold';
-            clf;
-            niak_montage(icc_vol13, img_opt);
-            title(sprintf('ICC map 13: metric %s', t_name));
-            print(gcf, '-dpng', img_path);
-            
-            img_name = sprintf('icc_map_23_%s.png', t_name);
-            img_path = [dump_folder filesep img_name];
-            img_opt.type_color = 'hot_cold';
-            clf;
-            niak_montage(icc_vol23, img_opt);
-            title(sprintf('ICC map 23: metric %s', t_name));
-            print(gcf, '-dpng', img_path);
-            
+                        
             % Also take the data point by subject map and build a
             % similarity and a distance matrix from it
             mat_sim = niak_build_correlation(clust_mat);
             mat_dis = niak_build_distance(clust_mat);
-            % Calculate the ratio of within vs between similarity for each
-            % subject. We need these plots:
-            %   - are subjects worse for certain metrics? -> average across
-            %   all networks per subject over subjects, different colors
-            %   for metric
-            %   - are subjects worse for certain networks? -> average
-            %   across all subjects across networks, different colors for
-            %   metric
-            count = 1;
-            for m_id = [1:3:3*num_subs]
-                % Take a slice of the matrix
-                sub_sim = mat_sim(:,m_id:m_id+2);
-                within = sub_sim(m_id:m_id+2,:);
-                % Mask it
-                within = within(logical(tril(ones(3),-1)));
-                between = sub_sim([1:m_id-1 m_id+3:end]);
-                between = between(:);
-                ratio = mean(within)/mean(between);
-                full_mat(clust_id, count);
-                count = count + 1;
-            end
-            
-            
-            % Count how many scans were successfully computed per subject.
-            % Here we are looking for the specificity, sensitivity and
-            % accuracy:
-            %   - TPR = TP/(TP+FN)
-            %   - SPC = TN/(FP+TN)
-            %   - ACC = (TP + TN)/(P + N)
-            % Again, we can report these values in the same way as the
-            % ratios
-            
             
             % Cluster the subjects based on these two matrices
             hier_sim = niak_hierarchical_clustering(mat_sim);
@@ -234,9 +162,93 @@ for nclust_id = 1:length(clusters)
             clust_sim = niak_part2mat(part_sim);
             clust_dis = niak_part2mat(part_dis);
             
+            % Calculate the ratio of within vs between similarity for each
+            % subject. We need these plots:
+            %   - are subjects worse for certain metrics? -> average across
+            %   all networks per subject over subjects, different colors
+            %   for metric
+            %   - are subjects worse for certain networks? -> average
+            %   across all subjects across networks, different colors for
+            %   metric
+            % Count how many scans were successfully computed per subject.
+            % Here we are looking for the specificity, sensitivity and
+            % accuracy:
+            %   - TPR = TP/(TP+FN)
+            %   - SPC = TN/(FP+TN)
+            %   - ACC = (TP + TN)/(P + N)
+            % Again, we can report these values in the same way as the
+            % ratios
+            count = 1;
+            for m_id = 1:3:3*num_subs
+                % Take a slice of the similarity matrix
+                sub_sim = mat_sim(:,m_id:m_id+2);
+                within_sim = sub_sim(m_id:m_id+2,:);
+                % Mask it
+                within_sim = within_sim(logical(tril(ones(3),-1)));
+                between_sim = sub_sim([1:m_id-1 m_id+3:end]);
+                between_sim = between_sim(:);
+                ratio_sim = mean(within_sim)/mean(between_sim);
+                sim_tmp(clust_id, count) = ratio_sim;
+                
+                % Take the slice of negativethe distance matrix
+                sub_dis = mat_sim(:,m_id:m_id+2)*-1;
+                within_dis = sub_dis(m_id:m_id+2,:);
+                % Mask it
+                within_dis = within_dis(logical(tril(ones(3),-1)));
+                between_dis = sub_dis([1:m_id-1 m_id+3:end]);
+                between_dis = between_dis(:);
+                ratio_dis = mean(within_dis)/mean(between_dis);
+                dis_tmp(clust_id, count) = ratio_dis;
+                
+                % Compute the accuracy measures for similarity clustering
+                map_sim = clust_sim(:,m_id:m_id+2);
+                map_sim_within = map_sim(m_id:m_id+2,:);
+                map_sim_within = map_sim_within(logical(tril(ones(3),-1)));
+                map_sim_between = map_sim([1:m_id-1 m_id+3:end]);
+                map_sim_between = map_sim_between(:);
+                P = 3;
+                N = (num_subs-1)*3*3;
+                TP_sim = sum(logical(map_sim_within));
+                TN_sim = sum(map_sim_between==0);
+                FP_sim = sum(logical(map_sim_between));
+                FN_sim = sum(map_sim_within==0);
+                tpr_sim = TP_sim/(TP_sim+FN_sim);
+                spc_sim = TN_sim/(FP_sim+TN_sim);
+                acc_sim = (TP_sim + TN_sim)/(P + N);
+                
+                tpr_sim_tmp(clust_id, count) = tpr_sim;
+                spc_sim_tmp(clust_id, count) = spc_sim;
+                acc_sim_tmp(clust_id, count) = acc_sim;
+                
+                % Compute measures for distance clustering
+                map_dis = clust_dis(:,m_id:m_id+2);
+                map_dis_within = map_dis(m_id:m_id+2,:);
+                map_dis_within = map_dis_within(logical(tril(ones(3),-1)));
+                map_dis_between = map_dis([1:m_id-1 m_id+3:end]);
+                map_dis_between = map_dis_between(:);
+                P = 3;
+                N = (num_subs-1)*3*3;
+                TP_dis = sum(logical(map_dis_within));
+                TN_dis = sum(map_dis_between==0);
+                FP_dis = sum(logical(map_dis_between));
+                FN_dis = sum(map_dis_within==0);
+                tpr_dis = TP_dis/(TP_dis+FN_dis);
+                spc_dis = TN_dis/(FP_dis+TN_dis);
+                acc_dis = (TP_dis + TN_dis)/(P + N);
+                
+                tpr_dis_tmp(clust_id, count) = tpr_dis;
+                spc_dis_tmp(clust_id, count) = spc_dis;
+                acc_dis_tmp(clust_id, count) = acc_dis;
+
+                count = count + 1;
+            end
+            % Prepare a folder to keep these things in
+            dump_folder = [out_net filesep sprintf('scale_%d', num_clust) filesep sprintf('netw_%d', clust_id)];
+            psom_mkdir(dump_folder);
+            
             img_name = sprintf('clust_map_net_%d_sc_%d_%s.png', clust_id, num_clust, t_name);
             img_path = [dump_folder filesep img_name];
-            clf;
+            f = figure('visible', 'off');
             vopt.color_map = niak_hot_cold();
             subplot(2,2,1), niak_visu_matrix(mat_sim, vopt);
             subplot(2,2,2), niak_visu_matrix(mat_dis, vopt);
@@ -244,7 +256,135 @@ for nclust_id = 1:length(clusters)
             subplot(2,2,4), niak_visu_matrix(clust_dis);
             
             suptitle(sprintf('Clustering of Network %d at scale %d with %s', clust_id, num_clust, t_name));
-            print(gcf, '-dpng', img_path);
+            print(f, '-dpng', img_path);
+            
+            
+            % Also make a montage out of the things
+            img_name = sprintf('avg_map_%s.png', t_name);
+            img_path = [dump_folder filesep img_name];
+            img_opt.type_color = 'hot_cold';
+            close all;
+            f = figure('visible', 'off');
+            niak_montage(avg_vol, img_opt);
+            title(sprintf('AVG map: metric %s', t_name));
+            print(f, '-dpng', img_path);
+            
+            img_name = sprintf('std_map_%s.png', t_name);
+            img_path = [dump_folder filesep img_name];
+            img_opt.type_color = 'hot_cold';
+            close all;
+            f = figure('visible', 'off');
+            niak_montage(std_vol, img_opt);
+            title(sprintf('STD map: metric %s', t_name));
+            print(f, '-dpng', img_path);
+            
+            img_name = sprintf('icc_map_12_%s.png', t_name);
+            img_path = [dump_folder filesep img_name];
+            img_opt.type_color = 'hot_cold';
+            close all;
+            f = figure('visible', 'off');
+            niak_montage(icc_vol12, img_opt);
+            title(sprintf('ICC map 12: metric %s', t_name));
+            print(f, '-dpng', img_path);
+            
+            img_name = sprintf('icc_map_13_%s.png', t_name);
+            img_path = [dump_folder filesep img_name];
+            img_opt.type_color = 'hot_cold';
+            close all;
+            f = figure('visible', 'off');
+            niak_montage(icc_vol13, img_opt);
+            title(sprintf('ICC map 13: metric %s', t_name));
+            print(f, '-dpng', img_path);
+            
+            img_name = sprintf('icc_map_23_%s.png', t_name);
+            img_path = [dump_folder filesep img_name];
+            img_opt.type_color = 'hot_cold';
+            close all;
+            f = figure('visible', 'off');
+            niak_montage(icc_vol23, img_opt);
+            title(sprintf('ICC map 23: metric %s', t_name));
+            print(f, '-dpng', img_path);
+            close all;
         end
+        % Map the temporary files back
+        tpr_sim_mat = cat(3, tpr_sim_mat, tpr_dis_tmp);
+        spc_sim_mat = cat(3, spc_sim_mat, spc_dis_tmp);
+        acc_sim_mat = cat(3, acc_sim_mat, acc_dis_tmp);
+        tpr_dis_mat = cat(3, tpr_dis_mat, tpr_dis_tmp);
+        spc_dis_mat = cat(3, spc_dis_mat, spc_dis_tmp);
+        acc_dis_mat = cat(3, acc_dis_mat, acc_dis_tmp);
+        
+        sim = cat(3, sim, sim_tmp);
+        dis = cat(3, dis, dis_tmp);
     end
+    % 
+    % Visualize the across network and across subject metrics
+    labels = {}
+    for cell_id = 1:num_templates
+        labels{end+1} = in_templates{cell_id}{2};
+    end
+    % Prepare files
+    vis_mats = {
+                {sim, sprintf('w/b sim @ %d', num_clust)},...
+                {tpr_sim_mat, sprintf('TPR sim @ %d', num_clust)},...
+                {spc_sim_mat, sprintf('SPC sim @ %d', num_clust)},...
+                {acc_sim_mat, sprintf('ACC sim @ %d', num_clust)},...
+                {dis, sprintf('w/b dist @ %d', num_clust)},...
+                {tpr_dis_mat, sprintf('TPR dist @ %d', num_clust)},...
+                {spc_dis_mat, sprintf('SPC dist @ %d', num_clust)},...
+                {acc_dis_mat, sprintf('ACC dist @ %d', num_clust)},...
+               };
+%     vis_mats = {
+%                 {sim, 'w/b sim'},...
+%                 {acc_sim_mat, 'ACC sim'},...
+%                 {dis, 'w/b dist'},...
+%                 {acc_dis_mat, 'ACC dist'},...
+%                };
+    % Across network
+    f = figure('visible', 'off');
+    for vis_id = 1:length(vis_mats)
+        vis = vis_mats{vis_id};
+        sub_h = subplot(2,4,vis_id);
+        mat = vis{1};
+        tit = vis{2};
+        sub_mean = squeeze(mean(mat, 2));
+        x_mat = repmat(1:size(sub_mean,1), size(sub_mean,2), 1)';
+        sub_p = plot(sub_h, x_mat, sub_mean);
+        xlabel('Networks');
+        ylabel(tit);
+    end
+    suptitle(sprintf('@ scale %d', num_clust));
+    legend(labels);
+    net_path = [out_fig filesep sprintf('net_score_sc_%d.png', num_clust)];
+    set(gcf, 'PaperUnits', 'inches');
+    x_width=20;
+    y_width=10;
+    set(gcf, 'PaperPosition', [0 0 x_width y_width]); 
+    print(f, '-dpng', net_path);
+    
+    % Across subjects
+    f = figure('visible', 'off');
+    for vis_id = 1:length(vis_mats)
+        vis = vis_mats{vis_id};
+        sub_h = subplot(2,4,vis_id);
+        mat = vis{1};
+        tit = vis{2};
+        sub_mean = squeeze(mean(mat, 1));
+        x_mat = repmat(1:size(sub_mean,1), size(sub_mean,2), 1)';
+        sub_p = plot(sub_h, x_mat, sub_mean);
+        xlabel('Subjects');
+        ylabel(tit);
+    end
+    legend(labels);
+    suptitle(sprintf('@ scale %d', num_clust));
+    sub_path = [out_fig filesep sprintf('sub_score_sc_%d.png', num_clust)];
+    set(gcf, 'PaperUnits', 'inches');
+    x_width=20;
+    y_width=10;
+    set(gcf, 'PaperPosition', [0 0 x_width y_width]); 
+    print(f, '-dpng', sub_path);
+
+    all_path = [out_mat filesep sprintf('all_scale_%d.mat',num_clust)];
+    save(all_path, 'tpr_sim_mat', 'spc_sim_mat', 'acc_sim_mat', 'tpr_dis_mat', 'spc_dis_mat', 'acc_dis_mat', 'sim', 'dis');
+    fprintf('Saved all to %s', all_path);
 end
