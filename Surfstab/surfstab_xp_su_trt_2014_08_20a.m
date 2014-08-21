@@ -196,8 +196,8 @@ for nclust_id = 1:length(clusters)
                 TN_sim = sum(map_sim_between==0);
                 FP_sim = sum(logical(map_sim_between));
                 FN_sim = sum(map_sim_within==0);
-                tpr_sim = TP_sim/(TP_sim+FN_sim);
-                spc_sim = TN_sim/(FP_sim+TN_sim);
+                tpr_sim = TP_sim/P;
+                spc_sim = TN_sim/N;
                 acc_sim = (TP_sim + TN_sim)/(P + N);
                 
                 tpr_sim_tmp(clust_id, count) = tpr_sim;
@@ -216,8 +216,8 @@ for nclust_id = 1:length(clusters)
                 TN_dis = sum(map_dis_between==0);
                 FP_dis = sum(logical(map_dis_between));
                 FN_dis = sum(map_dis_within==0);
-                tpr_dis = TP_dis/(TP_dis+FN_dis);
-                spc_dis = TN_dis/(FP_dis+TN_dis);
+                tpr_dis = TP_dis/P;
+                spc_dis = TN_dis/N;
                 acc_dis = (TP_dis + TN_dis)/(P + N);
                 
                 tpr_dis_tmp(clust_id, count) = tpr_dis;
@@ -345,8 +345,8 @@ for nclust_id = 1:length(clusters)
         xlabel('Subjects');
         ylabel(tit);
     end
-    legend(labels);
     suptitle(sprintf('@ scale %d', num_clust));
+    legend(labels);
     sub_path = [out_fig filesep sprintf('sub_score_sc_%d.png', num_clust)];
     set(gcf, 'PaperUnits', 'inches');
     x_width=20;
