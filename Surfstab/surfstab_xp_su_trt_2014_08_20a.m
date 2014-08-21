@@ -15,7 +15,7 @@
 clear;
 %% Define the input data
 in_dir = '/data1/scores/all_out';
-out_dir = '/data1/scores/test_output_4';
+out_dir = '/data1/scores/test_output_5';
 psom_mkdir(out_dir);
 out_fig = [out_dir filesep 'figures'];
 psom_mkdir(out_fig);
@@ -188,7 +188,7 @@ for nclust_id = 1:length(clusters)
                 map_sim = clust_sim(:,m_id:m_id+2);
                 map_sim_within = map_sim(m_id:m_id+2,:);
                 map_sim_within = map_sim_within(logical(tril(ones(3),-1)));
-                map_sim_between = map_sim([1:m_id-1 m_id+3:end]);
+                map_sim_between = map_sim([1:m_id-1 m_id+3:end], :);
                 map_sim_between = map_sim_between(:);
                 P = 3;
                 N = (num_subs-1)*3*3;
@@ -323,7 +323,7 @@ for nclust_id = 1:length(clusters)
         xlabel('Networks');
         ylabel(tit);
     end
-    suptitle(sprintf('@ scale %d', num_clust));
+    suptitle(sprintf('Network scores @ scale %d', num_clust));
     legend(labels);
     net_path = [out_fig filesep sprintf('net_score_sc_%d.png', num_clust)];
     set(gcf, 'PaperUnits', 'inches');
@@ -345,7 +345,7 @@ for nclust_id = 1:length(clusters)
         xlabel('Subjects');
         ylabel(tit);
     end
-    suptitle(sprintf('@ scale %d', num_clust));
+    suptitle(sprintf('Subject scores @ scale %d', num_clust));
     legend(labels);
     sub_path = [out_fig filesep sprintf('sub_score_sc_%d.png', num_clust)];
     set(gcf, 'PaperUnits', 'inches');
