@@ -110,19 +110,18 @@ for nclust_id = 1:length(clusters)
                 end
             end
             % Now we have the match of the current 
-            disp(size(comp_data));
             data = reshape(comp_data', 1, 6);
             fig_path = [out_fig filesep sprintf('comp_%dv%d_net_%d_meth_%s_sc_%d.png', target_subs(1), target_subs(2), clust_id, t_name, num_clust)];
             clf;
             set(gcf, 'PaperUnits', 'inches');
             x_width=30;
             y_width=10;
+            suptitle(sprintf('Comparison %d vs %d network %d @ %d with %s', target_subs(1), target_subs(2), clust_id, num_clust, t_name));
             % Plot the montages
             for plot_id = 1:6
                 subplot(2,3,plot_id);
                 niak_montage(niak_part2vol(data{plot_id}, mask));
             end
-            suptitle(sprintf('Comparison %d vs %d network %d @ %d with %s', target_subs(1), target_subs(2), clust_id, num_clust, t_name));
             print(gcf, '-dpng', '-r300', fig_path);
         end
     end
