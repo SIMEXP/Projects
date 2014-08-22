@@ -100,6 +100,7 @@ for nclust_id = 1:length(clusters)
             hit = 1;
             for sub_id = 1:num_subs
                 if any(sub_id == target_subs)
+                    fprintf('Match for %d, hit is %d\n', sub_id, hit);
                     sub_name = name_subs{sub_id};
                     sub_struct = in_struct.(t_name).(sub_name);
                     name_ses = fieldnames(sub_struct);
