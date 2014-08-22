@@ -15,7 +15,7 @@
 clear;
 %% Define the input data
 in_dir = '/data1/scores/all_out';
-out_dir = '/data1/scores/test_output_5';
+out_dir = '/data1/scores/test_output_6';
 psom_mkdir(out_dir);
 out_fig = [out_dir filesep 'figures'];
 psom_mkdir(out_fig);
@@ -88,7 +88,8 @@ for nclust_id = 1:length(clusters)
     % Loop through the different input files again
     [acc_sim_mat, tpr_sim_mat, spc_sim_mat] = deal([]);
     [acc_dis_mat, tpr_dis_mat, spc_dis_mat] = deal([]);
-    [sim, dis] = deal([]);
+    [intra_sim_mat, inter_sim_mat, sim] = deal([]);
+    [intra_dis_mat, inter_dis_mat, dis] = deal([]);
     for t_id = 1:num_templates
         t_name = t_names{t_id};
         fprintf('Running %s at scale %d now...\n', t_name, num_clust);
@@ -96,7 +97,9 @@ for nclust_id = 1:length(clusters)
         num_subs = length(name_subs);
         [acc_sim_tmp, tpr_sim_tmp, spc_sim_tmp] = deal(zeros(num_clust, num_subs));
         [acc_dis_tmp, tpr_dis_tmp, spc_dis_tmp] = deal(zeros(num_clust, num_subs));
-        [sim_tmp, dis_tmp, icc_mat] = deal(zeros(num_clust, num_subs));
+        [intra_sim_tmp, inter_sim_tmp, sim_tmp] = deal([]);
+        [intra_dis_tmp, inter_dis_tmp, dis_tmp] = deal([]);
+        [icc_mat] = deal(zeros(num_clust, num_subs));
         
         for clust_id = 1:num_clust
             fprintf('   Running cluster %d with %s now\n', clust_id, t_name);
@@ -183,6 +186,11 @@ for nclust_id = 1:length(clusters)
                 between_dis = between_dis(:);
                 ratio_dis = mean(within_dis)/mean(between_dis);
                 dis_tmp(clust_id, count) = ratio_dis;
+                
+                intra_sim_tmp(clust_id, count) = mean(within_sim);
+                inter_sim_tmp(clust_id, count) = mean(between_sim);
+                intra_dis_tmp(clust_id, count) = mean(within_dis);
+                inter_dis_tmp(clust_id, count) = mean(between_dis);
                 
                 % Compute the accuracy measures for similarity clustering
                 map_sim = clust_sim(:,m_id:m_id+2);
@@ -284,15 +292,20 @@ for nclust_id = 1:length(clusters)
             
         end
         % Map the temporary files back
+        intra_sim_mat = cat(3, intra_sim_mat, intra_sim_tmp);
+        inter_sim_mat = cat(3, inter_sim_mat, inter_sim_tmp);
+        sim = cat(3, sim, sim_tmp);
+        
+        intra_dis_mat = cat(3, intra_dis_mat, intra_dis_tmp);
+        inter_dis_mat = cat(3, inter_dis_mat, inter_dis_tmp);
+        dis = cat(3, dis, dis_tmp);
+        
         tpr_sim_mat = cat(3, tpr_sim_mat, tpr_sim_tmp);
         spc_sim_mat = cat(3, spc_sim_mat, spc_sim_tmp);
         acc_sim_mat = cat(3, acc_sim_mat, acc_sim_tmp);
         tpr_dis_mat = cat(3, tpr_dis_mat, tpr_dis_tmp);
         spc_dis_mat = cat(3, spc_dis_mat, spc_dis_tmp);
         acc_dis_mat = cat(3, acc_dis_mat, acc_dis_tmp);
-        
-        sim = cat(3, sim, sim_tmp);
-        dis = cat(3, dis, dis_tmp);
     end
     % 
     % Visualize the across network and across subject metrics
@@ -301,20 +314,22 @@ for nclust_id = 1:length(clusters)
         labels{end+1} = in_templates{cell_id}{2};
     end
     % Prepare files
-    vis_mats = {
-                {sim, sprintf('w/b sim @ %d', num_clust)},...
-                {tpr_sim_mat, sprintf('TPR sim @ %d', num_clust)},...
-                {spc_sim_mat, sprintf('SPC sim @ %d', num_clust)},...
-                {acc_sim_mat, sprintf('ACC sim @ %d', num_clust)},...
-                {dis, sprintf('w/b dist @ %d', num_clust)},...
-                {tpr_dis_mat, sprintf('TPR dist @ %d', num_clust)},...
-                {spc_dis_mat, sprintf('SPC dist @ %d', num_clust)},...
-                {acc_dis_mat, sprintf('ACC dist @ %d', num_clust)},...
-               };
+    sim_mats = {{sim_intra_mat, sprintf('intra spat corr @ %d', num_clust)},...
+                {sim_inter_mat, sprintf('inter spat corr @ %d', num_clust)},...
+                {sim, sprintf('w/b spat corr @ %d', num_clust)},...
+                {dis_intra_mat, sprintf('intra eucl dist @ %d', num_clust)},...
+                {dis_inter_mat, sprintf('inter eucl dist @ %d', num_clust)},...
+                {dis, sprintf('w/b eucl dist @ %d', num_clust)}};
+    clust_mats = {{tpr_sim_mat, sprintf('TPR spat corr @ %d', num_clust)},...
+                  {spc_sim_mat, sprintf('SPC spat corr @ %d', num_clust)},...
+                  {acc_sim_mat, sprintf('ACC spat corr @ %d', num_clust)},...
+                  {tpr_dis_mat, sprintf('TPR eucl dist @ %d', num_clust)},...
+                  {spc_dis_mat, sprintf('SPC eucl dist @ %d', num_clust)},...
+                  {acc_dis_mat, sprintf('ACC eucl dist @ %d', num_clust)}};
     clf;
-    for vis_id = 1:length(vis_mats)
-        vis = vis_mats{vis_id};
-        sub_h = subplot(2,4,vis_id);
+    for vis_id = 1:length(sim_mats)
+        vis = sim_mats{vis_id};
+        sub_h = subplot(2,3,vis_id);
         mat = vis{1};
         tit = vis{2};
         sub_mean = squeeze(mean(mat, 2));
@@ -323,19 +338,40 @@ for nclust_id = 1:length(clusters)
         xlabel('Networks');
         ylabel(tit);
     end
-    suptitle(sprintf('Network scores @ scale %d', num_clust));
+    suptitle(sprintf('Network similarity @ scale %d', num_clust));
     legend(labels);
-    net_path = [out_fig filesep sprintf('net_score_sc_%d.png', num_clust)];
+    sim_path = [out_fig filesep sprintf('net_similarity_sc_%d.png', num_clust)];
     set(gcf, 'PaperUnits', 'inches');
     x_width=20;
     y_width=10;
     set(gcf, 'PaperPosition', [0 0 x_width y_width]); 
-    print(gcf, '-dpng', net_path);
+    print(gcf, '-dpng', sim_path);
+    
+        clf;
+    for vis_id = 1:length(clust_mats)
+        vis = clust_mats{vis_id};
+        sub_h = subplot(2,3,vis_id);
+        mat = vis{1};
+        tit = vis{2};
+        sub_mean = squeeze(mean(mat, 2));
+        x_mat = repmat(1:size(sub_mean,1), size(sub_mean,2), 1)';
+        sub_p = plot(sub_h, x_mat, sub_mean);
+        xlabel('Networks');
+        ylabel(tit);
+    end
+    suptitle(sprintf('Network clustering @ scale %d', num_clust));
+    legend(labels);
+    clust_path = [out_fig filesep sprintf('net_clustering_sc_%d.png', num_clust)];
+    set(gcf, 'PaperUnits', 'inches');
+    x_width=20;
+    y_width=10;
+    set(gcf, 'PaperPosition', [0 0 x_width y_width]); 
+    print(gcf, '-dpng', clust_path);
     
     % Across subjects
     clf;
-    for vis_id = 1:length(vis_mats)
-        vis = vis_mats{vis_id};
+    for vis_id = 1:length(sim_mats)
+        vis = sim_mats{vis_id};
         sub_h = subplot(2,4,vis_id);
         mat = vis{1};
         tit = vis{2};
@@ -347,7 +383,28 @@ for nclust_id = 1:length(clusters)
     end
     suptitle(sprintf('Subject scores @ scale %d', num_clust));
     legend(labels);
-    sub_path = [out_fig filesep sprintf('sub_score_sc_%d.png', num_clust)];
+    sub_path = [out_fig filesep sprintf('sub_similarity_sc_%d.png', num_clust)];
+    set(gcf, 'PaperUnits', 'inches');
+    x_width=20;
+    y_width=10;
+    set(gcf, 'PaperPosition', [0 0 x_width y_width]); 
+    print(gcf, '-dpng', sub_path);
+    
+    clf;
+    for vis_id = 1:length(clust_mats)
+        vis = clust_mats{vis_id};
+        sub_h = subplot(2,4,vis_id);
+        mat = vis{1};
+        tit = vis{2};
+        sub_mean = squeeze(mean(mat, 1));
+        x_mat = repmat(1:size(sub_mean,1), size(sub_mean,2), 1)';
+        sub_p = plot(sub_h, x_mat, sub_mean);
+        xlabel('Subjects');
+        ylabel(tit);
+    end
+    suptitle(sprintf('Subject scores @ scale %d', num_clust));
+    legend(labels);
+    sub_path = [out_fig filesep sprintf('sub_clust_sc_%d.png', num_clust)];
     set(gcf, 'PaperUnits', 'inches');
     x_width=20;
     y_width=10;
