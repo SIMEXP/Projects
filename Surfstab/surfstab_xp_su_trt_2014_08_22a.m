@@ -121,7 +121,7 @@ for nclust_id = 1:length(clusters)
             opt.vol_limits = [0 1];
             for plot_id = 1:6
                 subplot(2,3,plot_id);
-                niak_montage(niak_part2vol(data{plot_id}, mask));
+                niak_montage(niak_part2vol(data{plot_id}, mask), opt);
             end
             print(gcf, '-dpng', '-r300', fig_path);
         end
