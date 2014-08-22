@@ -372,7 +372,7 @@ for nclust_id = 1:length(clusters)
     clf;
     for vis_id = 1:length(sim_mats)
         vis = sim_mats{vis_id};
-        sub_h = subplot(2,4,vis_id);
+        sub_h = subplot(2,3,vis_id);
         mat = vis{1};
         tit = vis{2};
         sub_mean = squeeze(mean(mat, 1));
@@ -393,7 +393,7 @@ for nclust_id = 1:length(clusters)
     clf;
     for vis_id = 1:length(clust_mats)
         vis = clust_mats{vis_id};
-        sub_h = subplot(2,4,vis_id);
+        sub_h = subplot(2,3,vis_id);
         mat = vis{1};
         tit = vis{2};
         sub_mean = squeeze(mean(mat, 1));
@@ -412,6 +412,8 @@ for nclust_id = 1:length(clusters)
     print(gcf, '-dpng', sub_path);
 
     all_path = [out_mat filesep sprintf('all_scale_%d.mat',num_clust)];
-    save(all_path, 'tpr_sim_mat', 'spc_sim_mat', 'acc_sim_mat', 'tpr_dis_mat', 'spc_dis_mat', 'acc_dis_mat', 'sim', 'dis');
+    save(all_path, 'tpr_sim_mat', 'spc_sim_mat', 'acc_sim_mat', 'tpr_dis_mat', 'spc_dis_mat', 'acc_dis_mat',...
+         'sim', 'intra_sim_mat', 'inter_sim_mat', 'dis', 'intra_dis_mat', 'inter_dis_mat', 'mat_sim', 'mat_dis',...
+         'clust_sim', 'clust_dis');
     fprintf('Saved all to %s', all_path);
 end
