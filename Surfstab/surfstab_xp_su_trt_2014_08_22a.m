@@ -32,11 +32,6 @@ clusters = [10];
 % Search for the files we need and build the structure
 for nclust_id = 1:length(clusters)
     num_clust = clusters(nclust_id);
-
-%                     {[in_dir filesep sprintf('cbb_%d', num_clust) filesep 'stability_contrast'], 'cbb_contrast'},...
-%                     {[in_dir filesep sprintf('sld_clust_%d_win_40', num_clust) filesep 'stability_contrast'], 'sld40'},...
-%                     {[in_dir filesep sprintf('sld_clust_%d_win_50', num_clust) filesep 'stability_contrast'], 'sld50'},...
-%                     {[in_dir filesep sprintf('sld_clust_%d_win_60', num_clust) filesep 'stability_contrast'], 'sld60'},...
     
     in_templates = {{[in_dir filesep sprintf('cbb_%d', num_clust) filesep 'stability_maps'], 'cbb'},...
                     {[in_dir filesep sprintf('sld_clust_%d_win_40', num_clust) filesep 'stability_maps'], 'sld40'},...
@@ -79,20 +74,11 @@ for nclust_id = 1:length(clusters)
 
     %% Generate the case by rater matrix for ICC
     % Loop through the different input files again
-    [acc_sim_mat, tpr_sim_mat, spc_sim_mat] = deal([]);
-    [acc_dis_mat, tpr_dis_mat, spc_dis_mat] = deal([]);
-    [intra_sim_mat, inter_sim_mat, sim] = deal([]);
-    [intra_dis_mat, inter_dis_mat, dis] = deal([]);
     for t_id = 1:num_templates
         t_name = t_names{t_id};
         fprintf('Running %s at scale %d now...\n', t_name, num_clust);
         name_subs = fieldnames(in_struct.(t_name));
         num_subs = length(name_subs);
-        [acc_sim_tmp, tpr_sim_tmp, spc_sim_tmp] = deal(zeros(num_clust, num_subs));
-        [acc_dis_tmp, tpr_dis_tmp, spc_dis_tmp] = deal(zeros(num_clust, num_subs));
-        [intra_sim_tmp, inter_sim_tmp, sim_tmp] = deal([]);
-        [intra_dis_tmp, inter_dis_tmp, dis_tmp] = deal([]);
-        [icc_mat] = deal(zeros(num_clust, num_subs));
         
         for clust_id = 1:num_clust
             fprintf('   Running cluster %d with %s now\n', clust_id, t_name);
@@ -129,6 +115,9 @@ for nclust_id = 1:length(clusters)
             data = reshape(comp_data', 1, 6);
             fig_path = [out_fig filesep sprintf('comp_%dv%d_net_%d_meth_%s_sc_%d.png', target_subs(1), target_subs(2), clust_id, t_name, num_clust)];
             clf;
+            set(gcf, 'PaperUnits', 'inches');
+            x_width=30;
+            y_width=10;
             % Plot the montages
             for plot_id = 1:6
                 subplot(2,3,plot_id);
