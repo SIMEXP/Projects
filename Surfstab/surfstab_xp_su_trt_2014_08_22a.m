@@ -124,6 +124,7 @@ for nclust_id = 1:length(clusters)
                 end
             end
             % Now we have the match of the current 
+            disp(size(comp_data));
             data = reshape(comp_data', 1, 6);
             fig_path = [out_fig filesep sprintf('comp_%dv%d_net_%d_meth_%s_sc_%d.png', target_subs(1), target_subs(2), clust_id, t_name, num_clust)];
             clf;
