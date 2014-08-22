@@ -132,7 +132,7 @@ for nclust_id = 1:length(clusters)
             % Plot the montages
             for plot_id = 1:6
                 subplot(2,3,plot_id);
-                niak_montage(niak_part2vol(data{plot_id}), mask);
+                niak_montage(niak_part2vol(data{plot_id}, mask));
             end
             print(gcf, '-dpng', fig_path);
         end
