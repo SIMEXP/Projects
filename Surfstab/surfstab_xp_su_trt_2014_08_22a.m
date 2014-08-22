@@ -118,8 +118,8 @@ for nclust_id = 1:length(clusters)
                         net_masked = net_map(mask);
                         net_vec = net_masked(:);
                         comp_data{hit, ses_id} = net_vec;
-                        hit = hit + 1;
                     end
+                    hit = hit + 1;
                 else
                     continue
                 end
