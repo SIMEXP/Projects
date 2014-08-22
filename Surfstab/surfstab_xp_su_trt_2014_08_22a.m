@@ -15,7 +15,7 @@
 clear;
 %% Define the input data
 in_dir = '/data1/scores/all_out';
-out_dir = '/data1/scores/test_output_6';
+out_dir = '/data1/scores/comparison_1';
 psom_mkdir(out_dir);
 out_fig = [out_dir filesep 'figures'];
 psom_mkdir(out_fig);
