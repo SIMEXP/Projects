@@ -86,7 +86,6 @@ for nclust_id = 1:length(clusters)
             hit = 1;
             for sub_id = 1:num_subs
                 if any(sub_id == target_subs)
-                    fprintf('Match for %d, hit is %d\n', sub_id, hit);
                     sub_name = name_subs{sub_id};
                     sub_struct = in_struct.(t_name).(sub_name);
                     name_ses = fieldnames(sub_struct);
@@ -123,7 +122,8 @@ for nclust_id = 1:length(clusters)
                 subplot(2,3,plot_id);
                 niak_montage(niak_part2vol(data{plot_id}, mask));
             end
-            print(gcf, '-dpng', fig_path);
+            suptitle(sprintf('Comparison %d vs %d network %d @ %d with %s', target_subs(1), target_subs(2), clust_id, num_clust, t_name));
+            print(gcf, '-dpng', 'r300', fig_path);
         end
     end
 end
