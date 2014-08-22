@@ -118,6 +118,7 @@ for nclust_id = 1:length(clusters)
             y_width=10;
             suptitle(sprintf('Comparison %d vs %d network %d @ %d with %s', target_subs(1), target_subs(2), clust_id, num_clust, t_name));
             % Plot the montages
+            opt.vol_limits = [0 1];
             for plot_id = 1:6
                 subplot(2,3,plot_id);
                 niak_montage(niak_part2vol(data{plot_id}, mask));
