@@ -1,4 +1,5 @@
 clear;
+% Paths are for Mammouth atm
 in_path = '/home/surchs/database/phenoclust/data';
 part_path = '/home/surchs/masks';
 out_path = '/home/surchs/database/phenoclust/out';
