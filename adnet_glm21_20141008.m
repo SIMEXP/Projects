@@ -2,7 +2,7 @@ clear all
 addpath(genpath('/home/atam/quarantaine/niak-boss-0.12.16'));
 path_data = '/gs/scratch/atam/';
 
-%%% ADNET GLM CONNECTOME SCRIPT - MAIN CONTRASTS - basc_cambridge_15 -
+%%% ADNET GLM CONNECTOME SCRIPT - MAIN CONTRASTS - basc 40 scales -
 %%% NOTE: modelling adni2 only
 
 % Permission is hereby granted, free of charge, to any person obtaining a copy
