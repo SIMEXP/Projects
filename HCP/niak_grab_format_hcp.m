@@ -1,4 +1,4 @@
-function files = niak_extract_preprocess_hcp(path_data,opt)
+function files = niak_extract_preprocessed_hcp(path_data,opt)
 % Extract files preprocessed by HCP Pipelines, and format then in niak like structure 
 %
 % SYNTAX:
@@ -8,8 +8,8 @@ function files = niak_extract_preprocess_hcp(path_data,opt)
 % INPUTS:
 %
 % PATH_DATA
-%   (string, default [pwd filesep], aka './') full path to the outputs of 
-%   HCP Preprocessed data. 
+%   (string, default ['..'filesep], aka '../') the full path to the outputs of 
+%   HCP Preprocessed data (wraning: don't put the output folders in the same directory as the input folders). 
 %
 % OPT
 %   (structure, optional) with the following fields :
@@ -33,7 +33,28 @@ function files = niak_extract_preprocess_hcp(path_data,opt)
 %       spatial correlation between the individual mean functional volume 
 %       in non-linear stereotaxic space and the population average.
 %
-
+% _________________________________________________________________________
+% OUTPUTS:
+%
+% FILES
+%   (structure) the exact fields depend on OPT.TYPE_TASK. 
+%
+%   case 'rest' :
+%
+%       DATA.(SUBJECT).(SESSION).(RUN)
+%           (string) preprocessed fMRI datasets. 
+%
+%       MASK
+%           (string) a file name of a binary mask common 
+%           to all subjects and runs. The mask is the file located in 
+%           quality_control/group_coregistration/anat_mask_group_stereonl.<
+%           ext>
+%
+%       AREAS
+%           (string) a file name of an AAL parcelation into anatomical regions
+%           resampled at the same resolution as the fMRI datasets. 
+%
+%
 %% Default path for the database
 if (nargin<1)||isempty(path_data)
     path_data = [pwd filesep];
@@ -45,13 +66,63 @@ end
 
 %% Default options
 list_fields   = { 'type_task' , 'path_out'    };
-list_defaults = { 'motor'     , [pwd filesep] };
+list_defaults = { 'motor'     , ['..' filesep] };
 if nargin > 1
     opt = psom_struct_defaults(opt,list_fields,list_defaults);
 else
     opt = psom_struct_defaults(struct(),list_fields,list_defaults);
 end
 
+%% create the output folder structure
+fmri_preprocess      = [opt.path_out 'fmri_preprocess_' opt.type_task];
+anat                 = [opt.path_out 'fmri_preprocess_' opt.type_task  filesep 'anat'];
+fmri                 = [opt.path_out 'fmri_preprocess_' opt.type_task  filesep 'fmri'];
+quality_control      = [opt.path_out 'fmri_preprocess_' opt.type_task  filesep 'quality_control'];
+group_coregistration = [opt.path_out 'fmri_preprocess_' opt.type_task  filesep 'quality_control' filesep 'group_coregistration'];
+group_motion         = [opt.path_out 'fmri_preprocess_' opt.type_task  filesep 'quality_control' filesep 'group_motion'];
+EVs                  = [opt.path_out 'fmri_preprocess_' opt.type_task  filesep 'EVs'];
+
+mkdir(fmri_preprocess);
+mkdir(anat);
+mkdir(fmri);
+mkdir(quality_control);
+mkdir(group_coregistration);
+mkdir(group_motion);
+mkdir(EVs);
+
+%% Read subjects list
+list_subject = dir(path_data);
+list_subject = {list_subject(3:end).name};
+
+%% Extract necessary files and format them in a NIAK like fmri preprocessed ouput folder
+for nn = 1:length(list_subject)
+    subject = strtrim(list_subject{nn});
+    mkdir([anat filesep subject]);
+    mkdir([EVs filesep subject]);
+    % copy the subject anat file (ex: 100307/100307_Structural_preproc/MNINonLinear/T1w.nii.gz)
+    system(['cp ' subject filesep subject '_Structural_preproc/MNINonLinear/T1w.nii.gz ' anat filesep subject filesep 'anat_HCP' subject '_nuc_stereonl.nii.gz']);
+    % copy the subject anat mask file (ex :100307/100307_Structural_preproc/MNINonLinear/brainmask_fs.nii.gz)
+    system(['cp ' subject filesep subject '_Structural_preproc/MNINonLinear/brainmask_fs.nii.gz ' anat filesep subject filesep 'anat_HCP' subject '_mask_stereonl.nii.gz']);
+    % collect mask files to create an average anat mask
+    file_name = [subject filesep subject '_Structural_preproc/MNINonLinear/brainmask_fs.nii.gz'];
+    [hdr,mask] = niak_read_vol(file_name);
+    if ss = 1
+        mask_avg = mask;
+    else
+        mask_avg = mask+mask_avg;
+    end
+    % copy the subject functional file (ex :100307/100307_tfMRI_MOTOR_preproc/MNINonLinear/Results/tfMRI_MOTOR_LR/tfMRI_MOTOR_LR.nii.gz) for each run
+    system(['cp ' subject filesep subject '_tfMRI_MOTOR_preproc/MNINonLinear/Results/tfMRI_MOTOR_LR/tfMRI_MOTOR_LR.nii.gz ' fmri filesep 'fmri_HCP' subject '_session1_run1.nii.gz']);
+    system(['cp ' subject filesep subject '_tfMRI_MOTOR_preproc/MNINonLinear/Results/tfMRI_MOTOR_RL/tfMRI_MOTOR_RL.nii.gz ' fmri filesep 'fmri_HCP' subject '_session1_run2.nii.gz']);
+    
+    % create a mean volumes for run1 and save it in anat folder
+    %
+    %to be completed
+    
+    % copy the subject functional mask file (ex: 100307/100307_tfMRI_MOTOR_preproc/MNINonLinear/Results/tfMRI_MOTOR_LR/brainmask_fs.2.nii.gz)
+    system(['cp ' subject filesep subject '_tfMRI_MOTOR_preproc/MNINonLinear/Results/tfMRI_MOTOR_LR/brainmask_fs.2.nii.gz ' anat filesep subject filesep 'func_HCP' subject '_mask_stereonl.nii.gz']);
+    
+    
 
 
 
