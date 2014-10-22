@@ -42,7 +42,7 @@ opt_g.filter.session = {'session1'};
 % files_in.fmri = niak_grab_fmri_preprocess([path_data 'adni2/fmri_preprocess/'],opt_g).fmri; % Replace the folder by the path where the results of the fMRI preprocessing pipeline were stored. 
 
 % %belleville aka ad_criugm
-files_in_tmp.fmri = niak_grab_fmri_preprocess([path_data 'ad_mtl/belleville/fmri_preprocess/'],opt_g).fmri; % Replace the folder by the path where the results of the fMRI preprocessing pipeline were stored. 
+files_in.fmri = niak_grab_fmri_preprocess([path_data 'ad_mtl/belleville/fmri_preprocess/'],opt_g).fmri; % Replace the folder by the path where the results of the fMRI preprocessing pipeline were stored. 
 % files_in.fmri = psom_merge_pipeline(files_in.fmri,files_in_tmp.fmri);
 % 
 % %mni_mci

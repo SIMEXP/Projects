@@ -51,7 +51,7 @@ opt_g.filter.session = {'session1'};
 % 
 % %adpd
 opt_g.exclude_subject = {'AD001','AD009','AD020','AD025','AD031','AD034','AD037'};
-files_in_tmp.fmri = niak_grab_fmri_preprocess([path_data 'ad_mtl/adpd/fmri_preprocess/'],opt_g).fmri; % Replace the folder by the path where the results of the fMRI preprocessing pipeline were stored. 
+files_in.fmri = niak_grab_fmri_preprocess([path_data 'ad_mtl/adpd/fmri_preprocess/'],opt_g).fmri; % Replace the folder by the path where the results of the fMRI preprocessing pipeline were stored. 
 % files_in.fmri = psom_merge_pipeline(files_in.fmri,files_in_tmp.fmri);
 % 
 % %criugm_mci
