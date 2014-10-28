@@ -96,15 +96,17 @@ list_subject = {list_subject(3:end).name};
 
 %% Extract necessary files and format them in a NIAK like fmri preprocessed ouput folder
 for nn = 1:length(list_subject)
-    subject = strtrim(list_subject{nn});
+    subject_raw = strtrim(list_subject{nn}); % original subject name
+    subject = ['HCP' subject_raw] ; % formated subject name wtih a 'HCP' prefix
     mkdir([anat filesep subject]);
     mkdir([EVs filesep subject]);
+    mkdir([quality_control filesep subject]);
     % copy the subject anat file (ex: 100307/MNINonLinear/T1w.nii.gz)
-    system(['ln -s ' subject filesep 'MNINonLinear/T1w.nii.gz ' anat filesep subject filesep 'anat_HCP' subject '_nuc_stereonl.nii.gz']);
+    system(['ln -s ' subject_raw filesep 'MNINonLinear/T1w.nii.gz ' anat filesep subject filesep 'anat_HCP' subject '_nuc_stereonl.nii.gz']);
     % copy the subject anat mask file (ex :100307/MNINonLinear/brainmask_fs.nii.gz)
-    system(['ln -s ' subject filesep 'MNINonLinear/brainmask_fs.nii.gz ' anat filesep subject filesep 'anat_HCP' subject '_mask_stereonl.nii.gz']);
+    system(['ln -s ' subject_raw filesep 'MNINonLinear/brainmask_fs.nii.gz ' anat filesep subject filesep 'anat_HCP' subject '_mask_stereonl.nii.gz']);
     % collect mask files to create an average anat mask
-    mask_anat = [subject filesep 'MNINonLinear/brainmask_fs.nii.gz'];
+    mask_anat = [subject_raw filesep 'MNINonLinear/brainmask_fs.nii.gz'];
     [hdr,mask] = niak_read_vol(mask_anat);
     if nn == 1
         mask_anat_avg = mask;
@@ -112,8 +114,8 @@ for nn = 1:length(list_subject)
         mask_anat_avg = mask + mask_anat_avg;
     end
     % copy the subject functional file (ex :100307/MNINonLinear/Results/tfMRI_MOTOR_LR/tfMRI_MOTOR_LR.nii.gz) for each run
-    system(['ln -s ' subject filesep 'MNINonLinear/Results/tfMRI_MOTOR_LR/tfMRI_MOTOR_LR.nii.gz ' fmri filesep 'fmri_HCP' subject '_session1_run1.nii.gz']);
-    system(['ln -s ' subject filesep 'MNINonLinear/Results/tfMRI_MOTOR_RL/tfMRI_MOTOR_RL.nii.gz ' fmri filesep 'fmri_HCP' subject '_session1_run2.nii.gz']);
+    system(['ln -s ' subject_raw filesep 'MNINonLinear/Results/tfMRI_MOTOR_LR/tfMRI_MOTOR_LR.nii.gz ' fmri filesep 'fmri_HCP' subject '_session1_run1.nii.gz']);
+    system(['ln -s ' subject_raw filesep 'MNINonLinear/Results/tfMRI_MOTOR_RL/tfMRI_MOTOR_RL.nii.gz ' fmri filesep 'fmri_HCP' subject '_session1_run2.nii.gz']);
     
     % create a mean volumes for run1 and save it in anat folder as  func_HCP<subj>_mean_stereonl.nii.gz
     %
@@ -136,17 +138,19 @@ for nn = 1:length(list_subject)
     %to be completed
     if nn == 1
        motion_csv = cell(length(list_subject)+1,3);
-       scrub_csv  = cell(length(list_subject)+1,5);
+       scrub_csv  = cell(length(list_subject)*2+1,5); % for the scrubbing the is two runs to be wrot down in the csv file 
        xcorrf_csv = cell(length(list_subject)+1,3);
        xcorra_csv = cell(length(list_subject)+1,3);
+       
        motion_csv(1,:) = { '' , 'max_rotation' , 'max_translation' };
        scrub_csv(1,:)  = { '' , 'frames_scrubbed' ,'frames_OK' ,'FD' ,'FD_scrubbed' };
        xcorrf_csv(1,:) = { '' , 'perc_overlap_mask' ,'xcorr_vol' };
        xcorra_csv(1,:) = { '' , 'perc_overlap_mask' ,'xcorr_vol' };
+       
        motion_csv(nn+1,:) = { subject, ones, ones };
        scrub_csv(nn+1,:)  = { subject, ones, ones, ones, ones };
-       xcorrf_csv(1,:) = { subject, ones, ones };
-       xcorra_csv(1,:) = { subject, ones, ones };
+       xcorrf_csv(nn+1,:) = { subject, ones, ones };
+       xcorra_csv(nn+1,:) = { subject, ones, ones };
     else 
        motion_csv(nn+1,:) = { subject, ones, ones };
        scrub_csv(nn+1,:)  = { subject, ones, ones, ones, ones };
@@ -154,7 +158,7 @@ for nn = 1:length(list_subject)
        xcorra_csv(nn+1,:) = { subject, ones, ones };
     end
     % copy the subject onset file (ex: 100307/MNINonLinear/Results/tfMRI_EMOTION_LR/EVs/ (fear.txt, neut.txt, Stats.txt, Sync.txt)
-    system(['cp ' subject filesep 'MNINonLinear/Results/tfMRI_MOTOR_LR/EVs/* ' EVs filesep subject filesep '.']);
+    system(['cp ' subject_raw filesep 'MNINonLinear/Results/tfMRI_MOTOR_LR/EVs/* ' EVs filesep subject filesep '.']);
 end
 %create an average anat and func mask
 mask_anat_avg = mask_anat_avg/length(list_subject);
