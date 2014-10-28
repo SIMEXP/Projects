@@ -137,13 +137,21 @@ for nn = 1:length(list_subject)
     if nn == 1
        motion_csv = cell(length(list_subject)+1,3);
        scrub_csv  = cell(length(list_subject)+1,5);
+       xcorrf_csv = cell(length(list_subject)+1,3);
+       xcorra_csv = cell(length(list_subject)+1,3);
        motion_csv(1,:) = { '' , 'max_rotation' , 'max_translation' };
        scrub_csv(1,:)  = { '' , 'frames_scrubbed' ,'frames_OK' ,'FD' ,'FD_scrubbed' };
+       xcorrf_csv(1,:) = { '' , 'perc_overlap_mask' ,'xcorr_vol' };
+       xcorra_csv(1,:) = { '' , 'perc_overlap_mask' ,'xcorr_vol' };
        motion_csv(nn+1,:) = { subject, ones, ones };
        scrub_csv(nn+1,:)  = { subject, ones, ones, ones, ones };
+       xcorrf_csv(1,:) = { subject, ones, ones };
+       xcorra_csv(1,:) = { subject, ones, ones };
     else 
        motion_csv(nn+1,:) = { subject, ones, ones };
        scrub_csv(nn+1,:)  = { subject, ones, ones, ones, ones };
+       xcorrf_csv(nn+1,:) = { subject, ones, ones };
+       xcorra_csv(nn+1,:) = { subject, ones, ones };
     end
     % copy the subject onset file (ex: 100307/MNINonLinear/Results/tfMRI_EMOTION_LR/EVs/ (fear.txt, neut.txt, Stats.txt, Sync.txt)
     system(['cp ' subject filesep 'MNINonLinear/Results/tfMRI_MOTOR_LR/EVs/* ' EVs filesep subject filesep '.']);
@@ -160,9 +168,11 @@ niak_write_vol(hdr,mask_group_anat);
 hdr.file_name = [ group_coregistration filesep 'func_mask_group_stereonl.nii.gz' ];
 niak_write_vol(hdr,mask_group_anat);
 
-% save the csv motion and scrubbing files
+% save the csv motion,xcorr func  and scrubbing files
 niak_write_csv_cell ([ group_motion filesep 'qc_motion_group.csv' ], motion_csv );
 niak_write_csv_cell ([ group_motion filesep 'qc_scrubbing_group.csv' ], scrub_csv );
+niak_write_csv_cell ([ group_coregistration filesep 'func_tab_qc_coregister_stereonl.csv' ], xcorrf_csv );
+niak_write_csv_cell ([ group_coregistration filesep 'anat_tab_qc_coregister_stereonl.csv' ], xcorrf_csv );
 
 
 list_subject = {'s1','s2',...};
