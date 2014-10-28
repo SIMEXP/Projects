@@ -95,26 +95,26 @@ opt.test.ctrlvsmci.group.select.values = [1 2];
 
 
 
-%%% ctrl vs ad
+% %%% ctrl vs ad
+% 
+% opt.test.ctrlvsad.group.contrast.ctrlvsad = 1; 
+% opt.test.ctrlvsad.group.contrast.age = 0;     
+% opt.test.ctrlvsad.group.contrast.gender = 0;
+% opt.test.ctrlvsad.group.contrast.fd = 0;
+% % opt.test.ctrlvsad.group.multisite = 'adni2';
+% opt.test.ctrlvsad.group.select.label = 'diagnosis';
+% opt.test.ctrlvsad.group.select.values = [1 3];
 
-opt.test.ctrlvsad.group.contrast.ctrlvsad = 1; 
-opt.test.ctrlvsad.group.contrast.age = 0;     
-opt.test.ctrlvsad.group.contrast.gender = 0;
-opt.test.ctrlvsad.group.contrast.fd = 0;
-% opt.test.ctrlvsad.group.multisite = 'adni2';
-opt.test.ctrlvsad.group.select.label = 'diagnosis';
-opt.test.ctrlvsad.group.select.values = [1 3];
 
-
-%%% mci vs ad
-
-opt.test.mcivsad.group.contrast.mcivsad = 1; 
-opt.test.mcivsad.group.contrast.age = 0;     
-opt.test.mcivsad.group.contrast.gender = 0;
-opt.test.mcivsad.group.contrast.fd = 0;
-% opt.test.mcivsad.group.multisite = 'adni2';
-opt.test.mcivsad.group.select.label = 'diagnosis';
-opt.test.mcivsad.group.select.values = [2 3];
+% %%% mci vs ad
+% 
+% opt.test.mcivsad.group.contrast.mcivsad = 1; 
+% opt.test.mcivsad.group.contrast.age = 0;     
+% opt.test.mcivsad.group.contrast.gender = 0;
+% opt.test.mcivsad.group.contrast.fd = 0;
+% % opt.test.mcivsad.group.multisite = 'adni2';
+% opt.test.mcivsad.group.select.label = 'diagnosis';
+% opt.test.mcivsad.group.select.values = [2 3];
 
 
 
@@ -143,15 +143,15 @@ opt.test.avg_mci.group.contrast.fd = 0;
 opt.test.avg_mci.group.select.label = 'diagnosis';
 opt.test.avg_mci.group.select.values = 2;
 
-% 
-% %%% ad avg connectivity 
-opt.test.avg_ad.group.contrast.intercept = 1;
-opt.test.avg_ad.group.contrast.age = 0;
-opt.test.avg_ad.group.contrast.gender = 0;
-opt.test.avg_ad.group.contrast.fd = 0;
-% opt.test.avg_ad.group.multisite = 'adni2';
-opt.test.avg_ad.group.select.label = 'diagnosis';
-opt.test.avg_ad.group.select.values = 3;
+% % 
+% % %%% ad avg connectivity 
+% opt.test.avg_ad.group.contrast.intercept = 1;
+% opt.test.avg_ad.group.contrast.age = 0;
+% opt.test.avg_ad.group.contrast.gender = 0;
+% opt.test.avg_ad.group.contrast.fd = 0;
+% % opt.test.avg_ad.group.multisite = 'adni2';
+% opt.test.avg_ad.group.select.label = 'diagnosis';
+% opt.test.avg_ad.group.select.values = 3;
 
 
 
