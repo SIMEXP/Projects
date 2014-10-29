@@ -29,7 +29,7 @@ clear all
 %%%%%%%%%%%%%%%%%%%%%
 %% Parameters
 %%%%%%%%%%%%%%%%%%%%%
-task  = 'motor';
+task  = 'MOTOR';
 exp   = 'exp1';
 
 %% Setting input/output files 
