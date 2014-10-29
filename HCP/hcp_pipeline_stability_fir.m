@@ -76,7 +76,7 @@ files_in = niak_grab_fmri_preprocess([root_path 'fmri_preprocess_' task],opt_g);
 %% Event times
 %%%%%%%%%%%%%%%%%%%%%
 %% Set the timing of events;
-files_in.timing =['/home/' my_user_name '/svn/projects/twins/script/models/twins_stab_fir_timing.csv'];
+files_in.timing =['/home/' my_user_name '/github_repos/Projects/HCP/EVs/models/twins_stab_fir_timing.csv'];
 
 %%%%%%%%%%%%%
 %% Options %%
