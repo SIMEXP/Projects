@@ -26,7 +26,7 @@ path_data = '/gs/scratch/atam/';
 %%%%%%%%%%%%
 %% Grabbing the results from BASC
 %%%%%%%%%%%%
-files_in = niak_grab_stability_rest([path_data 'adnet/basc_40sc_20140731/']); % a subset of 5 scales (10, 20, 50, 100, 200)
+files_in = niak_grab_stability_rest([path_data 'adnet/basc_40sc_20141031/']); % a subset of 5 scales (10, 20, 50, 100, 200)
 
 %%%%%%%%%%%%%%%%%%%%%
 %% Grabbing the results from the NIAK fMRI preprocessing pipeline
