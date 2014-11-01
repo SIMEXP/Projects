@@ -3,7 +3,7 @@ addpath(genpath('/home/atam/quarantaine/niak-dev-06a636f'));
 path_data = '/gs/scratch/atam/';
 
 %%% ADNET GLM CONNECTOME SCRIPT - MAIN CONTRASTS - basc 40 scales -
-%%% NOTE: ADPD ONLY
+%%% NOTE: files in ad_mtl sites only
 
 % Permission is hereby granted, free of charge, to any person obtaining a copy
 % of this software and associated documentation files (the "Software"), to deal
@@ -42,20 +42,19 @@ opt_g.filter.session = {'session1'};
 % files_in.fmri = niak_grab_fmri_preprocess([path_data 'adni2/fmri_preprocess/'],opt_g).fmri; % Replace the folder by the path where the results of the fMRI preprocessing pipeline were stored. 
 
 %belleville aka ad_criugm
-% files_in_tmp.fmri = niak_grab_fmri_preprocess([path_data 'ad_mtl/belleville/fmri_preprocess/'],opt_g).fmri; % Replace the folder by the path where the results of the fMRI preprocessing pipeline were stored. 
-% files_in.fmri = psom_merge_pipeline(files_in.fmri,files_in_tmp.fmri);
+files_in.fmri = niak_grab_fmri_preprocess([path_data 'ad_mtl/belleville/fmri_preprocess/'],opt_g).fmri; % Replace the folder by the path where the results of the fMRI preprocessing pipeline were stored. 
 
 %mni_mci
-% files_in_tmp.fmri = niak_grab_fmri_preprocess([path_data 'ad_mtl/mni_mci/fmri_preprocess/'],opt_g).fmri; % Replace the folder by the path where the results of the fMRI preprocessing pipeline were stored. 
-% files_in.fmri = psom_merge_pipeline(files_in.fmri,files_in_tmp.fmri);
+files_in_tmp.fmri = niak_grab_fmri_preprocess([path_data 'ad_mtl/mni_mci/fmri_preprocess/'],opt_g).fmri; % Replace the folder by the path where the results of the fMRI preprocessing pipeline were stored. 
+files_in.fmri = psom_merge_pipeline(files_in.fmri,files_in_tmp.fmri);
 
 %adpd
-files_in.fmri = niak_grab_fmri_preprocess([path_data 'ad_mtl/adpd/fmri_preprocess/'],opt_g).fmri; % Replace the folder by the path where the results of the fMRI preprocessing pipeline were stored. 
-%files_in.fmri = psom_merge_pipeline(files_in.fmri,files_in_tmp.fmri);
+files_in_tmp.fmri = niak_grab_fmri_preprocess([path_data 'ad_mtl/adpd/fmri_preprocess/'],opt_g).fmri; % Replace the folder by the path where the results of the fMRI preprocessing pipeline were stored. 
+files_in.fmri = psom_merge_pipeline(files_in.fmri,files_in_tmp.fmri);
 
 %criugm_mci
-% files_in_tmp.fmri = niak_grab_fmri_preprocess([path_data 'ad_mtl/criugm_mci/fmri_preprocess/'],opt_g).fmri; % Replace the folder by the path where the results of the fMRI preprocessing pipeline were stored. 
-% files_in.fmri = psom_merge_pipeline(files_in.fmri,files_in_tmp.fmri);
+files_in_tmp.fmri = niak_grab_fmri_preprocess([path_data 'ad_mtl/criugm_mci/fmri_preprocess/'],opt_g).fmri; % Replace the folder by the path where the results of the fMRI preprocessing pipeline were stored. 
+files_in.fmri = psom_merge_pipeline(files_in.fmri,files_in_tmp.fmri);
 
 
 %%%%%%%%%%%%
@@ -68,7 +67,7 @@ files_in.model.group = [path_data 'adnet/models/admci_model_multisite_fd_2014103
 %%%%%%%%%%%%
 %% Options 
 %%%%%%%%%%%%
-opt.folder_out = [path_data 'adnet/results/glm24_20141031']; % Where to store the results
+opt.folder_out = [path_data 'adnet/results/glm24_admtl_20141031']; % Where to store the results
 opt.fdr = 0.1; % The maximal false-discovery rate that is tolerated both for individual (single-seed) maps and whole-connectome discoveries, at each particular scale (multiple comparisons across scales are addressed via permutation testing)
 opt.fwe = 0.05; % The overall family-wise error, i.e. the probablity to have the observed number of discoveries, agregated across all scales, under the global null hypothesis of no association.
 opt.nb_samps = 1000; % The number of samples in the permutation test. This number has to be multiplied by OPT.NB_BATCH below to get the effective number of samples
@@ -88,7 +87,7 @@ opt.test.ctrlvsmci.group.contrast.ctrlvsmci = 1;
 opt.test.ctrlvsmci.group.contrast.age = 0;     
 opt.test.ctrlvsmci.group.contrast.gender = 0;
 opt.test.ctrlvsmci.group.contrast.fd = 0;
-% opt.test.ctrlvsmci.group.multisite = 'adni2';
+%opt.test.ctrlvsmci.group.multisite = 'adni2';
 opt.test.ctrlvsmci.group.select.label = 'diagnosis'; 
 opt.test.ctrlvsmci.group.select.values = [1 2];
 
@@ -100,7 +99,7 @@ opt.test.ctrlvsad.group.contrast.ctrlvsad = 1;
 opt.test.ctrlvsad.group.contrast.age = 0;     
 opt.test.ctrlvsad.group.contrast.gender = 0;
 opt.test.ctrlvsad.group.contrast.fd = 0;
-% opt.test.ctrlvsad.group.multisite = 'adni2';
+%opt.test.ctrlvsad.group.multisite = 'adni2';
 opt.test.ctrlvsad.group.select.label = 'diagnosis';
 opt.test.ctrlvsad.group.select.values = [1 3];
 
@@ -111,7 +110,7 @@ opt.test.mcivsad.group.contrast.mcivsad = 1;
 opt.test.mcivsad.group.contrast.age = 0;     
 opt.test.mcivsad.group.contrast.gender = 0;
 opt.test.mcivsad.group.contrast.fd = 0;
-% opt.test.mcivsad.group.multisite = 'adni2';
+%opt.test.mcivsad.group.multisite = 'adni2';
 opt.test.mcivsad.group.select.label = 'diagnosis';
 opt.test.mcivsad.group.select.values = [2 3];
 
@@ -127,7 +126,7 @@ opt.test.avg_ctrl.group.contrast.intercept = 1;
 opt.test.avg_ctrl.group.contrast.age = 0;
 opt.test.avg_ctrl.group.contrast.gender = 0;
 opt.test.avg_ctrl.group.contrast.fd = 0;
-% opt.test.avg_ctrl.group.multisite = 'adni2';
+%opt.test.avg_ctrl.group.multisite = 'adni2';
 opt.test.avg_ctrl.group.select.label = 'diagnosis';
 opt.test.avg_ctrl.group.select.values = 1;
 
@@ -138,7 +137,7 @@ opt.test.avg_mci.group.contrast.intercept = 1;
 opt.test.avg_mci.group.contrast.age = 0;
 opt.test.avg_mci.group.contrast.gender = 0;
 opt.test.avg_mci.group.contrast.fd = 0;
-% opt.test.avg_mci.group.multisite = 'adni2';
+%opt.test.avg_mci.group.multisite = 'adni2';
 opt.test.avg_mci.group.select.label = 'diagnosis';
 opt.test.avg_mci.group.select.values = 2;
 
@@ -148,7 +147,7 @@ opt.test.avg_ad.group.contrast.intercept = 1;
 opt.test.avg_ad.group.contrast.age = 0;
 opt.test.avg_ad.group.contrast.gender = 0;
 opt.test.avg_ad.group.contrast.fd = 0;
-% opt.test.avg_ad.group.multisite = 'adni2';
+%opt.test.avg_ad.group.multisite = 'adni2';
 opt.test.avg_ad.group.select.label = 'diagnosis';
 opt.test.avg_ad.group.select.values = 3;
 
