@@ -68,7 +68,7 @@ files_in.model.group = [path_data 'adnet/models/admci_model_multisite_fd_2014103
 %%%%%%%%%%%%
 %% Options 
 %%%%%%%%%%%%
-opt.folder_out = [path_data 'adnet/results/glm24_20141031']; % Where to store the results
+opt.folder_out = [path_data 'adnet/results/glm24a_20141031']; % Where to store the results
 opt.fdr = 0.1; % The maximal false-discovery rate that is tolerated both for individual (single-seed) maps and whole-connectome discoveries, at each particular scale (multiple comparisons across scales are addressed via permutation testing)
 opt.fwe = 0.05; % The overall family-wise error, i.e. the probablity to have the observed number of discoveries, agregated across all scales, under the global null hypothesis of no association.
 opt.nb_samps = 1000; % The number of samples in the permutation test. This number has to be multiplied by OPT.NB_BATCH below to get the effective number of samples
