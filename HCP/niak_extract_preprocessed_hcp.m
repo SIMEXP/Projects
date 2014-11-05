@@ -135,21 +135,34 @@ mkdir(group_motion);
 mkdir(EVs);
 
 %% Extract necessary files and format them in a NIAK like fmri preprocessed ouput folders and files
-% Read subjects list
-list_subject = dir(path_data);
-list_subject = {list_subject(3:end).name};
-
+% Read subjects list and Prune subject that dont have the necessecary folder and flag them in a message
+list_subject_raw = dir(path_data);
+nb_subject = 0;
+for num_ss = 1:length(list_subject_raw)
+    if ~ismember(list_subject_raw(num_ss).name,{'.','..'}) && exist([ path_data list_subject_raw(num_ss).name filesep 'MNINonLinear/Results/tfMRI_' opt.type_task '_LR/' ],'dir')
+       nb_subject = nb_subject + 1;
+       sprintf('Adding subject %s', list_subject_raw(num_ss).name)
+       list_subject{nb_subject} = list_subject_raw(num_ss).name;     
+    else 
+       sprintf('subject %s is discarded', list_subject_raw(num_ss).name)
+    end
+    
+end   
+    
 % loop over subject and extract files
 for nn = 1:length(list_subject)
     subject_raw = strtrim(list_subject{nn}); % original subject name
     subject = ['HCP' subject_raw] ; % formated subject ID wtih a 'HCP' prefix
+    sprintf('Extracting subject %s',subject)
     mkdir([anat filesep subject]);
     mkdir([EVs filesep subject]);
     mkdir([quality_control filesep subject]);
     % copy the subject anat file (ex: 100307/MNINonLinear/T1w.nii.gz)
     system([cp_opt ' '  path_data subject_raw filesep 'MNINonLinear/T1w.nii.gz ' anat filesep subject filesep 'anat_' subject '_nuc_stereonl.nii.gz']);
+    files.(subject).anat = [anat filesep subject filesep 'anat_' subject '_nuc_stereonl.nii.gz'];
     % copy the subject anat mask file (ex :100307/MNINonLinear/brainmask_fs.nii.gz)
     system([cp_opt ' '  path_data subject_raw filesep 'MNINonLinear/brainmask_fs.nii.gz ' anat filesep subject filesep 'anat_' subject '_mask_stereonl.nii.gz']);
+    files.(subject).anat.mask = [anat filesep subject filesep 'anat_' subject '_mask_stereonl.nii.gz'];
     % collect mask files to create an average anat mask
     mask_anat = [ path_data subject_raw filesep 'MNINonLinear/brainmask_fs.nii.gz'];
     [hdr,mask] = niak_read_vol(mask_anat);
@@ -160,14 +173,16 @@ for nn = 1:length(list_subject)
     end 
     % copy the subject functional file (ex :100307/MNINonLinear/Results/tfMRI_MOTOR_LR/tfMRI_MOTOR_LR.nii.gz) for each run
     system([cp_opt ' '  path_data subject_raw filesep 'MNINonLinear/Results/tfMRI_' opt.type_task '_LR/tfMRI_' opt.type_task '_LR.nii.gz ' fmri filesep 'fmri_' subject '_session1_run1.nii.gz']);
+    files.(subject).fmri.session1.run1 = [fmri filesep 'fmri_' subject '_session1_run1.nii.gz'];
     system([cp_opt ' '  path_data subject_raw filesep 'MNINonLinear/Results/tfMRI_' opt.type_task '_RL/tfMRI_' opt.type_task '_RL.nii.gz ' fmri filesep 'fmri_' subject '_session1_run2.nii.gz']);
-    
+    files.(subject).fmri.session1.run2 = [fmri filesep 'fmri_' subject '_session1_run2.nii.gz'];
     % create a mean volumes for run1 and save it in anat folder as  func_HCP<subj>_mean_stereonl.nii.gz
     %
     %to be completed
     
     % copy the subject functional mask file (ex: 100307/100307_tfMRI_MOTOR_preproc/MNINonLinear/Results/tfMRI_MOTOR_LR/brainmask_fs.2.nii.gz)
     system([cp_opt ' '  path_data subject_raw filesep 'MNINonLinear/Results/tfMRI_' opt.type_task '_LR/brainmask_fs.2.nii.gz ' anat filesep subject filesep 'func_' subject '_mask_stereonl.nii.gz']);
+    files.(subject).func.mask = [anat filesep subject filesep 'func_' subject '_mask_stereonl.nii.gz'];
     % collect mask files to create an average func mask
     mask_func = [ path_data subject_raw filesep 'MNINonLinear/Results/tfMRI_' opt.type_task '_LR/brainmask_fs.2.nii.gz'];
     [hdr,mask] = niak_read_vol(mask_func);
@@ -176,7 +191,7 @@ for nn = 1:length(list_subject)
     else
         mask_func_avg = mask + mask_func_avg;
     end
-    %reate a qc_motion_group.csv  file that contain 3 colomn: "", "max_rotation" ,"max_translation" for each subject
+    %create a qc_motion_group.csv  file that contain 3 colomn: "", "max_rotation" ,"max_translation" for each subject
     % create a fake qc_scrubing_group.csv that contain 5 colomn: "","frames_scrubbed" ,"frames_OK" ,"FD" ,"FD_scrubbed" for each subject and fill it with 0
     %put these file in /quality_control/group_motion
     if nn == 1
@@ -209,6 +224,7 @@ for nn = 1:length(list_subject)
 end
 
 %create an average anat and func mask
+sprintf ('Creating an average anat and func mask')
 mask_anat_avg = mask_anat_avg/length(list_subject);
 mask_func_avg = mask_func_avg/length(list_subject);
 mask_group_anat = mask_anat_avg > 0.5;
@@ -219,6 +235,8 @@ hdr.file_name = [ group_coregistration filesep 'anat_mask_group_stereonl.nii.gz'
 niak_write_vol(hdr,mask_group_anat);
 hdr.file_name = [ group_coregistration filesep 'func_mask_group_stereonl.nii.gz' ];
 niak_write_vol(hdr,mask_group_func);
+files.gourp.anat.mask = [ group_coregistration filesep 'anat_mask_group_stereonl.nii.gz' ];
+files.gourp.func.mask = [ group_coregistration filesep 'func_mask_group_stereonl.nii.gz' ];
 
 % save the csv motion,xcorr func  and scrubbing files
 niak_write_csv_cell ([ group_motion filesep 'qc_motion_group.csv' ], motion_csv );
