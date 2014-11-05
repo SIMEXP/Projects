@@ -97,10 +97,7 @@ function files = niak_extract_preprocessed_hcp(path_data,opt)
 if (nargin<1)||isempty(path_data)
     path_data = [pwd filesep];
 end
-
-if ~strcmp(path_data(end),filesep)
-    path_data = [path_data filesep];
-end
+path_data = niak_full_path (path_data);
 
 %% Default options
 list_fields   = { 'type_task' , 'path_out'     , 'copy_out' };
@@ -150,11 +147,11 @@ for nn = 1:length(list_subject)
     mkdir([EVs filesep subject]);
     mkdir([quality_control filesep subject]);
     % copy the subject anat file (ex: 100307/MNINonLinear/T1w.nii.gz)
-    system([cp_opt ' ' subject_raw filesep 'MNINonLinear/T1w.nii.gz ' anat filesep subject filesep 'anat_' subject '_nuc_stereonl.nii.gz']);
+    system([cp_opt ' '  path_data subject_raw filesep 'MNINonLinear/T1w.nii.gz ' anat filesep subject filesep 'anat_' subject '_nuc_stereonl.nii.gz']);
     % copy the subject anat mask file (ex :100307/MNINonLinear/brainmask_fs.nii.gz)
-    system([cp_opt ' ' subject_raw filesep 'MNINonLinear/brainmask_fs.nii.gz ' anat filesep subject filesep 'anat_' subject '_mask_stereonl.nii.gz']);
+    system([cp_opt ' '  path_data subject_raw filesep 'MNINonLinear/brainmask_fs.nii.gz ' anat filesep subject filesep 'anat_' subject '_mask_stereonl.nii.gz']);
     % collect mask files to create an average anat mask
-    mask_anat = [subject_raw filesep 'MNINonLinear/brainmask_fs.nii.gz'];
+    mask_anat = [ path_data subject_raw filesep 'MNINonLinear/brainmask_fs.nii.gz'];
     [hdr,mask] = niak_read_vol(mask_anat);
     if nn == 1
         mask_anat_avg = mask;
@@ -162,17 +159,17 @@ for nn = 1:length(list_subject)
         mask_anat_avg = mask + mask_anat_avg;
     end 
     % copy the subject functional file (ex :100307/MNINonLinear/Results/tfMRI_MOTOR_LR/tfMRI_MOTOR_LR.nii.gz) for each run
-    system([cp_opt ' ' subject_raw filesep 'MNINonLinear/Results/tfMRI_' opt.type_task '_LR/tfMRI_' opt.type_task '_LR.nii.gz ' fmri filesep 'fmri_' subject '_session1_run1.nii.gz']);
-    system([cp_opt ' ' subject_raw filesep 'MNINonLinear/Results/tfMRI_' opt.type_task '_RL/tfMRI_' opt.type_task '_RL.nii.gz ' fmri filesep 'fmri_' subject '_session1_run2.nii.gz']);
+    system([cp_opt ' '  path_data subject_raw filesep 'MNINonLinear/Results/tfMRI_' opt.type_task '_LR/tfMRI_' opt.type_task '_LR.nii.gz ' fmri filesep 'fmri_' subject '_session1_run1.nii.gz']);
+    system([cp_opt ' '  path_data subject_raw filesep 'MNINonLinear/Results/tfMRI_' opt.type_task '_RL/tfMRI_' opt.type_task '_RL.nii.gz ' fmri filesep 'fmri_' subject '_session1_run2.nii.gz']);
     
     % create a mean volumes for run1 and save it in anat folder as  func_HCP<subj>_mean_stereonl.nii.gz
     %
     %to be completed
     
     % copy the subject functional mask file (ex: 100307/100307_tfMRI_MOTOR_preproc/MNINonLinear/Results/tfMRI_MOTOR_LR/brainmask_fs.2.nii.gz)
-    system([cp_opt ' ' subject_raw filesep 'MNINonLinear/Results/tfMRI_' opt.type_task '_LR/brainmask_fs.2.nii.gz ' anat filesep subject filesep 'func_' subject '_mask_stereonl.nii.gz']);
+    system([cp_opt ' '  path_data subject_raw filesep 'MNINonLinear/Results/tfMRI_' opt.type_task '_LR/brainmask_fs.2.nii.gz ' anat filesep subject filesep 'func_' subject '_mask_stereonl.nii.gz']);
     % collect mask files to create an average func mask
-    mask_func = [subject_raw filesep 'MNINonLinear/Results/tfMRI_' opt.type_task '_LR/brainmask_fs.2.nii.gz'];
+    mask_func = [ path_data subject_raw filesep 'MNINonLinear/Results/tfMRI_' opt.type_task '_LR/brainmask_fs.2.nii.gz'];
     [hdr,mask] = niak_read_vol(mask_func);
     if nn == 1
         mask_func_avg = mask;
@@ -208,7 +205,7 @@ for nn = 1:length(list_subject)
        xcorra_csv(nn+1,:)    = { subject, ones, ones };
     end
     % copy the subject onset file (ex: 100307/MNINonLinear/Results/tfMRI_EMOTION_LR/EVs/ (fear.txt, neut.txt, Stats.txt, Sync.txt)
-    system(['cp ' subject_raw filesep 'MNINonLinear/Results/tfMRI_MOTOR_LR/EVs/* ' EVs filesep subject filesep '.']);
+    system(['cp '  path_data subject_raw filesep 'MNINonLinear/Results/tfMRI_MOTOR_LR/EVs/* ' EVs filesep subject filesep '.']);
 end
 
 %create an average anat and func mask
