@@ -6,3 +6,7 @@ for nn = 1:4
     opt.type_task = 'EMOTION';
     niak_extract_preprocessed_hcp(path_data,opt);
 end
+
+opt.path_out = '~/Desktop/';
+opt.type_task = 'EMOTION';
+path_data = '/media/database1/hcp/';
