@@ -1,0 +1,24 @@
+% copy unprocessed HCP task data from connectome in box hard drives to a remote server 
+path_data = '/media/S500-1-20140805/';
+path_out  = '/media/database8/HCP_tmp/';
+server    = 'peuplier';
+user_name = 'yassinebha';
+
+% Grab subjects list
+list_subject_raw = dir(path_data);
+nb_subject = 0;
+for num_ss = 1:length(list_subject_raw)
+    if ~ismember(list_subject_raw(num_ss).name,{'.','..'}) && exist([ path_data list_subject_raw(num_ss).name filesep '/unprocessed/3T/' ],'dir')
+       nb_subject = nb_subject + 1;
+       sprintf('Adding subject %s', list_subject_raw(num_ss).name)
+       list_subject{nb_subject} = list_subject_raw(num_ss).name;     
+    else 
+       sprintf('subject %s is discarded', list_subject_raw(num_ss).name)
+    end  
+end
+
+% Rsync folders
+for nn=1:3 %length(list_subject);
+sprintf('Syncing subjet %s ', list_subject{nn})
+system(['rsync -ravv -f"- Diffusion/" -f"- rfMRI*/" ' path_data list_subject{nn} filesep '/unprocessed/3T/ ' user_name '@' server ':' path_out list_subject{nn} filesep]);   
+end
