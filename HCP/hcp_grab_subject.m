@@ -7,7 +7,17 @@ for nn = 1:4
     files = niak_extract_preprocessed_hcp(path_data,opt);
 end
 
-opt.path_out = '~/Desktop/';
+opt.path_out = '/media/database1/tmp/';
 opt.type_task = 'EMOTION';
 path_data = '/media/database1/hcp/';
-files = niak_extract_preprocessed_hcp(path_data,opt);
+[files_ind,files_group] = niak_extract_preprocessed_hcp(path_data,opt);
+
+[cell_fmri_ind,labels] = niak_fmri2cell(files_ind);
+files_in.vol = cell_fmri_ind;
+files_in.mask = files_group.func_mask;
+files_out.mean_vol= '';
+files_out.tab_coregister= '';
+files_out.mask_average= '';
+files_out.mask_group= '';
+opt_g.folder_out = '/media/database1/tmp/';
+[files_in,files_out,opt] = niak_brick_qc_coregister(files_in,files_out,opt_g);
