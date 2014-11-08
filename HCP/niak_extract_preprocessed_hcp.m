@@ -25,22 +25,11 @@ function [files_ind,files_group] = niak_extract_preprocessed_hcp(path_data,opt)
 %       (string, default 'LINK') make a synbolic link or a copy of the grabbed data. Possibles options are :
 %       'LINK' or 'COPY'.
 %
-%   MAX_TRANSLATION
-%       (scalar, default Inf) the maximal transition (difference between two
-%       adjacent volumes) in translation motion parameters within-run (in 
-%       mm). The Inf parameter result in selecting all subjects. Motion is 
-%       usually addressed by scrubbing (see MIN_NB_VOL below). 
+%   FILE_EXT
+%       (string, default 'MINC') The exention for the grabbed files. Possible extention 'NIFTI' or 'MINC'.
+%       case minc, data will be converted from nifti to minc.
+%       
 %
-%   MAX_ROTATION
-%       (scalar, default Inf) the maximal transition (difference between two
-%       adjacent volumes) in rotation motion parameters within-run (in 
-%       degrees). The Inf parameter result in selecting all subjects. Motion is 
-%       usually addressed by scrubbing (see MIN_NB_VOL below). 
-%
-%   MIN_XCORR_FUNC
-%       (scalar, default 0.5) the minimal accceptable XCORR measure of
-%       spatial correlation between the individual mean functional volume 
-%       in non-linear stereotaxic space and the population average.
 %
 % _________________________________________________________________________
 % OUTPUTS:
@@ -68,6 +57,11 @@ function [files_ind,files_group] = niak_extract_preprocessed_hcp(path_data,opt)
 %       AREAS
 %           (string) a file name of an AAL parcelation into anatomical regions
 %           resampled at the same resolution as the fMRI datasets. 
+%
+%       FLAG_VERBOSE 
+%           (boolean, default 1) if the flag is 1, then the function prints 
+%           some infos during the processing.
+%
 % _________________________________________________________________________
 % COMMENTS:
 %
@@ -106,8 +100,8 @@ end
 path_data = niak_full_path (path_data);
 
 %% Default options
-list_fields   = { 'type_task' , 'path_out'     , 'copy_out' };
-list_defaults = { 'MOTOR'     , ['..' filesep] , 'link'     };
+list_fields   = { 'type_task' , 'path_out'     , 'copy_out' , 'file_ext', 'flag_verbose'};
+list_defaults = { 'MOTOR'     , ['..' filesep] , 'link'     , 'minc'    ,  1            };
 if nargin > 1
     opt = psom_struct_defaults(opt,list_fields,list_defaults);
 else
@@ -123,7 +117,16 @@ else
    error('%s is an unsupported type of copy options, opt.copy_out should be "copy" or "link" ',opt.copy_out)
 end
 
+% files extension
+if opt.file_ext == 'minc'
+   ext = 'mnc.gz';
+elseif opt.file_ext == 'nifti'
+   ext = 'nii.gz';
+else 
+   error('%s is an unsupported type of extention option, opt.file_ext should be "minc" or "nifti" ',opt.file_ext)
+end
 %% create the output folder structure
+opt.type_task = upper(opt.type_task);
 fmri_preprocess      = [opt.path_out 'fmri_preprocess_' opt.type_task];
 anat                 = [opt.path_out 'fmri_preprocess_' opt.type_task  filesep 'anat'];
 fmri                 = [opt.path_out 'fmri_preprocess_' opt.type_task  filesep 'fmri'];
@@ -164,10 +167,10 @@ for nn = 1:length(list_subject)
     mkdir([quality_control filesep subject]);
     % copy the subject anat file (ex: 100307/MNINonLinear/T1w.nii.gz)
     system([cp_opt ' '  path_data subject_raw filesep 'MNINonLinear/T1w.nii.gz ' anat filesep subject filesep 'anat_' subject '_nuc_stereonl.nii.gz']);
-    files_ind.(subject).anat = sprintf([anat filesep subject filesep 'anat_' subject '_nuc_stereonl.nii.gz']);
+    files_ind.(subject).anat = sprintf([anat filesep subject filesep 'anat_' subject '_nuc_stereonl.' ext]);
     % copy the subject anat mask file (ex :100307/MNINonLinear/brainmask_fs.nii.gz)
     system([cp_opt ' '  path_data subject_raw filesep 'MNINonLinear/brainmask_fs.nii.gz ' anat filesep subject filesep 'anat_' subject '_mask_stereonl.nii.gz']);
-    files_ind.(subject).anat_mask = sprintf([anat filesep subject filesep 'anat_' subject '_mask_stereonl.nii.gz']);
+    files_ind.(subject).anat_mask = sprintf([anat filesep subject filesep 'anat_' subject '_mask_stereonl.' ext]);
     % collect mask files to create an average anat mask
     mask_anat = [ path_data subject_raw filesep 'MNINonLinear/brainmask_fs.nii.gz'];
     [hdr,mask] = niak_read_vol(mask_anat);
@@ -176,11 +179,11 @@ for nn = 1:length(list_subject)
     else
         mask_anat_avg = mask + mask_anat_avg;
     end 
-    % copy the subject functional file (ex :100307/MNINonLinear/Results/tfMRI_MOTOR_LR/tfMRI_MOTOR_LR.nii.gz) for each run
-    system([cp_opt ' '  path_data subject_raw filesep 'MNINonLinear/Results/tfMRI_' opt.type_task '_RL/tfMRI_' opt.type_task '_RL.nii.gz ' fmri filesep 'fmri_' subject '_session1_run2.nii.gz']);
-    files_ind.(subject).fmri.session1.run2 = sprintf([fmri filesep 'fmri_' subject '_session1_run2.nii.gz']);
-    system([cp_opt ' '  path_data subject_raw filesep 'MNINonLinear/Results/tfMRI_' opt.type_task '_LR/tfMRI_' opt.type_task '_LR.nii.gz ' fmri filesep 'fmri_' subject '_session1_run1.nii.gz']);
-    files_ind.(subject).fmri.session1.run1 = sprintf([fmri filesep 'fmri_' subject '_session1_run1.nii.gz']);
+    % copy the subject functional file (ex :100307/MNINonLinear/Results/tfMRI_MOTOR_RL/tfMRI_MOTOR_RL.nii.gz) for each run
+    system([cp_opt ' '  path_data subject_raw filesep 'MNINonLinear/Results/tfMRI_' opt.type_task '_RL/tfMRI_' opt.type_task '_RL.nii.gz ' fmri filesep 'fmri_' subject '_session1_' lower(opt.type_task)(1:2) 'RL.nii.gz']);
+    files_ind.(subject).fmri.session1.run1 = sprintf([fmri filesep 'fmri_' subject '_session1_' lower(opt.type_task)(1:2) 'RL.' ext]);
+    system([cp_opt ' '  path_data subject_raw filesep 'MNINonLinear/Results/tfMRI_' opt.type_task '_LR/tfMRI_' opt.type_task '_LR.nii.gz ' fmri filesep 'fmri_' subject '_session1_' lower(opt.type_task)(1:2) 'LR.nii.gz']);
+    files_ind.(subject).fmri.session1.run2 = sprintf([fmri filesep 'fmri_' subject '_session1_' lower(opt.type_task)(1:2) 'LR.' ext]);
     
     
     % create a mean volumes for run1 and save it in anat folder as  func_HCP<subj>_mean_stereonl.nii.gz
@@ -189,7 +192,7 @@ for nn = 1:length(list_subject)
     
     % copy the subject functional mask file (ex: 100307/100307_tfMRI_MOTOR_preproc/MNINonLinear/Results/tfMRI_MOTOR_LR/brainmask_fs.2.nii.gz)
     system([cp_opt ' '  path_data subject_raw filesep 'MNINonLinear/Results/tfMRI_' opt.type_task '_LR/brainmask_fs.2.nii.gz ' anat filesep subject filesep 'func_' subject '_mask_stereonl.nii.gz']);
-    files_ind.(subject).func.mask = sprintf([anat filesep subject filesep 'func_' subject '_mask_stereonl.nii.gz']);
+    files_ind.(subject).func.mask = sprintf([anat filesep subject filesep 'func_' subject '_mask_stereonl.' ext]);
     % collect mask files to create an average func mask
     mask_func = [ path_data subject_raw filesep 'MNINonLinear/Results/tfMRI_' opt.type_task '_LR/brainmask_fs.2.nii.gz'];
     [hdr,mask] = niak_read_vol(mask_func);
@@ -242,8 +245,8 @@ hdr.file_name = [ group_coregistration filesep 'anat_mask_group_stereonl.nii.gz'
 niak_write_vol(hdr,mask_group_anat);
 hdr.file_name = [ group_coregistration filesep 'func_mask_group_stereonl.nii.gz' ];
 niak_write_vol(hdr,mask_group_func);
-files_group.anat_mask = sprintf([ group_coregistration filesep 'anat_mask_group_stereonl.nii.gz' ]);
-files_group.func_mask = sprintf([ group_coregistration filesep 'func_mask_group_stereonl.nii.gz' ]);
+files_group.anat_mask = sprintf([ group_coregistration filesep 'anat_mask_group_stereonl.' ext ]);
+files_group.func_mask = sprintf([ group_coregistration filesep 'func_mask_group_stereonl.' ext ]);
 
 % save the csv motion,xcorr func  and scrubbing files
 niak_write_csv_cell ([ group_motion filesep 'qc_motion_group.csv' ], motion_csv );
@@ -254,3 +257,43 @@ niak_write_csv_cell ([ group_coregistration filesep 'anat_tab_qc_coregister_ster
 % get the the AAL template from github and save it 
 [msg,err]=system(['wget -O ' anat filesep 'template_aal.mnc.gz https://github.com/SIMEXP/niak/raw/master/template/roi_aal_3mm.mnc.gz']);
 files_group.ereas = sprintf([anat filesep 'template_aal.mnc.gz']);
+
+% convert data to mninc 
+if strcmp(opt.file_ext,'minc')
+   opt_conv.flag_zip = 1;
+   niak_brick_nii2mnc(fmri_preprocess, fmri_preprocess, opt_conv);
+end
+
+% create the mean functional image of the first run for each subject
+if flag_verbose
+    fprintf('Averaging volumes. Percentage done :');
+    curr_perc = -1;
+end
+for num_f = 1:length(fieldnames(files_ind))
+    if flag_verbose
+        new_perc = 5*floor(20*num_f/length(fieldnames(files_ind)));
+        if curr_perc~=new_perc
+            fprintf(' %1.0f',new_perc);
+            curr_perc = new_perc;
+        end
+    end
+    clear vol mean_vol_ind std_vol_ind
+    [hdr,vol] = niak_read_vol(files_ind.(fieldnames(files_ind){num_f}).fmri.session1.run1);
+    mean_vol_ind = mean(vol,4);
+    hdr.file_name = sprintf([anat filesep fieldnames(files_ind){num_f} filesep 'func_' fieldnames(files_ind){num_f} '_mean_stereonl.' ext]);
+    niak_write_vol(hdr,mean_vol_ind);
+    std_vol_ind  = std(vol,[],4);
+    hdr.file_name = sprintf([anat filesep fieldnames(files_ind){num_f} filesep 'func_' fieldnames(files_ind){num_f} '_std_stereonl.' ext]);
+    niak_write_vol(hdr,std_vol_ind);
+    
+    if num_f == 1
+       mean_vol_grp = mean(vol,4);
+       std_vol_grp  = std(vol,[],4);
+    else    
+       mean_vol_grp = mean(vol,4) + mean_vol_grp;
+       std_vol_grp  = std(vol,[],4) + std_vol_grp;
+    end
+end
+
+mean_vol_grp = mean_vol_grp/length(fieldnames(files_ind));
+std_vol_grp  = sqrt((std_vol_grp-length(fieldnames(files_ind))*(mean_vol_grp.^2))/(length(fieldnames(files_ind))-1));
