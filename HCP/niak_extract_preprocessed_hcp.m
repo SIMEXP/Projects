@@ -165,42 +165,43 @@ for nn = 1:length(list_subject)
     mkdir([anat filesep subject]);
     mkdir([EVs filesep subject]);
     mkdir([quality_control filesep subject]);
+    
     % copy the subject anat file (ex: 100307/MNINonLinear/T1w.nii.gz)
     system([cp_opt ' '  path_data subject_raw filesep 'MNINonLinear/T1w.nii.gz ' anat filesep subject filesep 'anat_' subject '_nuc_stereonl.nii.gz']);
     files_ind.(subject).anat = sprintf([anat filesep subject filesep 'anat_' subject '_nuc_stereonl.' ext]);
+    
     % copy the subject anat mask file (ex :100307/MNINonLinear/brainmask_fs.nii.gz)
     system([cp_opt ' '  path_data subject_raw filesep 'MNINonLinear/brainmask_fs.nii.gz ' anat filesep subject filesep 'anat_' subject '_mask_stereonl.nii.gz']);
     files_ind.(subject).anat_mask = sprintf([anat filesep subject filesep 'anat_' subject '_mask_stereonl.' ext]);
+    
     % collect mask files to create an average anat mask
     mask_anat = [ path_data subject_raw filesep 'MNINonLinear/brainmask_fs.nii.gz'];
-    [hdr,mask] = niak_read_vol(mask_anat);
+    [hdr_ma,mask_a] = niak_read_vol(mask_anat);
     if nn == 1
-        mask_anat_avg = mask;
+        mask_anat_avg = mask_a;
     else
-        mask_anat_avg = mask + mask_anat_avg;
+        mask_anat_avg = mask_a + mask_anat_avg;
     end 
+    
     % copy the subject functional file (ex :100307/MNINonLinear/Results/tfMRI_MOTOR_RL/tfMRI_MOTOR_RL.nii.gz) for each run
     system([cp_opt ' '  path_data subject_raw filesep 'MNINonLinear/Results/tfMRI_' opt.type_task '_RL/tfMRI_' opt.type_task '_RL.nii.gz ' fmri filesep 'fmri_' subject '_session1_' lower(opt.type_task)(1:2) 'RL.nii.gz']);
     files_ind.(subject).fmri.session1.run1 = sprintf([fmri filesep 'fmri_' subject '_session1_' lower(opt.type_task)(1:2) 'RL.' ext]);
     system([cp_opt ' '  path_data subject_raw filesep 'MNINonLinear/Results/tfMRI_' opt.type_task '_LR/tfMRI_' opt.type_task '_LR.nii.gz ' fmri filesep 'fmri_' subject '_session1_' lower(opt.type_task)(1:2) 'LR.nii.gz']);
     files_ind.(subject).fmri.session1.run2 = sprintf([fmri filesep 'fmri_' subject '_session1_' lower(opt.type_task)(1:2) 'LR.' ext]);
     
-    
-    % create a mean volumes for run1 and save it in anat folder as  func_HCP<subj>_mean_stereonl.nii.gz
-    %
-    %to be completed
-    
     % copy the subject functional mask file (ex: 100307/100307_tfMRI_MOTOR_preproc/MNINonLinear/Results/tfMRI_MOTOR_LR/brainmask_fs.2.nii.gz)
     system([cp_opt ' '  path_data subject_raw filesep 'MNINonLinear/Results/tfMRI_' opt.type_task '_LR/brainmask_fs.2.nii.gz ' anat filesep subject filesep 'func_' subject '_mask_stereonl.nii.gz']);
     files_ind.(subject).func.mask = sprintf([anat filesep subject filesep 'func_' subject '_mask_stereonl.' ext]);
+    
     % collect mask files to create an average func mask
     mask_func = [ path_data subject_raw filesep 'MNINonLinear/Results/tfMRI_' opt.type_task '_LR/brainmask_fs.2.nii.gz'];
-    [hdr,mask] = niak_read_vol(mask_func);
+    [hdr_mf,mask_f] = niak_read_vol(mask_func);
     if nn == 1
-        mask_func_avg = mask;
-    else
-        mask_func_avg = mask + mask_func_avg;
+        mask_func_avg = mask_f;
+     else
+        mask_func_avg = mask_f + mask_func_avg;
     end
+    
     % create a qc_motion_group.csv  file that contain 3 colomn: "", "max_rotation" ,"max_translation" for each subject
     % create a fake qc_scrubing_group.csv that contain 5 colomn: "","frames_scrubbed" ,"frames_OK" ,"FD" ,"FD_scrubbed" for each subject and fill it with 0
     % put these file in /quality_control/group_motion
@@ -229,6 +230,7 @@ for nn = 1:length(list_subject)
        xcorrf_csv(nn+1,:)    = { subject, ones, ones };
        xcorra_csv(nn+1,:)    = { subject, ones, ones };
     end
+    
     % copy the subject onset file (ex: 100307/MNINonLinear/Results/tfMRI_EMOTION_LR/EVs/ (fear.txt, neut.txt, Stats.txt, Sync.txt)
     system(['cp '  path_data subject_raw filesep 'MNINonLinear/Results/tfMRI_MOTOR_LR/EVs/* ' EVs filesep subject filesep '.']);
 end
@@ -241,10 +243,10 @@ mask_group_anat = mask_anat_avg > 0.5;
 mask_group_func = mask_func_avg > 0.5;
 
 % save the functional and the anat group mask
-hdr.file_name = [ group_coregistration filesep 'anat_mask_group_stereonl.nii.gz' ];
-niak_write_vol(hdr,mask_group_anat);
-hdr.file_name = [ group_coregistration filesep 'func_mask_group_stereonl.nii.gz' ];
-niak_write_vol(hdr,mask_group_func);
+hdr_ma.file_name = [ group_coregistration filesep 'anat_mask_group_stereonl.nii.gz' ];
+niak_write_vol(hdr_ma,mask_group_anat);
+hdr_mf.file_name = [ group_coregistration filesep 'func_mask_group_stereonl.nii.gz' ];
+niak_write_vol(hdr_mf,mask_group_func);
 files_group.anat_mask = sprintf([ group_coregistration filesep 'anat_mask_group_stereonl.' ext ]);
 files_group.func_mask = sprintf([ group_coregistration filesep 'func_mask_group_stereonl.' ext ]);
 
@@ -265,35 +267,55 @@ if strcmp(opt.file_ext,'minc')
 end
 
 % create the mean functional image of the first run for each subject
-if flag_verbose
+if opt.flag_verbose
     fprintf('Averaging volumes. Percentage done :');
     curr_perc = -1;
 end
-for num_f = 1:length(fieldnames(files_ind))
-    if flag_verbose
-        new_perc = 5*floor(20*num_f/length(fieldnames(files_ind)));
+for num_f = 1:length(list_subject)
+    subject_raw = strtrim(list_subject{num_f}); % original subject name
+    subject = ['HCP' subject_raw] ; % formated subject ID wtih a 'HCP' prefix
+    if opt.flag_verbose
+        new_perc = 5*floor(20*num_f/length(list_subject));
         if curr_perc~=new_perc
             fprintf(' %1.0f',new_perc);
             curr_perc = new_perc;
         end
     end
-    clear vol mean_vol_ind std_vol_ind
-    [hdr,vol] = niak_read_vol(files_ind.(fieldnames(files_ind){num_f}).fmri.session1.run1);
-    mean_vol_ind = mean(vol,4);
-    hdr.file_name = sprintf([anat filesep fieldnames(files_ind){num_f} filesep 'func_' fieldnames(files_ind){num_f} '_mean_stereonl.' ext]);
-    niak_write_vol(hdr,mean_vol_ind);
-    std_vol_ind  = std(vol,[],4);
-    hdr.file_name = sprintf([anat filesep fieldnames(files_ind){num_f} filesep 'func_' fieldnames(files_ind){num_f} '_std_stereonl.' ext]);
-    niak_write_vol(hdr,std_vol_ind);
+    clear vol_f hdr_f mean_vol_ind std_vol_ind
+    [hdr_f,vol_f] = niak_read_vol(files_ind.(subject).fmri.session1.run1);
+    mean_vol_ind = mean(vol_f,4);
+    hdr_f.file_name = sprintf([anat filesep subject filesep 'func_' subject '_mean_stereonl.' ext]);
+    niak_write_vol(hdr_f,mean_vol_ind);
+    files_mean.(subject).fmri.session1.run1 = hdr_f.file_name;
+    std_vol_ind  = std(vol_f,[],4);
+    hdr_f.file_name = sprintf([anat filesep subject filesep 'func_' subject '_std_stereonl.' ext]);
+    niak_write_vol(hdr_f,std_vol_ind);
+    files_std.(subject).fmri.session1.run1 = hdr_f.file_name;
     
     if num_f == 1
-       mean_vol_grp = mean(vol,4);
-       std_vol_grp  = std(vol,[],4);
+       mean_vol_grp = mean(vol_f,4);
+       std_vol_grp  = std(vol_f,[],4);
     else    
-       mean_vol_grp = mean(vol,4) + mean_vol_grp;
-       std_vol_grp  = std(vol,[],4) + std_vol_grp;
+       mean_vol_grp = mean(vol_f,4) + mean_vol_grp;
+       std_vol_grp  = std(vol_f,[],4) + std_vol_grp;
     end
 end
 
-mean_vol_grp = mean_vol_grp/length(fieldnames(files_ind));
-std_vol_grp  = sqrt((std_vol_grp-length(fieldnames(files_ind))*(mean_vol_grp.^2))/(length(fieldnames(files_ind))-1));
+mean_vol_grp = mean_vol_grp/length(list_subject);
+std_vol_grp  = sqrt((std_vol_grp-length(list_subject)*(mean_vol_grp.^2))/(length(list_subject)-1));
+
+% create xcor, mean_average and mean_std
+[cell_fmri_mean,labels] = niak_fmri2cell(files_mean);
+files_in.vol             = cell_fmri_mean;
+files_in.mask            = files_group.func_mask;
+files_out.mean_vol       = [ group_coregistration filesep 'func_mean_average_stereonl.mnc.gz' ];
+files_out.std_vol        = [ group_coregistration filesep 'func_mean_std_stereonl.mnc.gz' ];
+files_out.tab_coregister = [ group_coregistration filesep 'func_tab_qc_coregister_stereonl.csv' ];
+opt_g.labels_subject     = {labels.subject}';
+opt_g.folder_out         = '/media/database1/tmp/';
+[files_in,files_out,opt] = niak_brick_qc_coregister(files_in,files_out,opt_g);
+
+% Delete all nii.gz files if opt.file_ext ='minc'
+if strcmp(opt.file_ext,'minc')
+   system(['find ' fmri_preprocess filesep '. -name "*.nii.gz" -delete'])
+end

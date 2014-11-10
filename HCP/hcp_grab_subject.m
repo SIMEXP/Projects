@@ -12,11 +12,11 @@ opt.type_task = 'EMOTION';
 path_data = '/media/database1/hcp/';
 [files_ind,files_group] = niak_extract_preprocessed_hcp(path_data,opt);
 
-[cell_fmri_ind,labels] = niak_fmri2cell(files_ind);
-files_in.vol = cell_fmri_ind;
+[cell_fmri_mean,labels] = niak_fmri2cell(files_mean);
+files_in.vol = cell_fmri_mean;
 files_in.mask = files_group.func_mask;
 files_out.mean_vol= '';
-files_out.tab_coregister= '';
+files_out.tab_coregister= '/fmri_preprocess/quality_control/group_coregistration/func_tab_qc_coregister_stereonl.csv';
 files_out.mask_average= '';
 files_out.mask_group= '';
 opt_g.folder_out = '/media/database1/tmp/';
