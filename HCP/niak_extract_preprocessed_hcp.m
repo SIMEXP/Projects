@@ -313,7 +313,7 @@ files_out.std_vol        = [ group_coregistration filesep 'func_mean_std_stereon
 files_out.tab_coregister = [ group_coregistration filesep 'func_tab_qc_coregister_stereonl.csv' ];
 opt_g.labels_subject     = {labels.subject}';
 opt_g.folder_out         = '/media/database1/tmp/';
-[files_in,files_out,opt] = niak_brick_qc_coregister(files_in,files_out,opt_g);
+[files_in,files_out,opt_g] = niak_brick_qc_coregister(files_in,files_out,opt_g);
 
 % Delete all nii.gz files if opt.file_ext ='minc'
 if strcmp(opt.file_ext,'minc')
