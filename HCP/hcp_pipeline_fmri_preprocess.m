@@ -1,5 +1,62 @@
-% Template to write a script for the NIAK fMRI preprocessing pipeline
 %%% HCP preprocessing pipeline
+% Script to run a preprocessing pipeline analysis on the HCP database.
+%
+% Copyright (c) Pierre Bellec, Yassine Benhajali
+% Research Centre of the Montreal Geriatric Institute
+% & Department of Computer Science and Operations Research
+% University of Montreal, Québec, Canada, 2010-2012
+% Maintainer : pierre.bellec@criugm.qc.ca
+% See licensing information in the code.
+% Keywords : fMRI, FIR, clustering, BASC
+% Permission is hereby granted, free of charge, to any person obtaining a copy
+% of this software and associated documentation files (the "Software"), to deal
+% in the Software without restriction, including without limitation the rights
+% to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+% copies of the Software, and to permit persons to whom the Software is
+% furnished to do so, subject to the following conditions:
+%
+% The above copyright notice and this permission notice shall be included in
+% all copies or substantial portions of the Software.
+%
+% THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+% IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+% FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+% AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+% LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+% OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+% THE SOFTWARE.
+
+clear all
+%%%%%%%%%%%%%%%%%%%%%
+%% Parameters
+%%%%%%%%%%%%%%%%%%%%%
+task  = 'MOTOR';
+exp   = 'exp1';
+
+%% Setting input/output files 
+[status,cmdout] = system ('uname -n');
+server          = strtrim(cmdout);
+if strfind(server,'lg-1r') % This is guillimin
+    root_path = '/gs/scratch/yassinebha/HCP/';
+    fprintf ('server: %s (Guillimin) \n ',server)
+    my_user_name = getenv('USER');
+elseif strfind(server,'ip05') % this is mammouth
+    root_path = '/mnt/parallel_scratch_ms2_wipe_on_april_2015/pbellec/benhajal/HCP/';
+    fprintf ('server: %s (Mammouth) \n',server)
+    my_user_name = getenv('USER');
+else
+    switch server
+        case 'peuplier' % this is peuplier
+        root_path = '/media/scratch2/HCP_unproc_tmp/';
+        fprintf ('server: %s\n',server)
+        my_user_name = getenv('USER');
+        
+        case 'noisetier' % this is noisetier
+        root_path = '/media/database1/';
+        fprintf ('server: %s\n',server)
+        my_user_name = getenv('USER');
+    end
+end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Setting input/output files %%
@@ -8,21 +65,21 @@
 %% WARNING: Do not use underscores '_' in the IDs of subject, sessions or runs. This may cause bugs in subsequent pipelines.
 
 %% Subject 1
-files_in.HCP100307.anat             = '/media/database6/hcp/draftmnc/raw_data/HCP100307/T1w.mnc.gz';       % Structural scan
-files_in.HCP100307.fmri.session1.rl = '/media/database6/hcp/draftmnc/raw_data/HCP100307/tfMRI_MOTOR_RL.mnc.gz'; % fMRI run 1
-files_in.HCP100307.fmri.session1.lr = '/media/database6/hcp/draftmnc/raw_data/HCP100307/tfMRI_MOTOR_LR.mnc.gz';  % fMRI run 2
+files_in.HCP100307.anat                                    = [ root_path 'hcp_unproc_tmp/100307/unprocessed/3T/1T1w_MPR1/100307_3T_T1w_MPR1.mnc.gz';     % Structural scan
+files_in.HCP100307.fmri.session1.([lower(task)(1:2) 'rl']) = [ root_path 'hcp_unproc_tmp/100307/unprocessed/3T/tfMRI_' upper(task) '_RL/100307_3T_tfMRI_' task '_RL.mnc.gz'; % fMRI run 1
+files_in.HCP100307.fmri.session1.([lower(task)(1:2) 'lr']) = [ root_path 'hcp_unproc_tmp/100307/unprocessed/3T/tfMRI_' upper(task) '_LR/100307_3T_tfMRI_' task '_RL.mnc.gz'; % fMRI run 2
 
 %% Subject 2
-files_in.HCP103414.anat             = '/media/database6/hcp/draftmnc/raw_data/HCP103414/T1w.mnc.gz';       % Structural scan
-files_in.HCP103414.fmri.session1.rl = '/media/database6/hcp/draftmnc/raw_data/HCP103414/tfMRI_MOTOR_RL.mnc.gz'; % fMRI run 1
-files_in.HCP103414.fmri.session1.lr = '/media/database6/hcp/draftmnc/raw_data/HCP103414/tfMRI_MOTOR_LR.mnc.gz';  % fMRI run 2
+files_in.HCP100408.anat                                    = [ root_path 'hcp_unproc_tmp/100408/unprocessed/3T/1T1w_MPR1/100408_3T_T1w_MPR1.mnc.gz';     % Structural scan
+files_in.HCP100408.fmri.session1.([lower(task)(1:2) 'rl']) = [ root_path 'hcp_unproc_tmp/100408/unprocessed/3T/tfMRI_' upper(task) '_RL/100408_3T_tfMRI_' task '_RL.mnc.gz'; % fMRI run 1
+files_in.HCP100408.fmri.session1.([lower(task)(1:2) 'lr']) = [ root_path 'hcp_unproc_tmp/100408/unprocessed/3T/tfMRI_' upper(task) '_LR/100408_3T_tfMRI_' task '_RL.mnc.gz'; % fMRI run 2
 
 %%%%%%%%%%%%%%%%%%%%%%%
 %% Pipeline options  %%
 %%%%%%%%%%%%%%%%%%%%%%%
 
 %% General
-opt.folder_out  = '/media/database6/hcp/draftmnc/fmri_preprocess/';    % Where to store the results
+opt.folder_out  = [root_path 'fmri_preprocess_' upper(task) ]';    % Where to store the results
 opt.size_output = 'quality_control';                             % The amount of outputs that are generated by the pipeline. 'all' will keep intermediate outputs, 'quality_control' will only keep the quality control outputs.
 
 %% Pipeline manager
