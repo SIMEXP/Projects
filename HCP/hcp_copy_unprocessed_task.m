@@ -1,6 +1,6 @@
 % copy unprocessed HCP task data from connectome in box hard drives to a remote server 
-for nn = [1 2 3 5] 
-    path_data = ['/media/S500-' num2str(nn) '-20140805/'];
+for ss = [1 2 3 5] 
+    path_data = ['/media/S500-' num2str(ss) '-20140805/'];
     path_out  = '/media/scratch2/HCP_unproc/';
     server    = 'peuplier';
     user_name = 'yassinebha';
@@ -24,3 +24,4 @@ for nn = [1 2 3 5]
     system(['ssh ' user_name '@' server ' mkdir -p ' path_out list_subject{nn} filesep 'unprocessed/3T/']);
     system(['rsync -ravv -f"- Diffusion/" -f"- rfMRI*/" ' path_data list_subject{nn} filesep 'unprocessed/3T/ ' user_name '@' server ':' path_out list_subject{nn} filesep 'unprocessed/3T/']);   
     end
+end

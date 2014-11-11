@@ -1,6 +1,6 @@
 % copy unprocessed HCP task data from connectome in box hard drives to a remote server 
-for nn = 5:5 
-    path_data = ['/media/S500-' num2str(nn) '-20140805/'];
+for ss = 5:5 
+    path_data = ['/media/S500-' num2str(ss) '-20140805/'];
     path_out  = '/media/database8/HCP/';
     server    = 'peuplier';
     user_name = 'yassinebha';
