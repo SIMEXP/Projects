@@ -30,7 +30,7 @@ clear all
 %% Parameters
 %%%%%%%%%%%%%%%%%%%%%
 task  = 'emotion';
-exp   = 'exp1';
+exp   = 'hcp';
 
 %% Setting input/output files 
 [status,cmdout] = system ('uname -n');
@@ -68,19 +68,19 @@ opt_g.min_xcorr_anat = 0.5; % The minimum xcorr score for an fMRI dataset to be 
 opt_g.type_files = 'fir'; % Specify to the grabber to prepare the files for the STABILITY_FIR pipeline
 
 %Temporary grabber for debugging
-liste_exclude = dir ([root_path 'fmri_preprocess_' upper(task) '/anat']);
+liste_exclude = dir ([root_path 'fmri_preprocess_' upper(task) '_' exp '/anat']);
 liste_exclude = liste_exclude(5:end -1);
 liste_exclude = {liste_exclude.name};
 opt_g.exclude_subject = liste_exclude;
 
-files_in = niak_grab_fmri_preprocess([root_path 'fmri_preprocess_' upper(task)],opt_g); % Replace the folder by the path where the results of the fMRI preprocessing pipeline were stored. 
+files_in = niak_grab_fmri_preprocess([root_path 'fmri_preprocess_' upper(task) '_' exp],opt_g); % Replace the folder by the path where the results of the fMRI preprocessing pipeline were stored. 
 
 %% Event times
 data.covariates_group_subs = {'HCP100307','HCP100408'};
 
 for list = 1:length(data.covariates_group_subs)    
-files_in.timing.(data.covariates_group_subs{list}).session1.([lower(task)(1:2) 'RL']) = [root_path 'fmri_preprocess_' upper(task) '/EVs/hcp_model_intrarun.csv'];
-files_in.timing.(data.covariates_group_subs{list}).session1.([lower(task)(1:2) 'LR']) = [root_path 'fmri_preprocess_' upper(task) '/EVs/hcp_model_intrarun.csv'];
+files_in.timing.(data.covariates_group_subs{list}).session1.([lower(task)(1:2) 'RL']) = [root_path 'fmri_preprocess_' upper(task) '_' exp '/EVs/hcp_model_intrarun.csv'];
+files_in.timing.(data.covariates_group_subs{list}).session1.([lower(task)(1:2) 'LR']) = [root_path 'fmri_preprocess_' upper(task) '_' exp '/EVs/hcp_model_intrarun.csv'];
 end
 
 
@@ -89,7 +89,7 @@ end
 %%%%%%%%%%%%%
 
 %% BASC
-opt.folder_out = [ root_path '/bascfirperc_' exp ]; % Where to store the results
+opt.folder_out = [ root_path '/stability_fir_perc_' exp ]; % Where to store the results
 opt.grid_scales = [5:5:50 60:10:200 220:20:400 500:100:900]; % Search in the range 2-900 clusters
 opt.scales_maps = []; % Usually, this is initially left empty. After the pipeline ran a first time, the results of the MSTEPS procedure are used to select the final scales
 opt.stability_fir.nb_samps = 100;    % Number of bootstrap samples at the individual level. 100: the CI on indidividual stability is +/-0.1

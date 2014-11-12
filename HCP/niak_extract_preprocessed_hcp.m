@@ -127,13 +127,13 @@ else
 end
 %% create the output folder structure
 opt.type_task = upper(opt.type_task);
-fmri_preprocess      = [opt.path_out 'fmri_preprocess_' opt.type_task];
-anat                 = [opt.path_out 'fmri_preprocess_' opt.type_task  filesep 'anat'];
-fmri                 = [opt.path_out 'fmri_preprocess_' opt.type_task  filesep 'fmri'];
-quality_control      = [opt.path_out 'fmri_preprocess_' opt.type_task  filesep 'quality_control'];
-group_coregistration = [opt.path_out 'fmri_preprocess_' opt.type_task  filesep 'quality_control' filesep 'group_coregistration'];
-group_motion         = [opt.path_out 'fmri_preprocess_' opt.type_task  filesep 'quality_control' filesep 'group_motion'];
-EVs                  = [opt.path_out 'fmri_preprocess_' opt.type_task  filesep 'EVs'];
+fmri_preprocess      = [opt.path_out 'fmri_preprocess_' opt.type_task '_hcp'];
+anat                 = [opt.path_out 'fmri_preprocess_' opt.type_task '_hcp'  filesep 'anat'];
+fmri                 = [opt.path_out 'fmri_preprocess_' opt.type_task '_hcp'  filesep 'fmri'];
+quality_control      = [opt.path_out 'fmri_preprocess_' opt.type_task '_hcp'  filesep 'quality_control'];
+group_coregistration = [opt.path_out 'fmri_preprocess_' opt.type_task '_hcp'  filesep 'quality_control' filesep 'group_coregistration'];
+group_motion         = [opt.path_out 'fmri_preprocess_' opt.type_task '_hcp'  filesep 'quality_control' filesep 'group_motion'];
+EVs                  = [opt.path_out 'fmri_preprocess_' opt.type_task '_hcp'  filesep 'EVs'];
 
 mkdir(fmri_preprocess);
 mkdir(anat);
