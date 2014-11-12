@@ -65,14 +65,14 @@ end
 %% WARNING: Do not use underscores '_' in the IDs of subject, sessions or runs. This may cause bugs in subsequent pipelines.
 
 %% Subject 1
-files_in.HCP100307.anat                                    = [ root_path 'hcp_unproc_tmp/100307/unprocessed/3T/1T1w_MPR1/100307_3T_T1w_MPR1.mnc.gz'];     % Structural scan
-files_in.HCP100307.fmri.session1.([lower(task)(1:2) 'rl']) = [ root_path 'hcp_unproc_tmp/100307/unprocessed/3T/tfMRI_' upper(task) '_RL/100307_3T_tfMRI_' task '_RL.mnc.gz']; % fMRI run 1
-files_in.HCP100307.fmri.session1.([lower(task)(1:2) 'lr']) = [ root_path 'hcp_unproc_tmp/100307/unprocessed/3T/tfMRI_' upper(task) '_LR/100307_3T_tfMRI_' task '_LR.mnc.gz']; % fMRI run 2
+files_in.HCP100307.anat                                    = [ root_path 'HCP_unproc_tmp/100307/unprocessed/3T/T1w_MPR1/100307_3T_T1w_MPR1.mnc.gz'];     % Structural scan
+files_in.HCP100307.fmri.session1.([lower(task)(1:2) 'rl']) = [ root_path 'HCP_unproc_tmp/100307/unprocessed/3T/tfMRI_' upper(task) '_RL/100307_3T_tfMRI_' task '_RL.mnc.gz']; % fMRI run 1
+files_in.HCP100307.fmri.session1.([lower(task)(1:2) 'lr']) = [ root_path 'HCP_unproc_tmp/100307/unprocessed/3T/tfMRI_' upper(task) '_LR/100307_3T_tfMRI_' task '_LR.mnc.gz']; % fMRI run 2
 
 %% Subject 2
-files_in.HCP100408.anat                                    = [ root_path 'hcp_unproc_tmp/100408/unprocessed/3T/1T1w_MPR1/100408_3T_T1w_MPR1.mnc.gz'];     % Structural scan
-files_in.HCP100408.fmri.session1.([lower(task)(1:2) 'rl']) = [ root_path 'hcp_unproc_tmp/100408/unprocessed/3T/tfMRI_' upper(task) '_RL/100408_3T_tfMRI_' task '_RL.mnc.gz']; % fMRI run 1
-files_in.HCP100408.fmri.session1.([lower(task)(1:2) 'lr']) = [ root_path 'hcp_unproc_tmp/100408/unprocessed/3T/tfMRI_' upper(task) '_LR/100408_3T_tfMRI_' task '_LR.mnc.gz']; % fMRI run 2
+files_in.HCP100408.anat                                    = [ root_path 'HCP_unproc_tmp/100408/unprocessed/3T/T1w_MPR1/100408_3T_T1w_MPR1.mnc.gz'];     % Structural scan
+files_in.HCP100408.fmri.session1.([lower(task)(1:2) 'rl']) = [ root_path 'HCP_unproc_tmp/100408/unprocessed/3T/tfMRI_' upper(task) '_RL/100408_3T_tfMRI_' task '_RL.mnc.gz']; % fMRI run 1
+files_in.HCP100408.fmri.session1.([lower(task)(1:2) 'lr']) = [ root_path 'HCP_unproc_tmp/100408/unprocessed/3T/tfMRI_' upper(task) '_LR/100408_3T_tfMRI_' task '_LR.mnc.gz']; % fMRI run 2
 
 
 %%%%%%%%%%%%%%%%%%%%%%%
