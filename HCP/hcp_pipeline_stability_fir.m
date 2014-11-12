@@ -1,4 +1,4 @@
-% Script to run a STABILITY_FIR pipeline analysis on the twins database.
+% Script to run a STABILITY_FIR pipeline analysis on the HCP database.
 %
 % Copyright (c) Pierre Bellec, Yassine Benhajali
 % Research Centre of the Montreal Geriatric Institute
