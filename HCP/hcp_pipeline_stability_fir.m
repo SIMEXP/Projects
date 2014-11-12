@@ -46,7 +46,7 @@ elseif strfind(server,'ip05') % this is mammouth
 else
     switch server
         case 'peuplier' % this is peuplier
-        root_path = '/media/scratch2/HCP_unproc_tmp/';
+        root_path = '/media/database8/HCP_task/';
         fprintf ('server: %s\n',server)
         my_user_name = getenv('USER');
         
@@ -62,7 +62,7 @@ end
 %%%%%%%%%%%%%%%%%%%%
 %% Grabbing the results from the NIAK fMRI preprocessing pipeline
 %%%%%%%%%%%%%%%%%%%%%
-opt_g.min_nb_vol = 100;     % The minimum number of volumes for an fMRI dataset to be included. This option is useful when scrubbing is used, and the resulting time series may be too short.
+opt_g.min_nb_vol = 1;     % The minimum number of volumes for an fMRI dataset to be included. This option is useful when scrubbing is used, and the resulting time series may be too short.
 opt_g.min_xcorr_func = 0.5; % The minimum xcorr score for an fMRI dataset to be included. This metric is a tool for quality control which assess the quality of non-linear coregistration of functional images in stereotaxic space. Manual inspection of the values during QC is necessary to properly set this threshold.
 opt_g.min_xcorr_anat = 0.5; % The minimum xcorr score for an fMRI dataset to be included. This metric is a tool for quality control which assess the quality of non-linear coregistration of the anatomical image in stereotaxic space. Manual inspection of the values during QC is necessary to properly set this threshold.
 opt_g.type_files = 'fir'; % Specify to the grabber to prepare the files for the STABILITY_FIR pipeline
@@ -124,26 +124,7 @@ pipeline = niak_pipeline_stability_fir(files_in,opt);
 
 
 
-%%%%%%%%%%%%%%%%%%%%%
-%% Event times
-%%%%%%%%%%%%%%%%%%%%%
-%% Set the timing of events;
-files_in.timing =['/home/' my_user_name '/github_repos/Projects/HCP/EVs/models/twins_stab_fir_timing.csv'];
 
-%%%%%%%%%%%%%
-%% Options %%
-%%%%%%%%%%%%%
-
-%% BASC
-opt.folder_out = [root_path 'stability_fir_all_sad_blocs_' type_pre ]; % Where to store the results
-opt.grid_scales = [10:10:100 120:20:200 240:40:500]' ; % Search for stable clusters in the range 10 to 500 
-opt.scales_maps = [ 10   7   7 ;
-                    20  16  17 ;
-                    40  36  36 ;
-                    80  72  73 ;
-                   140 140 151 ;
-                   280 280 298 ;
-                   400 480 438 ]; 
 opt.stability_fir.nb_samps = 1;    % Number of bootstrap samples at the individual level. 100: the CI on indidividual stability is +/-0.1
 opt.stability_fir.std_noise = 0;     % The standard deviation of the judo noise. The value 0 will not use judo noise. 
 opt.stability_group.nb_samps = 500;  % Number of bootstrap samples at the group level. 500: the CI on group stability is +/-0.05

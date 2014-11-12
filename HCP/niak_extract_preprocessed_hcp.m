@@ -217,16 +217,16 @@ for nn = 1:length(list_subject)
        xcorra_csv(1,:) = { '' , 'perc_overlap_mask' ,'xcorr_vol' };
        
        motion_csv(nn+1,:) = { subject, ones, ones };
-       scrub_csv(nn+1,:)  = { [subject '_session1_run1'], ones, ones*100, ones, ones };
-       scrub_csv(nn+2,:)  = { [subject '_session1_run2'], ones, ones*100, ones, ones };
+       scrub_csv(nn+1,:)  = { [subject '_session1_' lower(opt.type_task)(1:2) 'RL'], ones, ones*100, ones, ones };
+       scrub_csv(nn+2,:)  = { [subject '_session1_' lower(opt.type_task)(1:2) 'RL'], ones, ones*100, ones, ones };
        xcorrf_csv(nn+1,:) = { subject, ones, ones };
        xcorra_csv(nn+1,:) = { subject, ones, ones };
        inc = 0;
     else
        inc = inc+1;
        motion_csv(nn+1,:)    = { subject, ones, ones };
-       scrub_csv(nn+inc+1,:) = { [subject '_session1_run1'], ones, ones*100, ones, ones };
-       scrub_csv(nn+inc+2,:) = { [subject '_session1_run2'], ones, ones*100, ones, ones };
+       scrub_csv(nn+inc+1,:) = { [subject '_session1_' lower(opt.type_task)(1:2) 'RL'], ones, ones*100, ones, ones };
+       scrub_csv(nn+inc+2,:) = { [subject '_session1_' lower(opt.type_task)(1:2) 'RL'], ones, ones*100, ones, ones };
        xcorrf_csv(nn+1,:)    = { subject, ones, ones };
        xcorra_csv(nn+1,:)    = { subject, ones, ones };
     end
