@@ -218,7 +218,7 @@ for nn = 1:length(list_subject)
        
        motion_csv(nn+1,:) = { subject, ones, ones };
        scrub_csv(nn+1,:)  = { [subject '_session1_' lower(opt.type_task)(1:2) 'RL'], ones, ones*100, ones, ones };
-       scrub_csv(nn+2,:)  = { [subject '_session1_' lower(opt.type_task)(1:2) 'RL'], ones, ones*100, ones, ones };
+       scrub_csv(nn+2,:)  = { [subject '_session1_' lower(opt.type_task)(1:2) 'LR'], ones, ones*100, ones, ones };
        xcorrf_csv(nn+1,:) = { subject, ones, ones };
        xcorra_csv(nn+1,:) = { subject, ones, ones };
        inc = 0;
@@ -226,7 +226,7 @@ for nn = 1:length(list_subject)
        inc = inc+1;
        motion_csv(nn+1,:)    = { subject, ones, ones };
        scrub_csv(nn+inc+1,:) = { [subject '_session1_' lower(opt.type_task)(1:2) 'RL'], ones, ones*100, ones, ones };
-       scrub_csv(nn+inc+2,:) = { [subject '_session1_' lower(opt.type_task)(1:2) 'RL'], ones, ones*100, ones, ones };
+       scrub_csv(nn+inc+2,:) = { [subject '_session1_' lower(opt.type_task)(1:2) 'LR'], ones, ones*100, ones, ones };
        xcorrf_csv(nn+1,:)    = { subject, ones, ones };
        xcorra_csv(nn+1,:)    = { subject, ones, ones };
     end

@@ -79,8 +79,8 @@ files_in = niak_grab_fmri_preprocess([root_path 'fmri_preprocess_' upper(task)],
 data.covariates_group_subs = {'HCP100307','HCP100408'};
 
 for list = 1:length(data.covariates_group_subs)    
-files_in.timing.(data.covariates_group_subs{list}).session1.run1    =   strcat('/home/porban/database/hcp/models/hcp_model_intrarun_20141111.csv');
-files_in.timing.(data.covariates_group_subs{list}).session1.run2    =   strcat('/home/porban/database/hcp/models/hcp_model_intrarun_20141111.csv');
+files_in.timing.(data.covariates_group_subs{list}).session1.([lower(task)(1:2) 'RL']) = [root_path 'fmri_preprocess_' upper(task) '/EVs/hcp_model_intrarun.csv'];
+files_in.timing.(data.covariates_group_subs{list}).session1.([lower(task)(1:2) 'LR']) = [root_path 'fmri_preprocess_' upper(task) '/EVs/hcp_model_intrarun.csv'];
 end
 
 
@@ -89,7 +89,7 @@ end
 %%%%%%%%%%%%%
 
 %% BASC
-opt.folder_out = '/home/porban/database/hcp/bascfirperc_20141001'; % Where to store the results
+opt.folder_out = [ root_path '/bascfirperc_' exp ]; % Where to store the results
 opt.grid_scales = [5:5:50 60:10:200 220:20:400 500:100:900]; % Search in the range 2-900 clusters
 opt.scales_maps = []; % Usually, this is initially left empty. After the pipeline ran a first time, the results of the MSTEPS procedure are used to select the final scales
 opt.stability_fir.nb_samps = 100;    % Number of bootstrap samples at the individual level. 100: the CI on indidividual stability is +/-0.1
@@ -118,33 +118,7 @@ opt.flag_group = true;  % Generate maps/FIR at the group level
 %% Run the pipeline %%
 %%%%%%%%%%%%%%%%%%%%%%
 opt.flag_test = false; % Put this flag to true to just generate the pipeline without running it. Otherwise the pipeline will start.
-%opt.psom.max_queued = 24; % Uncomment and change this parameter to set the number of parallel threads used to run the pipeline
-pipeline = niak_pipeline_stability_fir(files_in,opt);
-
-
-
-
-
-opt.stability_fir.nb_samps = 1;    % Number of bootstrap samples at the individual level. 100: the CI on indidividual stability is +/-0.1
-opt.stability_fir.std_noise = 0;     % The standard deviation of the judo noise. The value 0 will not use judo noise. 
-opt.stability_group.nb_samps = 500;  % Number of bootstrap samples at the group level. 500: the CI on group stability is +/-0.05
-opt.stability_fir.nb_min_fir = 1;    % the minimum response windows number. By defaut is set to 3
-
-%% FIR estimation 
-opt.fir.type_norm     = 'fir_shape'; % The type of normalization of the FIR. "fir_shape" (starts at zero, unit sum-of-squares)or 'perc'(without normalisation)
-opt.fir.time_window   = 246;          % The size (in sec) of the time window to evaluate the response, in this cas it correspond to 90 volumes for tr=3s
-opt.fir.time_sampling = 3;         % The time between two samples for the estimated response. Do not go below 1/2 TR unless there is a very large number of trials.
-opt.fir.max_interpolation = 15;
-opt.fir.nb_min_baseline = 10;
-
-%% FDR estimation
-opt.nb_samps_fdr = 10000; % The number of samples to estimate the false-discovery rate
-
-%%%%%%%%%%%%%%%%%%%%%%
-%% Run the pipeline %%
-%%%%%%%%%%%%%%%%%%%%%%
 %opt.psom.qsub_options = '-q lm -l walltime=7:00:00';
-opt.flag_test = false; % Put this flag to true to just generate the pipeline without running it. Otherwise the pipeline will start.
 pipeline = niak_pipeline_stability_fir(files_in,opt);
 
 %%extra

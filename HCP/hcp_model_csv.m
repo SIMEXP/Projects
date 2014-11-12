@@ -37,7 +37,7 @@ data.name_csv_group     = 'hcp_model_group';
 data.name_csv_intrarun  = 'hcp_model_intrarun';
 
 %% subjects
-data.subs =  {'100307','100408'};
+data.subs =  {'HCP100307','HCP100408'};
 
 %% group
 data.covariates_group_subs        = data.subs;
