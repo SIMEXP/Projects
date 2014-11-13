@@ -30,7 +30,7 @@ clear all
 %% Parameters
 %%%%%%%%%%%%%%%%%%%%%
 task  = 'emotion';
-exp   = 'hcp';
+exp   = 'niak';
 
 %% Setting input/output files 
 [status,cmdout] = system ('uname -n');
