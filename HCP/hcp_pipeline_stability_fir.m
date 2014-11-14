@@ -31,7 +31,7 @@ clear all
 %%%%%%%%%%%%%%%%%%%%%
 task  = 'emotion';
 exp   = 'hcp';
-fprintf ('script to run niak_stability_fir pipeline for task: %s and exp %s\',task,exp)
+fprintf ('script to run niak_stability_fir pipeline \n Task: %s \n experiment: %s\n',task,exp)
 %% Setting input/output files 
 [status,cmdout] = system ('uname -n');
 server          = strtrim(cmdout);
@@ -118,7 +118,7 @@ opt.flag_group = true;  % Generate maps/FIR at the group level
 %% Run the pipeline %%
 %%%%%%%%%%%%%%%%%%%%%%
 opt.flag_test = false; % Put this flag to true to just generate the pipeline without running it. Otherwise the pipeline will start.
-%opt.psom.qsub_options = '-q lm -l walltime=7:00:00';
+%opt.psom.qsub_options = 'q lm -l nodes=1:ppn=12,walltime=05:00:00';
 pipeline = niak_pipeline_stability_fir(files_in,opt);
 
 %%extra
