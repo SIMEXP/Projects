@@ -1,7 +1,7 @@
 
 clear all
 
-addpath(genpath('/home/atam/quarantaine/niak-boss-0.12.9'));
+addpath(genpath('/home/atam/quarantaine/niak-boss-0.12.18'));
 
 path_data = '/home/atam/database/';
 
