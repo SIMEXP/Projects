@@ -97,7 +97,7 @@ opt.stability_fir.std_noise = 0;     % The standard deviation of the judo noise.
 opt.stability_group.nb_samps = 500;  % Number of bootstrap samples at the group level. 500: the CI on group stability is +/-0.05
 
 %% FIR estimation 
-opt.name_condition = 'stimulus';
+opt.name_condition = 'task';
 opt.name_baseline = 'baseline';
 opt.fir.name_condition = 'stimulus';
 opt.fir.name_baseline = 'baseline';
