@@ -30,7 +30,7 @@ clear all
 %% Parameters
 %%%%%%%%%%%%%%%%%%%%%
 task  = 'emotion';
-exp   = 'hcp';
+exp   = 'niak';
 fprintf ('script to run niak_stability_fir pipeline \n Task: %s \n experiment: %s\n',task,exp)
 %% Setting input/output files 
 [status,cmdout] = system ('uname -n');
