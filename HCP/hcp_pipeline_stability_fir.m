@@ -105,7 +105,7 @@ opt.fir.type_norm     = 'fir';       % The type of normalization of the FIR.
 opt.fir.time_window   = 126.72;          % The size (in sec) of the time window to evaluate the response --> 176 vols
 opt.fir.max_interpolation = 7.2;    % --> max 10 vols consécutifs manquants (TR = 0.72s), sinon bloc rejeté, mais ça devrait être irrelevant comme pas de scrubbing ici
 opt.fir.time_sampling = 0.72;           % The time between two samples for the estimated response. Do not go below 1/2 TR unless there is a very large number of trials.
-
+opt.fir.nb_min_baseline = 3 ;
 %% FDR estimation
 opt.nb_samps_fdr = 10000; % The number of samples to estimate the false-discovery rate
 
