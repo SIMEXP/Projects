@@ -96,7 +96,7 @@ opt.stability_fir.nb_samps = 100;    % Number of bootstrap samples at the indivi
 opt.stability_fir.std_noise = 0;     % The standard deviation of the judo noise. The value 0 will not use judo noise. 
 opt.stability_group.nb_samps = 500;  % Number of bootstrap samples at the group level. 500: the CI on group stability is +/-0.05
 opt.nb_min_fir = 1;    % the minimum response windows number. By defaut is set to 1
-opt.stability_group.min_subject = 1; % (integer, default 3) the minimal number of subjects to start the group-level stability analysis. An error message will be issued if this number is not reached.
+opt.stability_group.min_subject = 2; % (integer, default 3) the minimal number of subjects to start the group-level stability analysis. An error message will be issued if this number is not reached.
 %% FIR estimation 
 opt.name_condition = 'task';
 opt.name_baseline = 'baseline';
