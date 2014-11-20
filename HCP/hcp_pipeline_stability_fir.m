@@ -91,12 +91,12 @@ end
 %% BASC
 opt.folder_out = [ root_path '/stability_fir_perc_' exp ]; % Where to store the results
 opt.grid_scales = [5:5:50 60:10:200 220:20:400 500:100:900]; % Search in the range 2-900 clusters
-opt.scales_maps = []; % Usually, this is initially left empty. After the pipeline ran a first time, the results of the MSTEPS procedure are used to select the final scales
+opt.scales_maps = [7 35]; % Usually, this is initially left empty. After the pipeline ran a first time, the results of the MSTEPS procedure are used to select the final scales
 opt.stability_fir.nb_samps = 100;    % Number of bootstrap samples at the individual level. 100: the CI on indidividual stability is +/-0.1
 opt.stability_fir.std_noise = 0;     % The standard deviation of the judo noise. The value 0 will not use judo noise. 
 opt.stability_group.nb_samps = 500;  % Number of bootstrap samples at the group level. 500: the CI on group stability is +/-0.05
-opt.stability_fir.nb_min_fir = 1;    % the minimum response windows number. By defaut is set to 3
-
+opt.nb_min_fir = 1;    % the minimum response windows number. By defaut is set to 1
+opt.stability_group.min_subject = 1; % (integer, default 3) the minimal number of subjects to start the group-level stability analysis. An error message will be issued if this number is not reached.
 %% FIR estimation 
 opt.name_condition = 'task';
 opt.name_baseline = 'baseline';
@@ -104,7 +104,8 @@ opt.fir.type_norm     = 'fir';       % The type of normalization of the FIR.
 opt.fir.time_window   = 126.72;          % The size (in sec) of the time window to evaluate the response --> 176 vols
 opt.fir.max_interpolation = 7.2;    % --> max 10 vols consécutifs manquants (TR = 0.72s), sinon bloc rejeté, mais ça devrait être irrelevant comme pas de scrubbing ici
 opt.fir.time_sampling = 0.72;           % The time between two samples for the estimated response. Do not go below 1/2 TR unless there is a very large number of trials.
-opt.fir.nb_min_baseline = 3 ;
+opt.fir.nb_min_baseline = 1 ;
+
 %% FDR estimation
 opt.nb_samps_fdr = 10000; % The number of samples to estimate the false-discovery rate
 
