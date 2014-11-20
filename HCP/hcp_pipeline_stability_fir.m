@@ -95,12 +95,11 @@ opt.scales_maps = []; % Usually, this is initially left empty. After the pipelin
 opt.stability_fir.nb_samps = 100;    % Number of bootstrap samples at the individual level. 100: the CI on indidividual stability is +/-0.1
 opt.stability_fir.std_noise = 0;     % The standard deviation of the judo noise. The value 0 will not use judo noise. 
 opt.stability_group.nb_samps = 500;  % Number of bootstrap samples at the group level. 500: the CI on group stability is +/-0.05
+opt.stability_fir.nb_min_fir = 1;    % the minimum response windows number. By defaut is set to 3
 
 %% FIR estimation 
 opt.name_condition = 'task';
 opt.name_baseline = 'baseline';
-opt.fir.name_condition = 'stimulus';
-opt.fir.name_baseline = 'baseline';
 opt.fir.type_norm     = 'fir';       % The type of normalization of the FIR.
 opt.fir.time_window   = 126.72;          % The size (in sec) of the time window to evaluate the response --> 176 vols
 opt.fir.max_interpolation = 7.2;    % --> max 10 vols consécutifs manquants (TR = 0.72s), sinon bloc rejeté, mais ça devrait être irrelevant comme pas de scrubbing ici
@@ -123,4 +122,3 @@ pipeline = niak_pipeline_stability_fir(files_in,opt);
 
 %%extra
 system(['cp ' mfilename('fullpath') '.m ' opt.folder_out '/.']); % make a copie of this script to output folder
-system(['cp ' files_in.timing ' ' opt.folder_out '/.' ]); % make a copie of time events file used to output folder
