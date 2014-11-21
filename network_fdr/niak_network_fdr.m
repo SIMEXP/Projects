@@ -131,7 +131,7 @@ end
 
 %% Default options
 list_fields    = { 'nb_classes' , 'hier'   , 'q'  , 'method' , 'nb_samps' , 'flag_verbose' , 'flag_rsquare' , 'flag_eff' , 'flag_residuals' , 'flag_beta', 'test' };
-list_defaults  = { 10           , struct() , 0.05 , 'LSL'    , 1000       , true           , false         , false     , false           , false      , 'none' };
+list_defaults  = { 10           , struct() , 0.05 , 'LSL'    , 1000       , true           , false          , false      , false            , false      , 'none' };
 opt = psom_struct_defaults(opt,list_fields,list_defaults);
 
 opt_glm = rmfield(opt,{'nb_classes','hier','q','method','nb_samps','flag_verbose'}); % the options for niak_glm
@@ -148,6 +148,11 @@ end
 
 %% Run the tests
 res = niak_glm(model,opt_glm);
+
+%% Generate connection-level partition
+for pp = 1:size(part,2)
+    [tmp,ind_mpart{pp},mpart{pp}] = niak_lvec2grp(res.pce);
+end
 
 %% Estimate pi_0
 pi_0 = cell(size(part,2),1);
@@ -174,11 +179,12 @@ end
 
 %% Omnibus test
 for pp = 1:size(part,2)
-    pce_omnibus{pp} = (sum(pi_0_null{pp}<=repmat(pi_0{pp},[opt.nb_samps 1]),1)+1)/(opt.nb_samps + 1);
+    res.pce_omnibus{pp} = (sum(pi_0_null{pp}<=repmat(pi_0{pp},[opt.nb_samps 1]),1)+1)/(opt.nb_samps + 1);
 end
 
 %% Run network tests
+res.pi_0 = pi_0;
 for pp = 1:size(part,2)
-    pi_0{pp}(pce_omnibus{pp}>=(opt.q/length(pce_omnibus{pp}))) = 1; % shrink the estimation of the proportion of true null towards 1
-    test_fdr{pp} = niak_group_fdr(res.pce,pi_0{pp},opt.q);
+    pi_0{pp}(res.pce_omnibus{pp}>=(opt.q/length(res.pce_omnibus{pp}))) = 1; % shrink the estimation of the proportion of true null towards 1
+    res.test_fdr{pp} = niak_group_fdr(res.pce,pi_0{pp},mpart{pp},opt.q);
 end
