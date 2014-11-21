@@ -1,10 +1,30 @@
-% this script generate group models for hcp data
-clear all
+function [] = hcp_model_csv(opt)
+% generate group and individual model for HCP database.
+%
+% SYNTAX:
+% [] = HCP_MODEL_CSV(OPT)
+%
+% _________________________________________________________________________
+%
+% OPT
+%   (structure, optional) with the following fields :
+%
+%   TASK (string, default 'MOTOR') type of tasks that would be extracted. Possibles tasks are: 'EMOTION',
+%       'GAMBLING','LANGUAGE','MOTOR','REST','RELATIONAL','SOCIAL','WM'.
+%   EXP (string, default '') type of experiment that would be extracted
+
 %%%%%%%%%%%%%%%%%%%%%
 %% Parameters
 %%%%%%%%%%%%%%%%%%%%%
-task  = 'emotion';
-exp   = 'hcp';
+%% Default options
+list_fields   = { 'task'    , 'exp'};
+list_defaults = { 'emotion' , 'hcp'   };
+if nargin == 1
+    opt = psom_struct_defaults(opt,list_fields,list_defaults);
+else
+    opt = psom_struct_defaults(struct(),list_fields,list_defaults);
+end
+
 
 %% Setting input/output files 
 [status,cmdout] = system ('uname -n');
@@ -32,7 +52,7 @@ else
 end
 
 %% path and files names
-data.dir_output         = [root_path 'fmri_preprocess_' upper(task) '/EVs/'];
+data.dir_output         = [root_path 'fmri_preprocess_' upper(opt.task) '_' lower(opt.exp) '/EVs/'];
 data.name_csv_group     = 'hcp_model_group';
 data.name_csv_intrarun  = 'hcp_model_intrarun';
 
@@ -45,11 +65,11 @@ data.covariates_group_names       = {'sex','age'};
 data.covariates_group_values(:,1) = [0;1]; % 1=f
 data.covariates_group_values(:,2) = [30;43];
 
-opt.labels_y = data.covariates_group_names;
-opt.labels_x = data.covariates_group_subs;
-opt.precision = 2;
+opt_group.labels_y = data.covariates_group_names;
+opt_group.labels_x = data.covariates_group_subs;
+opt_group.precision = 2;
 
-niak_write_csv(strcat(data.dir_output,data.name_csv_group,'.csv'),data.covariates_group_values,opt)
+niak_write_csv(strcat(data.dir_output,data.name_csv_group,'.csv'),data.covariates_group_values,opt_group);
 
 
 %% intrarun glmfir
@@ -59,8 +79,8 @@ data.covariates_intrarun_values(1,1) = 0;
 data.covariates_intrarun_values(1,2) = 125.72; %175 vols x 0.72 (=TR)
 data.covariates_intrarun_values(2,1) = 0;
 data.covariates_intrarun_values(2,2) = 2.16; % 3x0.72 (=TR)
-opt.labels_y = data.covariates_intrarun_names;
-opt.labels_x = data.covariates_intrarun_cond;
-opt.precision = 2;
-niak_write_csv(strcat(data.dir_output,data.name_csv_intrarun,'.csv'),data.covariates_intrarun_values,opt)
+opt_ind.labels_y = data.covariates_intrarun_names;
+opt_ind.labels_x = data.covariates_intrarun_cond;
+opt_ind.precision = 2;
+niak_write_csv(strcat(data.dir_output,data.name_csv_intrarun,'.csv'),data.covariates_intrarun_values,opt_ind);
 
