@@ -31,7 +31,7 @@ clear all
 %%%%%%%%%%%%%%%%%%%%%
 %% set experimentent
 task  = 'emotion';
-exp   = 'niak';
+exp   = 'hcp';
 fprintf ('script to run niak_stability_fir pipeline \n Task: %s \n experiment: %s\n',task,exp)
 
 %% Setting input/output files 
