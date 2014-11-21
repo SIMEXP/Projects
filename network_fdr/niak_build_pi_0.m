@@ -70,7 +70,7 @@ end
 grp = niak_lvec2grp(pce,part);
 
 % Loop over groups
-pi_0 = zeros(size(pce,length(grp)));
+pi_0 = zeros(size(pce,1),length(grp));
 for gg = 1:length(grp)
     pce = grp{gg}';
     n = size(pce,1);
