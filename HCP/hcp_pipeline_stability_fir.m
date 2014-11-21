@@ -62,7 +62,7 @@ end
 %% create the csv model files
 opt_model.task = task;
 opt_model.exp  = exp;
-hcp_model_csv(opt_model,root_path);
+hcp_model_csv(root_path,opt_model);
 
 %%%%%%%%%%%%%%%%%%%%
 %% Grabbing the results from the NIAK fMRI preprocessing pipeline
