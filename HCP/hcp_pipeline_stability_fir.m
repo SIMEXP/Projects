@@ -29,9 +29,11 @@ clear all
 %%%%%%%%%%%%%%%%%%%%%
 %% Parameters
 %%%%%%%%%%%%%%%%%%%%%
+%% set experimentent
 task  = 'emotion';
 exp   = 'niak';
 fprintf ('script to run niak_stability_fir pipeline \n Task: %s \n experiment: %s\n',task,exp)
+
 %% Setting input/output files 
 [status,cmdout] = system ('uname -n');
 server          = strtrim(cmdout);
@@ -57,7 +59,10 @@ else
     end
 end
 
-
+%% create the csv model files
+opt_model.task = task;
+opt_model.exp  = exp;
+hcp_model_csv(opt_model,root_path);
 
 %%%%%%%%%%%%%%%%%%%%
 %% Grabbing the results from the NIAK fMRI preprocessing pipeline
@@ -102,7 +107,7 @@ opt.stability_group.min_subject = 2; % (integer, default 3) the minimal number o
 opt.name_condition = 'task';
 opt.name_baseline = 'baseline';
 opt.fir.type_norm     = 'fir';       % The type of normalization of the FIR.
-opt.fir.time_window   = 126.72;          % The size (in sec) of the time window to evaluate the response --> 176 vols
+opt.fir.time_window   = 125.72;          % The size (in sec) of the time window to evaluate the response --> 176 vols
 opt.fir.max_interpolation = 7.2;    % --> max 10 vols consécutifs manquants (TR = 0.72s), sinon bloc rejeté, mais ça devrait être irrelevant comme pas de scrubbing ici
 opt.fir.time_sampling = 0.72;           % The time between two samples for the estimated response. Do not go below 1/2 TR unless there is a very large number of trials.
 opt.fir.nb_min_baseline = 1 ;
