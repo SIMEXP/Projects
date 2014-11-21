@@ -1,4 +1,4 @@
-function pi_0 = niak_build_pi_0_conn(pce,part,method,q)
+function pi_0 = niak_build_pi_0(pce,part,method,q)
 % Estimate the proportion of null hypothesis pi_0 in a connectome
 %
 % PI_0 = NIAK_BUILD_PI_0( PCE , PART , [METHOD] , [Q] )
@@ -31,7 +31,7 @@ function pi_0 = niak_build_pi_0_conn(pce,part,method,q)
 %   Biometrika, 93, 3, 491-507.
 %
 % SEE ALSO:
-% NIAK_BUILD_PI_0, NIAK_LVEC2GRP
+% NIAK_LVEC2GRP
 %
 % Copyright (c) Pierre Bellec, Centre de recherche de l'institut de 
 % Gériatrie de Montréal, Département d'informatique et de recherche 
@@ -57,11 +57,49 @@ function pi_0 = niak_build_pi_0_conn(pce,part,method,q)
 % OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 % THE SOFTWARE.
 
-grp = niak_lvec2grp(pce,part);
+% defaults
 if nargin < 3
-    pi_0 = niak_build_pi_0(grp);
-elseif nargin==4
-    pi_0 = niak_build_pi_0(grp,method);
-else
-    pi_0 = niak_build_pi_0(grp,method,q);
+    method = 'LSL';
+end
+
+if nargin < 4
+    q = 0.05;
+end
+
+% Reformat the p-values based on the intra/inter network partition
+grp = niak_lvec2grp(pce,part);
+
+% Loop over groups
+pi_0 = zeros(size(pce,length(grp)));
+for gg = 1:length(grp)
+    pce = grp{gg}';
+    n = size(pce,1);
+    m = size(pce,2);
+    % estimate the number of discoveries
+
+    switch method
+        case 'TST'
+
+            % The two-stage method: family-wise BH procedure
+            q = q/(1+q);
+            [fdr_bh,test_bh] = niak_fdr(pce,'BH',q);
+            pi_0(:,gg) = (n-sum(test_bh,1))'/n;
+  
+        case 'LSL'
+
+            % The least-slope method
+            [val,order] = sort(pce,1,'ascend');            
+            l = repmat((n+1-(1:n)'),[1 m]);
+            l(val~=1) = l(val~=1)./(1-val(val~=1));
+            l(val==1) = Inf;          
+            dl = l(2:end,:) - l(1:(end-1),:);            
+            pi_0(:,gg) = zeros(m,1);
+            for num_c = 1:m               
+                ind_c = find(dl(:,num_c)>0,1);
+                if isempty(ind_c)
+                    ind_c = n-1;
+                end
+                pi_0(num_c,gg) = min((floor(l(ind_c+1,num_c))+1)/n,1);
+            end            
+    end
 end
