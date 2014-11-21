@@ -27,7 +27,7 @@ root_path = niak_full_path (root_path);
 %% Default options
 list_fields   = { 'task'    , 'exp'};
 list_defaults = { 'emotion' , 'hcp'   };
-if (nargin > 1) || isempty(opt) 
+if (nargin > 1)  
     opt = psom_struct_defaults(opt,list_fields,list_defaults);
 else
     opt = psom_struct_defaults(struct(),list_fields,list_defaults);
