@@ -33,10 +33,7 @@ clear all
 task  = 'emotion';
 exp   = 'hcp';
 fprintf ('script to run niak_stability_fir pipeline \n Task: %s \n experiment: %s\n',task,exp)
-%% create the csv model filesthe model script
-opt_model.task = task;
-opt_model.exp  = exp;
-hcp_model_csv(opt_model);
+
 %% Setting input/output files 
 [status,cmdout] = system ('uname -n');
 server          = strtrim(cmdout);
@@ -62,7 +59,10 @@ else
     end
 end
 
-
+%% create the csv model files
+opt_model.task = task;
+opt_model.exp  = exp;
+hcp_model_csv(opt_model,root_path);
 
 %%%%%%%%%%%%%%%%%%%%
 %% Grabbing the results from the NIAK fMRI preprocessing pipeline
