@@ -4,7 +4,7 @@ clear all
 %% Parameters
 %%%%%%%%%%%%%%%%%%%%%
 task  = 'emotion';
-exp   = 'exp1';
+exp   = 'hcp';
 
 %% Setting input/output files 
 [status,cmdout] = system ('uname -n');
@@ -56,7 +56,7 @@ niak_write_csv(strcat(data.dir_output,data.name_csv_group,'.csv'),data.covariate
 data.covariates_intrarun_names =   {'times','duration'};
 data.covariates_intrarun_cond = {'task','baseline'};
 data.covariates_intrarun_values(1,1) = 0;
-data.covariates_intrarun_values(1,2) = 126.72; %176 vols x 0.72 (=TR)
+data.covariates_intrarun_values(1,2) = 125.72; %175 vols x 0.72 (=TR)
 data.covariates_intrarun_values(2,1) = 0;
 data.covariates_intrarun_values(2,2) = 2.16; % 3x0.72 (=TR)
 opt.labels_y = data.covariates_intrarun_names;
