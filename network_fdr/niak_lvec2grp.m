@@ -60,6 +60,7 @@ for k1 = 1:nb_part
         ind(nb_el,1) = k1;
         ind(nb_el,2) = k2;
         mpart(part==k1,part==k2) = nb_el;
+        mpart(part==k2,part==k1) = nb_el;
     end
 end
 
