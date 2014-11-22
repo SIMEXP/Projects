@@ -8,7 +8,7 @@ list_subject = dir(path_dcm);
 list_subject = {list_subject(3:end).name};
 
 nb_subject = length(list_subject);
-nb_subject = 1;
+%nb_subject = 1;
 for num_s = 1:nb_subject
     subject = list_subject{num_s};
     fprintf('Subject %s\n',subject);
