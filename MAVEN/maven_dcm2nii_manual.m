@@ -32,7 +32,13 @@ for num_s = 1:nb_subject
     system(['mkdir -p ' path_write  'func/run3/ ; scp -r ' path_func_run3 ' ' path_write 'func/run3/']);
     % create anat path
     system(['mkdir -p ' path_write  'anat/      ; scp -r ' path_anat ' ' path_write 'anat/']);
-    niak_brick_nii2mnc([path_write "func/"],[path_write "func/"]); niak_brick_nii2mnc([path_write "anat/"],[path_write "anat/"]);';        
+    % convert func images to minc
+    niak_brick_nii2mnc([path_write "func/"],[path_write "func/"]); 
+    % convert anat images to minc 
+    niak_brick_nii2mnc([path_write "anat/"],[path_write "anat/"]);
+    % remove func nifti files 
+    system(['rm -r ' path_write 'func/*/*.nii']);
+    % remove anat nifti file
+    system(['rm -r ' path_write 'anat/*.nii']); 
 end
-psom_run_pipeline(pipeline,opt_pipe)
 
