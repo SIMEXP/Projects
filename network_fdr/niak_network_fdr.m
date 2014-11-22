@@ -1,11 +1,7 @@
-function [results,opt] = niak_network_fdr(model,part,opt)
+function [res,opt] = niak_network_fdr(model,part,opt)
 % Network FDR testing of a general linear model on connectomes 
-% Y = X.BETA + E 
 %
 % [RESULTS,OPT] = NIAK_GLM( MODEL , [OPT] )
-%
-% _________________________________________________________________________
-% INPUTS:
 %
 % MODEL (structure) with the following fields:
 %   Y (2D array size N*L) each row is a vectorized connectome for one subject.
@@ -27,6 +23,8 @@ function [results,opt] = niak_network_fdr(model,part,opt)
 %      hypothesis. 'TST' : The two-stage estimator; 'LSL' : the least-slope estimator.
 %      See NIAK_BUILD_PI_0.
 %   Q (scalar, default 0.05) the acceptable level of false-discovery rate.
+%   P_OMNI (scalar, default 0.05) the p-value for the omnibut test.
+%   FLAG_SHRINKAGE (boolean, default true) turn on/off the shrinkage of the estimated proportion of null
 %   FLAG_VERBOSE (boolean, default true) verbose progress information.
 %   NB_CLASSES (vector of integer, default 10) the number of clusters in the partition. 
 %      Multiple numbers can be specified.
@@ -43,9 +41,6 @@ function [results,opt] = niak_network_fdr(model,part,opt)
 %      added to RESULTS (i.e. the regression coefficients times the contrast).
 %   FLAG_BETA (boolean, default false) if the flag is true, the regression coefficients
 %      BETA are added to RESULTS (see below).
-%
-% _________________________________________________________________________
-% OUTPUTS:
 %
 % RESULTS
 %   (stucture) with the following fields:
@@ -99,6 +94,12 @@ function [results,opt] = niak_network_fdr(model,part,opt)
 %   Step-up Pocedures That Control the False Discovery Rate,” 
 %   Biometrika, 93, 3, 491-507.
 %
+% On the group FDR:
+%
+%   Hu, J. X., Zhao, H., Zhou, H. H. (2010), "False discovery rate control 
+%   with groups". Journal of the American Statistical Association 105 (491), 
+%   1215-1227. URL http://dx.doi.org/10.1198/jasa.2010.tm09329
+%
 % _________________________________________________________________________
 % COMMENTS:
 %
@@ -130,11 +131,11 @@ if (nargin<2)||(isempty(opt))
 end
 
 %% Default options
-list_fields    = { 'nb_classes' , 'hier'   , 'q'  , 'method' , 'nb_samps' , 'flag_verbose' , 'flag_rsquare' , 'flag_eff' , 'flag_residuals' , 'flag_beta', 'test' };
-list_defaults  = { 10           , struct() , 0.05 , 'LSL'    , 1000       , true           , false          , false      , false            , false      , 'none' };
+list_fields    = { 'p_omni' , 'flag_shrinkage' , 'nb_classes' , 'hier'   , 'q'  , 'method' , 'nb_samps' , 'flag_verbose' , 'flag_rsquare' , 'flag_eff' , 'flag_residuals' , 'flag_beta', 'test' };
+list_defaults  = { 0.05     , true             , 10           , struct() , 0.05 , 'LSL'    , 1000       , true           , false          , false      , false            , false      , 'none' };
 opt = psom_struct_defaults(opt,list_fields,list_defaults);
 
-opt_glm = rmfield(opt,{'nb_classes','hier','q','method','nb_samps','flag_verbose'}); % the options for niak_glm
+opt_glm = rmfield(opt,{'p_omni' , 'flag_shrinkage' , 'nb_classes','hier','q','method','nb_samps','flag_verbose'}); % the options for niak_glm
 
 %% Generate the partitions, if necessary
 if (nargin<2)||isempty(part)
@@ -151,7 +152,7 @@ res = niak_glm(model,opt_glm);
 
 %% Generate connection-level partition
 for pp = 1:size(part,2)
-    [tmp,ind_mpart{pp},mpart{pp}] = niak_lvec2grp(res.pce);
+    [tmp,ind_mpart{pp},mpart{pp}] = niak_lvec2grp(res.pce,part(:,pp));
 end
 
 %% Estimate pi_0
@@ -185,6 +186,8 @@ end
 %% Run network tests
 res.pi_0 = pi_0;
 for pp = 1:size(part,2)
-    pi_0{pp}(res.pce_omnibus{pp}>=(opt.q/length(res.pce_omnibus{pp}))) = 1; % shrink the estimation of the proportion of true null towards 1
-    res.test_fdr{pp} = niak_group_fdr(res.pce,pi_0{pp},mpart{pp},opt.q);
+    if opt.flag_shrinkage
+        pi_0{pp}(res.pce_omnibus{pp}>=(opt.p_omni/length(res.pce_omnibus{pp}))) = 1; % shrink the estimation of the proportion of true null towards 1
+    end
+    res.test_fdr{pp} = niak_group_fdr(res.pce(:),pi_0{pp},mpart{pp},opt.q);
 end
