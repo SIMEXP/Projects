@@ -29,9 +29,11 @@ clear all
 %%%%%%%%%%%%%%%%%%%%%
 %% Parameters
 %%%%%%%%%%%%%%%%%%%%%
+%% set experimentent
 task  = 'emotion';
 exp   = 'hcp';
 fprintf ('script to run niak_stability_fir pipeline \n Task: %s \n experiment: %s\n',task,exp)
+
 %% Setting input/output files 
 [status,cmdout] = system ('uname -n');
 server          = strtrim(cmdout);
@@ -57,7 +59,10 @@ else
     end
 end
 
-
+%% create the csv model files
+opt_model.task = task;
+opt_model.exp  = exp;
+hcp_model_csv(root_path,opt_model);
 
 %%%%%%%%%%%%%%%%%%%%
 %% Grabbing the results from the NIAK fMRI preprocessing pipeline
@@ -91,20 +96,21 @@ end
 %% BASC
 opt.folder_out = [ root_path '/stability_fir_perc_' exp ]; % Where to store the results
 opt.grid_scales = [5:5:50 60:10:200 220:20:400 500:100:900]; % Search in the range 2-900 clusters
-opt.scales_maps = []; % Usually, this is initially left empty. After the pipeline ran a first time, the results of the MSTEPS procedure are used to select the final scales
+opt.scales_maps = [ 10   7   7 ;
+                    20  16  17 ]; % Usually, this is initially left empty. After the pipeline ran a first time, the results of the MSTEPS procedure are used to select the final scales
 opt.stability_fir.nb_samps = 100;    % Number of bootstrap samples at the individual level. 100: the CI on indidividual stability is +/-0.1
 opt.stability_fir.std_noise = 0;     % The standard deviation of the judo noise. The value 0 will not use judo noise. 
 opt.stability_group.nb_samps = 500;  % Number of bootstrap samples at the group level. 500: the CI on group stability is +/-0.05
-
+opt.nb_min_fir = 1;    % the minimum response windows number. By defaut is set to 1
+opt.stability_group.min_subject = 2; % (integer, default 3) the minimal number of subjects to start the group-level stability analysis. An error message will be issued if this number is not reached.
 %% FIR estimation 
-opt.name_condition = 'stimulus';
+opt.name_condition = 'task';
 opt.name_baseline = 'baseline';
-opt.fir.name_condition = 'stimulus';
-opt.fir.name_baseline = 'baseline';
 opt.fir.type_norm     = 'fir';       % The type of normalization of the FIR.
-opt.fir.time_window   = 126.72;          % The size (in sec) of the time window to evaluate the response --> 176 vols
+opt.fir.time_window   = 125.72;          % The size (in sec) of the time window to evaluate the response --> 176 vols
 opt.fir.max_interpolation = 7.2;    % --> max 10 vols consécutifs manquants (TR = 0.72s), sinon bloc rejeté, mais ça devrait être irrelevant comme pas de scrubbing ici
 opt.fir.time_sampling = 0.72;           % The time between two samples for the estimated response. Do not go below 1/2 TR unless there is a very large number of trials.
+opt.fir.nb_min_baseline = 1 ;
 
 %% FDR estimation
 opt.nb_samps_fdr = 10000; % The number of samples to estimate the false-discovery rate
@@ -123,4 +129,3 @@ pipeline = niak_pipeline_stability_fir(files_in,opt);
 
 %%extra
 system(['cp ' mfilename('fullpath') '.m ' opt.folder_out '/.']); % make a copie of this script to output folder
-system(['cp ' files_in.timing ' ' opt.folder_out '/.' ]); % make a copie of time events file used to output folder
