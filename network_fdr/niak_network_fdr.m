@@ -103,6 +103,14 @@ function [res,opt] = niak_network_fdr(model,part,opt)
 % _________________________________________________________________________
 % COMMENTS:
 %
+% If MODEL has more than one entry, the results of the different entries are 
+% assumed to come from different sites, and the results will be combined using the 
+% METAL approach:
+%
+% Cristen J. Willer, Yun Li and Gonçalo R. Abecasis. METAL: fast and efficient 
+% meta-analysis of genomewide association scans. Bioinformatics, application note,
+% Vol. 26 no. 17 2010, pages 2190–2191 doi:10.1093/bioinformatics/btq340
+%
 % Copyright (c) Pierre Bellec
 % Centre de recherche de l'Institut universitaire de gériatrie de Montréal, 2014.
 % Maintainer : pierre.bellec@criugm.qc.ca
@@ -131,8 +139,8 @@ if (nargin<2)||(isempty(opt))
 end
 
 %% Default options
-list_fields    = { 'p_omni' , 'flag_shrinkage' , 'nb_classes' , 'hier'   , 'q'  , 'method' , 'nb_samps' , 'flag_verbose' , 'flag_rsquare' , 'flag_eff' , 'flag_residuals' , 'flag_beta', 'test' };
-list_defaults  = { 0.05     , true             , 10           , struct() , 0.05 , 'LSL'    , 1000       , true           , false          , false      , false            , false      , 'none' };
+list_fields    = { 'p_omni' , 'flag_shrinkage' , 'nb_classes' , 'hier'   , 'q'  , 'method' , 'nb_samps' , 'flag_verbose' , 'flag_rsquare' , 'flag_eff' , 'flag_residuals' , 'flag_beta', 'test'  };
+list_defaults  = { 0.05     , true             , 10           , struct() , 0.05 , 'LSL'    , 1000       , true           , false          , false      , false            , false      , 'ttest' };
 opt = psom_struct_defaults(opt,list_fields,list_defaults);
 
 opt_glm = rmfield(opt,{'p_omni' , 'flag_shrinkage' , 'nb_classes','hier','q','method','nb_samps','flag_verbose'}); % the options for niak_glm
@@ -141,14 +149,42 @@ opt_glm = rmfield(opt,{'p_omni' , 'flag_shrinkage' , 'nb_classes','hier','q','me
 if (nargin<2)||isempty(part)
     opt_hier = opt.hier;
     opt_hier.flag_verbose = false;
-    R = niak_lvec2mat(mean(model.y,1));
+    for num_model = 1:length(model)
+        if num_model == 1
+            R = niak_lvec2mat(mean(model(num_model).y,1));
+        else
+            R = R + niak_lvec2mat(mean(model(num_model).y,1));
+        end
+    end
+    R = R / length(model);
     hier = niak_hierarchical_clustering(R,opt_hier);
     order = niak_hier2order(hier);
     part = niak_threshold_hierarchy(hier,struct('thresh',opt.nb_classes));
 end
 
 %% Run the tests
-res = niak_glm(model,opt_glm);
+%% Deal with multisite data using the metal approach
+if length(model)>1
+    for num_model = 1:length(model)
+        res.site(num_model) = niak_glm(model(num_model),opt_glm);
+    end
+    eff = zeros(size(res.site(end).eff));
+    std_eff = zeros(size(res.site(end).std_eff));
+    for num_model = 1:length(model)
+        eff = eff + (res.site(num_model).eff./(res.site(num_model).std_eff).^2);
+        std_eff = std_eff + (1./(res.site(num_model).std_eff).^2);
+    end
+    res.eff = eff ./ std_eff;
+    res.std_eff = sqrt(1./std_eff);
+    res.ttest = res.eff./res.std_eff;
+    res.pce = 2*(1-normcdf(abs(res.ttest)));
+else
+    res = niak_glm(model,opt_glm);
+end
+res.part = part;
+res.hier = hier;
+res.order = order;
+
 
 %% Generate connection-level partition
 for pp = 1:size(part,2)
@@ -167,8 +203,26 @@ for ss = 1:opt.nb_samps
     if opt.flag_verbose
         niak_progress(ss,opt.nb_samps);
     end
-    model_null = niak_permutation_glm(model);
-    res_null = niak_glm(model_null,opt_glm);
+    
+    if length(model)>1
+        for num_model = 1:length(model)
+            model_null(num_model) = niak_permutation_glm(model(num_model));
+            res_null.site(num_model) = niak_glm(model_null(num_model),opt_glm);
+        end
+        eff = zeros(size(res_null.site(end).eff));
+        std_eff = zeros(size(res_null.site(end).std_eff));
+        for num_model = 1:length(model_null)
+            eff = eff + (res_null.site(num_model).eff./(res_null.site(num_model).std_eff).^2);
+            std_eff = std_eff + (1./(res_null.site(num_model).std_eff).^2);
+        end
+        res_null.eff = eff ./ std_eff;
+        res_null.std_eff = sqrt(1./std_eff);
+        res_null.ttest = res_null.eff./res_null.std_eff;
+        res_null.pce = 2*(1-normcdf(abs(res_null.ttest)));
+    else
+        model_null = niak_permutation_glm(model);
+        res_null = niak_glm(model_null,opt_glm);
+    end
     pce_null(ss,:) = res_null.pce;
 end
 
