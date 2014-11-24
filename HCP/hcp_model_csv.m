@@ -60,6 +60,7 @@ end
 %  %  end
 
 %% path and files names
+mkdir([root_path 'fmri_preprocess_' upper(opt.task) '_' lower(opt.exp)],'EVs/');
 data.dir_output         = [root_path 'fmri_preprocess_' upper(opt.task) '_' lower(opt.exp) '/EVs/'];
 data.name_csv_group     = 'hcp_model_group';
 data.name_csv_intrarun  = 'hcp_model_intrarun';

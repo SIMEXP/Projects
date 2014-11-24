@@ -74,18 +74,17 @@ opt_g.type_files = 'fir'; % Specify to the grabber to prepare the files for the 
 
 %Temporary grabber for debugging
 liste_exclude = dir ([root_path 'fmri_preprocess_' upper(task) '_' exp '/anat']);
-liste_exclude = liste_exclude(5:end -1);
+liste_exclude = liste_exclude(23:end -1);
 liste_exclude = {liste_exclude.name};
 opt_g.exclude_subject = liste_exclude;
 
 files_in = niak_grab_fmri_preprocess([root_path 'fmri_preprocess_' upper(task) '_' exp],opt_g); % Replace the folder by the path where the results of the fMRI preprocessing pipeline were stored. 
 
 %% Event times
-data.covariates_group_subs = {'HCP100307','HCP100408'};
-
+data.covariates_group_subs = fieldnames(files_in.fmri);
 for list = 1:length(data.covariates_group_subs)    
-files_in.timing.(data.covariates_group_subs{list}).session1.([lower(task)(1:2) 'RL']) = [root_path 'fmri_preprocess_' upper(task) '_' exp '/EVs/hcp_model_intrarun.csv'];
-files_in.timing.(data.covariates_group_subs{list}).session1.([lower(task)(1:2) 'LR']) = [root_path 'fmri_preprocess_' upper(task) '_' exp '/EVs/hcp_model_intrarun.csv'];
+    files_in.timing.(data.covariates_group_subs{list}).session1.([lower(task)(1:2) 'RL']) = [root_path 'fmri_preprocess_' upper(task) '_' exp '/EVs/hcp_model_intrarun.csv'];
+    files_in.timing.(data.covariates_group_subs{list}).session1.([lower(task)(1:2) 'LR']) = [root_path 'fmri_preprocess_' upper(task) '_' exp '/EVs/hcp_model_intrarun.csv'];
 end
 
 
