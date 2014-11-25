@@ -162,102 +162,98 @@ for num_s = 1:length(list_subject)
     if ~isfield(files,subject)
         error('I could not find subject %s ',subject)
     end
-    %% Loop over subject's sessions
-    
-        file_anat = char(files.(subject).anat); % The individual T1 scan
-        file_func = char(files.(subject).fmri); % The individual Functional scan
-    
-        if ~psom_exist(file_anat)
-            error('I could not find the anatomical scan %s for subject %s',file_anat,subject)
+    file_anat = char(files.(subject).anat); % The individual T1 scan
+    file_func = char(files.(subject).fmri); % The individual Functional scan
+    if ~psom_exist(file_anat)
+        error('I could not find the anatomical scan %s for subject %s',file_anat,subject)
+    end
+    if ~psom_exist(file_func)
+    error('I could not find the functional scan %s for subject %s',file_func,subject)
+    end
+    fprintf('    Individual T1 and Functional scan \n')
+    [status,msg] = system(['register ' file_func ' ' file_anat ' &']);
+    if status ~=0
+        error('There was an error calling register. The error message was: msg')
+    end
+
+    % Get the input from the user for anatomical image
+    flag_ok = false;
+    while ~flag_ok
+          fprintf('    Rate T1 scan Subject %s\n',subject)
+          qc_input = input(sprintf('        ([O]K / [M]aybe / [F]ail), Default "%s": ',qc_tmp{2}),'s');
+          flag_ok = ismember(qc_input,{'OK','O','Maybe','M','Fail','F',''});
+          if ~flag_ok
+              fprintf('        The status should be O , M or F\n')
+          end
+    end
+    switch qc_input
+          case {'OK','O'}
+              qc_report{num_s+1,3} = 'OK';
+          case {'Maybe','M'}
+              qc_report{num_s+1,3} = 'Maybe';
+          case {'Fail','F'}
+              qc_report{num_s+1,3} = 'Fail';        
+          case ''
+              qc_report{num_s+1,3} = qc_tmp{2};
+    end
+    flag_ok = false;
+    while ~flag_ok
+          qc_comment = input(sprintf('        Comment, Default "%s": ',qc_tmp{3}),'s');
+          flag_ok = isempty(findstr(qc_comment,','));
+          if ~flag_ok
+              fprintf('        No comma allowed\n')
+          end
+    end
+    if isempty(qc_comment)
+      qc_report{num_s+1,4} = qc_tmp{3};
+    else
+      qc_report{num_s+1,4} = qc_comment;
+    end    
+
+
+    % Get the input from the user for functional scan
+    flag_ok = false;
+    while ~flag_ok
+          fprintf('    Rate Functional scan Subject %s\n',subject)
+          qc_input = input(sprintf('        ([O]K / [M]aybe / [F]ail), Default "%s": ',qc_tmp{4}),'s');
+          flag_ok = ismember(qc_input,{'OK','O','Maybe','M','Fail','F',''});
+          if ~flag_ok
+              fprintf('        The status should be O , M or F\n')
+          end
+    end
+    switch qc_input
+        case {'OK','O'}
+            qc_report{num_s+1,5} = 'OK';
+        case {'Maybe','M'}
+            qc_report{num_s+1,5} = 'Maybe';
+        case {'Fail','F'}
+            qc_report{num_s+1,5} = 'Fail';   
+        case ''
+            qc_report{num_s+1,5} = qc_tmp{4};
+    end
+    flag_ok = false;
+    while ~flag_ok
+        qc_comment = input(sprintf('        Comment, Default "%s": ',qc_tmp{5}),'s');
+        flag_ok = isempty(findstr(qc_comment,','));
+        if ~flag_ok
+            fprintf('        No comma allowed\n')
         end
-        if ~psom_exist(file_func)
-        error('I could not find the functional scan %s for subject %s',file_func,subject)
-        end
-    
-        fprintf('    Individual T1 and Functional scan \n')
-        [status,msg] = system(['register ' file_func ' ' file_anat ' &']);
-        if status ~=0
-           error('There was an error calling register. The error message was: msg')
-        end
-    
-       % Get the input from the user for anatomical image
-       flag_ok = false;
-       while ~flag_ok
-              fprintf('    Rate T1 scan Subject %s\n',subject)
-              qc_input = input(sprintf('        ([O]K / [M]aybe / [F]ail), Default "%s": ',qc_tmp{2}),'s');
-              flag_ok = ismember(qc_input,{'OK','O','Maybe','M','Fail','F',''});
-              if ~flag_ok
-                  fprintf('        The status should be O , M or F\n')
-              end
-       end
-       switch qc_input
-             case {'OK','O'}
-                  qc_report{num_s+1,3} = 'OK';
-             case {'Maybe','M'}
-                  qc_report{num_s+1,3} = 'Maybe';
-             case {'Fail','F'}
-                  qc_report{num_s+1,3} = 'Fail';        
-             case ''
-                  qc_report{num_s+1,3} = qc_tmp{2};
-       end
-       flag_ok = false;
-       while ~flag_ok
-             qc_comment = input(sprintf('        Comment, Default "%s": ',qc_tmp{3}),'s');
-             flag_ok = isempty(findstr(qc_comment,','));
-             if ~flag_ok
-                 fprintf('        No comma allowed\n')
-             end
-       end
-       if isempty(qc_comment)
-          qc_report{num_s+1,4} = qc_tmp{3};
-       else
-          qc_report{num_s+1,4} = qc_comment;
-       end    
-    
-    
-       % Get the input from the user for functional scan
-       flag_ok = false;
-       while ~flag_ok
-              fprintf('    Rate Functional scan Subject %s\n',subject)
-              qc_input = input(sprintf('        ([O]K / [M]aybe / [F]ail), Default "%s": ',qc_tmp{4}),'s');
-              flag_ok = ismember(qc_input,{'OK','O','Maybe','M','Fail','F',''});
-              if ~flag_ok
-                  fprintf('        The status should be O , M or F\n')
-              end
-       end
-       switch qc_input
-           case {'OK','O'}
-                qc_report{num_s+1,5} = 'OK';
-           case {'Maybe','M'}
-               qc_report{num_s+1,5} = 'Maybe';
-           case {'Fail','F'}
-               qc_report{num_s+1,5} = 'Fail';   
-           case ''
-               qc_report{num_s+1,5} = qc_tmp{4};
-       end
-       flag_ok = false;
-       while ~flag_ok
-           qc_comment = input(sprintf('        Comment, Default "%s": ',qc_tmp{5}),'s');
-           flag_ok = isempty(findstr(qc_comment,','));
-           if ~flag_ok
-               fprintf('        No comma allowed\n')
-           end
-       end
-       if isempty(qc_comment)
-        qc_report{num_s+1,6} = qc_tmp{5};
-       else
-        qc_report{num_s+1,6} = qc_comment;
-       end
-    
-       % Final status
-       if strcmp(qc_report{num_s+1,3},'Fail')||strcmp(qc_report{num_s+1,5},'Fail')
-          qc_report{num_s+1,2} = [' Fail'];
-       elseif strcmp(qc_report{num_s+1,3},'Maybe')||strcmp(qc_report{num_s+1,5},'Maybe')
-          qc_report{num_s+1,2} = [' Maybe'];
-       else 
-          qc_report{num_s+1,2} = [' OK'];
-       end
-    
+    end
+    if isempty(qc_comment)
+    qc_report{num_s+1,6} = qc_tmp{5};
+    else
+    qc_report{num_s+1,6} = qc_comment;
+    end
+
+    % Final status
+    if strcmp(qc_report{num_s+1,3},'Fail')||strcmp(qc_report{num_s+1,5},'Fail')
+      qc_report{num_s+1,2} = [' Fail'];
+    elseif strcmp(qc_report{num_s+1,3},'Maybe')||strcmp(qc_report{num_s+1,5},'Maybe')
+      qc_report{num_s+1,2} = [' Maybe'];
+    else 
+      qc_report{num_s+1,2} = [' OK'];
+    end
+
        %% Save the report
        niak_write_csv_cell(file_qc,qc_report);
     end
