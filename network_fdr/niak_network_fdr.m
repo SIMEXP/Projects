@@ -23,7 +23,7 @@ function [res,opt] = niak_network_fdr(model,part,opt)
 %      hypothesis. 'TST' : The two-stage estimator; 'LSL' : the least-slope estimator.
 %      See NIAK_BUILD_PI_0.
 %   Q (scalar, default 0.05) the acceptable level of false-discovery rate.
-%   P_OMNI (scalar, default 0.05) the p-value for the omnibut test.
+%   Q_OMNI (scalar, default OPT.Q) the FDR level for the omnibut test.
 %   FLAG_SHRINKAGE (boolean, default true) turn on/off the shrinkage of the estimated proportion of null
 %   FLAG_VERBOSE (boolean, default true) verbose progress information.
 %   NB_CLASSES (vector of integer, default 10) the number of clusters in the partition. 
@@ -139,11 +139,13 @@ if (nargin<2)||(isempty(opt))
 end
 
 %% Default options
-list_fields    = { 'p_omni' , 'flag_shrinkage' , 'nb_classes' , 'hier'   , 'q'  , 'method' , 'nb_samps' , 'flag_verbose' , 'flag_rsquare' , 'flag_eff' , 'flag_residuals' , 'flag_beta', 'test'  };
-list_defaults  = { 0.05     , true             , 10           , struct() , 0.05 , 'LSL'    , 1000       , true           , false          , false      , false            , false      , 'ttest' };
+list_fields    = { 'q_omni' , 'flag_shrinkage' , 'nb_classes' , 'hier'   , 'q'  , 'method' , 'nb_samps' , 'flag_verbose' , 'flag_rsquare' , 'flag_eff' , 'flag_residuals' , 'flag_beta', 'test'  };
+list_defaults  = { []       , true             , 10           , struct() , 0.05 , 'LSL'    , 1000       , true           , false          , false      , false            , false      , 'ttest' };
 opt = psom_struct_defaults(opt,list_fields,list_defaults);
-
-opt_glm = rmfield(opt,{'p_omni' , 'flag_shrinkage' , 'nb_classes','hier','q','method','nb_samps','flag_verbose'}); % the options for niak_glm
+if isempty(opt.q_omni)
+    opt.q_omni = opt.q;
+end
+opt_glm = rmfield(opt,{'q_omni' , 'flag_shrinkage' , 'nb_classes','hier','q','method','nb_samps','flag_verbose'}); % the options for niak_glm
 
 %% Generate the partitions, if necessary
 if (nargin<2)||isempty(part)
@@ -160,6 +162,9 @@ if (nargin<2)||isempty(part)
     hier = niak_hierarchical_clustering(R,opt_hier);
     order = niak_hier2order(hier);
     part = niak_threshold_hierarchy(hier,struct('thresh',opt.nb_classes));
+else
+    hier = [];
+    order = [];
 end
 
 %% Run the tests
@@ -241,7 +246,8 @@ end
 res.pi_0 = pi_0;
 for pp = 1:size(part,2)
     if opt.flag_shrinkage
-        pi_0{pp}(res.pce_omnibus{pp}>=(opt.p_omni/length(res.pce_omnibus{pp}))) = 1; % shrink the estimation of the proportion of true null towards 1
+        test_omnibus = niak_fdr(res.pce_omnibus{pp},'BH',opt.q_omni);
+        pi_0{pp}(~test_omnibus) = 1; % shrink the estimation of the proportion of true null towards 1
     end
     res.test_fdr{pp} = niak_group_fdr(res.pce(:),pi_0{pp},mpart{pp},opt.q);
 end
