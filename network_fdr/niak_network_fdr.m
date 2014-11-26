@@ -246,7 +246,7 @@ end
 res.pi_0 = pi_0;
 for pp = 1:size(part,2)
     if opt.flag_shrinkage
-        test_omnibus = niak_fdr(res.pce_omnibus{pp},'BH',opt.q_omni);
+        [fdr,test_omnibus] = niak_fdr(res.pce_omnibus{pp}(:),'BH',opt.q_omni);
         pi_0{pp}(~test_omnibus) = 1; % shrink the estimation of the proportion of true null towards 1
     end
     res.test_fdr{pp} = niak_group_fdr(res.pce(:),pi_0{pp},mpart{pp},opt.q);
