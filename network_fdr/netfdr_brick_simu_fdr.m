@@ -18,6 +18,10 @@ function [files_in,files_out,opt] = netfdr_brick_simu_fdr(files_in,files_out,opt
 %         in this case OPT.{THETA,N} below have to be specified.
 %   THETA (scalar, default 1) the effect size.
 %   LIST_SCALES (vector of integers) the list of scales used for testing. 
+%   PI_LOW (scalar, default 0.1) the proportion of within- / between-cluster
+%      showing an omnibus effect at low resolution.
+%   PI_HIGH (scalar, default 0.2) the proportion of the tests within-/between-cluster
+%      showing an effect at high resolution.
 %   LIST_FDR (vector, default [0.01 0.05 0.1 0.2]) the levels of acceptable 
 %      false-discovery rate for the t-maps.
 %   NB_SUBJECT (integer) the number of subjects per group.
@@ -71,8 +75,8 @@ list_defaults = { ''        , ''     };
 files_in = psom_struct_defaults(files_in,list_fields,list_defaults);
 
 %% Options
-list_fields   = { 'nb_perm' , 'type_background' , 'theta' , 'nb_samps' , 'list_fdr'          , 'nb_subject' , 'rand_seed' , 'list_scales' , 'flag_verbose' , 'flag_test'  };
-list_defaults = { 1000      , 'iid'             , 1       , 100        , [0.01 0.05 0.1 0.2] , 20           , []          , NaN           , true           , false        };
+list_fields   = { 'pi_low' , 'pi_high' , 'nb_perm' , 'type_background' , 'theta' , 'nb_samps' , 'list_fdr'          , 'nb_subject' , 'rand_seed' , 'list_scales' , 'flag_verbose' , 'flag_test'  };
+list_defaults = { 0.1      , 0.2       , 1000     , 'iid'             , 1       , 100        , [0.01 0.05 0.1 0.2] , 20           , []          , NaN           , true           , false        };
 opt = psom_struct_defaults(opt,list_fields,list_defaults);
 
 if opt.scale_ref == 0
