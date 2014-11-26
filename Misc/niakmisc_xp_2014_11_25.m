@@ -69,9 +69,13 @@ sum(test)/length(test)
 perc_disc = mean(niak_lvec2mat(test),1);
 hdr.file_name = 'perc_disc_metal.nii.gz';
 niak_write_vol(hdr,niak_part2vol(perc_disc,sc));
-% res_metal = niak_network_fdr (model,[],opt_fdr);
-% sum(res.test_fdr{1})
-% ans = 0
+
+res_metal = niak_network_fdr (model,[],opt_fdr);
+sum(res.test_fdr{1})
+% ans = 43
+perc_disc = mean(niak_lvec2mat(res_metal.test_fdr{1}),1);
+hdr.file_name = 'perc_disc_metal.nii.gz';
+niak_write_vol(hdr,niak_part2vol(perc_disc,sc));
 
 %% MNI MCI
 opt_fdr2 = opt_fdr;
