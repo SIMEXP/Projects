@@ -256,6 +256,12 @@ niak_write_csv_cell ([ group_motion filesep 'qc_scrubbing_group.csv' ], scrub_cs
 niak_write_csv_cell ([ group_coregistration filesep 'func_tab_qc_coregister_stereonl.csv' ], xcorrf_csv );
 niak_write_csv_cell ([ group_coregistration filesep 'anat_tab_qc_coregister_stereonl.csv' ], xcorrf_csv );
 
+% convert data to mninc 
+if strcmp(opt.file_ext,'minc')
+   opt_conv.flag_zip = 1;
+   niak_brick_nii2mnc(fmri_preprocess, fmri_preprocess, opt_conv);
+end
+
 % get the the 3mm  AAL template from github and resampl it to 2mm 
 [msg,err]=system(['wget -O ' anat filesep 'template_aal.mnc.gz https://github.com/SIMEXP/niak/raw/master/template/roi_aal_3mm.mnc.gz']);
 files_group.ereas      = sprintf([anat filesep 'template_aal.mnc.gz']);
@@ -265,11 +271,6 @@ files_out_resamp       = [anat filesep 'template_aal.mnc.gz'];
 opt_resamp.interpolation      = 'nearest_neighbour';
 niak_brick_resample_vol (files_in_resamp,files_out_resamp,opt_resamp);
 
-% convert data to mninc 
-if strcmp(opt.file_ext,'minc')
-   opt_conv.flag_zip = 1;
-   niak_brick_nii2mnc(fmri_preprocess, fmri_preprocess, opt_conv);
-end
 
 % create the mean functional image of the first run for each subject
 if opt.flag_verbose
