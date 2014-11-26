@@ -2,8 +2,8 @@ clear all
 addpath(genpath('/home/atam/quarantaine/niak-boss-0.12.18'));
 path_data = '/gs/scratch/atam/';
 
-%%% ADNET GLM CONNECTOME SCRIPT - MAIN CONTRASTS - basc 40 scales -
-%%% NOTE: MONTREAL SITES FOR CNE ONLY
+%%% ADNET GLM CONNECTOME SCRIPT - basc 40 scales -
+%%% NOTE: MONTREAL SITES FOR CNE ONLY - comparing CNEs against each other
 
 % Permission is hereby granted, free of charge, to any person obtaining a copy
 % of this software and associated documentation files (the "Software"), to deal
