@@ -85,9 +85,18 @@ path_qc = niak_full_path(opt.path_qc);
 
 %% Grab the raw data set
 
-path_raw_fmri = path_qc;
-subjects_list = dir([path_raw_fmri]);
-subjects_list = {subjects_list(3:end).name};
+list_subject_raw = dir(path_qc);
+nb_subject = 0;
+for num_ss = 1:length(list_subject_raw)
+    if ~ismember(list_subject_raw(num_ss).name,{'.','..','octave-workspace'})
+       nb_subject = nb_subject + 1;
+       sprintf('Adding subject %s', list_subject_raw(num_ss).name)
+       subjects_list{nb_subject} = list_subject_raw(num_ss).name;     
+    else 
+       sprintf('subject %s is discarded', list_subject_raw(num_ss).name)
+    end  
+end   
+  
 
 %%  Subject names
     for subject_n = 1:length(subjects_list)
