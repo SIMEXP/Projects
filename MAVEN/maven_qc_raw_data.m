@@ -103,7 +103,7 @@ end
         subject = subjects_list{ subject_n};
         fprintf('Subject %s\n',subject)
         % subject runs
-        subject_run = dir([path_raw_fmri subject filesep 'func/']);
+        subject_run = dir([path_qc subject filesep 'func/']);
         subject_run = {subject_run(3:end).name};
         
 %%      loop over runs
@@ -112,11 +112,11 @@ end
             fprintf('   %s\n',run)
             
 %%          Adding the subject to the list of files
-            path_fmri = [path_raw_fmri subject filesep 'func/' run filesep];
+            path_fmri = [path_qc subject filesep 'func/' run filesep];
             fmri_file = dir([path_fmri "RSN*"]);
             files.([subject 'run' num2str(num_run)]).fmri =[path_fmri fmri_file.name];
             
-            path_anat = [path_raw_fmri subject filesep 'anat/'];
+            path_anat = [path_qc subject filesep 'anat/'];
             anat_file = dir([path_anat "MPRAGEt1mprages009a1001*"]);
             files.([subject 'run' num2str(num_run)]).anat=[path_anat anat_file.name];
         end
