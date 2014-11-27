@@ -2,7 +2,7 @@ clear;
 % Paths are for Mammouth atm
 in_path = '/gs/scratch/surchs/abide_mnc';
 part_path = '/gs/project/gsf-624-aa/database2/phenoclust/mask/mstep_part_sc_36.nii.gz';
-out_path = '/gs/project/gsf-624-aa/database2/phenoclust/out/sc36/';
+out_path = [pwd '/sc36/'];
 % Search for the files we need and build the structure
 f = dir(in_path);
 [~, path_name, ~] = niak_fileparts(in_path);
@@ -47,5 +47,10 @@ disp(sprintf('I found %d files in %s.\n', numf, in_path));
 opt.psom.max_queued = 100;
 opt.scores.flag_target = true;
 opt.scores.flag_deal = true;
+% Remove the number of subjects for debugging
+fprintf('To make debugging easier, I will remove most of the subjects again\n');
+fn = fieldname(in_files.fmri);
+in_files.fmri = rmfield(in_files.fmri, fn(5:end));
+
 disp('Running the pipeline now.')
 pipeline = niak_pipeline_stability_scores(in_files, opt);
