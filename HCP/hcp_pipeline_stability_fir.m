@@ -1,3 +1,25 @@
+function [] = hcp_pipeleine_stability_fir(opt)
+% Script to run a preprocessing pipeline analysis on the HCP database.
+%
+% SYNTAX:
+% []= HCP_PIPELEINE_STABILITY_FIR(OPT);
+%
+% _________________________________________________________________________
+% INPUTS:
+%
+% OPT
+%   (structure, optional) with the following fields :
+%
+%   TASK
+%       (string, default 'MOTOR') type of tasks that would be extracted. Possibles tasks are: 'EMOTION',
+%       'GAMBLING','LANGUAGE','MOTOR','REST','RELATIONAL','SOCIAL','WM'.
+%
+%   EXP
+%       (string, default 'hcp') type of pipeline preprocessing used .
+%       Possibles pipeline : 'NIAK', 'HCP'
+%
+% _________________________________________________________________________
+%
 % Script to run a STABILITY_FIR pipeline analysis on the HCP database.
 %
 % Copyright (c) Pierre Bellec, Yassine Benhajali
@@ -30,8 +52,20 @@ clear all
 %% Parameters
 %%%%%%%%%%%%%%%%%%%%%
 %% set experimentent
-task  = 'emotion';
-exp   = 'hcp';
+list_fields   = { 'task' , 'exp' };
+list_defaults = { 'motor', 'hcp' };
+if ischar (opt.task ) &&  ischar(opt.exp)
+   if ismember(opt.task,{'EMOTION','GAMBLING','LANGUAGE','MOTOR','REST','RELATIONAL','SOCIAL','WM'}) && ismember(opt.exp,{'hcp','niak'})
+      opt = psom_struct_defaults(opt,list_fields,list_defaults);
+   else
+      error('wrong task or experiement, see documentation')
+   end
+else 
+   error ( 'you must specifie the task and the experiment')
+end
+
+task  = opt.task;
+exp   = opt.exp;
 fprintf ('script to run niak_stability_fir pipeline \n Task: %s \n experiment: %s\n',task,exp)
 
 %% Setting input/output files 
@@ -44,7 +78,7 @@ if strfind(server,'lg-1r') % This is guillimin
 elseif strfind(server,'ip05') % this is mammouth
     root_path = '/mnt/parallel_scratch_ms2_wipe_on_april_2015/pbellec/benhajal/HCP/';
     fprintf ('server: %s (Mammouth) \n',server)
-    my_user_name = getenv('USER');
+    my_useHCP_PIPELEINE_STABILITY_FIRr_name = getenv('USER');
 else
     switch server
         case 'peuplier' % this is peuplier
