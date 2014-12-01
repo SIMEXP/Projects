@@ -1,4 +1,4 @@
-function [] = hcp_pipeleine_stability_fir(opt)
+function [] = hcp_pipeline_stability_fir(opt)
 % Script to run a preprocessing pipeline analysis on the HCP database.
 %
 % SYNTAX:
@@ -61,7 +61,7 @@ if ischar (opt.task ) &&  ischar(opt.exp)
       error('wrong task or experiement, see documentation')
    end
 else 
-   error ( 'you must specifie the task and the experiment')
+   error ( 'you must specify the task and the experiment')
 end
 
 task  = opt.task;
@@ -96,7 +96,7 @@ end
 %% create the csv model files
 opt_model.task = task;
 opt_model.exp  = exp;
-hcp_model_csv(root_path,opt_model);
+eval([ 'hcp_model_' lower(opt_model.task) '_csv(root_path,opt_model)']);
 
 %%%%%%%%%%%%%%%%%%%%
 %% Grabbing the results from the NIAK fMRI preprocessing pipeline
