@@ -58,6 +58,7 @@ function [] = hcp_pipeline_stability_fir(opt)
 list_fields   = { 'task' , 'exp', 'trial' };
 list_defaults = { 'motor', 'hcp', ''      };
 if ischar (opt.task ) &&  ischar(opt.exp)
+   opt.task = upper(opt.task);
    if ismember(opt.task,{'EMOTION','GAMBLING','LANGUAGE','MOTOR','REST','RELATIONAL','SOCIAL','WM'}) && ismember(opt.exp,{'hcp','niak'}) && ischar(opt.trial)
       opt = psom_struct_defaults(opt,list_fields,list_defaults);
    else
