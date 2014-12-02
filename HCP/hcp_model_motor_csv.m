@@ -26,7 +26,7 @@ root_path = niak_full_path (root_path);
 
 %% Default options
 list_fields   = { 'task'    , 'exp'};
-list_defaults = { 'emotion' , 'hcp'   };
+list_defaults = { 'motor  ' , 'hcp'   };
 if (nargin > 1)  
     opt = psom_struct_defaults(opt,list_fields,list_defaults);
 else
@@ -85,7 +85,7 @@ data.name_csv_intrarunRL  = 'hcp_model_intrarunRL';
 
 %% intrarunLR fir
 data.covariates_intrarunLR_names = {'times','duration'};
-data.covariates_intrarunLR_cond  = {'rh1','rh2','baseline1','baseline2'};
+data.covariates_intrarunLR_cond  = {'rh','rh','baseline','baseline'};
 data.covariates_intrarunLR_values(1,1) = 9.5;
 data.covariates_intrarunLR_values(1,2) = 16.5; 
 data.covariates_intrarunLR_values(2,1) = 129.5;
@@ -97,7 +97,7 @@ data.covariates_intrarunLR_values(4,2) = 4;
 opt_ind.labels_y = data.covariates_intrarunLR_names;
 opt_ind.labels_x = data.covariates_intrarunLR_cond;
 opt_ind.precision = 2;
-niak_write_csv(strcat(data.dir_output,data.name_csv_intrarunLR,'.csv'),data.covariates_intrarun_values,opt_ind);
+niak_write_csv(strcat(data.dir_output,data.name_csv_intrarunLR,'.csv'),data.covariates_intrarunLR_values,opt_ind);
 
 %% intrarunRL fir
 data.covariates_intrarunRL_names = {'times','duration'};
@@ -106,11 +106,11 @@ data.covariates_intrarunRL_values(1,1) = 84.5;
 data.covariates_intrarunRL_values(1,2) = 16.5; 
 data.covariates_intrarunRL_values(2,1) = 160.5;
 data.covariates_intrarunRL_values(2,2) = 16.5;
-data.covariates_intrarunLR_values(3,1) = 83.05;
-data.covariates_intrarunLR_values(3,2) = 4;
-data.covariates_intrarunLR_values(4,1) = 159.5;
-data.covariates_intrarunLR_values(4,2) = 4;
+data.covariates_intrarunRL_values(3,1) = 83.05;
+data.covariates_intrarunRL_values(3,2) = 4;
+data.covariates_intrarunRL_values(4,1) = 159.5;
+data.covariates_intrarunRL_values(4,2) = 4;
 opt_ind.labels_y = data.covariates_intrarunRL_names;
 opt_ind.labels_x = data.covariates_intrarunRL_cond;
 opt_ind.precision = 2;
-niak_write_csv(strcat(data.dir_output,data.name_csv_intrarunRL,'.csv'),data.covariates_intrarun_values,opt_ind);
+niak_write_csv(strcat(data.dir_output,data.name_csv_intrarunRL,'.csv'),data.covariates_intrarunRL_values,opt_ind);

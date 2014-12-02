@@ -17,6 +17,8 @@ function [] = hcp_pipeline_stability_fir(opt)
 %   EXP
 %       (string, default 'hcp') type of pipeline preprocessing used .
 %       Possibles pipeline : 'NIAK', 'HCP'
+%   TRIAL
+%       (string, default '') type of trial to estimate the fir response, it depend on th task used .
 %
 % _________________________________________________________________________
 %
@@ -46,19 +48,20 @@ function [] = hcp_pipeline_stability_fir(opt)
 % LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 % OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 % THE SOFTWARE.
+% _________________________________________________________________________
+%
 
-clear all
 %%%%%%%%%%%%%%%%%%%%%
 %% Parameters
 %%%%%%%%%%%%%%%%%%%%%
 %% set experimentent
-list_fields   = { 'task' , 'exp' };
-list_defaults = { 'motor', 'hcp' };
+list_fields   = { 'task' , 'exp', 'trial' };
+list_defaults = { 'motor', 'hcp', ''      };
 if ischar (opt.task ) &&  ischar(opt.exp)
-   if ismember(opt.task,{'EMOTION','GAMBLING','LANGUAGE','MOTOR','REST','RELATIONAL','SOCIAL','WM'}) && ismember(opt.exp,{'hcp','niak'})
+   if ismember(opt.task,{'EMOTION','GAMBLING','LANGUAGE','MOTOR','REST','RELATIONAL','SOCIAL','WM'}) && ismember(opt.exp,{'hcp','niak'}) && ischar(opt.trial)
       opt = psom_struct_defaults(opt,list_fields,list_defaults);
    else
-      error('wrong task or experiement, see documentation')
+      error('wrong task, experiement or trial, see help hcp_pipeline_stability_fir')
    end
 else 
    error ( 'you must specify the task and the experiment')
@@ -66,7 +69,8 @@ end
 
 task  = opt.task;
 exp   = opt.exp;
-fprintf ('script to run niak_stability_fir pipeline \n Task: %s \n experiment: %s\n',task,exp)
+trial = opt.trial;
+fprintf ('script to run niak_stability_fir pipeline \n Task: %s \n Experiment: %s\n Trial: %s\n',task,exp,trial)
 
 %% Setting input/output files 
 [status,cmdout] = system ('uname -n');
@@ -117,8 +121,8 @@ files_in = niak_grab_fmri_preprocess([root_path 'fmri_preprocess_' upper(task) '
 %% Event times
 data.covariates_group_subs = fieldnames(files_in.fmri);
 for list = 1:length(data.covariates_group_subs)    
-    files_in.timing.(data.covariates_group_subs{list}).session1.([lower(task)(1:2) 'RL']) = [root_path 'fmri_preprocess_' upper(task) '_' exp '/EVs/hcp_model_intrarun.csv'];
-    files_in.timing.(data.covariates_group_subs{list}).session1.([lower(task)(1:2) 'LR']) = [root_path 'fmri_preprocess_' upper(task) '_' exp '/EVs/hcp_model_intrarun.csv'];
+    files_in.timing.(data.covariates_group_subs{list}).session1.([lower(task)(1:2) 'RL' trial]) = [root_path 'fmri_preprocess_' upper(task) '_' exp '/EVs/hcp_model_intrarunRL.csv'];
+    files_in.timing.(data.covariates_group_subs{list}).session1.([lower(task)(1:2) 'LR' trial]) = [root_path 'fmri_preprocess_' upper(task) '_' exp '/EVs/hcp_model_intrarunLR.csv'];
 end
 
 
@@ -127,20 +131,20 @@ end
 %%%%%%%%%%%%%
 
 %% BASC
-opt.folder_out = [ root_path '/stability_fir_perc_' exp ]; % Where to store the results
+opt.folder_out = [ root_path '/stability_fir_perc_' upper(task) trial '_' exp ]; % Where to store the results
 opt.grid_scales = [5:5:50 60:10:200 220:20:400 500:100:900]; % Search in the range 2-900 clusters
-opt.scales_maps = [ 10   7   7 ;
-                    20  16  17 ]; % Usually, this is initially left empty. After the pipeline ran a first time, the results of the MSTEPS procedure are used to select the final scales
+opt.scales_maps = [ 7   7   7 ;
+                    50  50  50 ]; % Usually, this is initially left empty. After the pipeline ran a first time, the results of the MSTEPS procedure are used to select the final scales
 opt.stability_fir.nb_samps = 100;    % Number of bootstrap samples at the individual level. 100: the CI on indidividual stability is +/-0.1
 opt.stability_fir.std_noise = 0;     % The standard deviation of the judo noise. The value 0 will not use judo noise. 
 opt.stability_group.nb_samps = 500;  % Number of bootstrap samples at the group level. 500: the CI on group stability is +/-0.05
 opt.nb_min_fir = 1;    % the minimum response windows number. By defaut is set to 1
 opt.stability_group.min_subject = 2; % (integer, default 3) the minimal number of subjects to start the group-level stability analysis. An error message will be issued if this number is not reached.
 %% FIR estimation 
-opt.name_condition = 'task';
+opt.name_condition = 'rh';
 opt.name_baseline = 'baseline';
 opt.fir.type_norm     = 'fir';       % The type of normalization of the FIR.
-opt.fir.time_window   = 125.72;          % The size (in sec) of the time window to evaluate the response --> 176 vols
+opt.fir.time_window   = 16.5;        % The size (in sec) of the time window to evaluate the response
 opt.fir.max_interpolation = 7.2;    % --> max 10 vols consécutifs manquants (TR = 0.72s), sinon bloc rejeté, mais ça devrait être irrelevant comme pas de scrubbing ici
 opt.fir.time_sampling = 0.72;           % The time between two samples for the estimated response. Do not go below 1/2 TR unless there is a very large number of trials.
 opt.fir.nb_min_baseline = 1 ;
