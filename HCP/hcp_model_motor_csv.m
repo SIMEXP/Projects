@@ -2,7 +2,7 @@ function [] = hcp_model_motor_csv(root_path,opt)
 % generate group and individual model for motor task HCP database.
 %
 % SYNTAX:
-% [] = HCP_MODEL_CSV(OPT)
+% [] = HCP_MODEL_MOTOR_CSV(OPT)
 %
 % _________________________________________________________________________
 % root_path (string, default [pwd]) the full path to the root folder that contain the 
@@ -20,7 +20,31 @@ function [] = hcp_model_motor_csv(root_path,opt)
 %%%%%%%%%%%%%%%%%%%%%
 %% Default path
 if isempty(root_path)
-   root_path = [pwd filesep];
+  %% Setting input/output files 
+  [status,cmdout] = system ('uname -n');
+  server          = strtrim(cmdout);
+  if strfind(server,'lg-1r') % This is guillimin
+      root_path = '/gs/scratch/yassinebha/HCP/';
+      fprintf ('server: %s (Guillimin) \n ',server)
+      my_user_name = getenv('USER');
+  elseif strfind(server,'ip05') % this is mammouth
+      root_path = '/mnt/parallel_scratch_ms2_wipe_on_april_2015/pbellec/benhajal/HCP/';
+      fprintf ('server: %s (Mammouth) \n',server)
+      my_user_name = getenv('USER');
+  else
+      switch server
+          case 'peuplier' % this is peuplier
+          root_path = '/media/scratch2/HCP_unproc_tmp/';
+          fprintf ('server: %s\n',server)
+          my_user_name = getenv('USER');
+          
+          case 'noisetier' % this is noisetier
+          root_path = '/media/database1/';
+          fprintf ('server: %s\n',server)
+          my_user_name = getenv('USER');
+      end
+  end
+   
 end
 root_path = niak_full_path (root_path);
 
@@ -33,40 +57,14 @@ else
     opt = psom_struct_defaults(struct(),list_fields,list_defaults);
 end
 
-%  %  for debuging only -------------------------------
-%% Setting input/output files 
-[status,cmdout] = system ('uname -n');
-server          = strtrim(cmdout);
-if strfind(server,'lg-1r') % This is guillimin
-    root_path = '/gs/scratch/yassinebha/HCP/';
-    fprintf ('server: %s (Guillimin) \n ',server)
-    my_user_name = getenv('USER');
-elseif strfind(server,'ip05') % this is mammouth
-    root_path = '/mnt/parallel_scratch_ms2_wipe_on_april_2015/pbellec/benhajal/HCP/';
-    fprintf ('server: %s (Mammouth) \n',server)
-    my_user_name = getenv('USER');
-else
-    switch server
-        case 'peuplier' % this is peuplier
-        root_path = '/media/scratch2/HCP_unproc_tmp/';
-        fprintf ('server: %s\n',server)
-        my_user_name = getenv('USER');
-        
-        case 'noisetier' % this is noisetier
-        root_path = '/media/database1/';
-        fprintf ('server: %s\n',server)
-        my_user_name = getenv('USER');
-    end
-end
-%%%------------------------------------------------------------
-
-
 %% path and files names
 mkdir([root_path 'fmri_preprocess_' upper(opt.task) '_' lower(opt.exp)],'EVs/');
 data.dir_output         = [root_path 'fmri_preprocess_' upper(opt.task) '_' lower(opt.exp) '/EVs/'];
 data.name_csv_group     = 'hcp_model_group';
 data.name_csv_intrarunLR  = 'hcp_model_intrarunLR';
 data.name_csv_intrarunRL  = 'hcp_model_intrarunRL';
+
+
 %  %% subjects
 %  data.subs =  {'HCP100307','HCP100408'};
 %  
