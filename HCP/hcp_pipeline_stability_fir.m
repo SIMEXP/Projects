@@ -121,8 +121,8 @@ files_in = niak_grab_fmri_preprocess([root_path 'fmri_preprocess_' upper(task) '
 %% Event times
 data.covariates_group_subs = fieldnames(files_in.fmri);
 for list = 1:length(data.covariates_group_subs)    
-    files_in.timing.(data.covariates_group_subs{list}).session1.([lower(task)(1:2) 'RL' trial]) = [root_path 'fmri_preprocess_' upper(task) '_' exp '/EVs/hcp_model_intrarunRL.csv'];
-    files_in.timing.(data.covariates_group_subs{list}).session1.([lower(task)(1:2) 'LR' trial]) = [root_path 'fmri_preprocess_' upper(task) '_' exp '/EVs/hcp_model_intrarunLR.csv'];
+    files_in.timing.(data.covariates_group_subs{list}).session1.([lower(task)(1:2) 'RL']) = [root_path 'fmri_preprocess_' upper(task) '_' exp '/EVs/hcp_model_intrarunRL.csv'];
+    files_in.timing.(data.covariates_group_subs{list}).session1.([lower(task)(1:2) 'LR']) = [root_path 'fmri_preprocess_' upper(task) '_' exp '/EVs/hcp_model_intrarunLR.csv'];
 end
 
 
@@ -133,8 +133,8 @@ end
 %% BASC
 opt.folder_out = [ root_path '/stability_fir_perc_' upper(task) trial '_' exp ]; % Where to store the results
 opt.grid_scales = [5:5:50 60:10:200 220:20:400 500:100:900]; % Search in the range 2-900 clusters
-opt.scales_maps = [ 7   7   7 ;
-                    50  50  50 ]; % Usually, this is initially left empty. After the pipeline ran a first time, the results of the MSTEPS procedure are used to select the final scales
+opt.scales_maps = [ 10   7   7 ; 
+                    80  80  83]; % Usually, this is initially left empty. After the pipeline ran a first time, the results of the MSTEPS procedure are used to select the final scales
 opt.stability_fir.nb_samps = 100;    % Number of bootstrap samples at the individual level. 100: the CI on indidividual stability is +/-0.1
 opt.stability_fir.std_noise = 0;     % The standard deviation of the judo noise. The value 0 will not use judo noise. 
 opt.stability_group.nb_samps = 500;  % Number of bootstrap samples at the group level. 500: the CI on group stability is +/-0.05
