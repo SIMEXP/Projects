@@ -111,12 +111,12 @@ opt_g.min_xcorr_func = 0.5; % The minimum xcorr score for an fMRI dataset to be 
 opt_g.min_xcorr_anat = 0.5; % The minimum xcorr score for an fMRI dataset to be included. This metric is a tool for quality control which assess the quality of non-linear coregistration of the anatomical image in stereotaxic space. Manual inspection of the values during QC is necessary to properly set this threshold.
 opt_g.type_files = 'fir'; % Specify to the grabber to prepare the files for the STABILITY_FIR pipeline
 
-%Temporary grabber for debugging
-liste_exclude = dir ([root_path 'fmri_preprocess_' upper(task) '_' exp '/anat']);
-liste_exclude = liste_exclude(23:end -1);
-liste_exclude = {liste_exclude.name};
-opt_g.exclude_subject = liste_exclude;
-
+%%Temporary grabber for debugging
+%liste_exclude = dir ([root_path 'fmri_preprocess_' upper(task) '_' exp '/anat']);
+%liste_exclude = liste_exclude(23:end -1);
+%liste_exclude = {liste_exclude.name};
+%opt_g.exclude_subject = liste_exclude;
+opt_g.exclude_subject ={'HCP168139'}; % to be investigated later , it make the pipelne crash, strange artifact in functional images
 files_in = niak_grab_fmri_preprocess([root_path 'fmri_preprocess_' upper(task) '_' exp],opt_g); % Replace the folder by the path where the results of the fMRI preprocessing pipeline were stored. 
 
 %% Event times
@@ -163,6 +163,7 @@ opt.flag_group = true;  % Generate maps/FIR at the group level
 %%%%%%%%%%%%%%%%%%%%%%
 opt.flag_test = false; % Put this flag to true to just generate the pipeline without running it. Otherwise the pipeline will start.
 %opt.psom.qsub_options = 'q lm -l nodes=1:ppn=12,walltime=05:00:00';
+opt.psom.qsub_options = '-q sw -l nodes=1:ppn=4,walltime=05:00:00';
 pipeline = niak_pipeline_stability_fir(files_in,opt);
 
 %%extra
