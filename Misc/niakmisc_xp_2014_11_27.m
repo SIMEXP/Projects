@@ -1,57 +1,59 @@
 
 clear
+opt_glm.test = 'ttest';
 
-warning('This script will generate a lot of results in the current folder. Press CTRL-C now to interrupt !')
-pause
+%% Load raw data
+load glm_ctrlvsmci_sci50_scg50_scf50.mat
+model = multisite.model(1);
+[hdr,sc] = niak_read_vol('networks_sci50_scg50_scf50.nii.gz');
 
-%% Set up paths
-path_curr = pwd;
-path_roi  = [path_curr filesep 'rois']; % Where to save the real regional time series
-path_out  = [path_curr filesep 'xp_2014_11_14']; % Where to store the results of the simulation
-path_logs = [path_out filesep 'logs']; % Where to save the logs of the pipeline
-psom_mkdir(path_out);
+%% Get rid of AD_CRIUGM's data
+ad_criugm = niak_find_str_cell(model.labels_x,'ad_hc');
+model.x = model.x(~ad_criugm,:);
+%model.y = model.y(~ad_criugm,:);
+model.y = niak_normalize_tseries(model.y(~ad_criugm,:)','median_mad')';
+model.c = model.c;
+model.labels_x = model.labels_x(~ad_criugm);
+model.labels_y = model.labels_y;
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% Download the ICBM aging functional connectomes - time series %%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-if ~psom_exist(path_roi)
-    mkdir(path_roi)
-    cd(path_roi)
-    fprintf('Could not find the aging time series. Downloading from figshare ...\n')
-    instr_dwnld = 'wget http://downloads.figshare.com/article/public/1241650';
-    [status,msg] = system(instr_dwnld);
-    if status~=0
-        psom_clean(path_roi)
-        error('Could not download the necessary data from figshare. The command was: %s. The error message was: %s',instr_dwnld,msg);
-    end
-    instr_unzip = 'unzip 1241650';
-    [status,msg] = system(instr_unzip);
-    if status~=0
-        psom_clean(path_roi)
-        error('Could not unzip the necessary data. The command was: %s. The error message was: %s',instr_unzip,msg);
-    end
-    psom_clean('1241650');
-    cd(path_curr)
-end
+%% Make masks per site
+mni_mci = niak_find_str_cell(model.labels_x,'ad_');
+criugm_mci = niak_find_str_cell(model.labels_x,'SB_');
+adpd = niak_find_str_cell(model.labels_x,'AD');
 
-%% Read the demographics data
-[tab,list_subject,ly] = niak_read_csv([path_roi filesep 'aging_full_model.csv']);
-age = tab(:,2);
+%% Extract submodels: mni_mci
+model_metal(1).x = model.x(mni_mci,:);
+model_metal(1).y = model.y(mni_mci,:);
+model_metal(1).c = model.c;
+model_metal(1).labels_x = model.labels_x(mni_mci);
+model_metal(1).labels_y = model.labels_y;
 
-%% Read connectoms
-for ss = 1:length(list_subject)
-    file_conn = [path_roi filesep 'correlation_' list_subject{ss} '_roi.mat'];
-    data = load(file_conn);
-    if ss == 1
-        conn = zeros(length(list_subject),length(data.mat_r));
-    end
-    R = data.mat_r;
-    R = (R-median(R))/niak_mad(R);    
-    conn(ss,:) = R;
+%% Extract submodels: criugm_mci
+model_metal(2).x = model.x(criugm_mci,:);
+model_metal(2).y = model.y(criugm_mci,:);
+model_metal(2).c = model.c;
+model_metal(2).labels_x = model.labels_x(criugm_mci);
+model_metal(2).labels_y = model.labels_y;
+
+%% Extract submodels: adpd
+model_metal(3).x = model.x(adpd,:);
+model_metal(3).y = model.y(adpd,:);
+model_metal(3).c = model.c;
+model_metal(3).labels_x = model.labels_x(adpd);
+model_metal(3).labels_y = model.labels_y;
+
+%% Extract submodels: adni2
+model_metal(4) = multisite.model(2);
+
+%% Build connectomes
+conn = [];
+exp = [];
+for num_m = 1:length(model_metal)
+    conn = [conn ; niak_normalize_tseries(model_metal(num_m).y')'];
+    exp = [exp ; [ones(size(model_metal(num_m).x,1),1) (model_metal(num_m).x(:,2)==max(model_metal(num_m).x(:,2)))]];    
 end
 
 %% Just simple t-stats
-exp = [ones(length(age),1) age];
 x = exp;
 x(:,2) = niak_normalize_tseries(exp(:,2));
 [beta,e,std_e,ttest,pce] = niak_lse(conn,x,[0;1]);
@@ -62,12 +64,13 @@ opt_v.limits = [-0.5 0.5];
 niak_visu_matrix(beta(2,:)',opt_v)
 
 %% Now try to predict age
+list_subject = cell(size(conn,1),1);
 list_c = 2.^(-7:2:10);
 list_g = 2.^(-10:2:5);
 K = 10;
 n = 8;
 age_hat = zeros(length(list_subject),1);
-exp = exp(randperm(size(exp,1)),:);
+age = exp(:,2);
 for ss = 1:length(list_subject) % Leave-one out cross-validation
 %for ss = 1:10 % Leave-one out cross-validation
     % Verbose progress
@@ -96,20 +99,6 @@ for ss = 1:length(list_subject) % Leave-one out cross-validation
     % Rank connections   
     [brank,erank,std_erank,ttest_rank,pce_rank] = niak_lse(avg_conn(mask,:),x,[0;1]);
     [val,order] = sort(abs(ttest_rank),'descend');
-    
-    % Run a stability analysis
-    if ss == 1
-        stab = zeros(length(part),length(part));
-    end
-    tmp = zeros(size(ttest_rank));
-    tmp(order(1:n)) = 1;
-    tmp = niak_vec2mat(tmp,0);
-    [indx,indy] = find(tmp);
-    adj = zeros(size(stab));
-    for num_i = 1:length(indx)
-        adj(part==indx(num_i),part==indy(num_i)) = 1;
-    end
-    stab = stab + adj;
     
     % Normalize the low-resolution connectomes (not using the test data)
     avg_conn = avg_conn(:,order(1:n));
@@ -141,11 +130,3 @@ for ss = 1:length(list_subject) % Leave-one out cross-validation
 %      model_svm = svmtrain(x(:,2),samp,sprintf('-s 3 -t 2 -c %1.10f -g %1.10f',list_c(ind_c),list_g(ind_g)));
 %      age_hat(ss) = svmpredict(exp(ss,2),[1 avg_conn(ss,:)],model_svm);
 end
-stab = stab / length(list_subject);
-R = niak_build_correlation(stab);
-hier_stab = niak_hierarchical_clustering (R);
-order_stab = niak_hier2order (hier_stab);
-beta = niak_vec2mat(beta(2,:));
-niak_visu_matrix(beta(order_stab,order_stab),opt_v)
-figure
-niak_visu_matrix(stab(order_stab,order_stab))

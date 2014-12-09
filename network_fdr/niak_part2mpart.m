@@ -1,11 +1,13 @@
-function mpart = niak_part2mpart( part )
+function mpart = niak_part2mpart( part , flag_lvec )
 % Convert a partition on nodes into a partition on edges.
 % 
-% MPART = NIAK_LVEC2GRP( PART )
+% MPART = NIAK_PART2MPART( PART , FLAG_LVEC )
 %
 % PART (array Kx1) a partition of the K nodes
+% FLAG_LVEC (default true) if the flag is on, use NIAK_MAT2LVEC to vectorize the mask. 
+%   Otherwise, use NIAK_MAT2VEC.
 % MPART (vector 1xL) a partition of the L vectorized edges into within or between partition-coefficients.
-%   The edges are vectorized with NIAK_MAT2LVEC.
+%   The edges are vectorized with NIAK_MAT2(LVEC/VEC).
 %
 % Copyright (c) Pierre Bellec, 
 % Centre de recherche de l'institut de gériatrie de Montréal, 
@@ -58,4 +60,8 @@ for k1 = 1:nb_part
 end
 
 %% Vectorize the matrix partition
-mpart = niak_mat2lvec(mpart);
+if (nargin<2)||flag_lvec
+    mpart = niak_mat2lvec(mpart);
+else 
+    mpart = niak_mat2vec(mpart);
+end

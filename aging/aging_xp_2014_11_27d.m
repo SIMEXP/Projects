@@ -7,7 +7,7 @@ pause
 %% Set up paths
 path_curr = pwd;
 path_roi  = [path_curr filesep 'rois']; % Where to save the real regional time series
-path_out  = [path_curr filesep 'xp_2014_11_14']; % Where to store the results of the simulation
+path_out  = [path_curr filesep 'xp_2014_11_27d']; % Where to store the results of the simulation
 path_logs = [path_out filesep 'logs']; % Where to save the logs of the pipeline
 psom_mkdir(path_out);
 
@@ -64,18 +64,22 @@ niak_visu_matrix(beta(2,:)',opt_v)
 %% Now try to predict age
 list_c = 2.^(-7:2:10);
 list_g = 2.^(-10:2:5);
-K = 10;
-n = 8;
+K = 30;
+n = 15;
 age_hat = zeros(length(list_subject),1);
-exp = exp(randperm(size(exp,1)),:);
-for ss = 1:length(list_subject) % Leave-one out cross-validation
+%exp = exp(randperm(size(exp,1)),:);
+perc = 0.4;
+nb_samps_age = zeros(size(age));
+nb_samps = 40;
+for ss = 1:nb_samps % Leave-one out cross-validation
 %for ss = 1:10 % Leave-one out cross-validation
     % Verbose progress
-    niak_progress(ss,length(list_subject));
+    niak_progress(ss,nb_samps);
     
     % Create a logical mask for the leave-one-out
-    mask = true(size(age));
-    mask(ss) = false;
+    mask = false(size(age));
+    mask(1:ceil(perc*length(list_subject))) = true;
+    mask = mask(randperm(length(mask)));
     
     % Extract the data, excluding one subject
     y = conn(mask,:);
@@ -118,9 +122,9 @@ for ss = 1:length(list_subject) % Leave-one out cross-validation
     avg_conn = (avg_conn - ones(length(list_subject),1)*m_avg_conn)./repmat(s_avg_conn,[length(list_subject),1]);
     
     % a simple regression model
-    beta_age = niak_lse(x(:,2),[ones(length(list_subject)-1,1) avg_conn(mask,:)]);
-    age_hat(ss) = [1 avg_conn(ss,:)]*beta_age;
-    
+    beta_age = niak_lse(x(:,2),[ones(sum(mask),1) avg_conn(mask,:)]);
+    age_hat(~mask) = age_hat(~mask) + [ones(sum(~mask),1) avg_conn(~mask,:)]*beta_age;
+    nb_samps_age(~mask) = nb_samps_age(~mask)+1;
 %      % a SVM prediction
 %      score = zeros(length(list_c),length(list_g));
 %      samp = [ones(length(list_subject)-1,1) avg_conn(mask,:)];
@@ -141,7 +145,7 @@ for ss = 1:length(list_subject) % Leave-one out cross-validation
 %      model_svm = svmtrain(x(:,2),samp,sprintf('-s 3 -t 2 -c %1.10f -g %1.10f',list_c(ind_c),list_g(ind_g)));
 %      age_hat(ss) = svmpredict(exp(ss,2),[1 avg_conn(ss,:)],model_svm);
 end
-stab = stab / length(list_subject);
+stab = stab / nb_samps;
 R = niak_build_correlation(stab);
 hier_stab = niak_hierarchical_clustering (R);
 order_stab = niak_hier2order (hier_stab);
@@ -149,3 +153,4 @@ beta = niak_vec2mat(beta(2,:));
 niak_visu_matrix(beta(order_stab,order_stab),opt_v)
 figure
 niak_visu_matrix(stab(order_stab,order_stab))
+age_hat = age_hat./nb_samps_age;
