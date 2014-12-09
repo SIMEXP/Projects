@@ -64,10 +64,10 @@ niak_visu_matrix(beta(2,:)',opt_v)
 %% Now try to predict age
 list_c = 2.^(-7:2:10);
 list_g = 2.^(-10:2:5);
-K = 10;
+K = 7;
 n = 8;
+nb_c = 5;
 age_hat = zeros(length(list_subject),1);
-exp = exp(randperm(size(exp,1)),:);
 for ss = 1:length(list_subject) % Leave-one out cross-validation
 %for ss = 1:10 % Leave-one out cross-validation
     % Verbose progress
@@ -87,32 +87,20 @@ for ss = 1:length(list_subject) % Leave-one out cross-validation
     hier = niak_hierarchical_clustering(R,struct('flag_verbose',false));
     part = niak_threshold_hierarchy(hier,struct('thresh',K));
     
-    % Generate connectomes at the new resolution
-    avg_conn = zeros(length(list_subject)-1,K*(K-1)/2);
-    for ss2 = 1:length(list_subject)
-        avg_conn(ss2,:) = niak_build_avg_sim(niak_vec2mat(conn(ss2,:)),part,true);
-    end
-
-    % Rank connections   
-    [brank,erank,std_erank,ttest_rank,pce_rank] = niak_lse(avg_conn(mask,:),x,[0;1]);
-    [val,order] = sort(abs(ttest_rank),'descend');
+    % Select the highest predictive connection per block
+    mpart = niak_part2mpart(part,false);
+    max_m = max(mpart(:));
+    ind_c = zeros(max_m,1);
+    val_m = zeros(max_m,1);
     
-    % Run a stability analysis
-    if ss == 1
-        stab = zeros(length(part),length(part));
+    for mm = 1:max_m
+        [val(mm),ind_c(mm)] = max(abs(ttest'.*(mpart==mm)));
     end
-    tmp = zeros(size(ttest_rank));
-    tmp(order(1:n)) = 1;
-    tmp = niak_vec2mat(tmp,0);
-    [indx,indy] = find(tmp);
-    adj = zeros(size(stab));
-    for num_i = 1:length(indx)
-        adj(part==indx(num_i),part==indy(num_i)) = 1;
-    end
-    stab = stab + adj;
+    [val,order] = sort(abs(val),'descend');
+    ind_c = ind_c(order(1:nb_c));
     
-    % Normalize the low-resolution connectomes (not using the test data)
-    avg_conn = avg_conn(:,order(1:n));
+    % Extract model of interest
+    avg_conn = conn(:,ind_c);
     m_avg_conn = mean(avg_conn(mask,:),1);
     s_avg_conn = std(avg_conn(mask,:),[],1);
     avg_conn = (avg_conn - ones(length(list_subject),1)*m_avg_conn)./repmat(s_avg_conn,[length(list_subject),1]);
@@ -120,32 +108,4 @@ for ss = 1:length(list_subject) % Leave-one out cross-validation
     % a simple regression model
     beta_age = niak_lse(x(:,2),[ones(length(list_subject)-1,1) avg_conn(mask,:)]);
     age_hat(ss) = [1 avg_conn(ss,:)]*beta_age;
-    
-%      % a SVM prediction
-%      score = zeros(length(list_c),length(list_g));
-%      samp = [ones(length(list_subject)-1,1) avg_conn(mask,:)];
-%      for num_c = 1:length(list_c)
-%          for num_g = 1:length(list_g)
-%              for ss2 = 1:(length(list_subject)-2) %% Nested cross-validation
-%                  mask2 = true(length(list_subject)-1,1);
-%                  mask2(ss2) = false;
-%                  model_svm = svmtrain(x(mask2,2),samp(mask2,:),sprintf('-s 3 -t 2 -c %1.10f -g %1.10f',list_c(num_c),list_g(num_g)));
-%                  val_pred = svmpredict(x(ss2,2),samp(ss2,:),model_svm);
-%                  score(num_c,num_g) = score(num_c,num_g) + (val_pred-x(ss2,2))^2;
-%               end
-%               score(num_c,num_g) = sqrt(score(num_c,num_g)/(length(list_subject)-2));
-%          end
-%      end
-%      [score_min,ind] = min(score(:));
-%      [ind_c,ind_g] = ind2sub(size(score),ind);
-%      model_svm = svmtrain(x(:,2),samp,sprintf('-s 3 -t 2 -c %1.10f -g %1.10f',list_c(ind_c),list_g(ind_g)));
-%      age_hat(ss) = svmpredict(exp(ss,2),[1 avg_conn(ss,:)],model_svm);
 end
-stab = stab / length(list_subject);
-R = niak_build_correlation(stab);
-hier_stab = niak_hierarchical_clustering (R);
-order_stab = niak_hier2order (hier_stab);
-beta = niak_vec2mat(beta(2,:));
-niak_visu_matrix(beta(order_stab,order_stab),opt_v)
-figure
-niak_visu_matrix(stab(order_stab,order_stab))

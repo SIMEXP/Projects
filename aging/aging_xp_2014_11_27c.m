@@ -7,7 +7,7 @@ pause
 %% Set up paths
 path_curr = pwd;
 path_roi  = [path_curr filesep 'rois']; % Where to save the real regional time series
-path_out  = [path_curr filesep 'xp_2014_11_14']; % Where to store the results of the simulation
+path_out  = [path_curr filesep 'xp_2014_11_27b']; % Where to store the results of the simulation
 path_logs = [path_out filesep 'logs']; % Where to save the logs of the pipeline
 psom_mkdir(path_out);
 
@@ -61,13 +61,24 @@ fprintf('Percentage of discovery: %1.2f\n',sum(sig)/length(sig));
 opt_v.limits = [-0.5 0.5];
 niak_visu_matrix(beta(2,:)',opt_v)
 
+%% Build a brain parcellation
+K = 30;
+R = niak_build_correlation(niak_vec2mat(ttest')); % Compute the similarity matrix between effect maps
+hier = niak_hierarchical_clustering(R,struct('flag_verbose',false));
+part = niak_threshold_hierarchy(hier,struct('thresh',K));
+    
+%% Build connectomes at the new resolution
+avg_conn_all = zeros(length(list_subject)-1,K*(K-1)/2);
+for ss2 = 1:length(list_subject)
+    avg_conn_all(ss2,:) = niak_build_avg_sim(niak_vec2mat(conn(ss2,:)),part,true);
+end
+
 %% Now try to predict age
 list_c = 2.^(-7:2:10);
 list_g = 2.^(-10:2:5);
-K = 10;
 n = 8;
 age_hat = zeros(length(list_subject),1);
-exp = exp(randperm(size(exp,1)),:);
+
 for ss = 1:length(list_subject) % Leave-one out cross-validation
 %for ss = 1:10 % Leave-one out cross-validation
     % Verbose progress
@@ -77,42 +88,12 @@ for ss = 1:length(list_subject) % Leave-one out cross-validation
     mask = true(size(age));
     mask(ss) = false;
     
-    % Extract the data, excluding one subject
-    y = conn(mask,:);
-    x = exp(mask,:);
-    
-    % Run a BASC-GLM analysis
-    [beta,e,std_e,ttest,pce] = niak_lse(y,x,[0;1]); 
-    R = niak_build_correlation(niak_vec2mat(ttest')); % Compute the similarity matrix between effect maps
-    hier = niak_hierarchical_clustering(R,struct('flag_verbose',false));
-    part = niak_threshold_hierarchy(hier,struct('thresh',K));
-    
-    % Generate connectomes at the new resolution
-    avg_conn = zeros(length(list_subject)-1,K*(K-1)/2);
-    for ss2 = 1:length(list_subject)
-        avg_conn(ss2,:) = niak_build_avg_sim(niak_vec2mat(conn(ss2,:)),part,true);
-    end
-
     % Rank connections   
-    [brank,erank,std_erank,ttest_rank,pce_rank] = niak_lse(avg_conn(mask,:),x,[0;1]);
+    [brank,erank,std_erank,ttest_rank,pce_rank] = niak_lse(avg_conn_all(mask,:),x,[0;1]);
     [val,order] = sort(abs(ttest_rank),'descend');
     
-    % Run a stability analysis
-    if ss == 1
-        stab = zeros(length(part),length(part));
-    end
-    tmp = zeros(size(ttest_rank));
-    tmp(order(1:n)) = 1;
-    tmp = niak_vec2mat(tmp,0);
-    [indx,indy] = find(tmp);
-    adj = zeros(size(stab));
-    for num_i = 1:length(indx)
-        adj(part==indx(num_i),part==indy(num_i)) = 1;
-    end
-    stab = stab + adj;
-    
     % Normalize the low-resolution connectomes (not using the test data)
-    avg_conn = avg_conn(:,order(1:n));
+    avg_conn = avg_conn_all(:,order(1:n));
     m_avg_conn = mean(avg_conn(mask,:),1);
     s_avg_conn = std(avg_conn(mask,:),[],1);
     avg_conn = (avg_conn - ones(length(list_subject),1)*m_avg_conn)./repmat(s_avg_conn,[length(list_subject),1]);
@@ -141,11 +122,3 @@ for ss = 1:length(list_subject) % Leave-one out cross-validation
 %      model_svm = svmtrain(x(:,2),samp,sprintf('-s 3 -t 2 -c %1.10f -g %1.10f',list_c(ind_c),list_g(ind_g)));
 %      age_hat(ss) = svmpredict(exp(ss,2),[1 avg_conn(ss,:)],model_svm);
 end
-stab = stab / length(list_subject);
-R = niak_build_correlation(stab);
-hier_stab = niak_hierarchical_clustering (R);
-order_stab = niak_hier2order (hier_stab);
-beta = niak_vec2mat(beta(2,:));
-niak_visu_matrix(beta(order_stab,order_stab),opt_v)
-figure
-niak_visu_matrix(stab(order_stab,order_stab))

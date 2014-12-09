@@ -1,81 +1,38 @@
+function res = niak_beta_scale(model,opt)
 
-clear
-
-warning('This script will generate a lot of results in the current folder. Press CTRL-C now to interrupt !')
-pause
-
-%% Set up paths
-path_curr = pwd;
-path_roi  = [path_curr filesep 'rois']; % Where to save the real regional time series
-path_out  = [path_curr filesep 'xp_2014_11_14']; % Where to store the results of the simulation
-path_logs = [path_out filesep 'logs']; % Where to save the logs of the pipeline
-psom_mkdir(path_out);
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% Download the ICBM aging functional connectomes - time series %%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-if ~psom_exist(path_roi)
-    mkdir(path_roi)
-    cd(path_roi)
-    fprintf('Could not find the aging time series. Downloading from figshare ...\n')
-    instr_dwnld = 'wget http://downloads.figshare.com/article/public/1241650';
-    [status,msg] = system(instr_dwnld);
-    if status~=0
-        psom_clean(path_roi)
-        error('Could not download the necessary data from figshare. The command was: %s. The error message was: %s',instr_dwnld,msg);
-    end
-    instr_unzip = 'unzip 1241650';
-    [status,msg] = system(instr_unzip);
-    if status~=0
-        psom_clean(path_roi)
-        error('Could not unzip the necessary data. The command was: %s. The error message was: %s',instr_unzip,msg);
-    end
-    psom_clean('1241650');
-    cd(path_curr)
+%% Setting up defaults for MODEL
+model = psom_struct_defaults( model , ...
+        { 'x' , 'y' , 'c' } , ...
+        { NaN , NaN , NaN } );
+        
+%% Setting up defaults for OPT 
+opt = psom_struct_defaults ( opt , ...
+      { 'type_normalize' , 'nb_samps' , 'perc' , 'nb_clusters' , 'nb_features' } , ...
+      { 'median_mad'     , 100        , 50     , 30            , 10            } );
+      
+%% Normalize connectomes
+if ~strcmp(opt.type_normalize)
+    model.y = niak_normalize_tseries(model.y',opt.type_normalize)';
 end
 
-%% Read the demographics data
-[tab,list_subject,ly] = niak_read_csv([path_roi filesep 'aging_full_model.csv']);
-age = tab(:,2);
-
-%% Read connectoms
-for ss = 1:length(list_subject)
-    file_conn = [path_roi filesep 'correlation_' list_subject{ss} '_roi.mat'];
-    data = load(file_conn);
-    if ss == 1
-        conn = zeros(length(list_subject),length(data.mat_r));
-    end
-    R = data.mat_r;
-    R = (R-median(R))/niak_mad(R);    
-    conn(ss,:) = R;
+%% Extract variable of interest 
+if sum(model.c>0)>1
+    error('Only a contrast on one variable is supported')
 end
+var_to_predict = model.x(:,model.c>0);
 
-%% Just simple t-stats
-exp = [ones(length(age),1) age];
-x = exp;
-x(:,2) = niak_normalize_tseries(exp(:,2));
-[beta,e,std_e,ttest,pce] = niak_lse(conn,x,[0;1]);
-[fdr,sig] = niak_fdr(pce','BH',0.05);
-fprintf('Max ttest: %1.2f\n',max(ttest));
-fprintf('Percentage of discovery: %1.2f\n',sum(sig)/length(sig));
-opt_v.limits = [-0.5 0.5];
-niak_visu_matrix(beta(2,:)',opt_v)
-
-%% Now try to predict age
-list_c = 2.^(-7:2:10);
-list_g = 2.^(-10:2:5);
-K = 10;
-n = 8;
-age_hat = zeros(length(list_subject),1);
-exp = exp(randperm(size(exp,1)),:);
-for ss = 1:length(list_subject) % Leave-one out cross-validation
+%% Run the estimation
+nb_samps_age = zeros(size(age));
+nb_samps = 40;
+for ss = 1:nb_samps % Leave-one out cross-validation
 %for ss = 1:10 % Leave-one out cross-validation
     % Verbose progress
-    niak_progress(ss,length(list_subject));
+    niak_progress(ss,nb_samps);
     
     % Create a logical mask for the leave-one-out
-    mask = true(size(age));
-    mask(ss) = false;
+    mask = false(size(age));
+    mask(1:ceil(perc*length(list_subject))) = true;
+    mask = mask(randperm(length(mask)));
     
     % Extract the data, excluding one subject
     y = conn(mask,:);
@@ -118,9 +75,9 @@ for ss = 1:length(list_subject) % Leave-one out cross-validation
     avg_conn = (avg_conn - ones(length(list_subject),1)*m_avg_conn)./repmat(s_avg_conn,[length(list_subject),1]);
     
     % a simple regression model
-    beta_age = niak_lse(x(:,2),[ones(length(list_subject)-1,1) avg_conn(mask,:)]);
-    age_hat(ss) = [1 avg_conn(ss,:)]*beta_age;
-    
+    beta_age = niak_lse(x(:,2),[ones(sum(mask),1) avg_conn(mask,:)]);
+    age_hat(~mask) = age_hat(~mask) + [ones(sum(~mask),1) avg_conn(~mask,:)]*beta_age;
+    nb_samps_age(~mask) = nb_samps_age(~mask)+1;
 %      % a SVM prediction
 %      score = zeros(length(list_c),length(list_g));
 %      samp = [ones(length(list_subject)-1,1) avg_conn(mask,:)];
@@ -141,7 +98,7 @@ for ss = 1:length(list_subject) % Leave-one out cross-validation
 %      model_svm = svmtrain(x(:,2),samp,sprintf('-s 3 -t 2 -c %1.10f -g %1.10f',list_c(ind_c),list_g(ind_g)));
 %      age_hat(ss) = svmpredict(exp(ss,2),[1 avg_conn(ss,:)],model_svm);
 end
-stab = stab / length(list_subject);
+stab = stab / nb_samps;
 R = niak_build_correlation(stab);
 hier_stab = niak_hierarchical_clustering (R);
 order_stab = niak_hier2order (hier_stab);
@@ -149,3 +106,4 @@ beta = niak_vec2mat(beta(2,:));
 niak_visu_matrix(beta(order_stab,order_stab),opt_v)
 figure
 niak_visu_matrix(stab(order_stab,order_stab))
+age_hat = age_hat./nb_samps_age;
