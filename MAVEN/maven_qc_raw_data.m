@@ -88,7 +88,7 @@ path_qc = niak_full_path(opt.path_qc);
 list_subject_raw = dir(path_qc);
 nb_subject = 0;
 for num_ss = 1:length(list_subject_raw)
-    if ~ismember(list_subject_raw(num_ss).name,{'.','..','octave-workspace'})
+    if ~ismember(list_subject_raw(num_ss).name,{'.','..','octave-workspace','qc_report.csv','octave_core'})
        nb_subject = nb_subject + 1;
        sprintf('Adding subject %s', list_subject_raw(num_ss).name)
        subjects_list{nb_subject} = list_subject_raw(num_ss).name;     
@@ -99,28 +99,37 @@ end
   
 
 %%  Subject names
-    for subject_n = 1:length(subjects_list)
-        subject = subjects_list{ subject_n};
-        fprintf('Subject %s\n',subject)
-        % subject runs
-        subject_run = dir([path_qc subject filesep 'func/']);
-        subject_run = {subject_run(3:end).name};
-        
+for subject_n = 1:length(subjects_list)
+    subject = subjects_list{ subject_n};
+    fprintf('Subject %s\n',subject)
+    % subject runs
+    subject_run = dir([path_qc subject filesep 'func/']);
+    subject_run = {subject_run(3:end).name};
+    
 %%      loop over runs
-        for num_run = 1:length(subject_run)
-            run = subject_run{num_run};
-            fprintf('   %s\n',run)
-            
+    for num_run = 1:length(subject_run)
+        run = subject_run{num_run};
+        fprintf('   %s\n',run)
+        
 %%          Adding the subject to the list of files
-            path_fmri = [path_qc subject filesep 'func/' run filesep];
-            fmri_file = dir([path_fmri "RSN*"]);
-            files.([subject 'run' num2str(num_run)]).fmri =[path_fmri fmri_file.name];
-            
-            path_anat = [path_qc subject filesep 'anat/'];
-            anat_file = dir([path_anat "MPRAGEt1mprages009a1001*"]);
-            files.([subject 'run' num2str(num_run)]).anat=[path_anat anat_file.name];
+        path_fmri = [path_qc subject filesep 'func/' run filesep];
+        fmri_file = dir([path_fmri "RSN*"]);
+        files.([subject 'run' num2str(num_run)]).fmri =[path_fmri fmri_file.name];
+        
+        path_anat = [path_qc subject filesep 'anat/'];
+        anat_file = dir([path_anat "MPRAGEt1mprages*"]);
+        switch anat_file(ismember({anat_file.name},{'MPRAGEt1mprages009a1001.mnc','MPRAGEt1mprages015a1001.mnc','MPRAGEt1mprages011a1001.mnc'})).name
+              case 'MPRAGEt1mprages009a1001.mnc'
+              files.([subject 'run' num2str(num_run)]).anat=[path_anat 'MPRAGEt1mprages009a1001.mnc'];
+              case 'MPRAGEt1mprages015a1001.mnc'
+              files.([subject 'run' num2str(num_run)]).anat=[path_anat 'MPRAGEt1mprages015a1001.mnc'];
+              case 'MPRAGEt1mprages011a1001.mnc'
+              files.([subject 'run' num2str(num_run)]).anat=[path_anat 'MPRAGEt1mprages011a1001.mnc']
+              otherwise
+              warning('subject %s has no anat found', subject)
         end
     end
+end
 
 %% Set default for the list of subjects
 list_subject = opt.list_subject;
@@ -174,10 +183,10 @@ for num_s = 1:length(list_subject)
     file_anat = char(files.(subject).anat); % The individual T1 scan
     file_func = char(files.(subject).fmri); % The individual Functional scan
     if ~psom_exist(file_anat)
-        error('I could not find the anatomical scan %s for subject %s',file_anat,subject)
+        warning('I could not find the anatomical scan %s for subject %s',file_anat,subject)
     end
     if ~psom_exist(file_func)
-    error('I could not find the functional scan %s for subject %s',file_func,subject)
+    warning('I could not find the functional scan %s for subject %s',file_func,subject)
     end
     fprintf('    Individual T1 and Functional scan \n')
     [status,msg] = system(['register ' file_func ' ' file_anat ' &']);
