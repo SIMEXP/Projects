@@ -124,9 +124,10 @@ for subject_n = 1:length(subjects_list)
               case 'MPRAGEt1mprages015a1001.mnc'
               files.([subject 'run' num2str(num_run)]).anat=[path_anat 'MPRAGEt1mprages015a1001.mnc'];
               case 'MPRAGEt1mprages011a1001.mnc'
-              files.([subject 'run' num2str(num_run)]).anat=[path_anat 'MPRAGEt1mprages011a1001.mnc']
+              files.([subject 'run' num2str(num_run)]).anat=[path_anat 'MPRAGEt1mprages011a1001.mnc'];
               otherwise
               warning('subject %s has no anat found', subject)
+              files.([subject 'run' num2str(num_run)]).anat=[path_anat ''];
         end
     end
 end
