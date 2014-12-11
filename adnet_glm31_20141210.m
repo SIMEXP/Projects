@@ -90,7 +90,6 @@ opt.test.ctrlvsmci.group.contrast.fd = 0;
 opt.test.ctrlvsmci.group.contrast.criugm_mci = 0;
 opt.test.ctrlvsmci.group.contrast.mnimci = 0;
 opt.test.ctrlvsmci.group.contrast.adpd = 0;
-opt.test.ctrlvsmci.group.multisite = 'mtladni2sites';
 opt.test.ctrlvsmci.group.select.label = 'diagnosis'; 
 opt.test.ctrlvsmci.group.select.values = [1 2];
 
@@ -109,7 +108,6 @@ opt.test.avg_ctrl.group.contrast.fd = 0;
 opt.test.avg_ctrl.group.contrast.criugm_mci = 0;
 opt.test.avg_ctrl.group.contrast.mnimci = 0;
 opt.test.avg_ctrl.group.contrast.adpd = 0;
-opt.test.avg_ctrl.group.multisite = 'mtladni2sites';
 opt.test.avg_ctrl.group.select.label = 'diagnosis';
 opt.test.avg_ctrl.group.select.values = 1;
 
@@ -123,7 +121,6 @@ opt.test.avg_mci.group.contrast.fd = 0;
 opt.test.avg_mci.group.contrast.criugm_mci = 0;
 opt.test.avg_mci.group.contrast.mnimci = 0;
 opt.test.avg_mci.group.contrast.adpd = 0;
-opt.test.avg_mci.group.multisite = 'mtladni2sites';
 opt.test.avg_mci.group.select.label = 'diagnosis';
 opt.test.avg_mci.group.select.values = 2;
 
