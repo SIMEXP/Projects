@@ -56,7 +56,7 @@ function [] = hcp_pipeline_stability_fir(opt)
 %%%%%%%%%%%%%%%%%%%%%
 %% set experimentent
 list_fields   = { 'task' , 'exp', 'trial' };
-list_defaults = { 'motor', 'hcp', ''      };
+list_defaults = { 'motor', 'hcp', 'rh'      };
 if ischar (opt.task ) &&  ischar(opt.exp)
    opt.task = upper(opt.task);
    if ismember(opt.task,{'EMOTION','GAMBLING','LANGUAGE','MOTOR','REST','RELATIONAL','SOCIAL','WM'}) && ismember(opt.exp,{'hcp','niak'}) && ischar(opt.trial)
@@ -99,8 +99,9 @@ else
 end
 
 %% create the csv model files
-opt_model.task = task;
-opt_model.exp  = exp;
+opt_model.task  = task;
+opt_model.exp   = exp;
+opt_model.trial = trial;
 eval([ 'hcp_model_' lower(opt_model.task) '_csv(root_path,opt_model)']);
 
 %%%%%%%%%%%%%%%%%%%%
@@ -122,8 +123,8 @@ files_in = niak_grab_fmri_preprocess([root_path 'fmri_preprocess_' upper(task) '
 %% Event times
 data.covariates_group_subs = fieldnames(files_in.fmri);
 for list = 1:length(data.covariates_group_subs)    
-    files_in.timing.(data.covariates_group_subs{list}).session1.([lower(task)(1:2) 'RL']) = [root_path 'fmri_preprocess_' upper(task) '_' exp '/EVs/hcp_model_intrarunRL.csv'];
-    files_in.timing.(data.covariates_group_subs{list}).session1.([lower(task)(1:2) 'LR']) = [root_path 'fmri_preprocess_' upper(task) '_' exp '/EVs/hcp_model_intrarunLR.csv'];
+    files_in.timing.(data.covariates_group_subs{list}).session1.([lower(task)(1:2) 'RL']) = [root_path 'fmri_preprocess_' upper(task) '_' exp '/EVs/hcp_model_intrarunRL_' lower(opt.task) '_' lower(opt.trial) '.csv'];
+    files_in.timing.(data.covariates_group_subs{list}).session1.([lower(task)(1:2) 'LR']) = [root_path 'fmri_preprocess_' upper(task) '_' exp '/EVs/hcp_model_intrarunLR_' lower(opt.task) '_' lower(opt.trial) '.csv'];
 end
 
 
