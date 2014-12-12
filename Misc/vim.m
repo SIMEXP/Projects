@@ -15,4 +15,4 @@ if isempty(IDX_term)
    end
 else command = sprintf('xterm -e "vim -f %s" &',file_name);
 end
-[status,output] = system(command,0,'async');
+system(command,0,'async');
