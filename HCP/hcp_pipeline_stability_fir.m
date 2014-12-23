@@ -165,10 +165,10 @@ opt.stability_group.nb_samps = 500;  % Number of bootstrap samples at the group 
 opt.nb_min_fir = 1;    % the minimum response windows number. By defaut is set to 1
 opt.stability_group.min_subject = 2; % (integer, default 3) the minimal number of subjects to start the group-level stability analysis. An error message will be issued if this number is not reached.
 %% FIR estimation 
-opt.name_condition = 'rh';
+opt.name_condition = trial;
 opt.name_baseline = 'baseline';
 opt.fir.type_norm     = 'fir';       % The type of normalization of the FIR.
-opt.fir.time_window   = 16.5;        % The size (in sec) of the time window to evaluate the response
+opt.fir.time_window   = opt.model.trial_duration;        % The size (in sec) of the time window to evaluate the response
 opt.fir.max_interpolation = 7.2;    % --> max 10 vols consécutifs manquants (TR = 0.72s), sinon bloc rejeté, mais ça devrait être irrelevant comme pas de scrubbing ici
 opt.fir.time_sampling = 0.72;           % The time between two samples for the estimated response. Do not go below 1/2 TR unless there is a very large number of trials.
 opt.fir.nb_min_baseline = 1 ;
@@ -185,8 +185,7 @@ opt.flag_group = true;  % Generate maps/FIR at the group level
 %% Run the pipeline %%
 %%%%%%%%%%%%%%%%%%%%%%
 opt.flag_test = false; % Put this flag to true to just generate the pipeline without running it. Otherwise the pipeline will start.
-%opt.psom.qsub_options = 'q lm -l nodes=1:ppn=12,walltime=05:00:00';
-opt.psom.qsub_options = '-q sw -l nodes=1:ppn=4,walltime=05:00:00';
+%  opt.psom.qsub_options = '-q sw -l nodes=1:ppn=4,walltime=05:00:00';
 pipeline = niak_pipeline_stability_fir(files_in,opt);
 
 %%extra
