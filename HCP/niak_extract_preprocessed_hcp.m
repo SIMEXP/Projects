@@ -142,6 +142,8 @@ mkdir(quality_control);
 mkdir(group_coregistration);
 mkdir(group_motion);
 mkdir(EVs);
+mkdir(EVs_lr);
+mkdir(EVs_rl);
 
 %% Extract necessary files and format them in a NIAK like fmri preprocessed ouput folders and files
 % Read subjects list and Prune subject that dont have the necessecary folder and flag them in a message
@@ -161,9 +163,11 @@ end
 for nn = 1:length(list_subject)
     subject_raw = strtrim(list_subject{nn}); % original subject name
     subject = ['HCP' subject_raw] ; % formated subject ID wtih a 'HCP' prefix
-    sprintf('Extracting subject %s',subject)
+    fprintf('Extracting subject %s \n',subject)
     mkdir([anat filesep subject]);
     mkdir([EVs filesep subject]);
+    mkdir([EVs filesep subject filesep 'lr']);
+    mkdir([EVs filesep subject filesep 'rl']);
     mkdir([quality_control filesep subject]);
     
     % copy the subject anat file (ex: 100307/MNINonLinear/T1w.nii.gz)
@@ -232,11 +236,12 @@ for nn = 1:length(list_subject)
     end
     
     % copy the subject onset file (ex: 100307/MNINonLinear/Results/tfMRI_EMOTION_LR/EVs/ (fear.txt, neut.txt, Stats.txt, Sync.txt)
-    system(['cp '  path_data subject_raw filesep 'MNINonLinear/Results/tfMRI_MOTOR_LR/EVs/* ' EVs filesep subject filesep '.']);
+    system(['cp '  path_data subject_raw filesep 'MNINonLinear/Results/tfMRI_MOTOR_LR/EVs/* ' EVs filesep subject filesep 'lr' filesep '.']);
+    system(['cp '  path_data subject_raw filesep 'MNINonLinear/Results/tfMRI_MOTOR_RL/EVs/* ' EVs filesep subject filesep 'rl' filesep '.']);
 end
 
 % create an average anat and func mask
-sprintf ('Creating an average anat and func mask')
+fprintf ('Creating an average anat and func mask \n')
 mask_anat_avg = mask_anat_avg/length(list_subject);
 mask_func_avg = mask_func_avg/length(list_subject);
 mask_group_anat = mask_anat_avg > 0.5;

@@ -18,7 +18,10 @@ function [] = hcp_pipeline_stability_fir(opt)
 %       (string, default 'hcp') type of pipeline preprocessing used .
 %       Possibles pipeline : 'NIAK', 'HCP'
 %   TRIAL
-%       (string, default '') type of trial to estimate the fir response, it depend on th task used .
+%       (string, default '') type of trial to estimate the fir response, it depend on th task used.
+%   MODEL
+%       (structure) see the OPT argument of  HCP_IND_MODEL_<TASK-NAME>_CSV. 
+%       The default parameters may work.
 %
 % _________________________________________________________________________
 %
@@ -55,8 +58,8 @@ function [] = hcp_pipeline_stability_fir(opt)
 %% Parameters
 %%%%%%%%%%%%%%%%%%%%%
 %% set experimentent
-list_fields   = { 'task' , 'exp', 'trial' };
-list_defaults = { 'motor', 'hcp', 'rh'      };
+list_fields   = { 'task' , 'exp', 'trial' , 'model'  };
+list_defaults = { 'motor', 'hcp', 'rh'    , struct() };
 if ischar (opt.task ) &&  ischar(opt.exp)
    opt.task = upper(opt.task);
    if ismember(opt.task,{'EMOTION','GAMBLING','LANGUAGE','MOTOR','REST','RELATIONAL','SOCIAL','WM'}) && ismember(opt.exp,{'hcp','niak'}) && ischar(opt.trial)
@@ -98,11 +101,6 @@ else
     end
 end
 
-%% create the csv model files
-opt_model.task  = task;
-opt_model.exp   = exp;
-opt_model.trial = trial;
-eval([ 'hcp_model_' lower(opt_model.task) '_csv(root_path,opt_model)']);
 
 %%%%%%%%%%%%%%%%%%%%
 %% Grabbing the results from the NIAK fMRI preprocessing pipeline
@@ -120,11 +118,32 @@ opt_g.type_files = 'fir'; % Specify to the grabber to prepare the files for the 
 opt_g.exclude_subject ={'HCP168139'}; % to be investigated later , it make the pipelne crash, strange artifact in functional images
 files_in = niak_grab_fmri_preprocess([root_path 'fmri_preprocess_' upper(task) '_' exp],opt_g); % Replace the folder by the path where the results of the fMRI preprocessing pipeline were stored. 
 
-%% Event times
-data.covariates_group_subs = fieldnames(files_in.fmri);
-for list = 1:length(data.covariates_group_subs)    
-    files_in.timing.(data.covariates_group_subs{list}).session1.([lower(task)(1:2) 'RL']) = [root_path 'fmri_preprocess_' upper(task) '_' exp '/EVs/hcp_model_intrarunRL_' lower(opt.task) '_' lower(opt.trial) '.csv'];
-    files_in.timing.(data.covariates_group_subs{list}).session1.([lower(task)(1:2) 'LR']) = [root_path 'fmri_preprocess_' upper(task) '_' exp '/EVs/hcp_model_intrarunLR_' lower(opt.task) '_' lower(opt.trial) '.csv'];
+
+%% create the csv model for each subject's run
+opt_model.exp   = exp;
+opt_model.trial = trial;
+if ~isempty(opt.model.trial_delay)
+   opt_model.trial_delay = opt.model.trial_delay;
+end
+if ~isempty(opt.model.trial_duration)
+   opt_model.trial_duration = opt.model.trial_duration;
+end
+if ~isempty(opt.model.baseline_delay)
+   opt_model.baseline_delay = opt.model.baseline_delay;
+end
+if ~isempty(opt.model.baseline_duration)
+   opt_model.baseline_duration = opt.model.baseline_duration;
+end
+
+%% loop over subjects and runs and create individual time events models
+data.ind_model = fieldnames(files_in.fmri);
+for list = 1:length(data.ind_model)
+    path_folder = [ root_path 'fmri_preprocess_' upper(task) '_' exp '/EVs/lr/']; %lr run
+    eval([ 'hcp_ind_model_' lower(task) '_csv(path_folder,opt_model)']);
+    files_in.timing.(data.ind_model{list}).session1.([lower(task)(1:2) 'LR']) = [path_folder 'hcp_model_intrarun_' lower(opt.task) '_' lower(opt.trial) '.csv'];
+    path_folder = [ root_path 'fmri_preprocess_' upper(task) '_' exp '/EVs/rl/']; %rl run
+    eval([ 'hcp_ind_model_' lower(task) '_csv(path_folder,opt_model)']);
+    files_in.timing.(data.ind_model{list}).session1.([lower(task)(1:2) 'RL']) = [path_folder 'hcp_model_intrarun_' lower(opt.task) '_' lower(opt.trial) '.csv'];
 end
 
 
