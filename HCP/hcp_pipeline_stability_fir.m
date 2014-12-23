@@ -110,16 +110,19 @@ opt_g.min_xcorr_func = 0.5; % The minimum xcorr score for an fMRI dataset to be 
 opt_g.min_xcorr_anat = 0.5; % The minimum xcorr score for an fMRI dataset to be included. This metric is a tool for quality control which assess the quality of non-linear coregistration of the anatomical image in stereotaxic space. Manual inspection of the values during QC is necessary to properly set this threshold.
 opt_g.type_files = 'fir'; % Specify to the grabber to prepare the files for the STABILITY_FIR pipeline
 
-%%Temporary grabber for debugging
-%liste_exclude = dir ([root_path 'fmri_preprocess_' upper(task) '_' exp '/anat']);
-%liste_exclude = liste_exclude(23:end -1);
-%liste_exclude = {liste_exclude.name};
-%opt_g.exclude_subject = liste_exclude;
-opt_g.exclude_subject ={'HCP168139'}; % to be investigated later , it make the pipelne crash, strange artifact in functional images
+%%%%%%%%%%%%%%Temporary grabber for debugging%%%%%%%%%%%%%%%%%%%%%
+liste_exclude = dir ([root_path 'fmri_preprocess_' upper(task) '_' exp '/anat']);
+liste_exclude = liste_exclude(23:end -1);
+liste_exclude = {liste_exclude.name};
+opt_g.exclude_subject = liste_exclude;
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%  opt_g.exclude_subject ={'HCP168139'}; % to be investigated later , it make the pipelne crash, strange artifact in functional images
 files_in = niak_grab_fmri_preprocess([root_path 'fmri_preprocess_' upper(task) '_' exp],opt_g); % Replace the folder by the path where the results of the fMRI preprocessing pipeline were stored. 
 
-
+%%%%%%%%%%%%%%%%%%%%
 %% create the csv model for each subject's run
+%%%%%%%%%%%%%%%%%%%%
 opt_model.exp   = exp;
 opt_model.trial = trial;
 if ~isempty(opt.model.trial_delay)
@@ -138,10 +141,10 @@ end
 %% loop over subjects and runs and create individual time events models
 data.ind_model = fieldnames(files_in.fmri);
 for list = 1:length(data.ind_model)
-    path_folder = [ root_path 'fmri_preprocess_' upper(task) '_' exp '/EVs/lr/']; %lr run
+    path_folder = [ root_path 'fmri_preprocess_' upper(task) '_' exp '/EVs/' data.ind_model{list} '/lr/']; %lr run
     eval([ 'hcp_ind_model_' lower(task) '_csv(path_folder,opt_model)']);
     files_in.timing.(data.ind_model{list}).session1.([lower(task)(1:2) 'LR']) = [path_folder 'hcp_model_intrarun_' lower(opt.task) '_' lower(opt.trial) '.csv'];
-    path_folder = [ root_path 'fmri_preprocess_' upper(task) '_' exp '/EVs/rl/']; %rl run
+    path_folder = [ root_path 'fmri_preprocess_' upper(task) '_' exp '/EVs/' data.ind_model{list} '/rl/']; %rl run
     eval([ 'hcp_ind_model_' lower(task) '_csv(path_folder,opt_model)']);
     files_in.timing.(data.ind_model{list}).session1.([lower(task)(1:2) 'RL']) = [path_folder 'hcp_model_intrarun_' lower(opt.task) '_' lower(opt.trial) '.csv'];
 end
