@@ -14,22 +14,22 @@ clear
 % this will write a csv for one seed of interest
 
 %% add niak path
-addpath(genpath('/usr/local/quarantine/niak-boss-0.12.14'))
+addpath(genpath('/sb/project/gsf-624-aa/quarantaine/niak-boss-0.12.18'))
 
 %% Select the scale and contrast
-scale = 'sci65_scg65_scf65'; % select scale
-contrast = {'avg_ctrl','avg_ad','avg_mci','ctrlvsmci','ctrlvsad','mcivsad'}; % list the contrasts of interest
+scale = 'sci35_scg35_scf33'; % select scale
+contrast = {'avg_ctrl','avg_mci','ctrlvsmci'}; % list the contrasts of interest
 contrast1 = 'ctrlvsmci'; % specify contrasts
-contrast2 = 'ctrlvsad';
-contrast3 = 'mcivsad';
+% contrast2 = 'ctrlvsad';
+% contrast3 = 'mcivsad';
 
 %% First read the networks and find a few significant seeds
-[hdr,netwk] = niak_read_vol([pwd filesep 'glm17d_nii' filesep scale filesep 'networks_' scale '.nii.gz']);
-[hdr,tmap1] = niak_read_vol([pwd filesep 'glm17d_nii' filesep scale filesep contrast1 filesep 'fdr_' contrast1 '_' scale '.nii.gz']);
-[hdr,tmap2] = niak_read_vol([pwd filesep 'glm17d_nii' filesep scale filesep contrast2 filesep 'fdr_' contrast2 '_' scale '.nii.gz']);
-[hdr,tmap3] = niak_read_vol([pwd filesep 'glm17d_nii' filesep scale filesep contrast3 filesep 'fdr_' contrast3 '_' scale '.nii.gz']); 
-seed = 39; % select seed of interest
-list_sig = unique(netwk((tmap1(:,:,:,seed)~=0) | (tmap2(:,:,:,seed)~=0) | (tmap3(:,:,:,seed)~=0)));  % conditions for list_sig; can also do list_sig = unique(netwk((tmap1(:,:,:,7)~=0)&(tmap2(:,:,:,7)~=0)));
+[hdr,netwk] = niak_read_vol([pwd filesep 'glm30b_20141216_nii' filesep scale filesep 'networks_' scale '.nii.gz']);
+[hdr,tmap1] = niak_read_vol([pwd filesep 'glm30b_20141216_nii' filesep scale filesep contrast1 filesep 'fdr_' contrast1 '_' scale '.nii.gz']);
+% [hdr,tmap2] = niak_read_vol([pwd filesep 'glm17d_nii' filesep scale filesep contrast2 filesep 'fdr_' contrast2 '_' scale '.nii.gz']);
+% [hdr,tmap3] = niak_read_vol([pwd filesep 'glm17d_nii' filesep scale filesep contrast3 filesep 'fdr_' contrast3 '_' scale '.nii.gz']); 
+seed = 10; % select seed of interest
+list_sig = unique(netwk((tmap1(:,:,:,seed)~=0))); %| (tmap2(:,:,:,seed)~=0) | (tmap3(:,:,:,seed)~=0)));  % conditions for list_sig; can also do list_sig = unique(netwk((tmap1(:,:,:,7)~=0)&(tmap2(:,:,:,7)~=0)));
 
 %% Extract the info for each contrast
 
@@ -37,7 +37,7 @@ tab = zeros([(length(list_sig)*length(contrast)) 3]);
 
 for i = 1:length(contrast)
 ly = { 'eff' , 'std_eff' , 'sig' };
-file = strcat(pwd,filesep,'glm17d_nii',filesep,scale,filesep,contrast{i},filesep,'glm_',contrast{i},'_',scale,'.mat');
+file = strcat(pwd,filesep,'glm30b_20141216_nii',filesep,scale,filesep,contrast{i},filesep,'glm_',contrast{i},'_',scale,'.mat');
 data = load(file);
 eff = niak_lvec2mat(data.eff);
 std_eff = niak_lvec2mat(data.std_eff);
@@ -56,7 +56,7 @@ end
 
 
 %% write the info
-file_write = 'glm17d_39_eff_connections.csv';
+file_write = [pwd filesep 'glm30b_20141216_nii' filesep scale filesep 'glm30b_10_eff_connections.csv'];
 opt_w.labels_x = labels_connection;
 opt_w.labels_y = ly;
 niak_write_csv(file_write,tab,opt_w);
