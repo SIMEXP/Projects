@@ -88,10 +88,4 @@ title('Stab map (cluster 1)')
 subplot(2,3,6)
 niak_montage(vol_stab(:,:,24:2:40,2))
 title('Stab map (cluster 2)')
-
-niak_montage(vol_part);
-print('partition_of_roi_subject1_voxel_demoniak.png','-dpng');
-hdr.file_name = 'part_roi_subject1_voxel_demoniak.nii.gz'; % save the partition in a nifti file
-niak_write_vol(hdr,vol_part); 
-hdr.file_name = 'stability_map_focus_subject1_voxel_demoniak.nii.gz'; % save the partition in a nifti file
-niak_write_vol(hdr,vol_stab); 
+print('stability_cores_focus.png','-dpng');
