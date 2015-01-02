@@ -1,7 +1,7 @@
 function [res,opt] = niak_network_fdr(model,part,opt)
 % Network FDR testing of a general linear model on connectomes 
 %
-% [RESULTS,OPT] = NIAK_GLM( MODEL , [OPT] )
+% [RESULTS,OPT] = NIAK_GLM( MODEL , PART , [OPT] )
 %
 % MODEL (structure) with the following fields:
 %   Y (2D array size N*L) each row is a vectorized connectome for one subject.
@@ -19,18 +19,18 @@ function [res,opt] = niak_network_fdr(model,part,opt)
 % OPT
 %   (structure, optional) with the following fields:
 %
-%   METHOD (string, default 'LSL') the estimator of the proportion of true null 
+%   METHOD (string, default 'TST') the estimator of the proportion of true null 
 %      hypothesis. 'TST' : The two-stage estimator; 'LSL' : the least-slope estimator.
 %      See NIAK_BUILD_PI_0.
 %   Q (scalar, default 0.05) the acceptable level of false-discovery rate.
-%   Q_OMNI (scalar, default OPT.Q) the FDR level for the omnibut test.
+%   Q_OMNI (scalar, default OPT.Q) the FDR level for the omnibus test.
 %   FLAG_SHRINKAGE (boolean, default true) turn on/off the shrinkage of the estimated proportion of null
 %   FLAG_VERBOSE (boolean, default true) verbose progress information.
 %   NB_CLASSES (vector of integer, default 10) the number of clusters in the partition. 
 %      Multiple numbers can be specified.
 %   HIER (structure, default 'Ward') the options of the hierarchical clustering. See
 %      NIAK_HIERARCHICAL_CLUSTERING). 
-%   NB_PERM (integer, default 1000) the number of permutations to estimate the omnibus test.
+%   NB_SAMPS (integer, default 1000) the number of permutations to estimate the omnibus test.
 %   TEST (string, default 'none') the type of test to be applied.
 %      Available options: 'ttest' , 'ftest', 'none'
 %   FLAG_RSQUARE (boolean, default false) if the flag is true, the R2 statistics of the
@@ -140,7 +140,7 @@ end
 
 %% Default options
 list_fields    = { 'q_omni' , 'flag_shrinkage' , 'nb_classes' , 'hier'   , 'q'  , 'method' , 'nb_samps' , 'flag_verbose' , 'flag_rsquare' , 'flag_eff' , 'flag_residuals' , 'flag_beta', 'test'  };
-list_defaults  = { []       , true             , 10           , struct() , 0.05 , 'LSL'    , 1000       , true           , false          , false      , false            , false      , 'ttest' };
+list_defaults  = { []       , true             , 10           , struct() , 0.05 , 'TST'    , 1000       , true           , false          , false      , false            , false      , 'ttest' };
 opt = psom_struct_defaults(opt,list_fields,list_defaults);
 if isempty(opt.q_omni)
     opt.q_omni = opt.q;
