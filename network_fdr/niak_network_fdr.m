@@ -111,6 +111,9 @@ function [res,opt] = niak_network_fdr(model,part,opt)
 % meta-analysis of genomewide association scans. Bioinformatics, application note,
 % Vol. 26 no. 17 2010, pages 2190–2191 doi:10.1093/bioinformatics/btq340
 %
+% If a vector of thresholds for FDR are specified, RESULTS has multiples entries,
+% each one corresponding to a FDR threshold.
+%
 % Copyright (c) Pierre Bellec
 % Centre de recherche de l'Institut universitaire de gériatrie de Montréal, 2014.
 % Maintainer : pierre.bellec@criugm.qc.ca
@@ -197,13 +200,17 @@ for pp = 1:size(part,2)
 end
 
 %% Estimate pi_0
-pi_0 = cell(size(part,2),1);
+pi_0 = cell(size(part,2),length(opt.q));
+vol_disc = cell(size(part,2),length(opt.q));
 for pp = 1:size(part,2)    
-    pi_0{pp} = niak_build_pi_0(res.pce,part(:,pp),opt.method,opt.q);
+    for qq = 1:length(opt.q)
+        [pi_0{pp,qq},vol_disc{pp,qq}] = niak_build_pi_0(res.pce,part(:,pp),opt.method,opt.q(qq),res.ttest);
+    end
 end
 
 %% Run permutation tests
 pce_null = zeros(opt.nb_samps,length(res.pce));
+ttest_null = zeros(opt.nb_samps,length(res.pce));
 for ss = 1:opt.nb_samps
     if opt.flag_verbose
         niak_progress(ss,opt.nb_samps);
@@ -229,25 +236,39 @@ for ss = 1:opt.nb_samps
         res_null = niak_glm(model_null,opt_glm);
     end
     pce_null(ss,:) = res_null.pce;
+    ttest_null(ss,:) = res_null.ttest;
 end
 
 %% Estimate pi_0 over replications
-pi_0_null = cell(size(part,2),1);
+pi_0_null = cell(size(part,2),length(opt.q));
+vol_disc_null = cell(size(part,2),length(opt.q));
 for pp = 1:size(part,2)
-    pi_0_null{pp} = niak_build_pi_0(pce_null,part(:,pp),opt.method,opt.q);
+    for qq = 1:length(opt.q)
+        [pi_0_null{pp,qq},vol_disc_null{pp,qq}] = niak_build_pi_0(pce_null,part(:,pp),opt.method,opt.q(qq),ttest_null);
+    end
 end
 
 %% Omnibus test
+res.pce_omnibus = cell(size(part,2),length(opt.q));
 for pp = 1:size(part,2)
-    res.pce_omnibus{pp} = (sum(pi_0_null{pp}<=repmat(pi_0{pp},[opt.nb_samps 1]),1)+1)/(opt.nb_samps + 1);
+    for qq = 1:length(opt.q)
+        res.pce_omnibus{pp,qq} = (sum(vol_disc_null{pp,qq}>=repmat(vol_disc{pp,qq},[opt.nb_samps 1]),1)+1)/(opt.nb_samps + 1);
+    end
 end
+res.pi_0 = pi_0;
+res.vol_disc = vol_disc;
 
 %% Run network tests
-res.pi_0 = pi_0;
 for pp = 1:size(part,2)
-    if opt.flag_shrinkage
-        [fdr,test_omnibus] = niak_fdr(res.pce_omnibus{pp}(:),'BH',opt.q_omni);
-        pi_0{pp}(~test_omnibus) = 1; % shrink the estimation of the proportion of true null towards 1
+    for qq = 1:length(opt.q)
+        if opt.flag_shrinkage
+            if length(opt.q_omni)>1
+                [fdr,test_omnibus] = niak_fdr(res.pce_omnibus{pp,qq}(:),'BH',opt.q_omni(qq));
+            else
+                [fdr,test_omnibus] = niak_fdr(res.pce_omnibus{pp,qq}(:),'BH',opt.q_omni);
+            end
+            pi_0{pp,qq}(~test_omnibus) = 1; % shrink the estimation of the proportion of true null towards 1
+        end
+        res.test_fdr{pp,qq} = niak_group_fdr(res.pce(:),pi_0{pp,qq},mpart{pp},opt.q(qq));
     end
-    res.test_fdr{pp} = niak_group_fdr(res.pce(:),pi_0{pp},mpart{pp},opt.q);
 end
