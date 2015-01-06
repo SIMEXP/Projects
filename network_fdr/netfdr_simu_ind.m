@@ -106,20 +106,23 @@ legend('NBS','NETFDR','Location','NorthWest');
 xlim([0.01,Max_FDR]);
 xlabel('False Discovery Rate');
 ylabel('Sensitivity');
+axis square 
 
 %AUC
 subplot(1,3,2);
 auc_nbs    = auc(flipud(fdr_nbs),flipud(sens_nbs),Max_FDR)*1/Max_FDR; 
-auc_netfdr = auc(flipud(fdr_netfdr),flipud(sens_netfdr),Max_FDR)*1/Max_FDR; 
+auc_netfdr = auc(fdr_netfdr,sens_netfdr,Max_FDR)*1/Max_FDR; 
 bar([auc_nbs,auc_netfdr]); 
 set(gca, 'XTick', 1:4, 'XTickLabel', {'NBS','FDRNET'});
 ylabel('Area Under Curve'); 
+axis square 
 
 %% effective fdr
 subplot(1,3,3)
 plot(list_fdr,list_fdr,'r')
 hold on
-plot(list_fdr,fdr_netfdr);
+plot(list_fdr,fdr_netfdr(1:length(list_fdr)));
 title('NETFDR')
 xlabel('Nominal FDR')
 ylabel('Effective FDR')
+axis square 
