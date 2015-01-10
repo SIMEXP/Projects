@@ -86,7 +86,7 @@ if strfind(server,'lg-1r') % This is guillimin
 elseif strfind(server,'ip05') % this is mammouth
     root_path = '/mnt/parallel_scratch_ms2_wipe_on_april_2015/pbellec/benhajal/HCP/';
     fprintf ('server: %s (Mammouth) \n',server)
-    my_useHCP_PIPELEINE_STABILITY_FIRr_name = getenv('USER');
+    my_user_name = getenv('USER');
 else
     switch server
         case 'peuplier' % this is peuplier
@@ -111,13 +111,13 @@ opt_g.min_xcorr_anat = 0.5; % The minimum xcorr score for an fMRI dataset to be 
 opt_g.type_files = 'fir'; % Specify to the grabber to prepare the files for the STABILITY_FIR pipeline
 
 %%%%%%%%%%%%%%Temporary grabber for debugging%%%%%%%%%%%%%%%%%%%%%
-liste_exclude = dir ([root_path 'fmri_preprocess_' upper(task) '_' exp '/anat']);
-liste_exclude = liste_exclude(23:end -1);
-liste_exclude = {liste_exclude.name};
-opt_g.exclude_subject = liste_exclude;
+%liste_exclude = dir ([root_path 'fmri_preprocess_' upper(task) '_' exp '/anat']);
+%liste_exclude = liste_exclude(23:end -1);
+%liste_exclude = {liste_exclude.name};
+%opt_g.exclude_subject = liste_exclude;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%  opt_g.exclude_subject ={'HCP168139'}; % to be investigated later , it make the pipelne crash, strange artifact in functional images
+opt_g.exclude_subject ={'HCP168139'}; % to be investigated later , it make the pipelne crash, strange artifact in functional images
 files_in = niak_grab_fmri_preprocess([root_path 'fmri_preprocess_' upper(task) '_' exp],opt_g); % Replace the folder by the path where the results of the fMRI preprocessing pipeline were stored. 
 
 %%%%%%%%%%%%%%%%%%%%
@@ -157,8 +157,16 @@ end
 %% BASC
 opt.folder_out = [ root_path '/stability_fir_perc_' upper(task) trial '_' exp ]; % Where to store the results
 opt.grid_scales = [5:5:50 60:10:200 220:20:400 500:100:900]; % Search in the range 2-900 clusters
-opt.scales_maps = [ 10   7   7 ; 
-                    80  80  83]; % Usually, this is initially left empty. After the pipeline ran a first time, the results of the MSTEPS procedure are used to select the final scales
+% use mstep sacle if exist or leave it empty
+mstep_file = [ opt.folder_out filesep 'stability_group/msteps_group.mat']; 
+if psom_exist(mstep_file)
+   warning ('The file %s exist, I will use MSTEP scale',mstep_file);
+   load (mstep_file);
+   opt.scales_maps = scales_final;
+else
+   warning ('The file %s does not exist, I will use the specified scale maps',mstep_file); 
+   opt.scales_maps = []; % Usually, this is initially left empty. After the pipeline ran a first time, the results of the MSTEPS procedure are used to select the final scales 
+end      
 opt.stability_fir.nb_samps = 100;    % Number of bootstrap samples at the individual level. 100: the CI on indidividual stability is +/-0.1
 opt.stability_fir.std_noise = 0;     % The standard deviation of the judo noise. The value 0 will not use judo noise. 
 opt.stability_group.nb_samps = 500;  % Number of bootstrap samples at the group level. 500: the CI on group stability is +/-0.05
@@ -185,7 +193,7 @@ opt.flag_group = true;  % Generate maps/FIR at the group level
 %% Run the pipeline %%
 %%%%%%%%%%%%%%%%%%%%%%
 opt.flag_test = false; % Put this flag to true to just generate the pipeline without running it. Otherwise the pipeline will start.
-%  opt.psom.qsub_options = '-q sw -l nodes=1:ppn=4,walltime=05:00:00';
+opt.psom.qsub_options = '-q sw -l nodes=1:ppn=4,walltime=05:00:00';
 pipeline = niak_pipeline_stability_fir(files_in,opt);
 
 %%extra
