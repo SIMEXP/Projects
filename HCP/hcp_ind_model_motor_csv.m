@@ -36,7 +36,7 @@ end
 
 %% path and files names
 dir_output         = path_folder;
-name_csv_intrarun  = ['hcp_model_intrarun_motor_test' lower(opt.trial)];
+name_csv_intrarun  = ['hcp_model_intrarun_motor_' lower(opt.trial)];
 
 %% intrarun fir
 switch opt.run
