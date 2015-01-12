@@ -141,9 +141,11 @@ end
 %% loop over subjects and runs and create individual time events models
 data.ind_model = fieldnames(files_in.fmri);
 for list = 1:length(data.ind_model)
+    opt_model.run = 'lr'; %run1
     path_folder = [ root_path 'fmri_preprocess_' upper(task) '_' exp '/EVs/' data.ind_model{list} '/lr/']; %lr run
     eval([ 'hcp_ind_model_' lower(task) '_csv(path_folder,opt_model)']);
     files_in.timing.(data.ind_model{list}).session1.([lower(task)(1:2) 'LR']) = [path_folder 'hcp_model_intrarun_' lower(opt.task) '_' lower(opt.trial) '.csv'];
+    opt_model.run = 'rl';%run2
     path_folder = [ root_path 'fmri_preprocess_' upper(task) '_' exp '/EVs/' data.ind_model{list} '/rl/']; %rl run
     eval([ 'hcp_ind_model_' lower(task) '_csv(path_folder,opt_model)']);
     files_in.timing.(data.ind_model{list}).session1.([lower(task)(1:2) 'RL']) = [path_folder 'hcp_model_intrarun_' lower(opt.task) '_' lower(opt.trial) '.csv'];
