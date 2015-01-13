@@ -7,10 +7,9 @@ clear
 task  = 'motor';
 exp   = 'hcp_perc';
 trial = 'rh';
-path_fir     = '/media/database8/HCP_task/stability_fir_perc_MOTORrh_hcp_all_sub/stability_group/fir';
-path_fmri    = '/media/database3/twins_study/old_exp/fmri_preprocess_EXP2_test1';
-path_pedigre = '~/github_repos/twins/script/models/twins_pedigre_raw_all.csv';
-path_out     = '/media/database8/HCP_heritability/'
+path_fir = '/media/database8/HCP_task/stability_fir_perc_MOTORrh_hcp_all_sub/stability_group/fir';
+path_out = '/media/database8/HCP_heritability/';
+
 delete ([path_fir filesep 'octave-core']);
 
 %set subject list and discard empty subject from the list
@@ -18,12 +17,11 @@ list_subj = dir(path_fir);
 list_subj = {list_subj(3:end).name};
 for nn = 1:length(list_subj)
     subject_file = strtrim(list_subj{nn});
-    subject      = strrep(strrep(subject_file,'.mat',''),'fir_','');
-    extra        = load(file_extra); % Load the scrubbing masks
+    subject      = strrep(strrep(subject_file,'.mat',''),'fir_group_level_','');
     file_fir     = [path_fir filesep subject_file];
     ind_fir      = load([path_fir filesep subject_file]); % Load the individual fir
     scales       = fieldnames(ind_fir);
-    if (ind_fir.(scales{1}).nb_fir_tot == 0) || (sum(extra.mask_suppressed(end-size(ind_fir.(scales{1}).fir_mean,1)+1:end)) > max_scrub) %
+    if (ind_fir.(scales{1}).nb_fir_tot == 0)
        list_subj{nn}='';
     end
 end
@@ -32,7 +30,7 @@ list_subj(cellfun(@isempty,list_subj)) = [];   %remove empty cells
 %% Loop over individual fir and grab the firs for all scales
 for xx = 1:length(list_subj)
     subject_file  = strtrim(list_subj{xx});
-    subject       = strrep(strrep(subject_file,'.mat',''),'fir_','');
+    subject       = strrep(strrep(subject_file,'.mat',''),'fir_group_level_','');
     file_fir      = [path_fir filesep subject_file];
     ind_fir       = load(file_fir); %% Load the individual fir
     scales        = fieldnames(ind_fir);
@@ -57,13 +55,29 @@ for xx = 1:length(list_subj)
 
 end    
 
+%%%%%%%pedigree builder%%%%%%%%
+%keep only twins in pedigree
+csv_cell = niak_read_csv_cell ([ path_out 'RESTRICTED_yassinebha_1_6_2015_14_22_6.csv' ]);
+data = csv_cell(2:end,:)(strcmp('Twin',csv_cell(2:end,3)),:);
+tmp_cell = cell([size(data)(1)+1 size(data)(2)]);
+tmp_cell(1,:) = csv_cell(1,:);
+tmp_cell(2:end,:) = data;
+csv_cell = tmp_cell;
+% add HCP suffic in subject ID
+for ii = 2:length(csv_cell)
+    csv_cell{ii,1} = sprintf('HCP%s',csv_cell{ii,1});
+end
+%write pedigree
+niak_write_csv_cell ( [path_out 'hcp_pedigre_clean.csv'] , csv_cell );
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 %write each scale cells to a .csv file
 for dd = 1:length(scales)
-    namesave = ['fir_' scales{dd} '.csv'];
+    namesave = [path_out 'fir_' task '_' trial '_' scales{dd} '_' exp '.csv'];
     fir_mean = fir.(scales{dd});
     niak_write_csv_cell (namesave,fir_mean);
-    niak_combine = niak_combine_csv_cell(namesave,path_pedigre);
-    niak_write_csv_cell ([path_out 'niak_combine_scan_pedig_' scales{dd} '_' exp '.csv'],niak_combine);
-    system([ 'scp -r ' path_out 'niak_combine_scan_pedig_' scales{dd} '_' exp '.csv noisetier:~/Dropbox/twins_fir_heritability/.'])
+    niak_combine = niak_combine_csv_cell(namesave,[path_out 'hcp_pedigre_clean.csv']);
+    niak_write_csv_cell ([path_out 'niak_combine_scan_pedig_' task '_' trial '_' scales{dd} '_' exp '.csv'],niak_combine);
+    system([ 'scp -r ' path_out 'niak_combine_scan_pedig_'  task '_' trial '_' scales{dd} '_' exp '.csv noisetier:~/Dropbox/HCP_fir_heritability/.'])
 end
-delete fir_sci*; % remove temporary  files
+delete (['fir_' task '_'trial '_sci*']); % remove temporary  files
