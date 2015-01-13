@@ -1,6 +1,6 @@
 clear
-path_dcm = '/database/twins_study/raw_dcm_MAJ/';
-path_nii = '/database/twins_study/raw_nii_EXP2/';
+path_dcm = '/media/database/twins_study/raw_dcm_MAJ/';
+path_nii = '/media/database/twins_study/raw_nii_EXP2/';
 opt_pipe.path_logs = [path_nii 'logs_conversion'];
 list_subject = dir(path_dcm);
 list_subject = {list_subject(3:end).name};

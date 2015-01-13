@@ -1,4 +1,4 @@
-%%% HCP preprocessing pipeline
+%%% MAVEN preprocessing pipeline
 % Script to run a preprocessing pipeline analysis on the HCP database.
 %
 % Copyright (c) Pierre Bellec, Yassine Benhajali
@@ -30,29 +30,29 @@ clear all
 %%%%%%%%%%%%%%%%%%%%%
 %% Parameters
 %%%%%%%%%%%%%%%%%%%%%
-task  = 'EMOTION';
-exp   = 'niak';
+task  = 'inkscape';
+exp   = 'fir';
 
 %% Setting input/output files 
 [status,cmdout] = system ('uname -n');
 server          = strtrim(cmdout);
 if strfind(server,'lg-1r') % This is guillimin
-    root_path = '/gs/scratch/yassinebha/HCP/';
+    root_path = '/gs/scratch/yassinebha/MAVEN/';
     fprintf ('server: %s (Guillimin) \n ',server)
     my_user_name = getenv('USER');
 elseif strfind(server,'ip05') % this is mammouth
-    root_path = '/mnt/parallel_scratch_ms2_wipe_on_april_2015/pbellec/benhajal/HCP/';
+    root_path = '/mnt/parallel_scratch_ms2_wipe_on_april_2015/pbellec/benhajal/MAVEN/';
     fprintf ('server: %s (Mammouth) \n',server)
     my_user_name = getenv('USER');
 else
     switch server
         case 'peuplier' % this is peuplier
-        root_path = '/media/scratch2/HCP_unproc_tmp/';
+        root_path = '/media/database6/MAVEN/';
         fprintf ('server: %s\n',server)
         my_user_name = getenv('USER');
         
         case 'noisetier' % this is noisetier
-        root_path = '/media/database1/';
+        root_path = '/media/database1/MAVEN/';
         fprintf ('server: %s\n',server)
         my_user_name = getenv('USER');
     end
@@ -63,6 +63,19 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %% WARNING: Do not use underscores '_' in the IDs of subject, sessions or runs. This may cause bugs in subsequent pipelines.
+
+list_subject_raw = dir([root_path 'raw_mnc']);
+nb_subject = 0;
+for num_ss = 1:length(list_subject_raw)
+    if ~ismember(list_subject_raw(num_ss).name,{'.','..','octave-wokspace','octave-core','qc_report.csv'}) 
+       nb_subject = nb_subject + 1;
+       sprintf('Adding subject %s', list_subject_raw(num_ss).name)
+       list_subject{nb_subject} = list_subject_raw(num_ss).name;     
+    else 
+       sprintf('subject %s is discarded', list_subject_raw(num_ss).name)
+    end  
+end   
+
 
 %% Subject 1
 files_in.HCP100307.anat                                    = [ root_path 'HCP_unproc_tmp/100307/unprocessed/3T/T1w_MPR1/100307_3T_T1w_MPR1.mnc.gz'];     % Structural scan
