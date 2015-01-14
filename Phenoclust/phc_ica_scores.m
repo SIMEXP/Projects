@@ -1,7 +1,8 @@
 clear
 
 %% Load data
-path_data = '/home/pbellec/database/phenoclust/scale_12/';
+%path_data = '/home/pbellec/database/phenoclust/scale_12/';
+path_data = '/data1/abide/Out/Remote/all_worked/out/maps/stability_maps/correlation/scale_12';
 [hdr,vol] = niak_read_vol('netstack_net10.nii.gz');
 [hdr,mask] = niak_read_vol('mask_gm.nii.gz');
 tseries = niak_vol2tseries(vol,mask);
