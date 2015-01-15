@@ -1,10 +1,15 @@
 clear
 
 %% Load data
+<<<<<<< HEAD
 path_data = '/home/pbellec/database/phenoclust/scale_12_2015_01_14/';
 path_res = [path_data 'phc_cluster_R_demeaned' filesep];
+=======
+%path_data = '/home/pbellec/database/phenoclust/scale_12_2015_01_14/';
+path_data = '/data1/abide/Out/Remote/all_worked/out/maps/stability_maps/correlation/scale_12/';
+>>>>>>> 190827ee1e42033079ccb2abf43fa14e0c70f3dd
 [hdr,vol] = niak_read_vol([path_data 'netstack_net10.nii.gz']);
-[hdr,mask] = niak_read_vol([path_data 'mask_gm.nii.gz']);
+[hdr,mask] = niak_read_vol([path_data 'mask.nii.gz']);
 tseries = niak_vol2tseries(vol,mask);
 
 %% Run a normalization by regressing out the average stability map
@@ -39,7 +44,7 @@ for cc = 1:max(part)
 end
 
 %% Load phenotypic variables
-tab = niak_read_csv_cell([path_data 'pheno_unique.csv']);
+tab = niak_read_csv_cell([path_data 'matched_pheno.csv']);
 [list_site,tmp,ind_site] = unique(tab(2:end,2));
 age = cell2mat(cellfun (@str2num, tab(2:end,6),"UniformOutput", false));
 
