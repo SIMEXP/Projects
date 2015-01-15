@@ -3,7 +3,7 @@ clear
 %% Load data
 %path_data = '/home/pbellec/database/phenoclust/scale_12_2015_01_14/';
 path_data = '/data1/abide/Out/Remote/all_worked/out/maps/stability_maps/correlation/scale_12/';
-[hdr,vol] = niak_read_vol([path_data 'netstack_net10.nii.gz']);
+[hdr,vol] = niak_read_vol([path_data 'netstack_net5.nii.gz']);
 [hdr,mask] = niak_read_vol([path_data 'mask.nii.gz']);
 tseries = niak_vol2tseries(vol,mask);
 
@@ -86,3 +86,11 @@ model_diagnosis.y = weights;
 model_diagnosis.c = [zeros(size(model_site.x,2),1) ; 1];
 opt_glm.test = 'ttest';
 res_diagnosis = niak_glm(model_diagnosis,opt_glm);
+
+
+diag = diagnosis -1;
+rats = [];
+rat = sum(diag) / size(diag,1);
+for i =  1:7
+    rats(i) = (sum(diag(part==i)) / sum(part==i)) / rat;
+end
