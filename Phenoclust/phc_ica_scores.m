@@ -43,6 +43,15 @@ model_age.x = [model_site.x niak_normalize_tseries(age,'mean')];
 model_age.y = weights;
 model_age.c = [zeros(size(model_site.x,2),1) ; 1];
 opt_glm.test = 'ttest';
+opt_glm.flag_beta = true;
+res_age = niak_glm(model_age,opt_glm);
+
+%% GLM analysis for age - the other way around
+model_age.y = age;
+model_age.x = [model_site.x weights];
+model_age.c = [zeros(size(model_site.x,2),1) ; ones(size(weights,2),1)];
+opt_glm.test = 'ftest';
+opt_glm.flag_beta = true;
 res_age = niak_glm(model_age,opt_glm);
 
 %% Diagnosis - METAL
@@ -66,6 +75,7 @@ res_diagnosis = niak_glm(model_diagnosis,opt_glm);
 %% GLM analysis for diagnosis - the other way around
 model_diagnosis.y = [niak_normalize_tseries(diagnosis,'mean')];
 model_diagnosis.x = [model_site.x weights];
-model_diagnosis.c = [zeros(size(model_site.x,2),1) ; ones(size(weights,2),1) ];
+model_diagnosis.c = [zeros(size(model_site.x,2),1) ; ones(size(model_diagnosis.x,2)-size(model_site.x,2),1) ];
 opt_glm.test = 'ftest';
+opt_glm.flag_beta = true;
 res_diagnosis = niak_glm(model_diagnosis,opt_glm);
