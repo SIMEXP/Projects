@@ -2,19 +2,13 @@ clear
 
 %% Load data
 path_data = '/home/pbellec/database/phenoclust/scale_12_2015_01_14/';
-path_res = [path_data 'phc_cluster_R_demeaned' filesep];
+path_res = [path_data 'phc_cluster_R_diff' filesep];
 [hdr,vol] = niak_read_vol([path_data 'netstack_net10.nii.gz']);
 [hdr,mask] = niak_read_vol([path_data 'mask_gm.nii.gz']);
 tseries = niak_vol2tseries(vol,mask);
 
-%% Run a normalization by regressing out the average stability map
-model_ga.y = tseries';
-model_ga.x = [ones(size(tseries,2),1) mean(tseries,1)'];
-model_ga.c = [0;1];
-opt_ga.flag_residuals = true;
-opt_ga.test = 'ttest';
-res_ga = niak_glm(model_ga,opt_ga);
-tseries_ga = res_ga.e';
+%% correct for the mean
+tseries_ga = niak_normalize_tseries(tseries_ga','mean')';
 
 %% Run a cluster analysis on the demeaned maps
 R = corr(tseries_ga');
@@ -71,6 +65,7 @@ model_diagnosis.y = weights;
 model_diagnosis.c = [zeros(size(model_site.x,2),1) ; 1];
 opt_glm.test = 'ttest';
 res_diagnosis = niak_glm(model_diagnosis,opt_glm);
+res_diagnosis.beta(end,:)
 
 %% GLM analysis for age - controls only
 mask_ctl = diagnosis == 1;
@@ -95,7 +90,7 @@ figure
 niak_montage(mean(vol,4),opt_vp);
 title('Grand average')
 
-%% Visualize the cluster means, after demeaning
+%% Visualize the cluster means, after substraction of the mean
 opt_vp.vol_limits = [-0.2 0.2];
 opt_vp.type_color = 'hot_cold';
 vol_ga = niak_tseries2vol(tseries_ga,mask);
@@ -130,6 +125,6 @@ hdr.file_name = [path_res 'grand_mean_clusters.nii.gz'];
 niak_write_vol(hdr,mean(vol,4));
 
 %% Visualize volumes using command line
-% mricron /home/pbellec/database/template.nii.gz -o mean_clusters.nii.gz -l 0.1 -h 0.7 -c 5redyell&
-% mricron /home/pbellec/database/template.nii.gz -o grand_mean_clusters.nii.gz -l 0.1 -h 0.7 -c 5redyell&
-%  mricron /home/pbellec/database/template.nii.gz -o mean_cluster_demeaned.nii.gz -l 2 -h 5 -c 5redyell -o mean_cluster_demeaned.nii.gz -l -5 -h -2 -c 6bluegrn&
+mricron /home/pbellec/database/template.nii.gz -o mean_clusters.nii.gz -l 0.1 -h 0.7 -c 5redyell&
+mricron /home/pbellec/database/template.nii.gz -o grand_mean_clusters.nii.gz -l 0.1 -h 0.7 -c 5redyell&
+mricron /home/pbellec/database/template.nii.gz -o mean_cluster_demeaned.nii.gz -l 2 -h 5 -c 5redyell -o mean_cluster_demeaned.nii.gz -l -5 -h -2 -c 6bluegrn&
