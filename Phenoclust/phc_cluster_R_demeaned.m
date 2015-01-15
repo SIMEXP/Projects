@@ -2,6 +2,7 @@ clear
 
 %% Load data
 path_data = '/home/pbellec/database/phenoclust/scale_12_2015_01_14/';
+path_res = [path_data 'phc_cluster_R_demeaned' filesep];
 [hdr,vol] = niak_read_vol([path_data 'netstack_net10.nii.gz']);
 [hdr,mask] = niak_read_vol([path_data 'mask_gm.nii.gz']);
 tseries = niak_vol2tseries(vol,mask);
@@ -20,30 +21,6 @@ R = corr(tseries_ga');
 hier = niak_hierarchical_clustering(R);
 order = niak_hier2order(hier);
 part = niak_threshold_hierarchy(hier,struct('thresh',7));
-
-%% Visualize the matrices
-figure
-opt_vr.limits = [-0.3 0.3];
-niak_visu_matrix(R(order,order),opt_vr);
-figure
-opt_p.flag_labels = true;
-niak_visu_part(part(order),opt_p);
-
-%% Visualize the cluster means
-opt_vp.vol_limits = [0 1];
-for cc = 1:max(part)
-    figure
-    niak_montage(mean(vol(:,:,:,part==cc),4),opt_vp);
-end
-
-%% Visualize the cluster means, after demeaning
-opt_vp.vol_limits = [-0.2 0.2];
-opt_vp.type_color = 'hot_cold';
-vol_ga = niak_tseries2vol(tseries_ga,mask);
-for cc = 1:max(part)
-    figure
-    niak_montage(mean(vol_ga(:,:,:,part==cc),4),opt_vp);
-end
 
 %% Build loads
 avg_clust = zeros(max(part),size(tseries_ga,2));
@@ -77,6 +54,7 @@ model_age.c = [zeros(size(model_site.x,2),1) ; 1];
 opt_glm.test = 'ttest';
 opt_glm.flag_beta = true;
 res_age = niak_glm(model_age,opt_glm);
+res_age.beta(model_age.c>0,:)
 
 %% GLM analysis for diagnosis - site covariates
 diagnosis = cell2mat(cellfun (@str2num, tab(2:end,4),"UniformOutput", false));
@@ -85,3 +63,73 @@ model_diagnosis.y = weights;
 model_diagnosis.c = [zeros(size(model_site.x,2),1) ; 1];
 opt_glm.test = 'ttest';
 res_diagnosis = niak_glm(model_diagnosis,opt_glm);
+
+%% GLM analysis for age - controls only
+mask_ctl = diagnosis == 1;
+model_age_ctl.x = [model_site.x(mask_ctl,:) niak_normalize_tseries(age(mask_ctl,:),'mean')];
+model_age_ctl.y = weights(mask_ctl,:);
+model_age_ctl.c = [zeros(size(model_site.x,2),1) ; 1];
+opt_glm.test = 'ttest';
+opt_glm.flag_beta = true;
+res_age_ctl = niak_glm(model_age_ctl,opt_glm);
+
+%% Visualize the matrices
+figure
+opt_vr.limits = [-0.3 0.3];
+niak_visu_matrix(R(order,order),opt_vr);
+figure
+opt_p.flag_labels = true;
+niak_visu_part(part(order),opt_p);
+
+%% Visualize the cluster means
+[fdr,test] = niak_fdr(res_age.pce(:),'BH',0.05);
+ind_visu = find(test)';
+% ind_visu = 1:max(part);
+opt_vp.vol_limits = [0 1];
+for cc = ind_visu
+    figure
+    niak_montage(mean(vol(:,:,:,part==cc),4),opt_vp);
+    title(sprintf('Average cluster %i',cc))
+end
+figure
+niak_montage(mean(vol,4),opt_vp);
+title('Grand average')
+
+%% Visualize the cluster means, after demeaning
+opt_vp.vol_limits = [-0.2 0.2];
+opt_vp.type_color = 'hot_cold';
+vol_ga = niak_tseries2vol(tseries_ga,mask);
+for cc = ind_visu;
+    figure
+    niak_montage(mean(vol_ga(:,:,:,part==cc),4),opt_vp);
+    title(sprintf('Demeaned average cluster %i',cc))
+end
+
+%% Write volumes
+% The average per cluster
+psom_mkdir(path_res)
+avg_clust_raw = zeros(max(part),size(tseries,2));
+for cc = 1:max(part)
+    avg_clust_raw(cc,:) = mean(tseries(part==cc,:),1);
+end
+vol_avg_raw = niak_tseries2vol(avg_clust_raw,mask);
+hdr.file_name = [path_res 'mean_clusters.nii.gz'];
+niak_write_vol(hdr,vol_avg_raw);
+
+% The demeaned, z-ified volumes
+avg_clust = zeros(max(part),size(tseries,2));
+for cc = 1:max(part)
+    avg_clust(cc,:) = mean(tseries_ga(part==cc,:),1);
+end
+avg_clust = niak_normalize_tseries(avg_clust','median_mad')';
+vol_avg = niak_tseries2vol(avg_clust,mask);
+hdr.file_name = [path_res 'mean_cluster_demeaned.nii.gz'];
+niak_write_vol(hdr,vol_avg);
+
+hdr.file_name = [path_res 'grand_mean_clusters.nii.gz'];
+niak_write_vol(hdr,mean(vol,4));
+
+%% Visualize volumes using command line
+% mricron /home/pbellec/database/template.nii.gz -o mean_clusters.nii.gz -l 0.1 -h 0.7 -c 5redyell&
+% mricron /home/pbellec/database/template.nii.gz -o grand_mean_clusters.nii.gz -l 0.1 -h 0.7 -c 5redyell&
+%  mricron /home/pbellec/database/template.nii.gz -o mean_cluster_demeaned.nii.gz -l 2 -h 5 -c 5redyell -o mean_cluster_demeaned.nii.gz -l -5 -h -2 -c 6bluegrn&
