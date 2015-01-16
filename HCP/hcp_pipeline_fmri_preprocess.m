@@ -154,4 +154,14 @@ opt.flag_test = false;
 [pipeline,opt] = niak_pipeline_fmri_preprocess(files_in,opt);
 
 %% extra
-system(['cp ' mfilename('fullpath') '.m ' opt.folder_out '.']); % make a copie of this script to output folder
+%copy Eprime varaibles for each subject to the preprocessing output folder
+for num_e = 1:length(list_subject)
+    subject = list_subject{num_e};
+    id = ['HCP' subject];
+    system([' mkdir -p ' opt.folder_out filesep 'EVs' filesep id filesep 'lr']);
+    system([' mkdir -p ' opt.folder_out filesep 'EVs' filesep id filesep 'rl']);
+    system(['rsync -a ' path_raw subject '/unprocessed/3T/tfMRI_' task '_LR/LINKED_DATA/EPRIME/EVs/ ' opt.folder_out filesep 'EVs' filesep id filesep 'lr/']); 
+    system(['rsync -a ' path_raw subject '/unprocessed/3T/tfMRI_' task '_RL/LINKED_DATA/EPRIME/EVs/ ' opt.folder_out filesep 'EVs' filesep id filesep 'rl/']); 
+end
+% make a copy of this script to output folder
+system(['cp ' mfilename('fullpath') '.m ' opt.folder_out '.']);

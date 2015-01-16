@@ -26,5 +26,7 @@ for ss = [1 2 3 5]
     end
 end
 
-%sync  unprocessed data to guillimin 
-rsync -avv -f"+ */" -f"+ *_3T_T1w_MPR1.nii.gz" -f"+ *_tfMRI_*" -f"- *" /media/scratch2/HCP_unproc/
+%Grab only functional images, anatomical images and Eprime variable for each task then convert all nifti files to minc  
+system(['rsync -avvn -f"+ */" -f"+ *_3T_T1w_MPR1.nii.gz" -f"+ *_tfMRI_*" -f"+ *.txt" -f"+ *.csv"  -f"- *" /media/scratch2/HCP_unproc/  /media/scratch2/HCP_task_unproc_nii'];
+opt.flag_zip = true;
+niak_brick_nii2mnc('/media/scratch2/HCP_task_unproc_nii','/media/scratch2/HCP_task_unproc_mnc',opt);
