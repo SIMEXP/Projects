@@ -64,15 +64,28 @@ end
 
 %% WARNING: Do not use underscores '_' in the IDs of subject, sessions or runs. This may cause bugs in subsequent pipelines.
 
-%% Subject 1
-files_in.HCP100307.anat                                    = [ root_path 'HCP_unproc_tmp/100307/unprocessed/3T/T1w_MPR1/100307_3T_T1w_MPR1.mnc.gz'];     % Structural scan
-files_in.HCP100307.fmri.session1.([lower(task)(1:2) 'rl']) = [ root_path 'HCP_unproc_tmp/100307/unprocessed/3T/tfMRI_' upper(task) '_RL/100307_3T_tfMRI_' task '_RL.mnc.gz']; % fMRI run 1
-files_in.HCP100307.fmri.session1.([lower(task)(1:2) 'lr']) = [ root_path 'HCP_unproc_tmp/100307/unprocessed/3T/tfMRI_' upper(task) '_LR/100307_3T_tfMRI_' task '_LR.mnc.gz']; % fMRI run 2
+%% Grab the raw data
+path_raw = [root_path 'HCP_unproc_tmp/'];
+list_subject = dir(path_raw);
+list_subject = {list_subject.name};
+list_subject = list_subject(~ismember(list_subject,{'.','..'}));
 
-%% Subject 2
-files_in.HCP100408.anat                                    = [ root_path 'HCP_unproc_tmp/100408/unprocessed/3T/T1w_MPR1/100408_3T_T1w_MPR1.mnc.gz'];     % Structural scan
-files_in.HCP100408.fmri.session1.([lower(task)(1:2) 'rl']) = [ root_path 'HCP_unproc_tmp/100408/unprocessed/3T/tfMRI_' upper(task) '_RL/100408_3T_tfMRI_' task '_RL.mnc.gz']; % fMRI run 1
-files_in.HCP100408.fmri.session1.([lower(task)(1:2) 'lr']) = [ root_path 'HCP_unproc_tmp/100408/unprocessed/3T/tfMRI_' upper(task) '_LR/100408_3T_tfMRI_' task '_LR.mnc.gz']; % fMRI run 2
+for num_s = 1:length(list_subject)
+    subject = list_subject{num_s};
+    id = ['HCP' subject];
+    files_in.(id).anat = [ root_path 'HCP_unproc_tmp/' subject '/unprocessed/3T/T1w_MPR1/' subject '_3T_T1w_MPR1.mnc.gz'];     % Structural scan
+    files_in.(id).fmri.session1.([lower(task)(1:2) 'rl']) = [ root_path 'HCP_unproc_tmp/' subject '/unprocessed/3T/tfMRI_' upper(task) '_RL/' subject '_3T_tfMRI_' upper(task) '_RL.mnc.gz']; % fMRI run 1
+    files_in.(id).fmri.session1.([lower(task)(1:2) 'lr']) = [ root_path 'HCP_unproc_tmp/' subject '/unprocessed/3T/tfMRI_' upper(task) '_LR/' subject '_3T_tfMRI_' upper(task) '_LR.mnc.gz']; % fMRI run 2
+    %check if all the necessary files exist
+    files_c = psom_files2cell(files_in.(id));
+    for num_f = 1:length(files_c)
+        if ~psom_exist(files_c{num_f})
+            warning ('The file %s does not exist, I suppressed subject %s',files_c{num_f},subject);
+            files_in = rmfield(files_in,id);
+            break
+        end        
+    end
+end
 
 
 %%%%%%%%%%%%%%%%%%%%%%%
