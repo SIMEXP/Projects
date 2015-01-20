@@ -19,7 +19,9 @@ require(OpenMx)
 task  = 'motor'
 exp   = 'hcp_perc'
 trial = 'rh'
-myTwinData <- read.csv("~/Dropbox/HCP_fir_heritability/niak_combine_scan_pedig_motor_rh_sci10_scg7_scf7_hcp_perc.csv", header=TRUE, na.strings="NaN")
+scale = 'sci80_scg80_scf83'
+
+myTwinData <- read.csv(paste("~/Dropbox/HCP_fir_heritability/niak_combine_scan_pedig_",task,"_",trial,"_",scale,"_",exp,".csv",sep=''), header=TRUE, na.strings="NaN")
 names(myTwinData)[1] <- "id_scan" # put the header for the scan's id
 myTwinData$id_scan <- as.character(myTwinData$id_scan)
 myTwinData <- myTwinData[complete.cases(myTwinData$Subject), ] # remove NA rows
@@ -34,9 +36,9 @@ write.csv(myTwinData,"~/Dropbox/HCP_fir_heritability/test.csv")# write a test ta
 if (any(duplicated(myTwinData$id_scan) == TRUE )) { warning( "the duplicated subjects ID are: \n" ,(myTwinData$id_scan[duplicated(myTwinData$id_scan)]),"\n") }
 myTwinData <- myTwinData[!duplicated(myTwinData$id_scan),] # remove the dulicated subject
 volume      = 24 # set times points or volume
-cluster     = 7 # set the number of clusters 
-permute = 1000 # set the number of permutations
-
+cluster     = 83 # set the number of clusters 
+permute = 1 # set the number of permutations
+cc = 
 for (cc in seq(cluster)) {
   for (vv in seq(volume)) {
     clust_vol_tmp <- paste("clust_",cc,"_v",vv,sep='')
@@ -360,7 +362,7 @@ TabResult$shapiroPvalue_Tw2 <- as.numeric(TabResult$shapiroPvalue_Tw2)
 # biocLite("rhdf5")
 library(rhdf5)
 h5createFile(paste("clust_",as.character(cc),"_scale",cluster,"_",exp,"_",task,"_",trial,sep = ''))
-h5write(TabResut,paste("clust_",as.character(cc),"_scale",cluster,"_",exp,"_",task,"_",trial,sep = ''),"TabResut")
+h5write(TabResult,paste("clust_",as.character(cc),"_scale",cluster,"_",exp,"_",task,"_",trial,sep = ''),"TabResult")
 
 # Write csv copy of the results table 
 write.csv(TabResult, file = paste("~/Dropbox/HCP_fir_heritability/" , paste("scale",cluster,"_",exp,"_",task,"_",trial,".csv",sep = ''),sep = ''))

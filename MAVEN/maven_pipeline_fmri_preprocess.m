@@ -61,6 +61,31 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Setting input/output files %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Grab the raw data
+path_raw = [root_path 'raw_task/'];
+list_subject = dir(path_raw);
+list_subject = {list_subject.name};
+list_subject = list_subject(~ismember(list_subject,{'.','..'}));
+
+for num_s = 1:length(list_subject)
+    subject = list_subject{num_s};
+    id = ['X' subject];
+    files_in.(id).anat = [path_raw subject filesep 'anat' filesep 'mprage.mnc.gz'];
+    files_in.(id).fmri.sess1.breathHold1400 = [path_raw subject filesep 'TfMRI_breathHold_1400' filesep 'func.mnc.gz'];
+    files_in.(id).fmri.sess1.checBoard1400 = [path_raw subject filesep 'TfMRI_visualCheckerboard_1400' filesep 'func.mnc.gz'];
+    files_in.(id).fmri.sess1.checBoard645 = [path_raw subject filesep 'TfMRI_visualCheckerboard_645' filesep 'func.mnc.gz'];    
+    
+    files_c = psom_files2cell(files_in.(id));
+    for num_f = 1:length(files_c)
+        if ~psom_exist(files_c{num_f})
+            warning ('The file %s does not exist, I suppressed subject %s',files_c{num_f},subject);
+            files_in = rmfield(files_in,id);
+            break
+        end        
+    end
+end
+
+
 
 %% WARNING: Do not use underscores '_' in the IDs of subject, sessions or runs. This may cause bugs in subsequent pipelines.
 

@@ -57,7 +57,7 @@ end
 
 %%%%%%%pedigree builder%%%%%%%%
 %keep only twins in pedigree
-csv_cell = niak_read_csv_cell ([ path_out 'RESTRICTED_yassinebha_1_6_2015_14_22_6.csv' ]);
+csv_cell = niak_read_csv_cell ([ '/media/database8/RESTRICTED_HCP/RESTRICTED_yassinebha_1_6_2015_14_22_6.csv' ]);
 data = csv_cell(2:end,:)(strcmp('Twin',csv_cell(2:end,3)),:);
 tmp_cell = cell([size(data)(1)+1 size(data)(2)]);
 tmp_cell(1,:) = csv_cell(1,:);
