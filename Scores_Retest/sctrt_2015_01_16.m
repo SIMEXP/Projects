@@ -84,6 +84,7 @@ for f_id = 1:6
         part = opt_mplm.space.mpart{2};
         opt_scores.sampling.type = 'scenario';
         opt_scores.sampling.opt = opt_s;
+        opt_scores.sampling.opt.t = ceil(0.6*opt_s.t);
         res = niak_stability_cores(tseries,part,opt_scores);
         sil_mat(:,:,count) = reshape(res.stab_contrast(:, 1), [32 32]);
         stab_mat(:,:,count) = reshape(res.stab_maps(:, 3), [32 32]);
