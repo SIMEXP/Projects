@@ -57,65 +57,79 @@ else
         my_user_name = getenv('USER');
     end
 end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% grab raw_data
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% Setting input/output files %%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% Grab the raw data
-path_raw = [root_path 'raw_task/'];
+path_raw = [root_path 'raw_mnc/'];
 list_subject = dir(path_raw);
 list_subject = {list_subject.name};
-list_subject = list_subject(~ismember(list_subject,{'.','..'}));
+list_subject = list_subject(~ismember(list_subject,{'.','..','octave-wokspace','octave-core','qc_report.csv'}));
 
 for num_s = 1:length(list_subject)
     subject = list_subject{num_s};
-    id = ['X' subject];
-    files_in.(id).anat = [path_raw subject filesep 'anat' filesep 'mprage.mnc.gz'];
-    files_in.(id).fmri.sess1.breathHold1400 = [path_raw subject filesep 'TfMRI_breathHold_1400' filesep 'func.mnc.gz'];
-    files_in.(id).fmri.sess1.checBoard1400 = [path_raw subject filesep 'TfMRI_visualCheckerboard_1400' filesep 'func.mnc.gz'];
-    files_in.(id).fmri.sess1.checBoard645 = [path_raw subject filesep 'TfMRI_visualCheckerboard_645' filesep 'func.mnc.gz'];    
-    
-    files_c = psom_files2cell(files_in.(id));
-    for num_f = 1:length(files_c)
-        if ~psom_exist(files_c{num_f})
-            warning ('The file %s does not exist, I suppressed subject %s',files_c{num_f},subject);
-            files_in = rmfield(files_in,id);
-            break
-        end        
+    id = strrep (subject, '_', '');
+    path_anat = [path_raw subject filesep 'anat/'];
+    anat_file = dir([path_anat "MPRAGEt1mprages*"]);
+    switch anat_tmp = anat_file(ismember({anat_file.name},{'MPRAGEt1mprages009a1001.mnc.gz','MPRAGEt1mprages015a1001.mnc.gz',...
+    'MPRAGEt1mprages011a1001.mnc.gz'})).name;  
+          case 'MPRAGEt1mprages009a1001.mnc.gz'
+          files_in.(id).anat=[path_anat 'MPRAGEt1mprages009a1001.mnc.gz'];
+          case 'MPRAGEt1mprages015a1001.mnc.gz'
+          files_in.(id).anat=[path_anat 'MPRAGEt1mprages015a1001.mnc.gz'];
+          case 'MPRAGEt1mprages011a1001.mnc.gz'
+          files_in.(id).anat=[path_anat 'MPRAGEt1mprages011a1001.mnc.gz'];
+          otherwise
+          warning('subject %s has no anat found', subject)
+          files_in.(id).anat=[path_anat ''];
+    end
+
+    % subject runs
+    subject_run = dir([path_raw subject filesep 'func/']);
+    subject_run = {subject_run(3:end).name};   
+    %loop over runs
+    for num_run = 1:length(subject_run) 
+        run_name = subject_run{num_run};
+        path_func = [path_raw subject filesep 'func/'];
+        func_file = dir([path_func run_name filesep  "RSN*"]);
+        func_tmp = func_file(ismember({func_file.name},{'RSN1ep2d64s004a001.mnc.gz','RSN1ep2d64s010a001.mnc.gz','RSN1ep2d64s006a001.mnc.gz','RSN2ep2d64s005a001.mnc.gz','RSN2ep2d64s007a001.mnc.gz','RSN2ep2d64s011a001.mnc.gz','RSN3ep2d64s006a001.mnc.gz','RSN3ep2d64s008a001.mnc.gz'})).name;
+        
+        switch func_tmp   
+              case 'RSN1ep2d64s004a001.mnc.gz'
+              files_in.(id).fmri.sess1.rest1 = [path_raw subject filesep 'func/run1/RSN1ep2d64s004a001.mnc.gz'];
+              case 'RSN1ep2d64s010a001.mnc.gz'
+              files_in.(id).fmri.sess1.rest1 = [path_raw subject filesep 'func/run1/RSN1ep2d64s010a001.mnc.gz'];
+              case 'RSN1ep2d64s006a001.mnc.gz'
+              files_in.(id).fmri.sess1.rest1 = [path_raw subject filesep 'func/run1/RSN1ep2d64s006a001.mnc.gz'];
+              case 'RSN2ep2d64s005a001.mnc.gz'
+              files_in.(id).fmri.sess1.inscape = [path_raw subject filesep 'func/run2/RSN2ep2d64s005a001.mnc.gz'];
+              case 'RSN2ep2d64s007a001.mnc.gz'
+              files_in.(id).fmri.sess1.inscape = [path_raw subject filesep 'func/run2/RSN2ep2d64s007a001.mnc.gz'];
+              case 'RSN2ep2d64s011a001.mnc.gz'
+              files_in.(id).fmri.sess1.inscape = [path_raw subject filesep 'func/run2/RSN2ep2d64s011a001.mnc.gz'];
+              case 'RSN3ep2d64s006a001.mnc.gz'
+              files_in.(id).fmri.sess1.rest2 = [path_raw subject filesep 'func/run3/RSN3ep2d64s006a001.mnc.gz'];
+              case 'RSN3ep2d64s008a001.mnc.gz'
+              files_in.(id).fmri.sess1.rest2 = [path_raw subject filesep 'func/run3/RSN3ep2d64s008a001.mnc.gz'];
+              otherwise
+              warning('subject %s has no functional found', subject)
+              files_in.(id).fmri.sess1.rest1 = [path_raw subject filesep ''];
+        end
     end
 end
 
+files_c = psom_files2cell(files_in.(id));
+for num_f = 1:length(files_c)
+    if ~psom_exist(files_c{num_f})
+        warning ('The file %s does not exist, I suppressed subject %s',files_c{num_f},subject);
+        files_in = rmfield(files_in,id);
+        break
+    end        
+end
 
-
-%% WARNING: Do not use underscores '_' in the IDs of subject, sessions or runs. This may cause bugs in subsequent pipelines.
-
-list_subject_raw = dir([root_path 'raw_mnc']);
-nb_subject = 0;
-for num_ss = 1:length(list_subject_raw)
-    if ~ismember(list_subject_raw(num_ss).name,{'.','..','octave-wokspace','octave-core','qc_report.csv'}) 
-       nb_subject = nb_subject + 1;
-       sprintf('Adding subject %s', list_subject_raw(num_ss).name)
-       list_subject{nb_subject} = list_subject_raw(num_ss).name;     
-    else 
-       sprintf('subject %s is discarded', list_subject_raw(num_ss).name)
-    end  
-end   
-
-
-%% Subject 1
-files_in.HCP100307.anat                                    = [ root_path 'HCP_unproc_tmp/100307/unprocessed/3T/T1w_MPR1/100307_3T_T1w_MPR1.mnc.gz'];     % Structural scan
-files_in.HCP100307.fmri.session1.([lower(task)(1:2) 'rl']) = [ root_path 'HCP_unproc_tmp/100307/unprocessed/3T/tfMRI_' upper(task) '_RL/100307_3T_tfMRI_' task '_RL.mnc.gz']; % fMRI run 1
-files_in.HCP100307.fmri.session1.([lower(task)(1:2) 'lr']) = [ root_path 'HCP_unproc_tmp/100307/unprocessed/3T/tfMRI_' upper(task) '_LR/100307_3T_tfMRI_' task '_LR.mnc.gz']; % fMRI run 2
-
-%% Subject 2
-files_in.HCP100408.anat                                    = [ root_path 'HCP_unproc_tmp/100408/unprocessed/3T/T1w_MPR1/100408_3T_T1w_MPR1.mnc.gz'];     % Structural scan
-files_in.HCP100408.fmri.session1.([lower(task)(1:2) 'rl']) = [ root_path 'HCP_unproc_tmp/100408/unprocessed/3T/tfMRI_' upper(task) '_RL/100408_3T_tfMRI_' task '_RL.mnc.gz']; % fMRI run 1
-files_in.HCP100408.fmri.session1.([lower(task)(1:2) 'lr']) = [ root_path 'HCP_unproc_tmp/100408/unprocessed/3T/tfMRI_' upper(task) '_LR/100408_3T_tfMRI_' task '_LR.mnc.gz']; % fMRI run 2
-
-
-%%%%%%%%%%%%%%%%%%%%%%%
-%% Pipeline options  %%
-%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Setting input/output files %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %% General
 opt.folder_out  = [root_path 'fmri_preprocess_' upper(task) '_' exp];    % Where to store the results
