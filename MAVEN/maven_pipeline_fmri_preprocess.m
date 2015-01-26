@@ -30,9 +30,8 @@ clear all
 %%%%%%%%%%%%%%%%%%%%%
 %% Parameters
 %%%%%%%%%%%%%%%%%%%%%
-task  = 'inkscape';
-exp   = 'fir';
-
+task  = 'inkscape_rest';
+exp   = 'all';
 %% Setting input/output files 
 [status,cmdout] = system ('uname -n');
 server          = strtrim(cmdout);
@@ -59,15 +58,14 @@ else
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % grab raw_data
-
 path_raw = [root_path 'raw_mnc/'];
 list_subject = dir(path_raw);
 list_subject = {list_subject.name};
-list_subject = list_subject(~ismember(list_subject,{'.','..','octave-wokspace','octave-core','qc_report.csv'}));
-
+list_subject = list_subject(~ismember(list_subject,{'.','..','octave-wokspace','octave-core','qc_report.csv','D2026_20140809_134404541'}));
 for num_s = 1:length(list_subject)
     subject = list_subject{num_s};
-    id = strrep (subject, '_', '');
+    id = subject(1:strfind(subject,'_')(1)-1);
+    fprintf('Subject %s\n',id);
     path_anat = [path_raw subject filesep 'anat/'];
     anat_file = dir([path_anat "MPRAGEt1mprages*"]);
     switch anat_tmp = anat_file(ismember({anat_file.name},{'MPRAGEt1mprages009a1001.mnc.gz','MPRAGEt1mprages015a1001.mnc.gz',...
@@ -82,7 +80,7 @@ for num_s = 1:length(list_subject)
           warning('subject %s has no anat found', subject)
           files_in.(id).anat=[path_anat ''];
     end
-
+    
     % subject runs
     subject_run = dir([path_raw subject filesep 'func/']);
     subject_run = {subject_run(3:end).name};   
@@ -91,28 +89,32 @@ for num_s = 1:length(list_subject)
         run_name = subject_run{num_run};
         path_func = [path_raw subject filesep 'func/'];
         func_file = dir([path_func run_name filesep  "RSN*"]);
-        func_tmp = func_file(ismember({func_file.name},{'RSN1ep2d64s004a001.mnc.gz','RSN1ep2d64s010a001.mnc.gz','RSN1ep2d64s006a001.mnc.gz','RSN2ep2d64s005a001.mnc.gz','RSN2ep2d64s007a001.mnc.gz','RSN2ep2d64s011a001.mnc.gz','RSN3ep2d64s006a001.mnc.gz','RSN3ep2d64s008a001.mnc.gz'})).name;
+        func_tmp = func_file(ismember({func_file.name},{'RSN1ep2d64s004a001.mnc.gz','RSN1ep2d64s010a001.mnc.gz',...
+        'RSN1ep2d64s006a001.mnc.gz','RSN2ep2d64s005a001.mnc.gz','RSN2ep2d64s007a001.mnc.gz','RSN2ep2d64s011a001.mnc.gz',...
+        'RSN3ep2d64s006a001.mnc.gz','RSN3ep2d64s008a001.mnc.gz','RSN3ep2d64s012a001.mnc.gz'})).name;
         
         switch func_tmp   
               case 'RSN1ep2d64s004a001.mnc.gz'
-              files_in.(id).fmri.sess1.rest1 = [path_raw subject filesep 'func/run1/RSN1ep2d64s004a001.mnc.gz'];
+              files_in.(id).fmri.session1.rest1 = [path_raw subject filesep 'func/run1/RSN1ep2d64s004a001.mnc.gz'];
               case 'RSN1ep2d64s010a001.mnc.gz'
-              files_in.(id).fmri.sess1.rest1 = [path_raw subject filesep 'func/run1/RSN1ep2d64s010a001.mnc.gz'];
+              files_in.(id).fmri.session1.rest1 = [path_raw subject filesep 'func/run1/RSN1ep2d64s010a001.mnc.gz'];
               case 'RSN1ep2d64s006a001.mnc.gz'
-              files_in.(id).fmri.sess1.rest1 = [path_raw subject filesep 'func/run1/RSN1ep2d64s006a001.mnc.gz'];
+              files_in.(id).fmri.session1.rest1 = [path_raw subject filesep 'func/run1/RSN1ep2d64s006a001.mnc.gz'];
               case 'RSN2ep2d64s005a001.mnc.gz'
-              files_in.(id).fmri.sess1.inscape = [path_raw subject filesep 'func/run2/RSN2ep2d64s005a001.mnc.gz'];
+              files_in.(id).fmri.session1.inscape = [path_raw subject filesep 'func/run2/RSN2ep2d64s005a001.mnc.gz'];
               case 'RSN2ep2d64s007a001.mnc.gz'
-              files_in.(id).fmri.sess1.inscape = [path_raw subject filesep 'func/run2/RSN2ep2d64s007a001.mnc.gz'];
+              files_in.(id).fmri.session1.inscape = [path_raw subject filesep 'func/run2/RSN2ep2d64s007a001.mnc.gz'];
               case 'RSN2ep2d64s011a001.mnc.gz'
-              files_in.(id).fmri.sess1.inscape = [path_raw subject filesep 'func/run2/RSN2ep2d64s011a001.mnc.gz'];
+              files_in.(id).fmri.session1.inscape = [path_raw subject filesep 'func/run2/RSN2ep2d64s011a001.mnc.gz'];
               case 'RSN3ep2d64s006a001.mnc.gz'
-              files_in.(id).fmri.sess1.rest2 = [path_raw subject filesep 'func/run3/RSN3ep2d64s006a001.mnc.gz'];
+              files_in.(id).fmri.session1.rest2 = [path_raw subject filesep 'func/run3/RSN3ep2d64s006a001.mnc.gz'];
               case 'RSN3ep2d64s008a001.mnc.gz'
-              files_in.(id).fmri.sess1.rest2 = [path_raw subject filesep 'func/run3/RSN3ep2d64s008a001.mnc.gz'];
+              files_in.(id).fmri.session1.rest2 = [path_raw subject filesep 'func/run3/RSN3ep2d64s008a001.mnc.gz'];
+              case 'RSN3ep2d64s012a001.mnc.gz'
+              files_in.(id).fmri.session1.rest2 = [path_raw subject filesep 'func/run3/RSN3ep2d64s012a001.mnc.gz'];
               otherwise
               warning('subject %s has no functional found', subject)
-              files_in.(id).fmri.sess1.rest1 = [path_raw subject filesep ''];
+              files_in.(id).fmri.session1.rest1 = [path_raw subject filesep ''];
         end
     end
 end
@@ -137,9 +139,9 @@ opt.size_output = 'quality_control';                             % The amount of
 
 
 %% Slice timing correction (niak_brick_slice_timing)
-opt.slice_timing.type_acquisition = 'interleaved ascending'; % Slice timing order (available options : 'sequential ascending', 'sequential descending', 'interleaved ascending', 'interleaved descending')
+opt.slice_timing.type_acquisition = 'interleaved descending'; % Slice timing order (available options : 'sequential ascending', 'sequential descending', 'interleaved ascending', 'interleaved descending')
 opt.slice_timing.type_scanner     = 'Siemens';                % Scanner manufacturer. Only the value 'Siemens' will actually have an impact
-opt.slice_timing.delay_in_tr      = 0;                       % The delay in TR ("blank" time between two volumes)
+opt.slice_timing.delay_in_tr      = 0.05;                       % The delay in TR ("blank" time between two volumes)
 opt.slice_timing.suppress_vol     = 0;                       % Number of dummy scans to suppress.
 opt.slice_timing.flag_nu_correct  = 1;                       % Apply a correction for non-uniformities on the EPI volumes (1: on, 0: of). This is particularly important for 32-channels coil.
 opt.slice_timing.arg_nu_correct   = '-distance 200';         % The distance between control points for non-uniformity correction (in mm, lower values can capture faster varying slow spatial drifts).
@@ -151,7 +153,7 @@ opt.motion.session_ref  = 'session1'; % The session that is used as a reference.
 
 % resampling in stereotaxic space
 opt.resample_vol.interpolation = 'trilinear'; % The resampling scheme. The fastest and most robust method is trilinear. 
-opt.resample_vol.voxel_size    = [2 2 2];     % The voxel size to use in the stereotaxic space
+opt.resample_vol.voxel_size    = [3 3 3];     % The voxel size to use in the stereotaxic space
 opt.resample_vol.flag_skip     = 0;           % Skip resampling (data will stay in native functional space after slice timing/motion correction) (0: don't skip, 1 : skip)
 
 % Linear and non-linear fit of the anatomical image in the stereotaxic
