@@ -1,0 +1,72 @@
+
+******************************************
+The pipeline PIPE is now being processed.
+Started on 23-Jan-2015 20:40:07
+user: surchs, host: ace-ws-4, system: unix
+******************************************
+23-Jan-2015 20:40:07 test submitted (1 run / 0 fail / 0 done / 0 left)
+23-Jan-2015 20:40:47 test failed    (0 run / 1 fail / 0 done / 0 left)
+
+*********************************************
+The processing of the pipeline is terminated.
+See report below for job completion status.
+23-Jan-2015 20:40:47
+*********************************************
+The execution of the following job has failed :
+
+    test ; 
+
+More infos can be found in the individual log files. Use the following command to display these logs :
+
+    psom_pipeline_visu('/home/surchs/Code/Projects/Scores_Retest/logs/','log',JOB_NAME)
+
+All jobs have been processed, but some jobs have failed.
+You may want to restart the pipeline latter if you managed to fix the problems.
+
+******************************************
+The pipeline PIPE is now being processed.
+Started on 23-Jan-2015 20:43:28
+user: surchs, host: ace-ws-4, system: unix
+******************************************
+23-Jan-2015 20:43:28 test submitted (1 run / 0 fail / 0 done / 0 left)
+23-Jan-2015 20:43:38 test failed    (0 run / 1 fail / 0 done / 0 left)
+
+*********************************************
+The processing of the pipeline is terminated.
+See report below for job completion status.
+23-Jan-2015 20:43:38
+*********************************************
+The execution of the following job has failed :
+
+    test ; 
+
+More infos can be found in the individual log files. Use the following command to display these logs :
+
+    psom_pipeline_visu('/home/surchs/Code/Projects/Scores_Retest/logs/','log',JOB_NAME)
+
+All jobs have been processed, but some jobs have failed.
+You may want to restart the pipeline latter if you managed to fix the problems.
+
+******************************************
+The pipeline PIPE is now being processed.
+Started on 23-Jan-2015 20:45:35
+user: surchs, host: ace-ws-4, system: unix
+******************************************
+23-Jan-2015 20:45:35 test submitted (1 run / 0 fail / 0 done / 0 left)
+23-Jan-2015 20:45:45 test failed    (0 run / 1 fail / 0 done / 0 left)
+
+*********************************************
+The processing of the pipeline is terminated.
+See report below for job completion status.
+23-Jan-2015 20:45:45
+*********************************************
+The execution of the following job has failed :
+
+    test ; 
+
+More infos can be found in the individual log files. Use the following command to display these logs :
+
+    psom_pipeline_visu('/home/surchs/Code/Projects/Scores_Retest/logs/','log',JOB_NAME)
+
+All jobs have been processed, but some jobs have failed.
+You may want to restart the pipeline latter if you managed to fix the problems.
