@@ -11,16 +11,24 @@
 #      Univariate Twin Analysis model to estimate causes of variation in HCP dataset 
 #      Path style model input - Raw data input
 # -----------------------------------------------------------------------------
-
+#--------------- set Parameters----------------------------------
 rm(list = ls())
 # Load Library
 require(OpenMx)
 #Prepare Data
 task  = 'motor'
-exp   = 'hcp_perc'
+fir_exp   = 'hcp_perc'
 trial = 'rh'
-myTwinData <- read.csv("~/Dropbox/HCP_fir_heritability/niak_combine_scan_pedig_motor_rh_sci10_scg7_scf7_hcp_perc.csv", header=TRUE, na.strings="NaN")
-names(myTwinData)[1] <- "id_scan" # put the header for the scan's id
+fir_scale = 'sci80_scg80_scf83'
+volume      = 24 # set times points or volume
+num_clusters     = 83 # set the number of clusters 
+permute = 1000 # set the number of permutations
+cluster = c(10,63) # set the liste of  clusters
+num_clusters = length(cluster)
+#-------------------------------------------------------------------
+#Read fir_pedigree combined file
+myTwinData <- read.csv(paste("~/Dropbox/HCP_fir_heritability/niak_combine_scan_pedig_",task,"_",trial,"_",fir_scale,"_",fir_exp,".csv",sep=''), header=TRUE, na.strings="NaN")
+names(myTwinData)[1000] <- "id_scan" # put the header for the scan's id
 myTwinData$id_scan <- as.character(myTwinData$id_scan)
 myTwinData <- myTwinData[complete.cases(myTwinData$Subject), ] # remove NA rows
 allDup <- function (value) 
@@ -33,15 +41,18 @@ write.csv(myTwinData,"~/Dropbox/HCP_fir_heritability/test.csv")# write a test ta
 # check for duplicated subject IDs
 if (any(duplicated(myTwinData$id_scan) == TRUE )) { warning( "the duplicated subjects ID are: \n" ,(myTwinData$id_scan[duplicated(myTwinData$id_scan)]),"\n") }
 myTwinData <- myTwinData[!duplicated(myTwinData$id_scan),] # remove the dulicated subject
-volume      = 24 # set times points or volume
-cluster     = 7 # set the number of clusters 
-permute = 1000 # set the number of permutations
 
-for (cc in seq(cluster)) {
+# bult empty table to store the result 
+TabResult <- matrix(, nrow = (volume*num_clusters), ncol = 13) # empty matrix to hold results for each fir times point
+colnames(TabResult) <- cbind("clust_vol","a2","a2_p","c2","c2_p","e2","e2_p","LL_ACE","LL_ACE_p","fir_mean","fir_var","shapiroPvalue_Tw1","shapiroPvalue_Tw2")
+TabResult <- data.frame(TabResult)
+
+for (ii in seq(num_clusters)) {
+  cc = cluster[ii]
   for (vv in seq(volume)) {
     clust_vol_tmp <- paste("clust_",cc,"_v",vv,sep='')
-    myTwinDataVars <- subset(myTwinData, Handedness >= 1 , c("id_scan","Mother_ID","Father_ID","Zygosity",clust_vol_tmp)) #subset variable of interest
-    myTwinDataVars  <- myTwinDataVars[allDup(myTwinDataVars$Mother_ID),] 
+    myTwinDataVars <- subset(myTwinData, Handedness >= 1 , c("id_scan","Mother_ID","Handedness","Zygosity",clust_vol_tmp)) #subset variable of interest
+    myTwinDataVars  <- myTwinDataVars[allDup(myTwinDataVars$Mother_ID),] #remove the remaining non twins aftre subsetting variale
     myTwinDataVars <- myTwinDataVars[order(myTwinDataVars$Mother_ID),] # oredr table assending 
     TabTmp <- matrix(, nrow = dim(myTwinDataVars)[1]+1, ncol = dim(myTwinDataVars)[2]+3) # create empty matrix to hold Twin1 and Twin2 fir times point
     colnames(TabTmp) <- cbind(paste(names(myTwinDataVars['id_scan']),"_twin1",sep=''),
@@ -49,8 +60,8 @@ for (cc in seq(cluster)) {
                               names(myTwinDataVars['Mother_ID']),
                               paste(names(myTwinDataVars[clust_vol_tmp]),"_twin1",sep=''),
                               paste(names(myTwinDataVars[clust_vol_tmp]),"_twin2",sep=''),
-                              paste(names(myTwinDataVars['Father_ID']),"_twin1",sep=''),
-                              paste(names(myTwinDataVars['Father_ID']),"_twin2",sep=''),
+                              paste(names(myTwinDataVars['Handedness']),"_twin1",sep=''),
+                              paste(names(myTwinDataVars['Handedness']),"_twin2",sep=''),
                               names(myTwinDataVars['Zygosity']))
     TabTmp <- data.frame(TabTmp) # empty data frame
     for (i in seq(dim(myTwinDataVars)[1]-1)) {
@@ -60,8 +71,8 @@ for (cc in seq(cluster)) {
                               myTwinDataVars$Mother_ID[i],
                               myTwinDataVars[[clust_vol_tmp]][i],
                               myTwinDataVars[[clust_vol_tmp]][i+1],
-                              myTwinDataVars$Father_ID[i],
-                              myTwinDataVars$Father_ID[i+1],
+                              myTwinDataVars$Handedness[i],
+                              myTwinDataVars$Handedness[i+1],
                               myTwinDataVars$Zygosity[i])  # fill table
       }
     }
@@ -71,29 +82,27 @@ for (cc in seq(cluster)) {
     TabTmp[[paste(clust_vol_tmp,"_twin1",sep='')]] <- as.numeric(TabTmp[[paste(clust_vol_tmp,"_twin1",sep='')]])
     TabTmp[[paste(clust_vol_tmp,"_twin2",sep='')]] <- as.numeric(TabTmp[[paste(clust_vol_tmp,"_twin2",sep='')]])
     TabTmp[['Mother_ID']] <- as.numeric(TabTmp[['Mother_ID']])
-    TabTmp[['Father_ID_twin1']] <- as.numeric(TabTmp[['Father_ID_twin1']])
-    TabTmp[['Father_ID_twin2']] <- as.numeric(TabTmp[['Father_ID_twin2']])
+    TabTmp[['Handedness_twin1']] <- as.numeric(TabTmp[['Handedness_twin1']])
+    TabTmp[['Handedness_twin2']] <- as.numeric(TabTmp[['Handedness_twin2']])
     TabTmp[['Zygosity']] <- as.numeric(TabTmp[['Zygosity']])
     
     # create  permutation vector for fir_t1 and fir_t2
+    
     set.seed(200)
-    permTab_t1 <- replicate(permute,sample(TabTmp[[paste(clust_vol_tmp,"_twin1",sep='')]]))
-    permTab_t1 <- cbind(TabTmp[[paste(clust_vol_tmp,"_twin1",sep='')]],permTab_t1)
-    set.seed(100)
-    permTab_t2<-replicate(permute,sample(TabTmp[[paste(clust_vol_tmp,"_twin2",sep='')]]))
-    permTab_t2 <- cbind(TabTmp[[paste(clust_vol_tmp,"_twin2",sep='')]],permTab_t2)
-    permTab <- cbind(permTab_t1,permTab_t2)
-    for (pp in seq(permute+1)) { #permutation test for fir_twin1 and fir_twin2 column
-      TabTmp[[paste(clust_vol_tmp,"_twin1",sep='')]] <- permTab[,pp]
-      TabTmp[[paste(clust_vol_tmp,"_twin2",sep='')]] <- permTab[,pp+permute+1]
+    permTab<-replicate(permute,sample(TabTmp$Zygosity))
+    permTab <- cbind(TabTmp$Zygosity,permTab)
+    for (pp in seq(permute+1)) { #permutation test for Zygosity column
+      TabTmp$Zygosity <- permTab[,pp]
       selVars <- c(paste(clust_vol_tmp,"_twin1",sep=''),paste(clust_vol_tmp,"_twin2",sep=''))
       mzData <- as.matrix(subset(TabTmp, Zygosity == 1,selVars))
-      dzData <- as.matrix(subset(TabTmp, Zygosity == 0, selVars))
+      dzData <- as.matrix(subset(TabTmp, Zygosity == 2, selVars))
+      
       # compute mean and cov dz mz
       #     colMeans(mzData,na.rm=TRUE)
       #     colMeans(dzData,na.rm=TRUE)
       #     cov(mzData,use="complete")
       #     cov(dzData,use="complete")
+      
       
       twinACEModel <- mxModel("twinACE",
                               mxModel("ACE",
@@ -208,12 +217,7 @@ for (cc in seq(cluster)) {
         e2 <- E/V
         ACEest <- rbind(cbind(A,C,E),cbind(a2,c2,e2))
         LL_ACE <- mxEval(objective, twinACEFit)
-        # store the result in a tale 
-        if (cc == 1 & vv==1 & pp ==1) {
-          TabResult <- matrix(, nrow = (volume*cluster), ncol = 13) # empty matrix to hold results for each fir times point
-          colnames(TabResult) <- cbind("clust_vol","a2","a2_p","c2","c2_p","e2","e2_p","LL_ACE","LL_ACE_p","fir_mean","fir_var","shapiroPvalue_Tw1","shapiroPvalue_Tw2")
-          TabResult <- data.frame(TabResult)
-        }
+        
         fir_mean <- mean(myTwinDataVars[[clust_vol_tmp]])
         fir_var <- var(myTwinDataVars[[clust_vol_tmp]])
         shapiroPvalue_Tw1 <- shapiro.test(TabTmp[[paste(clust_vol_tmp,"_twin1",sep='')]])
@@ -309,7 +313,7 @@ for (cc in seq(cluster)) {
   )
   data <- list(trace1, trace2, trace3, trace4, trace5)
   layout <- list(
-    title = paste("clust_",as.character(cc),"_scale",cluster,"_",exp,"_",manip,sep = ''), 
+    title = paste("clust_",as.character(cc),"_",fir_scale,"_",fir_exp,"_",task,"_",trial,sep = ''), 
     xaxis = list(title = "Fir Times Points"), 
     yaxis = list(title = "Heritability Estimate"), 
     yaxis2 = list(
@@ -321,7 +325,7 @@ for (cc in seq(cluster)) {
     )
   )
   
-  response <- p$plotly(data, kwargs=list(filename=paste("clust_",as.character(cc),"_scale",cluster,"_",exp,"_",manip,sep = ''),
+  response <- p$plotly(data, kwargs=list(filename=paste("clust_",as.character(cc),"_",fir_scale,"_",fir_exp,"_",task,"_",trial,sep = ''),
                                          layout = layout, 
                                          fileopt="overwrite"))
   filename <- response$filename
@@ -339,7 +343,7 @@ for (cc in seq(cluster)) {
   TabResultTmp$shapiroPvalue_Tw1 <- as.numeric(TabResultTmp$shapiroPvalue_Tw1)
   TabResultTmp$shapiroPvalue_Tw2 <- as.numeric(TabResultTmp$shapiroPvalue_Tw2)
   # Write csv copy of the results table for each cluster
-  write.csv(TabResultTmp, file = paste("~/Dropbox/twins_fir_heritability/" , paste("clust_",as.character(cc),"_scale",cluster,"_",exp,"_",manip,".csv",sep = ''),sep = ''))
+  write.csv(TabResultTmp, file = paste("~/Dropbox/HCP_fir_heritability/" , paste("clust_",as.character(cc),"_",fir_scale,"_",fir_exp,"_",task,"_",trial,".csv",sep = ''),sep = ''))
   
 } 
 
@@ -361,12 +365,12 @@ TabResult$shapiroPvalue_Tw2 <- as.numeric(TabResult$shapiroPvalue_Tw2)
 # source("http://bioconductor.org/biocLite.R")
 # biocLite("rhdf5")
 library(rhdf5)
-h5createFile(paste("clust_",as.character(cc),"_scale",cluster,"_",exp,"_",manip,sep = ''))
-h5write(TabResut,paste("clust_",as.character(cc),"_scale",cluster,"_",exp,"_",manip,sep = ''),"TabResut")
+h5createFile(paste("clust_",as.character(cc),"_",fir_scale,"_",fir_exp,"_",task,"_",trial,sep = ''))
+h5write(TabResult,paste("clust_",as.character(cc),"_",fir_scale,"_",fir_exp,"_",task,"_",trial,sep = ''),"TabResult")
 
 # Write csv copy of the results table 
-write.csv(TabResult, file = paste("~/Dropbox/twins_fir_heritability/" , paste("scale",cluster,"_",exp,"_",manip,".csv",sep = ''),sep = ''))
-write.csv(TabTmp, file = paste("~/Dropbox/twins_fir_heritability/" , paste("clust_",as.character(cc),"_scale",cluster,"_TABTMP_",exp,"_",manip,".csv",sep = ''),sep = ''))
+write.csv(TabResult, file = paste("~/Dropbox/HCP_fir_heritability/" , paste("scale",num_clusters,"_",fir_exp,"_",task,"_",trial,".csv",sep = ''),sep = ''))
+write.csv(TabTmp, file = paste("~/Dropbox/HCP_fir_heritability/" , paste("clust_",as.character(cc),"_",fir_scale,"_TABTMP_",fir_exp,"_",task,"_",trial,".csv",sep = ''),sep = ''))
 
 
 

@@ -2,7 +2,7 @@
 for ss = [1 2 3 5] 
     path_data = ['/media/S500-' num2str(ss) '-20140805/'];
     path_out  = '/media/scratch2/HCP_unproc/';
-    server    = 'peuplier';
+    server    = 'noisetier';
     user_name = 'yassinebha';
 
     % Grab subjects list
@@ -25,3 +25,8 @@ for ss = [1 2 3 5]
     system(['rsync -ravv -f"- Diffusion/" -f"- rfMRI*/" ' path_data list_subject{nn} filesep 'unprocessed/3T/ ' user_name '@' server ':' path_out list_subject{nn} filesep 'unprocessed/3T/']);   
     end
 end
+
+%Grab only functional images, anatomical images and Eprime variable for each task then convert all nifti files to minc  
+system(['rsync -avv -f"+ */" -f"+ *_3T_T1w_MPR1.nii.gz" -f"+ *_tfMRI_*" -f"+ *.txt" -f"+ *.csv"  -f"- *" /media/scratch2/HCP_unproc/  /media/scratch2/HCP_task_unproc_nii']);
+opt.flag_zip = true;
+niak_brick_nii2mnc('/media/scratch2/HCP_task_unproc_nii','/media/scratch2/HCP_task_unproc_mnc',opt);
