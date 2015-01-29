@@ -123,6 +123,7 @@ for f_id = 1:6
 
         part = opt_mplm.space.mpart{2};
         opt_scores.sampling.type = 'bootstrap';
+        opt_scores.flag_verbose = false;
         res = niak_stability_cores(tseries,part,opt_scores);
         sil_mat(:,:,count) = reshape(res.stab_contrast(:, 1), [32 32]);
         stab_mat(:,:,count) = reshape(res.stab_maps(:, 3), [32 32]);
