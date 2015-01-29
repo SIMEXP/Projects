@@ -1,6 +1,6 @@
 clear
 
-num_net = 6;
+num_net = 7;
 path_data = '/home/pbellec/database/preventad/scores_2015_01_28/';
 path_res = [path_data 'cluster_' num2str(num_net) 'R_diff' filesep];
 
@@ -17,7 +17,7 @@ tseries_ga = niak_normalize_tseries(tseries,'mean');
 %% Run a cluster analysis on the demeaned maps
 R = corr(tseries_ga');
 hier = niak_hierarchical_clustering(R);
-part = niak_threshold_hierarchy(hier,struct('thresh',5));
+part = niak_threshold_hierarchy(hier,struct('thresh',7));
 order = niak_part2order (part,R);
 
 %% Visualize the matrices
@@ -47,9 +47,9 @@ for ss = 1:length(list_subject)
 end
 
 %% GLM analysis 
-list_cov = [5 9 11 13];
+%list_cov = [5 9 11 13];
 %list_cov = [1 2 5 9 13];
-%list_cov = [5];
+list_cov = [5];
 %list_cov = 1:14;
 %list_cov = [5 6 7 8 9 11 12 13];
 pce = zeros(length(list_cov),max(part));
@@ -58,9 +58,11 @@ for cc = 1:length(list_cov)
     fd = tab2(:,15);
     mask_covar = ~isnan(covar);
     %mask_covar = ~isnan(covar)&(tab2(:,2)~=1);
-    model_covar.x = [ones(sum(mask_covar),1) niak_normalize_tseries([covar(mask_covar) fd(mask_covar)],'mean')];
+    %model_covar.x = [ones(sum(mask_covar),1) niak_normalize_tseries([covar(mask_covar) fd(mask_covar)],'mean')];
+    model_covar.x = [ones(sum(mask_covar),1) niak_normalize_tseries([covar(mask_covar)],'mean')];
     model_covar.y = weights(mask_covar,:);
-    model_covar.c = [0 ; 1 ; 0];
+    %model_covar.c = [0 ; 1 ; 0];
+    model_covar.c = [0 ; 1 ];
     opt_glm.test = 'ttest';
     opt_glm.flag_beta = true;
     res_covar = niak_glm(model_covar,opt_glm);
@@ -93,7 +95,7 @@ w_hat = model_covar.x*res_covar.beta;
 plot(w_hat(:,2), model_covar.y(:,2),'.')
 
 %% GLM analysis the other way
-covar = tab2(:,9);
+covar = tab2(:,13);
 fd = tab2(:,15); 
 mask_covar = ~isnan(covar);
 model_covar.y = [niak_normalize_tseries(covar(mask_covar),'mean')];
