@@ -45,24 +45,7 @@ figure;
 niak_visu_matrix(show_tar);
 title('This is the target for the Estrid method');
 %% Now do this again, but this time show all networks at once. side by side
-=======
-
 %% Visualize stability maps for all networks at once. side by side for both methods
->>>>>>> 069fef54b0d58f94bbc46007ac47130457944692:Scores_Retest/sctrt_xp_2015_01_25_c.m
-stab_mat = zeros(16 * 32, 2 * 32);
-for i = 1:16
-    stab_est = reshape(res_est.stab_maps(:, i), [32 32]);
-    stab_reg = reshape(res_reg.stab_maps(:, i), [32 32]);
-    start = (i-1) * 32;
-    stop = i * 32;
-    stab_mat(start + 1:stop,1:32) = stab_reg;
-    stab_mat(start + 1:stop,33:end) = stab_est;
-end
-
-h = figure;
-set(h, 'PaperPosition', [32 1 8*32 1]);
-niak_visu_matrix(stab_mat);
-<<<<<<< HEAD:Scores_Retest/sctrt_xp_2015_01_25_b.m
 %% Now do this a couple of times and see what the mean looks like
 edge = 32;
 
@@ -121,5 +104,3 @@ figure;
 niak_visu_matrix(std_est);
 title('std of  net#3 of Estrid method');
 movegui('southwest');
-=======
->>>>>>> 069fef54b0d58f94bbc46007ac47130457944692:Scores_Retest/sctrt_xp_2015_01_25_c.m
