@@ -80,12 +80,9 @@ for ind_net = 1:length(list_net)
         fd = tab2(:,21);
         age = tab2(:,1);
         sex = tab2(:,2);
-        mask_covar = ~isnan(covar)&~isnan(fd);
-        %mask_covar = ~isnan(covar)&(tab2(:,2)~=1);
-        %model_covar.x = [ones(sum(mask_covar),1) niak_normalize_tseries(covar(mask_covar),'mean').*niak_normalize_tseries(sex(mask_covar),'mean') niak_normalize_tseries([covar(mask_covar) fd(mask_covar) age(mask_covar) sex(mask_covar)],'mean')];
+        mask_covar = ~isnan(covar);
         model_covar.x = [ones(sum(mask_covar),1) niak_normalize_tseries([covar(mask_covar) fd(mask_covar)],'mean')];
         model_covar.y = weights1(mask_covar,:);
-        %model_covar.c = [0 ; 0 ; 1; 0 ; 0 ; 0];
         model_covar.c = [0 ; 1 ; 0];
         opt_glm.test = 'ttest';
         opt_glm.flag_beta = true;
@@ -93,32 +90,27 @@ for ind_net = 1:length(list_net)
         model_covar.y = weights2(mask_covar,:);
         res_covar2 = niak_glm(model_covar,opt_glm);
         fprintf('%s\n',ly{list_cov(cc)});
-        %res_covar.beta(model_covar.c>0,:)
         pce1(cc,:,ind_net) = res_covar1.pce;
         pce2(cc,:,ind_net) = res_covar2.pce;
     end
 end
 
+%% Test for associations run1
 [fdr,test1] = niak_fdr(pce1(:),'BH',0.2);
 test1 = reshape(test1,size(pce1))
 
+%% Test for associations run2
 [fdr,test2] = niak_fdr(pce2(:),'BH',0.2);
 test2 = reshape(test2,size(pce2))
 
+%% Test for associations combining runs 1 and 2 as if they were independent
 chi2_trt = -2*(log(pce1)+log(pce2));
 pce_comb = 1-chi2cdf(chi2_trt , 4);
 
 [fdr,test_comb] = niak_fdr(pce_comb(:),'BH',0.2);
 test_comb = reshape(test_comb,size(pce_comb))
 
-test_loc = zeros(size(pce));
-for cc = 1:length(list_cov)
-    pce_tmp = squeeze(pce(cc,:,:));
-    pce_tmp = pce_tmp(:);
-    [hdr,test] = niak_fdr(pce_tmp,'BH',0.1);
-    test_loc(cc,:,:) = reshape(test,size(pce,2),size(pce,3));
-end
-
+%% VISUALIZATION
 if 0
 
 w_hat = model_covar.x*res_covar.beta;
