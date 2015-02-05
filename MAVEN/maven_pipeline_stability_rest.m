@@ -108,10 +108,21 @@ files_in = niak_grab_fmri_preprocess([root_path 'fmri_preprocess_' upper(task) '
 opt.folder_out = [root_path '/basc_' upper(task) '_' exp]; % Where to store the results
 
 opt.region_growing.thre_size = 1000; %  the size of the regions, when they stop growing. A threshold of 1000 mm3 will give about 1000 regions on the grey matter. 
-opt.grid_scales = [10:10:100 120:20:200 240:40:500]'; % Search for stable clusters in the range 10 to 500 
-opt.scales_maps = repmat(opt.grid_scales,[1 3]); % The scales that will be used to generate the maps of brain clusters and stability. 
+opt.grid_scales = [10:10:100 120:20:200 240:40:500]'; % Search for stable clusters in the range 10 to 500
+% use mstep sacle if exist or leave it empty
+mstep_file = [ opt.folder_out filesep 'stability_group/msteps_group.mat'];
+if psom_exist(mstep_file)
+   warning ('The file %s exist, I will use MSTEP scale',mstep_file);
+   load (mstep_file);
+   opt.scales_maps = scales_final;
+else
+   warning ('The file %s does not exist, I will use the specified scale maps',mstep_file);
+   opt.scales_maps = repmat(opt.grid_scales,[1 3]); % The scales that will be used to generate the maps of brain clusters and stability. 
                                                  % In this example the same number of clusters are used at the individual (first column), 
                                                  % group (second column) and consensus (third and last colum) levels.
+end
+
+
 opt.stability_tseries.nb_samps = 100; % Number of bootstrap samples at the individual level. 100: the CI on indidividual stability is +/-0.1
 opt.stability_group.nb_samps = 500; % Number of bootstrap samples at the group level. 500: the CI on group stability is +/-0.05
 
