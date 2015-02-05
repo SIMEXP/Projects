@@ -8,12 +8,12 @@ path_res = [path_data 'phc_cluster4_R_diff' filesep];
 tseries = niak_vol2tseries(vol,mask);
 
 %% correct for the mean
-tseries_ga = niak_normalize_tseries(tseries','mean')';
+tseries_ga = niak_normalize_tseries(tseries,'mean');
 
 %% Run a cluster analysis on the demeaned maps
 R = corr(tseries_ga');
 hier = niak_hierarchical_clustering(R);
-part = niak_threshold_hierarchy(hier,struct('thresh',3));
+part = niak_threshold_hierarchy(hier,struct('thresh',5));
 order = niak_part2order (part,R);
 
 %% Visualize the matrices
