@@ -3,6 +3,7 @@ clear;
 in_path = '/gs/scratch/surchs/nyu_trt/data/fmri/';
 part_path = '/gs/project/gsf-624-aa/database2/cambridge_template/templates/template_cambridge_basc_multiscale_sym_scale007.nii.gz';
 out_path = ['/gs/project/gsf-624-aa/database2/cambridge_template/templates' filesep 'sc36/'];
+search_pattern = 'fmri_sub[0-9]*_session[0-9]+_rest.mnc.gz';
 % Search for the files we need and build the structure
 f = dir(in_path);
 [~, path_name, ~] = niak_fileparts(in_path);
@@ -19,7 +20,7 @@ for f_id = 1:numel(in_strings)
         dir_strings = {f_dir.name};
         for fd_id = 1:numel(dir_strings)
             dir_string = dir_strings{fd_id};
-            [start, stop] = regexp(dir_string, 'fmri_sub[0-9]*_session_[0-9]+_run[0-9]+.mnc.gz');
+            [start, stop] = regexp(dir_string, search_pattern);
             if ~isempty(start) && ~isempty(stop)
                 [~, fname, ~] = niak_fileparts(dir_string(start:stop));
                 sub_name = [dir_name '_' fname];
@@ -28,7 +29,7 @@ for f_id = 1:numel(in_strings)
             end
         end
     else
-        [start, stop] = regexp(in_string, 'fmri_sub[0-9]*_session_[0-9]+_run[0-9]+.mnc.gz');
+        [start, stop] = regexp(in_string, search_pattern);
         if ~isempty(start) && ~isempty(stop)
             [~, fname, ~] = niak_fileparts(in_string(start:stop));
             sub_name = [path_name '_' fname];
