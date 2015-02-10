@@ -1,4 +1,4 @@
 Projects
 ========
 
-Scripts for random projects
+Experiments and analysis for cool projects
