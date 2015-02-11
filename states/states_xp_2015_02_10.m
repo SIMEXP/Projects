@@ -21,7 +21,7 @@ S = 10;
 % Window length
 length_w = 15;
 % The number of tested states
-nb_clust_states = 3;
+nb_clust_states = 2;
 
 %% Now simulate data
 y = cell(2*S,1);
@@ -41,14 +41,39 @@ for ss = 1:2*S
      end
 end
 
+% visualize the average connectome per state
+R1 = zeros(N,N);
+R2 = zeros(N,N);
+for ss = 1:2*S
+    if ss<=S
+        R1 = R1 + corr(y{ss}(~states1,:));
+        R2 = R2 + corr(y{ss}( states1,:));
+    else
+        R1 = R1 + corr(y{ss}(~states2,:));
+        R2 = R2 + corr(y{ss}( states2,:));
+    end
+end
+R1 = R1/(2*S);
+R2 = R2/(2*S);
+
+figure
+subplot(1,2,1)
+niak_visu_matrix(abs(R1));
+title('Average connectivity state 1')
+subplot(1,2,2)
+niak_visu_matrix(abs(R2));
+title('Average connectivity state 1')
+
 %% Build dynamic connectomes, and cluster them
 
 % The dynamic connectomes
 conn = states_dyn_conn(y,length_w);
 % For (interesting) fun: visualize the dynamics of connectivity (press p to play)
 % The random variation in structure actually appear as non-random in connectome space
-% niak_visu_motion(conn{1}) % Subject in group 1
-% niak_visu_motion(conn{21}) % Subject in group 2
+figure
+niak_visu_motion(conn{1}) % Subject in group 1
+figure
+niak_visu_motion(conn{21}) % Subject in group 2
 
 % vectorize connectomes, as well as associated subject and state information
 all_conn = [];
@@ -69,26 +94,39 @@ for ss = 1:2*S
 end
 % At this stage we end up with a 4005 (connections in the connectome) x 7640 (number of time windows x number of subjects) array
 % Let's build a (correlation-based) distance matrix between dynamic connectomes
-R = corr(all_conn);
+D = niak_build_distance(all_conn);
 
 % Run a hierarchical clustering on the distance matrix.
 % I am avoiding to use niak functions here, but I suspect they are quite faster.
-hier = niak_hierarchical_clustering(R);
+hier = niak_hierarchical_clustering(-D);
 
 % Alright, now compute average states (1 per actual brain state, plus one for transitions)
 part = niak_threshold_hierarchy(hier,struct('thresh',nb_clust_states));
 for cc = 1:nb_clust_states
     avg_states(:,cc) = mean(all_conn(:,part==cc),2);
-    demeaned_states(:,cc) = mean(all_conn(:,part==cc),2) - mean(all_conn,2);
 end
 % For (interesting) fun again, let's visualize the estimated states
-% niak_visu_matrix(avg_states(:,1))
+niak_visu_matrix(avg_states(:,1))
 % There is clearly one that corresponds to state 1, another to state 0, and one in between, as expected
 
 
 %% Now, on to the statistics!
 
-% Start building weights
-all_demeaned = niak_normalize_tseries(all_conn','mean')';
-weights = corr(all_demeaned,demeaned_states);
+%% Visualize demeaned states
+part = niak_threshold_hierarchy(hier,struct('thresh',nb_clust_states));
+for cc = 1:nb_clust_states
+    demeaned_states(:,cc) = mean(all_conn(:,part==cc),2) - mean(all_conn,2);
+end
 
+% Start building weights
+weights = zeros(nb_clust_states,size(all_conn,2));
+for cc = 1:nb_clust_states
+    weights(cc,:) = sum((all_conn - repmat(avg_states(:,cc),[1 size(all_conn,2)])).^2);
+end
+corr(weights')
+
+% Number of states
+part = niak_threshold_hierarchy(hier,struct('thresh',10));
+for cc = 1:10
+    avg_states(:,cc) = mean(all_conn(:,part==cc),2);
+end
