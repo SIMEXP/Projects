@@ -38,21 +38,25 @@ exp   = 'niak';
 server          = strtrim(cmdout);
 if strfind(server,'lg-1r') % This is guillimin
     root_path = '/gs/scratch/yassinebha/HCP/';
+    path_raw  = ['/gs/project/eim-670-aa/HCP/HCP_task_unproc_mnc/'];
     fprintf ('server: %s (Guillimin) \n ',server)
     my_user_name = getenv('USER');
 elseif strfind(server,'ip05') % this is mammouth
     root_path = '/mnt/parallel_scratch_ms2_wipe_on_april_2015/pbellec/benhajal/HCP/';
+    path_raw = [root_path 'HCP_unproc_tmp/'];
     fprintf ('server: %s (Mammouth) \n',server)
     my_user_name = getenv('USER');
 else
     switch server
         case 'peuplier' % this is peuplier
         root_path = '/media/scratch2/HCP_unproc_tmp/';
+        path_raw = [root_path 'HCP_unproc_tmp/'];
         fprintf ('server: %s\n',server)
         my_user_name = getenv('USER');
         
         case 'noisetier' % this is noisetier
         root_path = '/media/database1/';
+        path_raw = [root_path 'HCP_unproc_tmp/'];
         fprintf ('server: %s\n',server)
         my_user_name = getenv('USER');
     end
@@ -65,7 +69,6 @@ end
 %% WARNING: Do not use underscores '_' in the IDs of subject, sessions or runs. This may cause bugs in subsequent pipelines.
 
 %% Grab the raw data
-path_raw = [root_path 'HCP_unproc_tmp/'];
 list_subject = dir(path_raw);
 list_subject = {list_subject.name};
 list_subject = list_subject(~ismember(list_subject,{'.','..'}));
@@ -73,9 +76,9 @@ list_subject = list_subject(~ismember(list_subject,{'.','..'}));
 for num_s = 1:length(list_subject)
     subject = list_subject{num_s};
     id = ['HCP' subject];
-    files_in.(id).anat = [ root_path 'HCP_unproc_tmp/' subject '/unprocessed/3T/T1w_MPR1/' subject '_3T_T1w_MPR1.mnc.gz'];     % Structural scan
-    files_in.(id).fmri.session1.([lower(task)(1:2) 'rl']) = [ root_path 'HCP_unproc_tmp/' subject '/unprocessed/3T/tfMRI_' upper(task) '_RL/' subject '_3T_tfMRI_' upper(task) '_RL.mnc.gz']; % fMRI run 1
-    files_in.(id).fmri.session1.([lower(task)(1:2) 'lr']) = [ root_path 'HCP_unproc_tmp/' subject '/unprocessed/3T/tfMRI_' upper(task) '_LR/' subject '_3T_tfMRI_' upper(task) '_LR.mnc.gz']; % fMRI run 2
+    files_in.(id).anat = [ path_raw subject '/unprocessed/3T/T1w_MPR1/' subject '_3T_T1w_MPR1.mnc.gz'];     % Structural scan
+    files_in.(id).fmri.session1.([lower(task)(1:2) 'rl']) = [  path_raw subject '/unprocessed/3T/tfMRI_' upper(task) '_RL/' subject '_3T_tfMRI_' upper(task) '_RL.mnc.gz']; % fMRI run 1
+    files_in.(id).fmri.session1.([lower(task)(1:2) 'lr']) = [  path_raw subject '/unprocessed/3T/tfMRI_' upper(task) '_LR/' subject '_3T_tfMRI_' upper(task) '_LR.mnc.gz']; % fMRI run 2
     %check if all the necessary files exist
     files_c = psom_files2cell(files_in.(id));
     for num_f = 1:length(files_c)
