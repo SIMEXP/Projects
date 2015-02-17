@@ -17,7 +17,7 @@ files_in.fmri = niak_grab_fmri_preprocess('/media/database6/MAVEN/fmri_preproces
 
 
 %% Set the seeds
-files_in.seeds = '/media/database6/MAVEN/qc_connectome/seeds/maven_seeds_20150216.csv';
+files_in.seeds = '/home/yassinebha/github_repos/Projects/MAVEN/maven_seed_20150216.csv';
 
 %% Options
 opt.folder_out = '/media/database6/MAVEN/qc_connectome/p2pconnectome_session1/'; % Where to store the results
