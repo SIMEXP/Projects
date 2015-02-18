@@ -127,8 +127,8 @@ if ~isempty(opt.model.baseline_duration)
 end
 
 
-mkdir([root_path 'fmri_preprocess_INKSCAPE_REST_all/'],'onset');
-path_folder = [ root_path 'fmri_preprocess_INKSCAPE_REST_all/onset/'];
+mkdir([root_path 'fmri_preprocess_INSCAPE_REST_all/'],'onset');
+path_folder = [ root_path 'fmri_preprocess_INSCAPE_REST_all/onset/'];
 eval([ 'maven_model_' lower(task) '(path_folder,opt_model)']);
 
 %%%%%%%%%%%%%%%%%%%%
@@ -146,11 +146,11 @@ opt_g.filter.run = {task};
 %liste_exclude = {liste_exclude.name};
 %opt_g.exclude_subject = liste_exclude;
 
-files_in = niak_grab_fmri_preprocess([root_path 'fmri_preprocess_INKSCAPE_REST_all/'],opt_g); % Replace the folder by the path where the results of the fMRI preprocessing pipeline were stored. 
+files_in = niak_grab_fmri_preprocess([root_path 'fmri_preprocess_INSCAPE_REST_all/'],opt_g); % Replace the folder by the path where the results of the fMRI preprocessing pipeline were stored. 
 %% Event times
 data.covariates_group_subs = fieldnames(files_in.fmri);
 for list = 1:length(data.covariates_group_subs)    
-    files_in.timing.(data.covariates_group_subs{list}).session1.(task) = [root_path 'fmri_preprocess_INKSCAPE_REST_all/onset/maven_model_intrarun_' lower(opt.task) '.csv'];
+    files_in.timing.(data.covariates_group_subs{list}).session1.(task) = [root_path 'fmri_preprocess_INSCAPE_REST_all/onset/maven_model_intrarun_' lower(opt.task) '.csv'];
 end
 
 %%%%%%%%%%%%%
