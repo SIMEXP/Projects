@@ -61,7 +61,7 @@ function [] = maven_pipeline_stability_fir(opt)
 %% Parameters
 %%%%%%%%%%%%%%%%%%%%%
 %% set experimentent
-list_fields   = { 'task'    , 'tr' , 'model' ,'type_norm' };
+list_fields   = { 'task'    , 'tr' , 'model'  ,'type_norm' };
 list_defaults = { 'inscape' , '2680', struct(),'fir'    };
 if ischar (opt.task ) &&  ischar(opt.tr)
    if ismember(opt.task,{'inscape'})
@@ -141,7 +141,7 @@ opt_g.type_files = 'fir'; % Specify to the grabber to prepare the files for the 
 opt_g.filter.run = {task};
 
 %%Temporary grabber for debugging
-%liste_exclude = dir ([root_path 'fmri_preprocess_INKSCAPE_REST_all/anat']);
+%liste_exclude = dir ([root_path 'fmri_preprocess_INSCAPE_REST_all/anat']);
 %liste_exclude = liste_exclude(43:end -1);
 %liste_exclude = {liste_exclude.name};
 %opt_g.exclude_subject = liste_exclude;

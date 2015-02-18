@@ -26,7 +26,7 @@ path_folder = niak_full_path (path_folder);
 
 %% Default options
 list_fields   = { 'task'         , 'trial_delay' , 'trial_duration' , 'baseline_delay' , 'baseline_duration' };
-list_defaults = { 'checkerboard' , 3             ,  415             ,  0               ,  6                  };
+list_defaults = { 'inscape' , 3             ,  415             ,  0               ,  6                  };
 if (nargin > 1) && ~isempty(opt.task) 
     opt = psom_struct_defaults(opt,list_fields,list_defaults);
 else
@@ -35,7 +35,7 @@ end
 
 %% path and files names
 data.dir_output         = path_folder;
-data.name_csv_intrarun  = ['nki_model_intrarun_' lower(opt.task)];
+data.name_csv_intrarun  = ['maven_model_intrarun_' lower(opt.task)];
 
 %% intrarun fir model
 opt_csv_read.separator= sprintf(',');
