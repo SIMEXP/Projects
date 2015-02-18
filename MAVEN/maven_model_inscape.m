@@ -25,7 +25,7 @@ function [] = maven_model_inscape(path_folder,opt)
 path_folder = niak_full_path (path_folder);
 
 %% Default options
-list_fields   = { 'task'         , 'trial_delay' , 'trial_duration' , 'baseline_delay' , 'baseline_duration' };
+list_fields   = { 'task'    , 'trial_delay' , 'trial_duration' , 'baseline_delay' , 'baseline_duration' };
 list_defaults = { 'inscape' , 3             ,  415             ,  0               ,  6                  };
 if (nargin > 1) && ~isempty(opt.task) 
     opt = psom_struct_defaults(opt,list_fields,list_defaults);
@@ -38,7 +38,6 @@ data.dir_output         = path_folder;
 data.name_csv_intrarun  = ['maven_model_intrarun_' lower(opt.task)];
 
 %% intrarun fir model
-opt_csv_read.separator= sprintf(',');
 data.covariates_intrarun_names = {'times','duration'};
 data.covariates_intrarun_cond  = {'baseline',opt.task};
 data.covariates_intrarun_values(1,1) = opt.baseline_delay;
