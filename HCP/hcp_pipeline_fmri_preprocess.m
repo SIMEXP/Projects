@@ -38,7 +38,7 @@ exp   = 'niak';
 server          = strtrim(cmdout);
 if strfind(server,'lg-1r') % This is guillimin
     root_path = '/gs/scratch/yassinebha/HCP/';
-    path_raw  = ['/gs/project/eim-670-aa/HCP/HCP_task_unproc_mnc/'];
+    path_raw  = ['/sb/project/gsf-624-aa/database/HCP/HCP_task_unproc_mnc/'];
     fprintf ('server: %s (Guillimin) \n ',server)
     my_user_name = getenv('USER');
 elseif strfind(server,'ip05') % this is mammouth
