@@ -62,7 +62,7 @@ function [] = maven_pipeline_stability_fir(opt)
 %%%%%%%%%%%%%%%%%%%%%
 %% set experimentent
 list_fields   = { 'task'    , 'exp' , 'model' ,'type_norm' };
-list_defaults = { 'inscape' , ''    , struct(),'fir'       };
+list_defaults = { 'inscape' , '2680', struct(),'fir'    };
 if ischar (opt.task ) &&  ischar(opt.exp)
    if ismember(opt.task,{'inscape'})
       opt = psom_struct_defaults(opt,list_fields,list_defaults);
@@ -129,7 +129,7 @@ end
 
 mkdir([root_path 'fmri_preprocess_ALL_task/'],'onset');
 path_folder = [ root_path 'fmri_preprocess_ALL_task/onset/'];
-eval([ 'nki_model_' lower(task) '(path_folder,opt_model)']);
+eval([ 'maven_model_' lower(task) '(path_folder,opt_model)']);
 
 %%%%%%%%%%%%%%%%%%%%
 %% Grabbing the results from the NIAK fMRI preprocessing pipeline
@@ -150,7 +150,7 @@ files_in = niak_grab_fmri_preprocess([root_path 'fmri_preprocess_ALL_task/'],opt
 %% Event times
 data.covariates_group_subs = fieldnames(files_in.fmri);
 for list = 1:length(data.covariates_group_subs)    
-    files_in.timing.(data.covariates_group_subs{list}).session1.(task) = [root_path 'fmri_preprocess_ALL_task/onset/nki_model_intrarun_' lower(opt.task) '.csv'];
+    files_in.timing.(data.covariates_group_subs{list}).session1.(task) = [root_path 'fmri_preprocess_ALL_task/onset/maven_model_intrarun_' lower(opt.task) '.csv'];
 end
 
 %%%%%%%%%%%%%
@@ -170,7 +170,7 @@ else
    warning ('The file %s does not exist, I will use the specified scale maps',mstep_file);
    opt.scales_maps = []; % Usually, this is initially left empty. After the pipeline ran a first time, the results of the MSTEPS procedure are used to select the final scales 
 end
-opt.stability_fir.nb_samps = 100;    % Number of bootstrap samples at the individual level. 100: the CI on indidividual stability is +/-0.1
+opt.stability_fir.nb_samps = 1;    % Number of bootstrap samples at the individual level. 100: the CI on indidividual stability is +/-0.1
 opt.stability_fir.std_noise = 0;     % The standard deviation of the judo noise. The value 0 will not use judo noise. 
 opt.stability_group.nb_samps = 500;  % Number of bootstrap samples at the group level. 500: the CI on group stability is +/-0.05
 opt.nb_min_fir = 1;    % the minimum response windows number. By defaut is set to 1
@@ -196,7 +196,7 @@ opt.flag_group = true;  % Generate maps/FIR at the group level
 %% Run the pipeline %%
 %%%%%%%%%%%%%%%%%%%%%%
 opt.flag_test = false; % Put this flag to true to just generate the pipeline without running it. Otherwise the pipeline will start.
-opt.psom.qsub_options = '-q sw -l nodes=1:ppn=4,walltime=05:00:00';
+%opt.psom.qsub_options = '-q sw -l nodes=1:ppn=4,walltime=05:00:00';
 pipeline = niak_pipeline_stability_fir(files_in,opt);
 
 %%extra
