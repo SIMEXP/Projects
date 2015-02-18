@@ -90,7 +90,23 @@ for num_s = 1:length(list_subject)
     end
 end
 
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%  warning: The file /sb/project/gsf-624-aa/database/HCP/HCP_task_unproc_mnc/116120/unprocessed/3T/tfMRI_MOTOR_RL/116120_3T_tfMRI_MOTOR_RL.mnc.gz does not exist, I suppressed subject 116120
+%  warning: The file /sb/project/gsf-624-aa/database/HCP/HCP_task_unproc_mnc/126931/unprocessed/3T/tfMRI_MOTOR_RL/126931_3T_tfMRI_MOTOR_RL.mnc.gz does not exist, I suppressed subject 126931
+%  warning: The file /sb/project/gsf-624-aa/database/HCP/HCP_task_unproc_mnc/128329/unprocessed/3T/tfMRI_MOTOR_LR/128329_3T_tfMRI_MOTOR_LR.mnc.gz does not exist, I suppressed subject 128329
+%  warning: The file /sb/project/gsf-624-aa/database/HCP/HCP_task_unproc_mnc/129432/unprocessed/3T/tfMRI_MOTOR_RL/129432_3T_tfMRI_MOTOR_RL.mnc.gz does not exist, I suppressed subject 129432
+%  warning: The file /sb/project/gsf-624-aa/database/HCP/HCP_task_unproc_mnc/129533/unprocessed/3T/tfMRI_MOTOR_RL/129533_3T_tfMRI_MOTOR_RL.mnc.gz does not exist, I suppressed subject 129533
+%  warning: The file /sb/project/gsf-624-aa/database/HCP/HCP_task_unproc_mnc/131621/unprocessed/3T/tfMRI_MOTOR_RL/131621_3T_tfMRI_MOTOR_RL.mnc.gz does not exist, I suppressed subject 131621
+%  warning: The file /sb/project/gsf-624-aa/database/HCP/HCP_task_unproc_mnc/140420/unprocessed/3T/tfMRI_MOTOR_RL/140420_3T_tfMRI_MOTOR_RL.mnc.gz does not exist, I suppressed subject 140420
+%  warning: The file /sb/project/gsf-624-aa/database/HCP/HCP_task_unproc_mnc/143527/unprocessed/3T/tfMRI_MOTOR_RL/143527_3T_tfMRI_MOTOR_RL.mnc.gz does not exist, I suppressed subject 143527
+%  warning: The file /sb/project/gsf-624-aa/database/HCP/HCP_task_unproc_mnc/197449/unprocessed/3T/tfMRI_MOTOR_RL/197449_3T_tfMRI_MOTOR_RL.mnc.gz does not exist, I suppressed subject 197449                                                                                                        
+%  warning: The file /sb/project/gsf-624-aa/database/HCP/HCP_task_unproc_mnc/197651/unprocessed/3T/tfMRI_MOTOR_RL/197651_3T_tfMRI_MOTOR_RL.mnc.gz does not exist, I suppressed subject 197651                                                                                                        
+%  warning: The file /sb/project/gsf-624-aa/database/HCP/HCP_task_unproc_mnc/207628/unprocessed/3T/tfMRI_MOTOR_RL/207628_3T_tfMRI_MOTOR_RL.mnc.gz does not exist, I suppressed subject 207628                                                                                                        
+%  warning: The file /sb/project/gsf-624-aa/database/HCP/HCP_task_unproc_mnc/208428/unprocessed/3T/tfMRI_MOTOR_RL/208428_3T_tfMRI_MOTOR_RL.mnc.gz does not exist, I suppressed subject 208428
+%  warning: The file /sb/project/gsf-624-aa/database/HCP/HCP_task_unproc_mnc/650746/unprocessed/3T/tfMRI_MOTOR_RL/650746_3T_tfMRI_MOTOR_RL.mnc.gz does not exist, I suppressed subject 650746
+%  warning: The file /sb/project/gsf-624-aa/database/HCP/HCP_task_unproc_mnc/745555/unprocessed/3T/tfMRI_MOTOR_RL/745555_3T_tfMRI_MOTOR_RL.mnc.gz does not exist, I suppressed subject 745555
+%  warning: The file /sb/project/gsf-624-aa/database/HCP/HCP_task_unproc_mnc/782157/unprocessed/3T/tfMRI_MOTOR_RL/782157_3T_tfMRI_MOTOR_RL.mnc.gz does not exist, I suppressed subject 782157
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%
 %% Pipeline options  %%
 %%%%%%%%%%%%%%%%%%%%%%%
