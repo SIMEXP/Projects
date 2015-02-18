@@ -1,8 +1,8 @@
-function [] = nki_model_checkerboard(path_folder,opt)
+function [] = maven_model_inscape(path_folder,opt)
 % generate individual model for motor task HCP database.
 %
 % SYNTAX:
-% [] = HCP_IND_MODEL_CHECKERBOARD_CSV(OPT)
+% [] = MAVEN_MODEL_INSCAPE(PATH_FOLDER,OPT)
 %
 % _________________________________________________________________________
 % PATH_FOLDER (string, default [pwd]) the full path to the root folder that contain the 
@@ -11,12 +11,12 @@ function [] = nki_model_checkerboard(path_folder,opt)
 % OPT
 %   (structure, optional) with the following fields :
 %
-%   TASK (string, default 'checkerboard') type of trial that would be extracted, possiblr trial : 'checkerboard', 'breathhold'.
-%   TRIAL_DELAY (numeric, default '1,5') time delay before each trial to estimate FIR responses.
+%   TASK (string, default 'inscape') type of trial that would be extracted, possiblr trial : 'inscape'.
+%   TRIAL_DELAY (numeric, default '3') time delay before each trial to estimate FIR responses.
 %   TRIAL_DURATION (numeric, default '16.5') time for each trial to estimate FIR responses.
-%   BASELINE_DELAY (numeric, default '2.5') time delay before each trial's baseline estimate.
+%   BASELINE_DELAY (numeric, default '0') time delay before each trial's baseline estimate.
 %   BASELINE_DURATION (numeric, default '4') time for each trial to estimate baselie for FIR responses.
-%   EXP (string, default '1400') type of TR used. Possible value '1400', '645'.
+%   EXP (string, default '2680') type of TR used. Possible value '2680'.
 
 %%%%%%%%%%%%%%%%%%%%%
 %% Parameters
@@ -26,7 +26,7 @@ path_folder = niak_full_path (path_folder);
 
 %% Default options
 list_fields   = { 'task'         , 'trial_delay' , 'trial_duration' , 'baseline_delay' , 'baseline_duration' };
-list_defaults = { 'checkerboard' , 1.5           ,  20              ,  2.5               ,  4                  };
+list_defaults = { 'checkerboard' , 3             ,  415             ,  0               ,  6                  };
 if (nargin > 1) && ~isempty(opt.task) 
     opt = psom_struct_defaults(opt,list_fields,list_defaults);
 else
@@ -41,9 +41,9 @@ data.name_csv_intrarun  = ['nki_model_intrarun_' lower(opt.task)];
 opt_csv_read.separator= sprintf(',');
 data.covariates_intrarun_names = {'times','duration'};
 data.covariates_intrarun_cond  = {'baseline',opt.task};
-data.covariates_intrarun_values(1,1) = (0 - opt.baseline_delay) + 20;
+data.covariates_intrarun_values(1,1) = opt.baseline_delay;
 data.covariates_intrarun_values(1,2) = opt.baseline_duration;
-data.covariates_intrarun_values(2,1) = (20 - opt.trial_delay);
+data.covariates_intrarun_values(2,1) = opt.trial_delay;
 data.covariates_intrarun_values(2,2) = opt.trial_duration;
 %% write model to csv
 opt_csv_write.labels_y = data.covariates_intrarun_names;

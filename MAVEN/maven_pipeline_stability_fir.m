@@ -13,8 +13,8 @@ function [] = maven_pipeline_stability_fir(opt)
 %   TASK
 %       (string, default 'inscape) type of tasks that would be extracted. Possibles tasks are: 'inscape'.
 %
-%   EXP
-%       (string, default '') type of experiment used.
+%   TR
+%       (numeric, default '2680') the Tr in millisecond .
 %
 %   MODEL
 %       (structure) see the OPT argument of  NKI_MODEL_<TASK-NAME>. 
@@ -61,9 +61,9 @@ function [] = maven_pipeline_stability_fir(opt)
 %% Parameters
 %%%%%%%%%%%%%%%%%%%%%
 %% set experimentent
-list_fields   = { 'task'    , 'exp' , 'model' ,'type_norm' };
+list_fields   = { 'task'    , 'tr' , 'model' ,'type_norm' };
 list_defaults = { 'inscape' , '2680', struct(),'fir'    };
-if ischar (opt.task ) &&  ischar(opt.exp)
+if ischar (opt.task ) &&  ischar(opt.tr)
    if ismember(opt.task,{'inscape'})
       opt = psom_struct_defaults(opt,list_fields,list_defaults);
    else
@@ -72,9 +72,9 @@ if ischar (opt.task ) &&  ischar(opt.exp)
 else 
    error ( 'you must specify the task and the model')
 end
-
+%% Setting normalization option
 task  = opt.task;
-exp   = opt.exp;
+tr   = opt.tr;
 if ismember(opt.type_norm,{'fir'})
    type_norm = 'perc';
 elseif ismember(opt.type_norm,{'fir_shape'})
@@ -82,7 +82,7 @@ elseif ismember(opt.type_norm,{'fir_shape'})
 else
    error('wrong normalisation type')
 end
-fprintf ('script to run nki_stability_fir pipeline \n Task: %s \n exp: %s\n normalisation: fir %s\n ',task,exp,type_norm)
+fprintf ('script to run nki_stability_fir pipeline \n Task: %s \n tr: %s\n normalisation: fir %s\n ',task,tr,type_norm)
 
 %% Setting input/output files 
 [status,cmdout] = system ('uname -n');
@@ -111,7 +111,7 @@ end
 
 %% create the csv model files
 opt_model.task = task;
-opt_model.exp  = exp;
+opt_model.tr  = tr;
 
 if ~isempty(opt.model.trial_delay)
    opt_model.trial_delay = opt.model.trial_delay;
@@ -127,8 +127,8 @@ if ~isempty(opt.model.baseline_duration)
 end
 
 
-mkdir([root_path 'fmri_preprocess_ALL_task/'],'onset');
-path_folder = [ root_path 'fmri_preprocess_ALL_task/onset/'];
+mkdir([root_path 'fmri_preprocess_INKSCAPE_REST_all/'],'onset');
+path_folder = [ root_path 'fmri_preprocess_INKSCAPE_REST_all/onset/'];
 eval([ 'maven_model_' lower(task) '(path_folder,opt_model)']);
 
 %%%%%%%%%%%%%%%%%%%%
@@ -141,16 +141,16 @@ opt_g.type_files = 'fir'; % Specify to the grabber to prepare the files for the 
 opt_g.filter.run = {task};
 
 %%Temporary grabber for debugging
-%liste_exclude = dir ([root_path 'fmri_preprocess_ALL_task/anat']);
+%liste_exclude = dir ([root_path 'fmri_preprocess_INKSCAPE_REST_all/anat']);
 %liste_exclude = liste_exclude(43:end -1);
 %liste_exclude = {liste_exclude.name};
 %opt_g.exclude_subject = liste_exclude;
 
-files_in = niak_grab_fmri_preprocess([root_path 'fmri_preprocess_ALL_task/'],opt_g); % Replace the folder by the path where the results of the fMRI preprocessing pipeline were stored. 
+files_in = niak_grab_fmri_preprocess([root_path 'fmri_preprocess_INKSCAPE_REST_all/'],opt_g); % Replace the folder by the path where the results of the fMRI preprocessing pipeline were stored. 
 %% Event times
 data.covariates_group_subs = fieldnames(files_in.fmri);
 for list = 1:length(data.covariates_group_subs)    
-    files_in.timing.(data.covariates_group_subs{list}).session1.(task) = [root_path 'fmri_preprocess_ALL_task/onset/maven_model_intrarun_' lower(opt.task) '.csv'];
+    files_in.timing.(data.covariates_group_subs{list}).session1.(task) = [root_path 'fmri_preprocess_INKSCAPE_REST_all/onset/maven_model_intrarun_' lower(opt.task) '.csv'];
 end
 
 %%%%%%%%%%%%%
@@ -158,7 +158,7 @@ end
 %%%%%%%%%%%%%
 
 %% BASC
-opt.folder_out = [ root_path '/stability_fir_' type_norm  '_' lower(task) '_' exp ]; % Where to store the results
+opt.folder_out = [ root_path '/stability_fir_' type_norm  '_' lower(task) '_' tr ]; % Where to store the results
 opt.grid_scales = [5:5:50 60:10:200 220:20:400 500:100:900]; % Search in the range 2-900 clusters
 % use mstep sacle if exist or leave it empty
 mstep_file = [ opt.folder_out filesep 'stability_group/msteps_group.mat'];
@@ -180,8 +180,8 @@ opt.name_condition = lower(task);
 opt.name_baseline = 'baseline';
 opt.fir.type_norm     = opt.type_norm;       % The type of normalization of the FIR.
 opt.fir.time_window   = opt.model.trial_duration;        % The size (in sec) of the time window to evaluate the response
-opt.fir.max_interpolation = (str2num(exp)/1000)*5;    % --> max 5 vols consécutifs manquants, sinon bloc rejeté, mais ça devrait être irrelevant comme pas de scrubbing ici
-opt.fir.time_sampling = str2num(exp)/1000;           % The time between two samples for the estimated response. Do not go below 1/2 TR unless there is a very large number of trials.
+opt.fir.max_interpolation = (str2num(tr)/1000)*5;    % --> max 5 vols consécutifs manquants, sinon bloc rejeté, mais ça devrait être irrelevant comme pas de scrubbing ici
+opt.fir.time_sampling = str2num(tr)/1000;           % The time between two samples for the estimated response. Do not go below 1/2 TR unless there is a very large number of trials.
 opt.fir.nb_min_baseline = 1 ;
 
 %% FDR estimation
