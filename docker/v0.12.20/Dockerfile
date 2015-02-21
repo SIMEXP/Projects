@@ -49,4 +49,5 @@ RUN echo addpath\(genpath\(\"/home/niak/build/SIMEXP/\"\)\)\; >> /etc/octave.con
 RUN touch /.bashrc
 RUN echo source /opt/minc-itk4/minc-toolkit-config.sh >> /.bashrc
 # docker build -t="pbellec/niak:v0.12.20" .
-# docker run -i -t --name niak -v /home/pbellec/database:/database --user $UID:$GID simexp/niak:0.12.20 /bin/bash -c "source /.bashrc && octave"
+# docker run -i -t --name niak -v $HOME:$HOME --user $UID:$GID simexp/niak:0.12.20 /bin/bash -c "source /.bashrc && cd $HOME && octave"
+# docker run -i -t --rm --name niak  -v /tmp/.X11-unix:/tmp/.X11-unix -e DISPLAY=unix$DISPLAY -v $HOME:$HOME --user $UID:$GID simexp/niak:0.12.20 /bin/bash -c "source /.bashrc && export HOME=$HOME && cd $HOME && octave --force-gui"
