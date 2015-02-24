@@ -1,6 +1,9 @@
 #Scores tutorial
 This tutorial is a working example of the scores pipeline and allows you to quickly run scores on a demo dataset and visualize the results. You can find the [matlab scrip version of the tutorial here](https://github.com/SIMEXP/Projects/blob/master/Scores/scores_tutorial.m). For a more theoretical introduction to scores, please refer to [this file](https://github.com/SIMEXP/Projects/wiki/Misc-demo-stable-cores).
 ## Notes
+__You need niak installed to run this!__ Refer to [the support website](http://simexp.github.io/niak/niak_installation.html) for instructions on how to do this.
+Additionally, since scores is still in development, you need to __checkout the scores branch__ of niak before you run. We will merge the scores branch very soon, so this should only be a problem for the immediate future.
+
  The tutorial includes code to collect preprocessed files from nested folders and generate the input structure expected by the pipeline. While this is not neccessary for the tutorial, it is intended as a template for your own experiments.
 
  Also, the tutorial is structured using matlabs cell structure. This means you can run different sections of the script at different times. If you run the whole script in one pass, the last visualization part will probably fail, because it is looking for the outputs of the pipeline that have not been completed yet. If you want to run the script in one go or use your own visualization tools, just comment out the last section.
