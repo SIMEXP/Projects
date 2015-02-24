@@ -1,5 +1,5 @@
 #Scores tutorial
-This tutorial is a working example of the scores pipeline and allows you to quickly run scores on a demo dataset and visualize the results. For a more theoretical introduction to scores, please refer to [this file](https://github.com/SIMEXP/Projects/wiki/Misc-demo-stable-cores).
+This tutorial is a working example of the scores pipeline and allows you to quickly run scores on a demo dataset and visualize the results. You can find the [matlab scrip version of the tutorial here](https://github.com/SIMEXP/Projects/blob/master/Scores/scores_tutorial.m). For a more theoretical introduction to scores, please refer to [this file](https://github.com/SIMEXP/Projects/wiki/Misc-demo-stable-cores).
 ## Notes
  The tutorial includes code to collect preprocessed files from nested folders and generate the input structure expected by the pipeline. While this is not neccessary for the tutorial, it is intended as a template for your own experiments.
 
