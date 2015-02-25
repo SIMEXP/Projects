@@ -21,7 +21,7 @@ files_in.fmri = niak_grab_fmri_preprocess('/media/database6/MAVEN/fmri_preproces
 files_in.seeds = '/media/database6/MAVEN/seeds/maven_seeds_20150216.csv';
 
 %% Options
-opt.folder_out = '/media/database6/MAVEN/qc_connectome/p2pconnectome_' run_name '/'; % Where to store the results
+opt.folder_out = ['/media/database6/MAVEN/qc_connectome/p2pconnectome_' run_name '/']; % Where to store the results
 opt.connectome.type = 'Z'; % The type of connectome. See "help niak_brick_connectome" for more info.
 % 'S': covariance;
 %'R': correlation;
