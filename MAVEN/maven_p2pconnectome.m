@@ -14,7 +14,7 @@ opt_g.type_files = 'glm_connectome'; % Specify to the grabber to prepare the fil
 opt_g.filter.session = {'session1'}; 
 opt_g.filter.run = {run_name}; 
 
-files_in.fmri = niak_grab_fmri_preprocess('/media/database6/MAVEN/fmri_preprocess_INKSCAPE_REST_all/',opt_g).fmri; % Replace the folder by the path where the results of the fMRI preprocessing pipeline were stored. 
+files_in.fmri = niak_grab_fmri_preprocess('/media/database6/MAVEN/fmri_preprocess_INSCAPE_REST_all/',opt_g).fmri; % Replace the folder by the path where the results of the fMRI preprocessing pipeline were stored. 
 
 
 %% Set the seeds
