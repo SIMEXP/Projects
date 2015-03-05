@@ -1,8 +1,9 @@
 clear;
 % Paths are for Mammouth atm
+scales = [7 12];
 in_path = '/gs/scratch/surchs/nyu_trt/data/fmri/';
-part_path = '/gs/project/gsf-624-aa/database2/cambridge_template/templates/template_cambridge_basc_multiscale_sym_scale007.nii.gz';
-out_path = ['/gs/project/gsf-624-aa/database2/cambridge_template/templates' filesep 'sc36/'];
+part_temp = '/gs/project/gsf-624-aa/database2/cambridge_template/templates/template_cambridge_basc_multiscale_sym_scale%03d.nii.gz';
+out_temp = '/gs/project/gsf-624-aa/database2/cambridge_template/templates/sc%02d/';
 search_pattern = 'fmri_sub[0-9]*_session[0-9]+_rest.mnc.gz';
 % Search for the files we need and build the structure
 f = dir(in_path);
@@ -39,9 +40,6 @@ for f_id = 1:numel(in_strings)
     end
 end
 
-in_files.part = part_path;
-opt.folder_out = out_path;
-% Compute the number of matched files
 fnames = fieldnames(in_files.fmri);
 numf = length(fnames);
 disp(sprintf('I found %d files in %s.\n', numf, in_path));
@@ -53,5 +51,19 @@ fprintf('To make debugging easier, I will remove most of the subjects again\n');
 fn = fieldnames(in_files.fmri);
 in_files.fmri = rmfield(in_files.fmri, fn(5:end));
 
+% Run one pipeline for each scale
+pipeline = struct;
+for sc_id = 1:scales
+	scale = scales(sc_id);
+	fprintf('Adding pipeline for scale %02d now\n', scale);
+	part_path = sprintf(part_temp, scale);
+	out_path = sprintf(out_temp, scale);
+	
+	in_files.part = part_path;
+	opt.folder_out = out_path;
+	% Compute the number of matched files
+	scale_pipe = niak_pipeline_stability_scores(in_files, opt);
+	pipeline = psom_merge_pipeline(pipeline, scale_pipe, sprintf('scale_%02d_',scale));
+end
 disp('Running the pipeline now.')
-%pipeline = niak_pipeline_stability_scores(in_files, opt);
+psom_run_pipeline(pipeline, opt.psom);
