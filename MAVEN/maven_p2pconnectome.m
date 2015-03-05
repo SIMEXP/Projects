@@ -1,6 +1,7 @@
-
-clear
-
+%% Run p2pconnectme based on a list of seeds
+clear all
+%% set parameters
+run_name =  'rest1';
 %% Set the template
 files_in.network = '/home/yassinebha/database/cambridge_template/basc_cambridge_sc100.mnc.gz';
 
@@ -11,16 +12,16 @@ opt_g.min_xcorr_anat = 0.5; % The minimum xcorr score for an fMRI dataset to be 
 opt_g.type_files = 'glm_connectome'; % Specify to the grabber to prepare the files for the glm_connectome pipeline
 % opt_g.exclude_subject = {};
 opt_g.filter.session = {'session1'}; 
-% opt_g.filter.run = {}; 
+opt_g.filter.run = {run_name}; 
 
-files_in.fmri = niak_grab_fmri_preprocess('/media/database6/MAVEN/fmri_preprocess_INKSCAPE_REST_all/',opt_g).fmri; % Replace the folder by the path where the results of the fMRI preprocessing pipeline were stored. 
+files_in.fmri = niak_grab_fmri_preprocess('/media/database6/MAVEN/fmri_preprocess_INSCAPE_REST_all/',opt_g).fmri; % Replace the folder by the path where the results of the fMRI preprocessing pipeline were stored. 
 
 
 %% Set the seeds
 files_in.seeds = '/media/database6/MAVEN/seeds/maven_seeds_20150216.csv';
 
 %% Options
-opt.folder_out = '/media/database6/MAVEN/qc_connectome/p2pconnectome_session1/'; % Where to store the results
+opt.folder_out = ['/media/database6/MAVEN/qc_connectome/p2pconnectome_' run_name '/']; % Where to store the results
 opt.connectome.type = 'Z'; % The type of connectome. See "help niak_brick_connectome" for more info.
 % 'S': covariance;
 %'R': correlation;
