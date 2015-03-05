@@ -3,8 +3,9 @@ clear;
 scales = [7 12 20 36 64];
 num_scales = length(scales);
 in_path = '/gs/scratch/surchs/nyu_trt/data/fmri/';
+out_dir = '/gs/project/gsf-624-aa/database2/scores/retest/out';
 part_temp = '/gs/project/gsf-624-aa/database2/cambridge_template/templates/template_cambridge_basc_multiscale_sym_scale%03d.nii.gz';
-out_temp = '/gs/project/gsf-624-aa/database2/scores/retest/out/sc%02d/%s/';
+out_temp = [out_dir filesep 'sc%02d/%s/'];
 search_pattern = 'fmri_sub[0-9]*_session[0-9]+_rest.mnc.gz';
 % Search for the files we need and build the structure
 f = dir(in_path);
@@ -42,12 +43,16 @@ for f_id = 1:numel(in_strings)
 end
 
 fnames = fieldnames(in_files.fmri);
-numf = length(fnames);
-disp(sprintf('I found %d files in %s.\n', numf, in_path));
-opt.psom.max_queued = 100;
-opt.scores.flag_target = true;
-opt.scores.flag_deal = true;
+fprintf('To make debugging easier, I will remove most of the subjects again\n');
+fn = fieldnames(in_files.fmri);
+in_files.fmri = rmfield(in_files.fmri, fnames(5:end));
 
+
+numf = length(fieldnames(in_files.fmri));
+disp(sprintf('I found %d files in %s.\n', numf, in_path));
+
+opt.psom.max_queued = 100;
+opt.path_logs = out_dir;
 % Run one pipeline for each scale
 pipeline = struct;
 for sc_id = 1:num_scales
