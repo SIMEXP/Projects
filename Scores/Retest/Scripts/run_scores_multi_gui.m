@@ -1,8 +1,11 @@
 clear;
 % Paths are for Mammouth atm
+scales = [7 12 20 36 64];
+num_scales = length(scales);
 in_path = '/gs/scratch/surchs/nyu_trt/data/fmri/';
-part_path = '/gs/project/gsf-624-aa/database2/cambridge_template/templates/template_cambridge_basc_multiscale_sym_scale007.nii.gz';
-out_path = ['/gs/project/gsf-624-aa/database2/cambridge_template/templates' filesep 'sc36/'];
+out_dir = '/gs/project/gsf-624-aa/database2/scores/retest/out';
+part_temp = '/gs/project/gsf-624-aa/database2/cambridge_template/templates/template_cambridge_basc_multiscale_sym_scale%03d.nii.gz';
+out_temp = [out_dir filesep 'sc%02d/%s/'];
 search_pattern = 'fmri_sub[0-9]*_session[0-9]+_rest.mnc.gz';
 % Search for the files we need and build the structure
 f = dir(in_path);
@@ -39,19 +42,43 @@ for f_id = 1:numel(in_strings)
     end
 end
 
-in_files.part = part_path;
-opt.folder_out = out_path;
-% Compute the number of matched files
 fnames = fieldnames(in_files.fmri);
-numf = length(fnames);
-disp(sprintf('I found %d files in %s.\n', numf, in_path));
-opt.psom.max_queued = 100;
-opt.scores.flag_target = true;
-opt.scores.flag_deal = true;
-% Remove the number of subjects for debugging
 fprintf('To make debugging easier, I will remove most of the subjects again\n');
 fn = fieldnames(in_files.fmri);
-in_files.fmri = rmfield(in_files.fmri, fn(5:end));
+in_files.fmri = rmfield(in_files.fmri, fnames(5:end));
 
+
+numf = length(fieldnames(in_files.fmri));
+disp(sprintf('I found %d files in %s.\n', numf, in_path));
+
+opt.psom.max_queued = 100;
+opt.path_logs = out_dir;
+% Run one pipeline for each scale
+pipeline = struct;
+for sc_id = 1:num_scales
+	scale = scales(sc_id);
+	fprintf('Adding pipeline for scale %02d now\n', scale);
+	part_path = sprintf(part_temp, scale);
+	
+	in_files.part = part_path;
+	% Run one pipeline with the target option and the other without
+	opt.folder_out = sprintf(out_temp, scale, 'target');
+	opt.flag_test = true;
+	opt.scores.flag_target = true;
+	opt.scores.flag_deal = true;
+	% Compute the number of matched files
+	scale_pipe = niak_pipeline_stability_scores(in_files, opt);
+	pipeline = psom_merge_pipeline(pipeline, scale_pipe, sprintf('tar_s_%02d_',scale));
+	
+	
+	opt.folder_out = sprintf(out_temp, scale, 'time');
+	opt.flag_test = true;
+	opt.scores.flag_target = false;
+	opt.scores.flag_deal = false;
+	% Compute the number of matched files
+	scale_pipe = niak_pipeline_stability_scores(in_files, opt);
+	pipeline = psom_merge_pipeline(pipeline, scale_pipe, sprintf('tim_s_%02d_',scale));
+end
+opt.flag_true = false;
 disp('Running the pipeline now.')
-%pipeline = niak_pipeline_stability_scores(in_files, opt);
+%psom_run_pipeline(pipeline, opt.psom);
