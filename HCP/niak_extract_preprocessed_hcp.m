@@ -143,8 +143,6 @@ mkdir(quality_control);
 mkdir(group_coregistration);
 mkdir(group_motion);
 mkdir(EVs);
-mkdir(EVs_lr);
-mkdir(EVs_rl);
 
 %% Extract necessary files and format them in a NIAK like fmri preprocessed ouput folders and files
 % Read subjects list and Prune subject that dont have the necessecary folder and flag them in a message
