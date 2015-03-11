@@ -107,6 +107,7 @@ if nargin > 1
 else
     opt = psom_struct_defaults(struct(),list_fields,list_defaults);
 end
+opt.path_out = niak_full_path (opt.path_out);
 
 % copy or link option
 if opt.copy_out == 'link'
