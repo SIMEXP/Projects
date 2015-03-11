@@ -235,8 +235,8 @@ for nn = 1:length(list_subject)
     end
     
     % copy the subject onset file (ex: 100307/MNINonLinear/Results/tfMRI_EMOTION_LR/EVs/ (fear.txt, neut.txt, Stats.txt, Sync.txt)
-    system(['cp '  path_data subject_raw filesep 'MNINonLinear/Results/tfMRI_MOTOR_LR/EVs/* ' EVs filesep subject filesep 'lr' filesep '.']);
-    system(['cp '  path_data subject_raw filesep 'MNINonLinear/Results/tfMRI_MOTOR_RL/EVs/* ' EVs filesep subject filesep 'rl' filesep '.']);
+    system(['cp '  path_data subject_raw filesep 'MNINonLinear/Results/tfMRI_' opt.type_task '_LR/EVs/* ' EVs filesep subject filesep 'lr' filesep '.']);
+    system(['cp '  path_data subject_raw filesep 'MNINonLinear/Results/tfMRI_' opt.type_task '_RL/EVs/* ' EVs filesep subject filesep 'rl' filesep '.']);
 end
 
 % create an average anat and func mask
