@@ -20,11 +20,11 @@ A=2*sqrt(Y.*conj(Y));       % Calcul de l'amplitude pour les fréquences F: mult
 
 Pu=A.^2;                     % Calcul de la puissance : carré de l'amplitude
 
-figure(1); clf              % ouvrir figure
 plot(F,Pu);                 % spectre de puissance
 title('Spectre de Puissance')
 xlabel('Frequence (Hz)')    %
-ylabel({'Puissance'})
-
-
+ylabel({'Puissance (dB)'})
+set(gca,'yscale','log');
+grid on
+grid minor
 end % fin de la fonction
