@@ -53,6 +53,7 @@ set(hp,'markersize',16)
 hp = plot(3+0.2*rand(size(val,1),1),val(:,3),'k.');
 set(hp,'markersize',16)
 title (['distribution of ' metric ' in inscapes / rest1 / rest2'])
+print('fig_distribution_FD.png','-dpng');
 
 %% Make a plot of distribution for FD rest1 - inscape, FD rest2 - inscape
 figure
@@ -63,6 +64,7 @@ set(hp,'markersize',16)
 hp = plot(2+0.2*rand(size(val,1),1),val(:,3)-val(:,1),'r.');
 set(hp,'markersize',16)
 title (['distribution of ' metric ' in rest1-inscapes / rest2-inscapes'])
+print('fig_distribution_FD_rest_minus_inscapes.png','-dpng');
  
 %% Make a t-test
 [ttest1,pce1,mean_eff1,std_eff1,df1] = niak_ttest(val(:,2)-val(:,1))
