@@ -23,7 +23,7 @@ Pu=A.^2;                     % Calcul de la puissance : carré de l'amplitude
 plot(F,Pu);                 % spectre de puissance
 title('Spectre de Puissance')
 xlabel('Frequence (Hz)')    %
-ylabel({'Puissance (dB)'})
+ylabel({'Puissance (log)'})
 set(gca,'yscale','log');
 grid on
 grid minor
