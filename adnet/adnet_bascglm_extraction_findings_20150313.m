@@ -49,7 +49,7 @@ mask = net>0;
 
 for cc = 1:length(data_contrast)
     for ss = 1:length(data_seed)
-        eff = zeros([size(net) length(data_scale_all]);
+        eff = zeros([size(net) length(data_scale_all)]);
         for sc = 1:length(data_scale_all)
             [hdr,eff(:,:,:,sc)] = niak_read_vol(strcat(data_results,'/effects/single_effect_',data_contrast{cc},'_',data_seed{ss},'_',data_scale_all{sc},'.nii.gz'));
         end
