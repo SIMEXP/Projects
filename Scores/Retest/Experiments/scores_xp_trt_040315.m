@@ -7,18 +7,20 @@
 % ______________________________________________________________________________
 clear all; close all;
 %% Set up paths
-scales = 7;
+scales = [7 12 20 36];
 num_scale = length(scales);
 metrics = {'dual_regression', 'rmap_part', 'stability_maps'};
 num_metric = length(metrics);
-in_temp = '/data1/scores/retest/out/sc%02d';
+in_temp = '/data1/scores/retest/out/sc%02d/time/';
 mask_temp = '/data1/cambridge/template/template_cambridge_basc_multiscale_sym_scale%03d.nii.gz';
-out_temp = '/data1/scores/retest/out/newtest/sc%02d/%s';
+out_temp = '/data1/scores/retest/out/icc_maps/sc%02d/time/%s';
 %% Get the files
 for met_id = 1:num_metric
     metric = metrics{met_id};
+    fprintf('Running %s\n', metric);
     for scale_id = 1:num_scale
         scale = scales(scale_id);
+        fprintf('    @ scale %d\n', scale);
         % Set up the output path
         out_dir = sprintf(out_temp, scale, metric);
         psom_mkdir(out_dir);
@@ -47,7 +49,7 @@ for met_id = 1:num_metric
         for f_id = 1:numel(in_strings)
             in_string = in_strings{f_id};
             % Get anything with a nii.gz in the end
-            [start, stop] = regexp(in_string, '\w*.nii.gz');
+            [start, stop] = regexp(in_string, '\w*.mnc.gz');
             [sub_start, sub_stop] = regexp(in_string, 'sub[0-9]*');
             [ses_start, ses_stop] = regexp(in_string, 'session[0-9]+');
             if ~isempty(start) && ~isempty(stop)
@@ -64,6 +66,7 @@ for met_id = 1:num_metric
         % Prepare storage variable
         mat = zeros(scale, num_sub, 3, num_vox);
         % Load the individual files and compute the ICC across sessions
+        fprintf('      Loading files now\n');
         for sub_id = 1:num_sub
             sub_name = sub_names{sub_id};
             ses_names = fieldnames(in_struct.(sub_name));
@@ -80,6 +83,7 @@ for met_id = 1:num_metric
         end
         % Now that we have them all together for one metric, run the ICC across
         % voxels for each cluster and each pair of sessions
+        fprintf('      Computing ICC\n');
         icc_mat = zeros(scale, 3, num_vox);
         for clust = 1:scale
             % This is going to be hellishly slow...
@@ -99,6 +103,7 @@ for met_id = 1:num_metric
         % save them to disk. Also make a quick montage of them and save that as
         % well.
         % Make an empty volume to store the maps in
+        fprintf('       Generating Outputs\n');
         out_mat = zeros([size(mask) scale*3]);
         vol_pos = 1:3:scale*3;
         for clust = 1:scale
@@ -114,6 +119,7 @@ for met_id = 1:num_metric
             img_name = sprintf('icc_%d_of_%d_12_%s.png', clust, scale, metric);
             img_path = [out_fig filesep img_name];
             img_opt.type_color = 'hot_cold';
+            img_opt.vol_limits = [-1 1];
             clf;
             niak_montage(vol12, img_opt);
             title(sprintf('ICC map 12: net %d, scale %d, metric %s', clust, scale, metric));
@@ -122,6 +128,7 @@ for met_id = 1:num_metric
             img_name = sprintf('icc_%d_of_%d_13_%s.png', clust, scale, metric);
             img_path = [out_fig filesep img_name];
             img_opt.type_color = 'hot_cold';
+            img_opt.vol_limits = [-1 1];
             clf;
             niak_montage(vol13, img_opt);
             title(sprintf('ICC map 13: net %d, scale %d, metric %s', clust, scale, metric));
@@ -130,6 +137,7 @@ for met_id = 1:num_metric
             img_name = sprintf('icc_%d_of_%d_23_%s.png', clust, scale, metric);
             img_path = [out_fig filesep img_name];
             img_opt.type_color = 'hot_cold';
+            img_opt.vol_limits = [-1 1];
             clf;
             niak_montage(vol23, img_opt);
             title(sprintf('ICC map 23: net %d, scale %d, metric %s', clust, scale, metric));
@@ -140,6 +148,6 @@ for met_id = 1:num_metric
         icc_path = [out_vol filesep icc_name];
         icc_hdr = m_hdr;
         icc_hdr.file_name = icc_path;
-        niak_write_vol(icc_hdr, out_vol);
+        niak_write_vol(icc_hdr, out_mat);
     end
 end
