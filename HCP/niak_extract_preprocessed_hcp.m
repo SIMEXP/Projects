@@ -107,6 +107,7 @@ if nargin > 1
 else
     opt = psom_struct_defaults(struct(),list_fields,list_defaults);
 end
+opt.path_out = niak_full_path (opt.path_out);
 
 % copy or link option
 if opt.copy_out == 'link'
@@ -142,8 +143,6 @@ mkdir(quality_control);
 mkdir(group_coregistration);
 mkdir(group_motion);
 mkdir(EVs);
-mkdir(EVs_lr);
-mkdir(EVs_rl);
 
 %% Extract necessary files and format them in a NIAK like fmri preprocessed ouput folders and files
 % Read subjects list and Prune subject that dont have the necessecary folder and flag them in a message
@@ -236,8 +235,8 @@ for nn = 1:length(list_subject)
     end
     
     % copy the subject onset file (ex: 100307/MNINonLinear/Results/tfMRI_EMOTION_LR/EVs/ (fear.txt, neut.txt, Stats.txt, Sync.txt)
-    system(['cp '  path_data subject_raw filesep 'MNINonLinear/Results/tfMRI_MOTOR_LR/EVs/* ' EVs filesep subject filesep 'lr' filesep '.']);
-    system(['cp '  path_data subject_raw filesep 'MNINonLinear/Results/tfMRI_MOTOR_RL/EVs/* ' EVs filesep subject filesep 'rl' filesep '.']);
+    system(['cp '  path_data subject_raw filesep 'MNINonLinear/Results/tfMRI_' opt.type_task '_LR/EVs/* ' EVs filesep subject filesep 'lr' filesep '.']);
+    system(['cp '  path_data subject_raw filesep 'MNINonLinear/Results/tfMRI_' opt.type_task '_RL/EVs/* ' EVs filesep subject filesep 'rl' filesep '.']);
 end
 
 % create an average anat and func mask
@@ -323,7 +322,7 @@ files_out.mean_vol       = [ group_coregistration filesep 'func_mean_average_ste
 files_out.std_vol        = [ group_coregistration filesep 'func_mean_std_stereonl.mnc.gz' ];
 files_out.tab_coregister = [ group_coregistration filesep 'func_tab_qc_coregister_stereonl.csv' ];
 opt_g.labels_subject     = {labels.subject}';
-opt_g.folder_out         = '/media/database1/tmp/';
+opt_g.folder_out         = group_coregistration;
 [files_in,files_out,opt_g] = niak_brick_qc_coregister(files_in,files_out,opt_g);
 
 % Delete all nii.gz files if opt.file_ext ='minc'
