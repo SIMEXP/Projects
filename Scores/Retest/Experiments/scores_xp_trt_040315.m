@@ -11,9 +11,9 @@ scales = [7 12 20 36];
 num_scale = length(scales);
 metrics = {'dual_regression', 'rmap_part', 'stability_maps'};
 num_metric = length(metrics);
-in_temp = '/data1/scores/retest/out/sc%02d/time/';
+in_temp = '/data1/scores/retest/out_nii/sc%02d/time/';
 mask_temp = '/data1/cambridge/template/template_cambridge_basc_multiscale_sym_scale%03d.nii.gz';
-out_temp = '/data1/scores/retest/out/icc_maps/sc%02d/time/%s';
+out_temp = '/data1/scores/retest/icc_maps/sc%02d/time/%s';
 %% Get the files
 for met_id = 1:num_metric
     metric = metrics{met_id};
@@ -49,7 +49,7 @@ for met_id = 1:num_metric
         for f_id = 1:numel(in_strings)
             in_string = in_strings{f_id};
             % Get anything with a nii.gz in the end
-            [start, stop] = regexp(in_string, '\w*.mnc.gz');
+            [start, stop] = regexp(in_string, '\w*.nii.gz');
             [sub_start, sub_stop] = regexp(in_string, 'sub[0-9]*');
             [ses_start, ses_stop] = regexp(in_string, 'session[0-9]+');
             if ~isempty(start) && ~isempty(stop)
@@ -73,7 +73,7 @@ for met_id = 1:num_metric
             for ses_id = 1:3
                 ses_name = ses_names{ses_id};
                 path = in_struct.(sub_name).(ses_name);
-                [~, vol] = niak_read_vol(path);
+                [ref_hd, vol] = niak_read_vol(path);
                 for clust = 1:scale
                     net = vol(:,:,:,clust);
                     net_vec = net(mask);
@@ -146,7 +146,8 @@ for met_id = 1:num_metric
         % Save the 4D file 
         icc_name = sprintf('icc_map_%d_sc_%d_%s%s', clust, scale, metric, ext);
         icc_path = [out_vol filesep icc_name];
-        icc_hdr = m_hdr;
+        % Work around the 3D to 4D header conversion issue
+        icc_hdr = ref_hd;
         icc_hdr.file_name = icc_path;
         niak_write_vol(icc_hdr, out_mat);
     end
