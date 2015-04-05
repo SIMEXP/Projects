@@ -109,7 +109,14 @@ opt_g.min_nb_vol = 1;     % The minimum number of volumes for an fMRI dataset to
 opt_g.min_xcorr_func = 0.5; % The minimum xcorr score for an fMRI dataset to be included. This metric is a tool for quality control which assess the quality of non-linear coregistration of functional images in stereotaxic space. Manual inspection of the values during QC is necessary to properly set this threshold.
 opt_g.min_xcorr_anat = 0.5; % The minimum xcorr score for an fMRI dataset to be included. This metric is a tool for quality control which assess the quality of non-linear coregistration of the anatomical image in stereotaxic space. Manual inspection of the values during QC is necessary to properly set this threshold.
 opt_g.type_files = 'fir'; % Specify to the grabber to prepare the files for the STABILITY_FIR pipeline
-
+if ismember(opt.trial,{'run1','run2'})
+    switch opt.trial
+    case 'run1'
+        opt_g.filter.run = {[lower(task)(1:2) 'lr']};
+    case 'run2'
+        opt_g.filter.run = {[lower(task)(1:2) 'rl']};
+    end
+end
 %%%%%%%%%%%%%%Temporary grabber for debugging%%%%%%%%%%%%%%%%%%%%%
 %liste_exclude = dir ([root_path 'fmri_preprocess_' upper(task) '_' exp '/anat']);
 %liste_exclude = liste_exclude(23:end -1);
@@ -168,8 +175,14 @@ if psom_exist(mstep_file)
 else
    warning ('The file %s does not exist, I will use the specified scale maps',mstep_file); 
    opt.scales_maps = []; % Usually, this is initially left empty. After the pipeline ran a first time, the results of the MSTEPS procedure are used to select the final scales 
-end      
-opt.stability_fir.nb_samps = 100;    % Number of bootstrap samples at the individual level. 100: the CI on indidividual stability is +/-0.1
+end
+% the Number of bootstrap samples at the individual level is 1 intrial run1 and run2 
+if ismember(opt.trial,{'run1','run2'}
+   opt.stability_fir.nb_samps = 1;
+else 
+   opt.stability_fir.nb_samps = 100;   % Number of bootstrap samples at the individual level. 100: the CI on indidividual stability is +/-0.1
+end
+
 opt.stability_fir.std_noise = 0;     % The standard deviation of the judo noise. The value 0 will not use judo noise. 
 opt.stability_group.nb_samps = 500;  % Number of bootstrap samples at the group level. 500: the CI on group stability is +/-0.05
 opt.nb_min_fir = 1;    % the minimum response windows number. By defaut is set to 1
@@ -195,7 +208,7 @@ opt.flag_group = true;  % Generate maps/FIR at the group level
 %% Run the pipeline %%
 %%%%%%%%%%%%%%%%%%%%%%
 opt.flag_test = false; % Put this flag to true to just generate the pipeline without running it. Otherwise the pipeline will start.
-opt.psom.qsub_options = '-q sw -l nodes=1:ppn=4,walltime=05:00:00';
+%opt.psom.qsub_options = '-q sw -l nodes=1:ppn=4,walltime=05:00:00';
 pipeline = niak_pipeline_stability_fir(files_in,opt);
 
 %%extra
