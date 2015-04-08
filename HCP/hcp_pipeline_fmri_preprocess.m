@@ -160,8 +160,8 @@ opt.smooth_vol.fwhm      = 6;  % Full-width at maximum (FWHM) of the Gaussian bl
 opt.smooth_vol.flag_skip = 0;  % Skip spatial smoothing (0: don't skip, 1 : skip)
 
 % how to specify a different parameter for two subjects (here subject1 and subject2)
-%  opt.tune(1).subject = 'subject1';
-%  opt.tune(1).param.slice_timing.flag_center = true; % Anything that usually goes in opt can go in param. What's specified in opt applies by default, but is overridden by tune.param
+  opt.tune(1).subject = 'HCP165840';
+  opt.tune(1).param.t1_preprocess.nu_correct.arg ='-distance 50' ; % Anything that usually goes in opt can go in param. What's specified in opt applies by default, but is overridden by tune.param
 %  
 %  opt.tune(2).subject = 'subject2';
 %  opt.tune(2).param.slice_timing.flag_center = false; % Anything that usually goes in opt can go in param. What's specified in opt applies by default, but is overridden by tune.param

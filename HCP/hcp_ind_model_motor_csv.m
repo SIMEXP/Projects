@@ -49,7 +49,13 @@ switch opt.run
             model_intrarun_values(1,2) = opt.trial_duration;
             model_intrarun_values(2,1) = str2num(niak_read_csv_cell([path_folder 'rh.txt'],opt_csv_read){1,1})-11 + opt.baseline_delay;
             model_intrarun_values(2,2) = opt.baseline_duration;
-        else 
+            % Write model file
+            opt_csv_write.labels_y = model_intrarun_names;
+            opt_csv_write.labels_x = model_intrarun_cond;
+            opt_csv_write.precision = 2;
+            niak_write_csv(strcat(dir_output,name_csv_intrarun,'.csv'),model_intrarun_values,opt_csv_write);
+
+        elseif ismember(opt.trial,{'rh','lh','rf','lf','t'}) 
             model_intrarun_cond  = {opt.trial,opt.trial,'baseline','baseline','baseline'};
             model_intrarun_values(1,1) = str2num(niak_read_csv_cell([path_folder opt.trial '.txt'],opt_csv_read){1,1}) - opt.trial_delay;
             model_intrarun_values(1,2) = opt.trial_duration;
@@ -61,13 +67,13 @@ switch opt.run
             model_intrarun_values(4,2) = opt.baseline_duration;
             model_intrarun_values(5,1) = str2num(niak_read_csv_cell([path_folder 'rf.txt'],opt_csv_read){2,1})+12 + opt.baseline_delay;
             model_intrarun_values(5,2) = opt.baseline_duration;
-        end
-        % Write model file
-        opt_csv_write.labels_y = model_intrarun_names;
-        opt_csv_write.labels_x = model_intrarun_cond;
-        opt_csv_write.precision = 2;
-        niak_write_csv(strcat(dir_output,name_csv_intrarun,'.csv'),model_intrarun_values,opt_csv_write);
-        
+
+            % Write model file
+            opt_csv_write.labels_y = model_intrarun_names;
+            opt_csv_write.labels_x = model_intrarun_cond;
+            opt_csv_write.precision = 2;
+            niak_write_csv(strcat(dir_output,name_csv_intrarun,'.csv'),model_intrarun_values,opt_csv_write);
+        end        
      case 'rl'
         opt_csv_read.separator= sprintf('\t');
         model_intrarun_names = {'times','duration'};
@@ -77,7 +83,13 @@ switch opt.run
             model_intrarun_values(1,2) = opt.trial_duration;
             model_intrarun_values(2,1) = str2num(niak_read_csv_cell([path_folder 'lh.txt'],opt_csv_read){1,1})-11 + opt.baseline_delay;
             model_intrarun_values(2,2) = opt.baseline_duration;
-        else 
+            % Write model file
+            opt_csv_write.labels_y = model_intrarun_names;
+            opt_csv_write.labels_x = model_intrarun_cond;
+            opt_csv_write.precision = 2;
+            niak_write_csv(strcat(dir_output,name_csv_intrarun,'.csv'),model_intrarun_values,opt_csv_write);
+
+        elseif ismember(opt.trial,{'rh','lh','rf','lf','t'}) 
             model_intrarun_names = {'times','duration'};
             model_intrarun_cond  = {opt.trial,opt.trial,'baseline','baseline','baseline'};
             model_intrarun_values(1,1) = str2num(niak_read_csv_cell([path_folder opt.trial '.txt'],opt_csv_read){1,1}) - opt.trial_delay;
@@ -90,10 +102,11 @@ switch opt.run
             model_intrarun_values(4,2) = opt.baseline_duration;
             model_intrarun_values(5,1) = str2num(niak_read_csv_cell([path_folder 'lf.txt'],opt_csv_read){2,1})+12 + opt.baseline_delay;
             model_intrarun_values(5,2) = opt.baseline_duration;
+
+            % Write model file
+            opt_csv_write.labels_y = model_intrarun_names;
+            opt_csv_write.labels_x = model_intrarun_cond;
+            opt_csv_write.precision = 2;
+            niak_write_csv(strcat(dir_output,name_csv_intrarun,'.csv'),model_intrarun_values,opt_csv_write);
         end
-        % Write model file
-        opt_csv_write.labels_y = model_intrarun_names;
-        opt_csv_write.labels_x = model_intrarun_cond;
-        opt_csv_write.precision = 2;
-        niak_write_csv(strcat(dir_output,name_csv_intrarun,'.csv'),model_intrarun_values,opt_csv_write);
 end
