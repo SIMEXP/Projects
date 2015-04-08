@@ -1,42 +1,32 @@
-function hrf = ReponseHemodynamique(freq)
-% Cette fonction génère une fonction de réponse 
-% telle que la convolution corresponde à une réponse hémodynamique
-% Syntaxe: hrf = ReponseHemodynamique(taille)
-% freq (scalaire) la fréquence d'échantillonnage
-% hrf: le vecteur associé a la réponse hémodynamique
+function hemo = ReponseHemodynamique(freq)
+% Cette fonction génère une fonction de réponse à une impulsion,
+%  correspondant à un processus hémodynamique.
+%
+% Syntaxe: hemo = ReponseHemodynamique(freq)
+%  freq: (scalaire) la fréquence d'échantillonnage
+%  hemo:  (vecteur) la réponse hémodynamique
+%
+% Remarque:
+%  Le code de cette fonction était utilisé dans la question 1.1
+%  du laboratoire du cours 8 'Introduction au filtrage'
 %
 % Exemple:
-% hrf = ReponseHemodynamique(0.5);
-% stem(hrf)
+%  hemo = ReponseHemodynamique(0.5);
+%  plot(hemo,'-o')
 
-if nargin<1
-    error('SVP spécifiez freq')
-end
+% ce paramètre fixe le pic de la réponse hémodynamique
+pic = 5;
 
-if ~isnumeric(freq)||(numel(freq)>1)
-    error('Le paramétre freq est un scalaire')
-end
+% fonction de réponse hémodynamique modélisée par des droites (linspace)
+% D'abord une augmentation de la ligne de base
+% puis une diminution sous la ligne de base
+% suivie d'un retour à la ligne de base
+hemo = [linspace(0,1,(pic*freq)+1) linspace(1,-0.3,(pic*freq)/2) linspace(-0.3,0,(pic*freq)/2)]; 
 
-% paramétres de la réponse
-hrf_parameters = [5.4 5.2 10.8 7.35 0.35];
-peak1 = hrf_parameters(1);
-fwhm1 = hrf_parameters(2);
-peak2 = hrf_parameters(3);
-fwhm2 = hrf_parameters(4);
-dip   = hrf_parameters(5);
-   
-taille = ceil(20*freq)*2+1;
-nb_points = (taille-1)/2;
-time = (0:nb_points)/freq;
-tinv=(time>0)./(time+(time<=0));
-alpha1    = peak1^2/fwhm1^2*8*log(2);
-beta1     = fwhm1^2/peak1/8/log(2);
-gamma1    = (time/peak1).^alpha1.*exp(-(time-peak1)./beta1);
-d_gamma1  = -(alpha1*tinv-1/beta1).*gamma1;
-alpha2    = peak2^2/fwhm2^2*8*log(2);
-beta2     = fwhm2^2/peak2/8/log(2);
-gamma2    = (time/peak2).^alpha2.*exp(-(time-peak2)./beta2);
-d_gamma2  = -(alpha2*tinv-1/beta2).*gamma2;
-hrf   = gamma1-dip*gamma2;
-d_hrf = d_gamma1-dip*d_gamma2;
-hrf = [zeros(1,nb_points) hrf];
+% On rajoute des zéros au début de la réponse
+% de façon a ce que la réponse à une impulsion 
+% démarre à l'instant correspondant à l'impulsion
+hemo = [zeros(1,length(hemo)-1) hemo]; 
+
+% On normalise la réponse
+hemo = hemo/sum(abs(hemo));
