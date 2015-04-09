@@ -123,8 +123,12 @@ end
 %liste_exclude = {liste_exclude.name};
 %opt_g.exclude_subject = liste_exclude;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+if ismember(opt.trial,{'run1','run2'})
+   opt_g.exclude_subject ={'HCP168139','HCP123925','HCP130316'};% to be investigated later , it make the pipelne crash, strange artifact in functional images
+else
+   opt_g.exclude_subject ={'HCP168139'};% to be investigated later , it make the pipelne crash, strange artifact in functional images
+end
 
-opt_g.exclude_subject ={'HCP168139'}; % to be investigated later , it make the pipelne crash, strange artifact in functional images
 files_in = niak_grab_fmri_preprocess([root_path 'fmri_preprocess_' upper(task) '_' exp],opt_g); % Replace the folder by the path where the results of the fMRI preprocessing pipeline were stored. 
 
 %%%%%%%%%%%%%%%%%%%%
@@ -147,17 +151,35 @@ end
 
 %% loop over subjects and runs and create individual time events models
 data.ind_model = fieldnames(files_in.fmri);
-for list = 1:length(data.ind_model)
-    opt_model.run = 'lr'; %run1
-    path_folder = [ root_path 'fmri_preprocess_' upper(task) '_' exp '/EVs/' data.ind_model{list} '/lr/']; %lr run
-    eval([ 'hcp_ind_model_' lower(task) '_csv(path_folder,opt_model)']);
-    files_in.timing.(data.ind_model{list}).session1.([lower(task)(1:2) 'LR']) = [path_folder 'hcp_model_intrarun_' lower(opt.task) '_' lower(opt.trial) '.csv'];
-    opt_model.run = 'rl';%run2
-    path_folder = [ root_path 'fmri_preprocess_' upper(task) '_' exp '/EVs/' data.ind_model{list} '/rl/']; %rl run
-    eval([ 'hcp_ind_model_' lower(task) '_csv(path_folder,opt_model)']);
-    files_in.timing.(data.ind_model{list}).session1.([lower(task)(1:2) 'RL']) = [path_folder 'hcp_model_intrarun_' lower(opt.task) '_' lower(opt.trial) '.csv'];
+if ismember(opt.trial,{'run1','run2'})
+   switch opt.trial
+         case 'run1'
+            for list = 1:length(data.ind_model)
+                opt_model.run = 'lr'; %run1
+                path_folder = [ root_path 'fmri_preprocess_' upper(task) '_' exp '/EVs/' data.ind_model{list} '/lr/']; %lr run
+                eval([ 'hcp_ind_model_' lower(task) '_csv(path_folder,opt_model)']);
+                files_in.timing.(data.ind_model{list}).session1.([lower(task)(1:2) 'LR']) = [path_folder 'hcp_model_intrarun_' lower(opt.task) '_' lower(opt.trial) '.csv'];
+            end
+         case 'run2'
+            for list = 1:length(data.ind_model)
+                opt_model.run = 'rl';%run2
+                path_folder = [ root_path 'fmri_preprocess_' upper(task) '_' exp '/EVs/' data.ind_model{list} '/rl/']; %rl run
+                eval([ 'hcp_ind_model_' lower(task) '_csv(path_folder,opt_model)']);
+                files_in.timing.(data.ind_model{list}).session1.([lower(task)(1:2) 'RL']) = [path_folder 'hcp_model_intrarun_' lower(opt.task) '_' lower(opt.trial) '.csv'];
+            end
+   end
+else
+   for list = 1:length(data.ind_model)
+       opt_model.run = 'lr'; %run1
+       path_folder = [ root_path 'fmri_preprocess_' upper(task) '_' exp '/EVs/' data.ind_model{list} '/lr/']; %lr run
+       eval([ 'hcp_ind_model_' lower(task) '_csv(path_folder,opt_model)']);
+       files_in.timing.(data.ind_model{list}).session1.([lower(task)(1:2) 'LR']) = [path_folder 'hcp_model_intrarun_' lower(opt.task) '_' lower(opt.trial) '.csv'];
+       opt_model.run = 'rl';%run2
+       path_folder = [ root_path 'fmri_preprocess_' upper(task) '_' exp '/EVs/' data.ind_model{list} '/rl/']; %rl run
+       eval([ 'hcp_ind_model_' lower(task) '_csv(path_folder,opt_model)']);
+       files_in.timing.(data.ind_model{list}).session1.([lower(task)(1:2) 'RL']) = [path_folder 'hcp_model_intrarun_' lower(opt.task) '_' lower(opt.trial) '.csv'];
+   end
 end
-
 
 %%%%%%%%%%%%%
 %% Options %%
@@ -177,7 +199,7 @@ else
    opt.scales_maps = []; % Usually, this is initially left empty. After the pipeline ran a first time, the results of the MSTEPS procedure are used to select the final scales 
 end
 % the Number of bootstrap samples at the individual level is 1 intrial run1 and run2 
-if ismember(opt.trial,{'run1','run2'}
+if ismember(opt.trial,{'run1','run2'})
    opt.stability_fir.nb_samps = 1;
 else 
    opt.stability_fir.nb_samps = 100;   % Number of bootstrap samples at the individual level. 100: the CI on indidividual stability is +/-0.1
