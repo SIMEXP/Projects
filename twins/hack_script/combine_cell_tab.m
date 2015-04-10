@@ -84,6 +84,7 @@ end
 cell_combin = cell(size(cell_master,1),size(cell_slave,2)+size(cell_master,2));
 n_shift = 0;
 for n_cell_master = 2:size(cell_master(1:end,opt.combine_master_colomn),1)
+    niak_progress( n_cell_master , length(cell_master(1:end,opt.combine_master_colomn)))
     n_rep = 0;
     for n_cell_slave = 2:size(cell_slave(1:end,opt.combine_slave_colomn),1)
         subj_match = strfind(cell_master{n_cell_master,opt.combine_master_colomn},char(cell_slave{n_cell_slave,opt.combine_slave_colomn}));
