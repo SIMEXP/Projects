@@ -106,118 +106,115 @@ names = {
         'STANFORD',...
         'CALTECH'
         };
-
 for network = 1:7
-    for contrast = 2:5
-        fprintf('Running Network %d with contrast %s now\n', network, names{contrast});
-        con = zeros(19,1);
-        con(contrast) = 1;
-        q = 0.01;
-        opt_v.vol_limits = [0 10];
+    fprintf('Running Network %d F-Test now\n', network);
+    con = zeros(19,1);
+    con(5:end) = 1;
+    q = 0.01;
+    opt_v.vol_limits = [0 10];
 
-        glm_seed.x = X;
-        glm_seed.y = Y_seed(:,:,network);
-        glm_seed.c = con;
+    glm_seed.x = X;
+    glm_seed.y = Y_seed(:,:,network);
+    glm_seed.c = con;
 
-        glm_scores.x = X;
-        glm_scores.y = Y_scores(:,:,network);
-        glm_scores.c = con;
+    glm_scores.x = X;
+    glm_scores.y = Y_scores(:,:,network);
+    glm_scores.c = con;
 
-        glm_dual.x = X;
-        glm_dual.y = Y_dual(:,:,network);
-        glm_dual.c = con;
+    glm_dual.x = X;
+    glm_dual.y = Y_dual(:,:,network);
+    glm_dual.c = con;
 
-        opt.test = 'ttest';
-        opt.flag_beta = true;
+    opt.test = 'ttest';
+    opt.flag_beta = true;
 
-        results_seed = niak_glm(glm_seed, opt);
-        results_scores = niak_glm(glm_scores, opt);
-        results_dual = niak_glm(glm_dual, opt);
+    results_seed = niak_glm(glm_seed, opt);
+    results_scores = niak_glm(glm_scores, opt);
+    results_dual = niak_glm(glm_dual, opt);
 
-        % Do FDR correction on the p-values
-        [~, test_seed] = niak_fdr(results_seed.pce, 'BH', q);
-        [~, test_dual] = niak_fdr(results_dual.pce, 'BH', q);
-        [~, test_scores] = niak_fdr(results_scores.pce, 'BH', q);
+    % Do FDR correction on the p-values
+    [~, test_seed] = niak_fdr(results_seed.pce, 'BH', q);
+    [~, test_dual] = niak_fdr(results_dual.pce, 'BH', q);
+    [~, test_scores] = niak_fdr(results_scores.pce, 'BH', q);
 
-        % take -log10 of the pvalues (independent of FDR)
-        lp_seed = -log10(results_seed.pce);
-        lp_scores = -log10(results_scores.pce);
-        lp_dual = -log10(results_dual.pce);
-        lp_seed(isnan(lp_seed)) = 0;
-        lp_seed(isinf(lp_seed)) = 0;
+    % take -log10 of the pvalues (independent of FDR)
+    lp_seed = -log10(results_seed.pce);
+    lp_scores = -log10(results_scores.pce);
+    lp_dual = -log10(results_dual.pce);
+    lp_seed(isnan(lp_seed)) = 0;
+    lp_seed(isinf(lp_seed)) = 0;
+    
+    lp_scores(isnan(lp_scores)) = 0;
+    lp_scores(isinf(lp_scores)) = 0;
+    
+    lp_dual(isnan(lp_dual)) = 0;
+    lp_dual(isinf(lp_dual)) = 0;
+
+    % Make the maps and add the p-values where appropriate
+    map_seed = zeros(size(mask));
+    map_scores = zeros(size(mask));
+    map_dual = zeros(size(mask));
+
+    map_seed(logical(mask)) = test_seed;
+    map_scores(logical(mask)) = test_scores;
+    map_dual(logical(mask)) = test_dual;
+
+    map_seed(map_seed == 1) = lp_seed(logical(test_seed));
+    map_scores(map_scores == 1) = lp_scores(logical(test_scores));
+    map_dual(map_dual == 1) = lp_dual(logical(test_dual));
+    
+    if store
+        thdr = mhdr;
         
-        lp_scores(isnan(lp_scores)) = 0;
-        lp_scores(isinf(lp_scores)) = 0;
+        m1_name = sprintf('f_test_n_%d_seed_%s.mat', network, use);
+        n1_name = sprintf('f_test_n_%d_seed_%s.nii.gz', network, use);
+        m1_path = [vol_path filesep m1_name];
+        n1_path = [vol_path filesep n1_name];
         
-        lp_dual(isnan(lp_dual)) = 0;
-        lp_dual(isinf(lp_dual)) = 0;
-
-        % Make the maps and add the p-values where appropriate
-        map_seed = zeros(size(mask));
-        map_scores = zeros(size(mask));
-        map_dual = zeros(size(mask));
-
-        map_seed(logical(mask)) = test_seed;
-        map_scores(logical(mask)) = test_scores;
-        map_dual(logical(mask)) = test_dual;
-
-        map_seed(map_seed == 1) = lp_seed(logical(test_seed));
-        map_scores(map_scores == 1) = lp_scores(logical(test_scores));
-        map_dual(map_dual == 1) = lp_dual(logical(test_dual));
+        thdr.file_name = n1_path;
+        niak_write_vol(thdr, map_seed);
+        save(m1_path, 'map_seed');
         
-        if store
-            thdr = mhdr;
-            
-            m1_name = sprintf('c_%s_n_%d_seed_%s.mat', names{contrast}, network, use);
-            n1_name = sprintf('c_%s_n_%d_seed_%s.nii.gz', names{contrast}, network, use);
-            m1_path = [vol_path filesep m1_name];
-            n1_path = [vol_path filesep n1_name];
-            
-            thdr.file_name = n1_path;
-            niak_write_vol(thdr, map_seed);
-            save(m1_path, 'map_seed');
-            
-            m2_name = sprintf('c_%s_n_%d_scores_%s.mat', names{contrast}, network, use);
-            n2_name = sprintf('c_%s_n_%d_scores_%s.nii.gz', names{contrast}, network, use);
-            m2_path = [vol_path filesep m2_name];
-            n2_path = [vol_path filesep n2_name];
-            
-            thdr.file_name = n2_path;
-            niak_write_vol(thdr, map_scores);
-            save(m2_path, 'map_scores');
-            
-            m3_name = sprintf('c_%s_n_%d_dual_%s.mat', names{contrast}, network, use);
-            n3_name = sprintf('c_%s_n_%d_dual_%s.nii.gz', names{contrast}, network, use);
-            m3_path = [vol_path filesep m3_name];
-            n3_path = [vol_path filesep n3_name];
-            
-            thdr.file_name = n3_path;
-            niak_write_vol(thdr, map_dual);
-            save(m3_path, 'map_dual');
-            
-        end
+        m2_name = sprintf('f_test_n_%d_scores_%s.mat', network, use);
+        n2_name = sprintf('f_test_n_%d_scores_%s.nii.gz', network, use);
+        m2_path = [vol_path filesep m2_name];
+        n2_path = [vol_path filesep n2_name];
+        
+        thdr.file_name = n2_path;
+        niak_write_vol(thdr, map_scores);
+        save(m2_path, 'map_scores');
+        
+        m3_name = sprintf('f_test_n_%d_dual_%s.mat', network, use);
+        n3_name = sprintf('f_test_n_%d_dual_%s.nii.gz', network, use);
+        m3_path = [vol_path filesep m3_name];
+        n3_path = [vol_path filesep n3_name];
+        
+        thdr.file_name = n3_path;
+        niak_write_vol(thdr, map_dual);
+        save(m3_path, 'map_dual');
+        
+    end
 
-        if show
-            f1 = figure(1);
-            niak_montage(map_seed);
-            title(sprintf('Network %d: seed (%s), contrast: %s', network, use, names{contrast}));
-            f1_name = sprintf('c_%s_n_%d_seed_%s.png', names{contrast}, network, use);
-            f1_path = [fig_path filesep f1_name];
-            print(f1, f1_path, '-dpng');
-            
-            f2 = figure(2);
-            niak_montage(map_scores);
-            title(sprintf('Network %d: scores (%s), contrast: %s', network, use, names{contrast}));
-            f2_name = sprintf('c_%s_n_%d_scores_%s.png', names{contrast}, network, use);
-            f2_path = [fig_path filesep f2_name];
-            print(f2, f2_path, '-dpng');
-            
-            f3 = figure(3);
-            niak_montage(map_dual);
-            title(sprintf('Network %d: dual regression (%s), contrast: %s', network, use, names{contrast}));
-            f3_name = sprintf('c_%s_n_%d_dual_%s.png', names{contrast}, network, use);
-            f3_path = [fig_path filesep f3_name];
-            print(f3, f3_path, '-dpng');
-        end
+    if show
+        f1 = figure(1);
+        niak_montage(map_seed);
+        title(sprintf('Network %d: seed (%s) F-Test', network, use));
+        f1_name = sprintf('f_test_n_%d_seed_%s.png', network, use);
+        f1_path = [fig_path filesep f1_name];
+        print(f1, f1_path, '-dpng');
+        
+        f2 = figure(2);
+        niak_montage(map_scores);
+        title(sprintf('Network %d: scores (%s) F-Test', network, use));
+        f2_name = sprintf('f_test_n_%d_scores_%s.png', network, use);
+        f2_path = [fig_path filesep f2_name];
+        print(f2, f2_path, '-dpng');
+        
+        f3 = figure(3);
+        niak_montage(map_dual);
+        title(sprintf('Network %d: dual regression (%s) F-Test', network, use));
+        f3_name = sprintf('f_test_n_%d_dual_%s.png', network, use);
+        f3_path = [fig_path filesep f3_name];
+        print(f3, f3_path, '-dpng');
     end
 end
