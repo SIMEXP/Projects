@@ -21,11 +21,12 @@ RUN apt-get install -y \
   libxi6 \
   libxmu-dev \
   libxmu-headers \
-  libxmu6 \
-  octave=3.8.1-1ubuntu1~octave1~precise1 
+  libxmu6 \  
+  octave=3.8.1-1ubuntu1~octave1~precise1 \
+  unzip
   
 # Fetch Octave forge packages
-RUN mkdir /home/niak
+RUN mkdir /home/octave
 RUN wget http://sourceforge.net/projects/octave/files/Octave%20Forge%20Packages/Individual%20Package%20Releases/control-2.8.0.tar.gz -P /home/octave
 RUN wget http://sourceforge.net/projects/octave/files/Octave%20Forge%20Packages/Individual%20Package%20Releases/general-1.3.4.tar.gz -P /home/octave
 RUN wget http://sourceforge.net/projects/octave/files/Octave%20Forge%20Packages/Individual%20Package%20Releases/signal-1.3.0.tar.gz -P /home/octave
