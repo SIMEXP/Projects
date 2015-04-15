@@ -102,7 +102,7 @@ end
 true_pos(1) = 1;
 false_pos(1) = 1;
 % Show ROC
-f1 = figure;
+f1 = figure('position',[0 0 800 400]);
 subplot(1,2,1);
 plot(false_pos, true_pos);
 title('manual');
@@ -111,20 +111,29 @@ axis([0 1 0 1]);
 subplot(1,2,2);
 plot(X_scores_b_shift, roc_scores_b_shift);
 title('matlab');
+set(f1,'PaperPositionMode','auto');
+print(f1, 'roc_comparison.png', '-dpng');
 
 % Show maps
-f2 = figure;
-subplot(1,2,1);
+f2 = figure('position',[0 0 1200 400]);
+subplot(1,3,1);
 imagesc(scores_shift_border);
 grid on;
 title('scores');
 colormap('cool')
 
-subplot(1,2,2);
+subplot(1,3,2);
+imagesc(dureg_shift_border);
+grid on;
+title('dual regression');
+colormap('cool')
+
+subplot(1,3,3);
 imagesc(reshape(border_regular_labels, [32 32]));
 grid on;
 title('true signal');
 colormap('cool')
-
+set(f2,'PaperPositionMode','auto');
+print(f2, 'map_comparison.png', '-dpng');
 
 
