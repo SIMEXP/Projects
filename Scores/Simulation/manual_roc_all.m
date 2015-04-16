@@ -97,32 +97,7 @@ for s_id = 1:n_shifts
     tpr_cell{s_id,2} = roc_seed_b_shift;
     
     fpr_cell{s_id,3} = X_dureg_b_shift;
-    tpr_cell{s_id,3} = roc_dureg_b_shift;
-    %% Run a manual ROC analysis
-    scores_vec = dureg_shift_border(:);
-    u_val = unique(scores_vec);
-    n_val = length(u_val);
-    
-    true_pos = zeros(n_val+1, 1);
-    false_pos = zeros(n_val+1, 1);
-    P = sum(border_regular_labels);
-    N = sum(~border_regular_labels);
-    
-    for v_id = 2:n_val
-        thresh = u_val(v_id);
-        pass_thr = scores_vec > thresh;
-        TP = sum(pass_thr(border_regular_labels));
-        FP = sum(pass_thr(~border_regular_labels));
-        tpr = TP / P;
-        fpr = FP / N;
-        true_pos(v_id) = tpr;
-        false_pos(v_id) = fpr;
-    end
-    true_pos(1) = 1;
-    tpr_cell{s_id,1} = true_pos;
-    false_pos(1) = 1;
-    fpr_cell{s_id,1} = false_pos;
-    
+    tpr_cell{s_id,3} = roc_dureg_b_shift;    
 end
 
 cc=jet(n_shifts);
@@ -130,50 +105,38 @@ labels = cellstr(num2str((shifts'*100)/n_edge, 'shift by %.1f %%'));
 labels{end+1} = 'chance';
 % Show ROC
 f1 = figure('position',[0 0 1200 600]);
-subplot(1,2,1);
+subplot(1,3,1);
 hold on;
 for s_id = 1:n_shifts
     plot(fpr_cell{s_id,1}, tpr_cell{s_id,1}, 'color', cc(s_id,:));
 end
 plot(linspace(0,1,10), linspace(0,1,10), 'color', 'k');
 hold off;
-title('manual');
+title('scores');
 legend(labels, 'Location', 'southeast');
 axis([0 1 0 1]);
 
-subplot(1,2,2);
+subplot(1,3,2);
 hold on;
 for s_id = 1:n_shifts
     plot(fpr_cell{s_id,2}, tpr_cell{s_id,2}, 'color',cc(s_id,:));
 end
 plot(linspace(0,1,10), linspace(0,1,10),'color', 'k');
 hold off;
-title('matlab');
+title('seed');
 legend(labels, 'Location', 'southeast');
-set(f1,'PaperPositionMode','auto');
-print(f1, sprintf('roc_dureg_comparison_edge_%d.png', edge), '-dpng');
-
-% Show maps
-f2 = figure('position',[0 0 1200 400]);
-subplot(1,3,1);
-imagesc(scores_shift_border);
-grid on;
-set(gca,'XTick',linspace(0,edge,5), 'YTick', linspace(0,edge,5));
-title('scores');
-colormap('cool')
-
-subplot(1,3,2);
-imagesc(dureg_shift_border);
-grid on;
-set(gca,'XTick',linspace(0,edge,5), 'YTick', linspace(0,edge,5));
-title('dual regression');
-colormap('cool')
+axis([0 1 0 1]);
 
 subplot(1,3,3);
-imagesc(reshape(border_regular_labels, [edge, edge]));
-grid on;
-set(gca,'XTick',linspace(0,edge,5), 'YTick', linspace(0,edge,5));
-title('true signal');
-colormap('cool')
-set(f2,'PaperPositionMode','auto');
-print(f2, sprintf('map_dureg_comparison_edge_%d.png', edge), '-dpng');
+hold on;
+for s_id = 1:n_shifts
+    plot(fpr_cell{s_id,3}, tpr_cell{s_id,3}, 'color',cc(s_id,:));
+end
+plot(linspace(0,1,10), linspace(0,1,10),'color', 'k');
+hold off;
+title('dual regression');
+legend(labels, 'Location', 'southeast');
+axis([0 1 0 1]);
+
+set(f1,'PaperPositionMode','auto');
+print(f1, sprintf('roc_comparison_edge_%d_all.png', edge), '-dpng');
