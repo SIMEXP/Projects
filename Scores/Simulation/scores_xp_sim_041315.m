@@ -65,7 +65,6 @@ title('Regular Prior');
 set(fig,'PaperPositionMode','auto');
 print(fig, [fig_path filesep 'regular_prior.png'], '-dpng');
 
-
 prior_shift = circshift(prior_regular, 3, 1);
 prior_shift = circshift(prior_shift, 3, 2);
 prior_shift_vec = reshape(prior_shift, [dot(edge, edge), 1]);
