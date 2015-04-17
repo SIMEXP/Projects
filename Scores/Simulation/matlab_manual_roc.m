@@ -1,7 +1,8 @@
+%% All about MATLAB
 clear all; close all;
 %% Make the signal for smooth and shifted prior
 edge = 64;
-shifts = 3:8;
+shifts = 3:10;
 n_shifts = length(shifts);
 n_edge = edge/4;
 corner_net = 1;
@@ -24,7 +25,8 @@ for s_id = 1:n_shifts
     prior_regular_vec = opt_mplm.space.mpart{2};
     prior_regular = reshape(prior_regular_vec, [edge, edge]);
     
-    prior_shift = circshift(prior_regular, [shift shift]);
+    prior_shift = circshift(prior_regular, shift, 1);
+    prior_shift = circshift(prior_shift, shift, 2);
     prior_shift_vec = reshape(prior_shift, [dot(edge, edge), 1]);
     
     %% Make the labels for ROC
@@ -88,14 +90,38 @@ for s_id = 1:n_shifts
     [X_seed_c_shift, roc_seed_c_shift, ~, AUC_seed_c_shift] = perfcurve(corner_regular_labels, seed_shift_corner(:), true);
     [X_dureg_c_shift, roc_dureg_c_shift, ~, AUC_dureg_c_shift] = perfcurve(corner_regular_labels, dureg_shift_corner(:), true);
     
-    fpr_cell{s_id,2} = X_scores_b_shift;
-    tpr_cell{s_id,2} = roc_scores_b_shift;
+    fpr_cell{s_id,1} = X_scores_b_shift;
+    tpr_cell{s_id,1} = roc_scores_b_shift;
     
     fpr_cell{s_id,2} = X_seed_b_shift;
     tpr_cell{s_id,2} = roc_seed_b_shift;
     
     fpr_cell{s_id,3} = X_dureg_b_shift;
     tpr_cell{s_id,3} = roc_dureg_b_shift;
+    %% Run a manual ROC analysis
+    vec = scores_shift_border(:);
+    u_val = unique(vec);
+    n_val = length(u_val);
+    
+    true_pos = zeros(n_val+1, 1);
+    false_pos = zeros(n_val+1, 1);
+    P = sum(border_regular_labels);
+    N = sum(~border_regular_labels);
+    
+    for v_id = 2:n_val
+        thresh = u_val(v_id);
+        pass_thr = vec > thresh;
+        TP = sum(pass_thr(border_regular_labels));
+        FP = sum(pass_thr(~border_regular_labels));
+        tpr = TP / P;
+        fpr = FP / N;
+        true_pos(v_id) = tpr;
+        false_pos(v_id) = fpr;
+    end
+    true_pos(1) = 1;
+    tpr_cell{s_id,1} = true_pos;
+    false_pos(1) = 1;
+    fpr_cell{s_id,1} = false_pos;
     
 end
 
@@ -104,40 +130,30 @@ labels = cellstr(num2str((shifts'*100)/n_edge, 'shift by %.1f %%'));
 labels{end+1} = 'chance';
 % Show ROC
 f1 = figure('position',[0 0 1200 600]);
-subplot(1,3,1);
+subplot(1,2,1);
 hold on;
 for s_id = 1:n_shifts
     plot(fpr_cell{s_id,1}, tpr_cell{s_id,1}, 'color', cc(s_id,:));
 end
 plot(linspace(0,1,10), linspace(0,1,10), 'color', 'k');
 hold off;
-title('scores');
+title('manual');
 legend(labels, 'Location', 'southeast');
 axis([0 1 0 1]);
 
-subplot(1,3,2);
+subplot(1,2,2);
 hold on;
 for s_id = 1:n_shifts
     plot(fpr_cell{s_id,2}, tpr_cell{s_id,2}, 'color',cc(s_id,:));
 end
 plot(linspace(0,1,10), linspace(0,1,10),'color', 'k');
 hold off;
-title('seed');
+title('matlab');
 legend(labels, 'Location', 'southeast');
 set(f1,'PaperPositionMode','auto');
-
-subplot(1,3,3);
-hold on;
-for s_id = 1:n_shifts
-    plot(fpr_cell{s_id,3}, tpr_cell{s_id,}, 'color',cc(s_id,:));
-end
-plot(linspace(0,1,10), linspace(0,1,10),'color', 'k');
-hold off;
-title('dureg');
-legend(labels, 'Location', 'southeast');
 print(f1, sprintf('roc_dureg_comparison_edge_%d.png', edge), '-dpng');
 
-% % Show maps
+% Show maps
 % f2 = figure('position',[0 0 1200 400]);
 % subplot(1,3,1);
 % imagesc(scores_shift_border);
