@@ -14,7 +14,7 @@ The four datasets include:
 Due to restrictions imposed by the Alzheimer's Disease Neuroimaging Initiative (ADNI) and/or by the consent forms signed by the subjects, some of the data used in the paper cannot be shared.
 
 ## GLM-connectome analysis
-- The preprocessing pipelines for [ADNI2](), [MNI](), [CRIUGMa](), and [CRIUGMb]()
+- The preprocessing pipelines for [ADNI2](https://github.com/SIMEXP/Projects/blob/master/mcinet/ADNI2_pipeline_preprocess.m), [MNI](https://github.com/SIMEXP/Projects/blob/master/mcinet/MNI_pipeline_preprocess.m), [CRIUGMa](https://github.com/SIMEXP/Projects/blob/master/mcinet/CRIUGMa_pipeline_preprocess.m), and [CRIUGMb](https://github.com/SIMEXP/Projects/blob/master/mcinet/CRIUGMb_pipeline_preprocess.m)
 - The region-growing pipeline
 - The [Boostrap Analysis of Stable Clusters](https://github.com/SIMEXP/Projects/blob/master/mcinet/mcinet_pipeline_BASC_regular_grid.m) pipeline, with regular grid of resolutions/scales.
 - The [Boostrap Analysis of Stable Clusters](https://github.com/SIMEXP/Projects/blob/master/mcinet/mcinet_pipeline_BASC_MSTEPS.m) pipeline, with resolutions/scales selected by MSTEPS.
