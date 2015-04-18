@@ -7,7 +7,7 @@ This github repository contains the scripts used to generate the results of the 
 
 This resting-state fMRI dataset is composed of four independent datasets collected from multiple sites.
 The four datasets include:
-- The [Alzheimer's Disease Neuroimaging Initiative](http://www.adni-info.org/Home.aspx) 2 (ADNI2) multsite sample
+- The [Alzheimer's Disease Neuroimaging Initiative](http://www.adni-info.org/Home.aspx) 2 (ADNI2) multisite sample
 - A sample collected at the Montreal Neurological Institute, henceforth referred to as MNI, and which has been described in [this publication](http://www.ncbi.nlm.nih.gov/pubmed/24583406)
 - Two samples collected at the Centre de recherche de l'institut universitaire de gériatrie de Montréal, henceforth referred to as CRIUGMa and CRIUGMb
 
