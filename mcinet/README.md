@@ -15,7 +15,7 @@ Due to restrictions imposed by the Alzheimer's Disease Neuroimaging Initiative (
 
 ## GLM-connectome analysis
 - The preprocessing pipelines for [ADNI2](https://github.com/SIMEXP/Projects/blob/master/mcinet/ADNI2_pipeline_preprocess.m), [MNI](https://github.com/SIMEXP/Projects/blob/master/mcinet/MNI_pipeline_preprocess.m), [CRIUGMa](https://github.com/SIMEXP/Projects/blob/master/mcinet/CRIUGMa_pipeline_preprocess.m), and [CRIUGMb](https://github.com/SIMEXP/Projects/blob/master/mcinet/CRIUGMb_pipeline_preprocess.m)
-- The region-growing pipeline
+- The [region-growing](https://github.com/SIMEXP/Projects/blob/master/mcinet/mcinet_pipeline_region_growing.m) pipeline
 - The [Boostrap Analysis of Stable Clusters](https://github.com/SIMEXP/Projects/blob/master/mcinet/mcinet_pipeline_BASC_regular_grid.m) pipeline, with regular grid of resolutions/scales.
 - The [Boostrap Analysis of Stable Clusters](https://github.com/SIMEXP/Projects/blob/master/mcinet/mcinet_pipeline_BASC_MSTEPS.m) pipeline, with resolutions/scales selected by MSTEPS.
 - The [Multiscale Statistical Parametric Connectome](https://github.com/SIMEXP/Projects/blob/master/mcinet/mcinet_pipeline_MSPC_regular_grid.m) pipeline, with regular grid of resolutions/scales.
