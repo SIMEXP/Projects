@@ -364,11 +364,11 @@ end
 pos_mat = reshape(1:12, [3 4])';
 opt_v.limits = [-1 1];
 opt_v.color_map = niak_hot_cold;
-net_names = {'corner', 'reference1', 'reference2', 'border', 'clean'};
+figs = cell(n_nets, 1);
 % iterate across networks
 for net_id = 1:n_nets
     network = networks(net_id);
-    f = figure(net_id);
+    figs{net_id} = figure('position',[0 0 1200 1200]);
     % Iterate across noise levels, last one is clean
     for n_id  = 1:4
         noise_id = n_id - 1;
@@ -388,7 +388,7 @@ for net_id = 1:n_nets
             dureg = reshape(mean(squeeze(dureg_map(2, :, network, noise_id, :)),2), [edge edge]);
         end
         
-        figure(net_id);
+        figure(figs{net_id});
         % Scores
         pos = pos_mat(n_id, 1);
         subplot(4,3,pos);
@@ -416,4 +416,6 @@ for net_id = 1:n_nets
             title('Dual Regression');
         end
     end
+    figure(figs{net_id});
+    suptitle(sprintf('%s network', net_names{net_id}));
 end
