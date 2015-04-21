@@ -11,7 +11,7 @@ ref_net1 = 2;
 ref_net2 = 5;
 n_perm = 2;
 
-noise_levels = [0.01, 0.1, 1];
+noise_levels = [0.001, 0.01, 0.1];
 
 opt_s.type = 'checkerboard';
 opt_s.t = 100;
@@ -49,7 +49,7 @@ dureg_clean = zeros(edge*edge, 3, n_perm);
 
 scores_tpr_store = zeros(n_ref, 3, n_perm);
 scores_thr_store = zeros(n_ref, 2, 3, n_perm);
-scores_auc_store = zeros(3, 3, n_perm);
+scores_auc_store = zeros(3, n_perm);
 
 seed_tpr_store = zeros(n_ref, 3, n_perm);
 seed_thr_store = zeros(n_ref, 2, 3, n_perm);
@@ -103,8 +103,8 @@ for n_id = 1:3
         opt_t.correction = 'mean_var';
         tseed = niak_build_tseries(tseries,prior_regular_vec,opt_t);
         seed_tmp = niak_fisher(corr(tseries,tseed))';
-        seed_corner = seed_tmp(corner_net, :);
-        [seed_fpr, seed_tpr, seed_thr, seed_auc] = perfcurve(corner_regular_labels, seed_corner, true);
+        seed_map = seed_tmp(corner_net, :);
+        [seed_fpr, seed_tpr, seed_thr, seed_auc] = perfcurve(corner_regular_labels, seed_map, true);
         % Append -1 and 1 to the threshold and fix the fpr and tpr
         % values so the interpolation doesn't fuck it up
         seed_thr = [1; seed_thr; -1];
@@ -124,7 +124,7 @@ for n_id = 1:3
         seed_thr_store(:, 2, n_id, i_id) = seed_fpr_tint;
         seed_auc_store(n_id, i_id) = seed_auc;
         % Store the maps also
-        seed_clean(:,n_id) = seed_clean(:,n_id) + seed_corner';
+        seed_clean(:,n_id) = seed_clean(:,n_id) + seed_map';
         %% Dual Regression
         opt_t.type_center = 'mean';
         opt_t.correction = 'mean_var';
@@ -161,137 +161,159 @@ stab_clean_avg = scores_clean/n_perm;
 seed_clean_avg = seed_clean/n_perm;
 dureg_clean_avg = dureg_clean/n_perm;
 
-%% Visualize the findings separately for the different methods
-%% Get the results out
-f_scores = figure(1);
-f_seed = figure(2);
-f_dureg = figure(3);
-pos_mat = reshape(1:9, [3 3])';
+%% Plot the ROC curves as a function of noise levels
+f_roc = figure(1);
+for n_id = 1:3
+    noise = noise_levels(n_id);
+    subplot(1,3,n_id);
+    hold on;
+    % scores
+    plot(ref_fpr, mean(squeeze(scores_tpr_store(:, n_id, :)),2), 'g');
+    scores_auc = mean(scores_auc_store(n_id, :));
+    % seed
+    plot(ref_fpr, mean(squeeze(seed_tpr_store(:, n_id, :)),2), 'r');
+    seed_auc = mean(seed_auc_store(n_id, :));
+    % dureg
+    plot(ref_fpr, mean(squeeze(dureg_tpr_store(:, n_id, :)),2), 'b');
+    dureg_auc = mean(dureg_auc_store(n_id, :));
+    % labels
+    labels = {sprintf('scores (%.3f)', scores_auc), sprintf('seed (%.3f)', seed_auc), sprintf('dual regression (%.3f)', dureg_auc)};
+    title(sprintf('Noise level %.2f', noise));
+    legend(labels, 'Location', 'southeast');
+end
+
+%% Plot the AUC bars with standard deviation
+% Combine them all into one big plot
+f_auc = figure(2);
+auc_all = [mean(scores_auc_store, 2), mean(seed_auc_store, 2), mean(dureg_auc_store, 2)];
+std_all = [std(scores_auc_store,[], 2), std(seed_auc_store,[], 2), std(dureg_auc_store,[], 2)];
+barwitherr(std_all, auc_all);
+legend({'scores', 'seed', 'dual regression'}, 'Location', 'eastoutside');
+title('AUC over different noise levels');
+set(gca,'xlim',[0 4],'ylim', [0.5 1], 'XTickLabel', cellstr(num2str(noise_levels')));
+xlabel('noise level');
+ylabel('AUC');
+
+%% Show the maps for the different methods and noise levels
+f_maps = figure(3);
 
 opt_v.limits = [-1 1];
 opt_v.color_map = niak_hot_cold;
+pos_mat = reshape(1:9, [3 3]);
 for n_id = 1:3
-    for s_id = 1:3
-        % Get the values
-        % Scores
-        scores_corner = reshape(stab_clean_avg(:, corner_net, n_id, s_id), [edge, edge]);
-        scores_border = reshape(stab_clean_avg(:, border_net, n_id, s_id), [edge, edge]);
-        scores_ref1 = reshape(stab_clean_avg(:, ref_net1, n_id, s_id), [edge, edge]);
-        scores_ref2 = reshape(stab_clean_avg(:, ref_net2, n_id, s_id), [edge, edge]);
-        
-        % Seed
-        seed_corner = reshape(seed_clean_avg(corner_net, :, n_id, s_id), [edge, edge]);
-        seed_border = reshape(seed_clean_avg(border_net, :, n_id, s_id), [edge, edge]);
-        seed_ref1 = reshape(seed_clean_avg(ref_net1, :, n_id, s_id), [edge, edge]);
-        seed_ref2 = reshape(seed_clean_avg(ref_net2, :, n_id, s_id), [edge, edge]);
-        
-        % Dual Regression
-        dureg_corner = reshape(dureg_clean_avg(corner_net, :, n_id, s_id), [edge, edge]);
-        dureg_border = reshape(dureg_clean_avg(border_net, :, n_id, s_id), [edge, edge]);
-        dureg_ref1 = reshape(dureg_clean_avg(ref_net1, :, n_id, s_id), [edge, edge]);
-        dureg_ref2 = reshape(dureg_clean_avg(ref_net2, :, n_id, s_id), [edge, edge]);
-        
-        % Plot things
-        % Scores
-        figure(f_scores);
-        pos = pos_mat(n_id, s_id);
-        subplot(3,3,pos);
-        niak_visu_matrix(scores_corner, opt_v);
-        if s_id == 1
-            ylabel(sprintf('noise %.3f', noise_levels(n_id)));
-        end
-        if n_id == 1
-            title(sprintf('smooth %d', smooth_levels(s_id)));
-        end
-        
-        % Seed
-        figure(f_seed);
-        pos = pos_mat(n_id, s_id);
-        subplot(3,3,pos);
-        niak_visu_matrix(seed_corner, opt_v);
-        if s_id == 1
-            ylabel(sprintf('noise %.3f', noise_levels(n_id)));
-        end
-        if n_id == 1
-            title(sprintf('smooth %d', smooth_levels(s_id)));
-        end
-        
-        % Dureg
-        figure(f_dureg);
-        pos = pos_mat(n_id, s_id);
-        subplot(3,3,pos);
-        niak_visu_matrix(dureg_corner, opt_v);
-        if s_id == 1
-            ylabel(sprintf('noise %.3f', noise_levels(n_id)));
-        end
-        if n_id == 1
-            title(sprintf('smooth %d', smooth_levels(s_id)));
-        end
-        
+    noise = noise_levels(n_id);
+    % Get the values
+    % Scores
+    scores_map = reshape(stab_clean_avg(:, n_id), [edge, edge]);
+    % Seed
+    seed_map = reshape(seed_clean_avg(:, n_id), [edge, edge]);
+    % Dual Regression
+    dureg_map = reshape(dureg_clean_avg(:, n_id), [edge, edge]);
+    
+    % Plot things
+    % Scores
+    pos = pos_mat(1, n_id);
+    subplot(3,3, pos);
+    niak_visu_matrix(scores_map, opt_v);
+    ylabel(sprintf('noise %.3f', noise));
+    if n_id == 1
+        title('Scores');
+    end
+    
+    % Seed
+    pos = pos_mat(2, n_id);
+    subplot(3,3, pos);
+    niak_visu_matrix(seed_map, opt_v);
+    if n_id == 1
+        title('Seed');
+    end
+    
+    % Dureg
+    pos = pos_mat(3, n_id);
+    subplot(3,3, pos);
+    niak_visu_matrix(dureg_map, opt_v);
+    if n_id == 1
+        title('Scores');
     end
 end
-figure(f_scores);
-suptitle('Scores');
-figure(f_seed);
-suptitle('Seed');
-figure(f_dureg);
-suptitle('Dual Regression');
+suptitle('Corner network maps across different noise levels');
 
-%% Show it
-% Show the effect of noise on 
-f1 = figure('position',[0 0 1200 600]);
-subplot(2,2,1);
-niak_visu_matrix(scores_corner_d);
-subplot(2,2,2);
-niak_visu_matrix(scores_ref1_d);
-subplot(2,2,3);
-niak_visu_matrix(scores_ref2_d);
-subplot(2,2,4);
-niak_visu_matrix(scores_border_d);
-print(f1, 'diagonal_noise_simulation.png', '-dpng');
-set(f1,'PaperPositionMode','auto');
-print(f1, [fig_path filesep 'clean.png'], '-dpng');
+%% Plot the FPR and TPR curves over the thresholds
+f_thr = figure(3);
+pos_mat = reshape(1:9, [3 3]);
 
-%% Plot a noise and non-noise network for the three methods
-f2 = figure('position',[0 0 1200 600]);
-opt_v = struct;
-opt_v.limits = [-1 1];
-subplot(2,3,1);
-niak_visu_matrix(scores_corner_d, opt_v);
-subplot(2,3,2);
-niak_visu_matrix(seed_corner_d, opt_v);
-subplot(2,3,3);
-niak_visu_matrix(dureg_corner_d, opt_v);
-subplot(2,3,4);
-niak_visu_matrix(scores_ref2_d, opt_v);
-subplot(2,3,5);
-niak_visu_matrix(seed_ref2_d, opt_v);
-subplot(2,3,6);
-niak_visu_matrix(dureg_ref2_d, opt_v);
-set(f2,'PaperPositionMode','auto');
-print(f2, [fig_path filesep 'noise.png'], '-dpng');
-
-%% Find out how the values inside and outside of the noise relate to each other
-inside_mask = reshape(prior_regular_vec .* diag_mask(:) == corner_net, [edge, edge]);
-outside_mask = reshape(prior_regular_vec .* ~diag_mask(:) == corner_net, [edge, edge]);
-
-avg_in = mean(scores_corner_d(logical(inside_mask)));
-avg_out = mean(scores_corner_d(logical(outside_mask)));
-%% Show the differnces
-f3 = figure('position',[0 0 1200 600]);
-opt_v = struct;
-opt_v.limits = [-1 1];
-subplot(2,3,1);
-niak_visu_matrix(scores_corner - scores_corner_d, opt_v);
-subplot(2,3,2);
-niak_visu_matrix(seed_corner - seed_corner_d, opt_v);
-subplot(2,3,3);
-niak_visu_matrix(dureg_corner - dureg_corner_d, opt_v);
-subplot(2,3,4);
-niak_visu_matrix(scores_ref2 - scores_ref2_d, opt_v);
-subplot(2,3,5);
-niak_visu_matrix(seed_ref2_d - seed_ref2_d, opt_v);
-subplot(2,3,6);
-niak_visu_matrix(dureg_ref2 - dureg_ref2_d, opt_v);
-set(f3,'PaperPositionMode','auto');
-print(f3, [fig_path filesep 'difference.png'], '-dpng');
+for n_id = 1:3
+    noise = noise_levels(n_id);
+    
+    % Get the values
+    % scores
+    scores_tpr = mean(squeeze(scores_thr_store(:, 1, n_id, :)),2);
+    scores_fpr = mean(squeeze(scores_thr_store(:, 2, n_id, :)),2);
+    scores_ab = (trapz(ref_thr, scores_tpr) - trapz(ref_thr, scores_fpr))/2;
+    % seed
+    seed_tpr = mean(squeeze(seed_thr_store(:, 1, n_id, :)),2);
+    seed_fpr = mean(squeeze(seed_thr_store(:, 2, n_id, :)),2);
+    seed_ab = (trapz(ref_thr, seed_tpr) - trapz(ref_thr, seed_fpr))/2;
+    % dureg
+    dureg_tpr = mean(squeeze(dureg_thr_store(:, 1, n_id, :)),2);
+    dureg_fpr = mean(squeeze(dureg_thr_store(:, 2, n_id, :)),2);
+    dureg_ab = (trapz(ref_thr, dureg_tpr) - trapz(ref_thr, dureg_fpr))/2;
+            
+    % Plot things
+    % Scores
+    pos = pos_mat(1, n_id);
+    subplot(3,3, pos);
+    hold on;
+    % Generate filled area
+    X = [ref_thr, fliplr(ref_thr)];
+    Y = [scores_fpr', fliplr(scores_tpr')];
+    h = fill(X, Y, 'b');
+    set(h,'facealpha',.1);
+    plot(ref_thr, scores_tpr, 'g');
+    plot(ref_thr, scores_fpr, 'r');
+    hold off;
+    legend({'TPR', 'FPR', sprintf('TPR-FPR (%.3f)', scores_ab)}, 'Location', 'southwest');
+    if n_id == 1
+        title('Scores');
+    elseif n_id == 3
+        xlabel('threshold');
+    end
+    
+    % Seed
+    pos = pos_mat(2, n_id);
+    subplot(3,3, pos);
+    hold on;
+    % Generate filled area
+    X = [ref_thr, fliplr(ref_thr)];
+    Y = [seed_fpr', fliplr(seed_tpr')];
+    h = fill(X, Y, 'b');
+    set(h,'facealpha',.1);
+    plot(ref_thr, seed_tpr, 'g');
+    plot(ref_thr, seed_fpr, 'r');
+    hold off;
+    legend({'TPR', 'FPR', sprintf('TPR-FPR (%.3f)', seed_ab)}, 'Location', 'southwest');
+    if n_id == 1
+        title('Seed');
+    elseif n_id == 3
+        xlabel('threshold');
+    end
+    
+    % Dual Regression
+    pos = pos_mat(3, n_id);
+    subplot(3,3, pos);
+    hold on;
+    % Generate filled area
+    X = [ref_thr, fliplr(ref_thr)];
+    Y = [dureg_fpr', fliplr(dureg_tpr')];
+    h = fill(X, Y, 'b');
+    set(h,'facealpha',.1);
+    plot(ref_thr, dureg_tpr, 'g');
+    plot(ref_thr, dureg_fpr, 'r');
+    hold off;
+    legend({'TPR', 'FPR', sprintf('TPR-FPR (%.3f)', dureg_ab)}, 'Location', 'southwest');
+    if n_id == 1
+        title('Dual Regression');
+    elseif n_id == 3
+        xlabel('threshold');
+    end
+end
