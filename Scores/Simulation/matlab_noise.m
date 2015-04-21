@@ -9,7 +9,7 @@ corner_net = 1;
 border_net = 6;
 ref_net1 = 2;
 ref_net2 = 5;
-n_perm = 30;
+n_perm = 2;
 
 noise_levels = [0.01, 0.1, 1];
 smooth_levels = [4, 8, 16];
@@ -25,8 +25,8 @@ opt_scores.sampling.type = 'bootstrap';
 opt_scores.sampling.opt = opt_s;
 
 n_ref = 100;
-ref_fpr = linspace(0,1,n_ref);
-ref_thr = linspace(0,1,n_ref);
+ref_fpr = linspace(-1,1,n_ref);
+ref_thr = linspace(-1,1,n_ref);
 
 %% Dry run to get the priors
 [tseries,opt_mplm] = niak_simus_scenario(opt_s);
@@ -44,13 +44,21 @@ opt_scores.flag_verbose = false;
 
 %% Prepare the storage
 % For the maps
-stab_clean = zeros(edge*edge, 16, 3, 3);
-seed_clean = zeros(16, edge*edge, 3, 3);
-dureg_clean = zeros(16, edge*edge, 3, 3);
+scores_clean = zeros(edge*edge, 3, 3, n_perm);
+seed_clean = zeros(edge*edge, 3, 3, n_perm);
+dureg_clean = zeros(edge*edge, 3, 3, n_perm);
 
-stab_tpr = zeros(n_ref, 16, 3, 3, n_perm);
-stab_thr = 
-stab_auc
+scores_tpr_store = zeros(n_ref, 3, 3, n_perm);
+scores_thr_store = zeros(n_ref, 2, 3, 3, n_perm);
+scores_auc_store = zeros(3, 3, n_perm);
+
+seed_tpr_store = zeros(n_ref, 3, 3, n_perm);
+seed_thr_store = zeros(n_ref, 2, 3, 3, n_perm);
+seed_auc_store = zeros(3, 3, n_perm);
+
+dureg_tpr_store = zeros(n_ref, 3, 3, n_perm);
+dureg_thr_store = zeros(n_ref, 2, 3, 3, n_perm);
+dureg_auc_store = zeros(3, 3, n_perm);
 
 %% Iterate
 for n_id = 1:3
@@ -61,9 +69,10 @@ for n_id = 1:3
         smooth = smooth_levels(s_id);
         opt_s.variance = noise;
         opt_s.fwhm = smooth;
+        fprintf('Running noise %.3f smoothing %d\n', noise, smooth);
         
         for i_id = 1:n_perm
-            fprintf('Running permutation %d\n', i_id);
+            fprintf('    permutation %d\n', i_id);
             %% Now generate the simulated signal
             [tseries,opt_mplm] = niak_simus_scenario(opt_s);
 
@@ -71,31 +80,55 @@ for n_id = 1:3
             %% Scores
             opt_scores.flag_target = false;
             res_scores = niak_stability_cores(tseries,prior_regular_vec,opt_scores);
-            scores_corner = reshape(res_scores.stab_maps(:, corner_net), [edge, edge]);
-            [scores_fpr, scores_tpr, scores_thr, scores_auc] = perfcurve(corner_regular_labels, scores_corner(:), true);
+            scores_corner = res_scores.stab_maps(:, corner_net);
+            [scores_fpr, scores_tpr, scores_thr, scores_auc] = perfcurve(corner_regular_labels, scores_corner, true);
+            % Append -1 and 1 to the threshold and fix the fpr and tpr
+            % values so the interpolation doesn't fuck it up
+            scores_thr = [1; scores_thr; -1];
+            scores_fpr = [0; scores_fpr; 1];
+            scores_tpr = [0; scores_tpr; 1];
+            % Interpolate thr
+            [~, scores_tpr_t] = clean_dupl(scores_thr, scores_tpr);
+            [scores_thr_t, scores_fpr_t] = clean_dupl(scores_thr, scores_fpr);
+            scores_tpr_tint = interp1(scores_thr_t, scores_tpr_t, ref_thr, 'linear', 'extrap');
+            scores_fpr_tint = interp1(scores_thr_t, scores_fpr_t, ref_thr, 'linear', 'extrap');
+            % Clean up duplicates and interpolate fpr
             [scores_fpr, scores_tpr] = clean_dupl(scores_fpr, scores_tpr);
-            % Interpolate tpr and thr
             scores_tpr_fint = interp1(scores_fpr, scores_tpr, ref_fpr);
-            seed_tpr_tint = interp1(scores_thr, scores_tpr, ref_thr);
-            seed_fpr_tint = interp1(scores_thr, scores_fpr, ref_thr);
-            %     scores_border = reshape(res_scores.stab_maps(:, border_net), [edge, edge]);
-            stab_clean(:,:,n_id, s_id) = stab_clean(:,:,n_id, s_id) + res_scores.stab_maps;
+            % Store the results
+            scores_tpr_store(:, n_id, s_id, i_id) = scores_tpr_fint;
+            scores_thr_store(:, 1, n_id, s_id, i_id) = scores_tpr_tint;
+            scores_thr_store(:, 2, n_id, s_id, i_id) = scores_fpr_tint;
+            scores_auc_store(n_id, s_id, i_id) = scores_auc;
+            % Store the maps also
+            scores_clean(:,n_id, s_id) = scores_clean(:,n_id, s_id) + scores_corner;
             %% Seed
             opt_t.type_center = 'mean';
             opt_t.correction = 'mean_var';
             tseed = niak_build_tseries(tseries,prior_regular_vec,opt_t);
             seed_tmp = niak_fisher(corr(tseries,tseed))';
-            seed_corner = reshape(seed_tmp(corner_net, :), [edge, edge]);
-            [seed_fpr, seed_tpr, seed_thr, seed_auc] = perfcurve(corner_regular_labels, seed_corner(:), true);
+            seed_corner = seed_tmp(corner_net, :);
+            [seed_fpr, seed_tpr, seed_thr, seed_auc] = perfcurve(corner_regular_labels, seed_corner, true);
+            % Append -1 and 1 to the threshold and fix the fpr and tpr
+            % values so the interpolation doesn't fuck it up
+            seed_thr = [1; seed_thr; -1];
+            seed_fpr = [0; seed_fpr; 1];
+            seed_tpr = [0; seed_tpr; 1];
+            % Interpolate thr
+            [~, seed_tpr_t] = clean_dupl(seed_thr, seed_tpr);
+            [seed_thr_t, seed_fpr_t] = clean_dupl(seed_thr, seed_fpr);
+            seed_tpr_tint = interp1(seed_thr_t, seed_tpr_t, ref_thr, 'linear', 'extrap');
+            seed_fpr_tint = interp1(seed_thr_t, seed_fpr_t, ref_thr, 'linear', 'extrap');
+            % Interpolate fpr
             [seed_fpr, seed_tpr] = clean_dupl(seed_fpr, seed_tpr);
-            % Interpolate tpr and thr
             seed_tpr_fint = interp1(seed_fpr, seed_tpr, ref_fpr);
-            seed_tpr_tint = interp1(seed_thr, seed_tpr, ref_thr);
-            seed_fpr_tint = interp1(seed_thr, seed_fpr, ref_thr);
-        %     seed_border = reshape(seed_tmp(border_net, :), [edge, edge]);
-        %     seed_ref1 = reshape(seed_tmp(ref_net1, :), [edge, edge]);
-        %     seed_ref2 = reshape(seed_tmp(ref_net2, :), [edge, edge]);
-            seed_clean(:,:,n_id, s_id) = seed_clean(:,:,n_id, s_id) + seed_tmp;
+            % Store the results
+            seed_tpr_store(:, n_id, s_id, i_id) = seed_tpr_fint;
+            seed_thr_store(:, 1, n_id, s_id, i_id) = seed_tpr_tint;
+            seed_thr_store(:, 2, n_id, s_id, i_id) = seed_fpr_tint;
+            seed_auc_store(n_id, s_id, i_id) = seed_auc;
+            % Store the maps also
+            seed_clean(:,n_id, s_id) = seed_clean(:,n_id, s_id) + seed_corner';
             %% Dual Regression
             opt_t.type_center = 'mean';
             opt_t.correction = 'mean_var';
@@ -104,21 +137,32 @@ for n_id = 1:3
             tseries_dual = niak_normalize_tseries(tseries);
             beta = niak_lse(tseries_dual,tseed);
             % Get corner for ROC
-            dureg_corner = reshape(beta(corner_net, :), [edge, edge]);
-            [dureg_fpr, dureg_tpr, dureg_thr, dureg_auc] = perfcurve(corner_regular_labels, dureg_corner(:), true);
+            dureg_corner = beta(corner_net, :);
+            [dureg_fpr, dureg_tpr, dureg_thr, dureg_auc] = perfcurve(corner_regular_labels, dureg_corner, true);
+            % Append -1 and 1 to the threshold and fix the fpr and tpr
+            % values so the interpolation doesn't fuck it up
+            dureg_thr = [1; dureg_thr; -1];
+            dureg_fpr = [0; dureg_fpr; 1];
+            dureg_tpr = [0; dureg_tpr; 1];
+            % Interpolate thr
+            [~, dureg_tpr_t] = clean_dupl(dureg_thr, dureg_tpr);
+            [dureg_thr_t, dureg_fpr_t] = clean_dupl(dureg_thr, dureg_fpr);
+            dureg_tpr_tint = interp1(dureg_thr_t, dureg_tpr_t, ref_thr, 'linear', 'extrap');
+            dureg_fpr_tint = interp1(dureg_thr_t, dureg_fpr_t, ref_thr, 'linear', 'extrap');
+            % Interpolate fpr
             [dureg_fpr, dureg_tpr] = clean_dupl(dureg_fpr, dureg_tpr);
-            % Interpolate tpr and thr
             dureg_tpr_fint = interp1(dureg_fpr, dureg_tpr, ref_fpr);
-            seed_tpr_tint = interp1(dureg_thr, dureg_tpr, ref_thr);
-            seed_fpr_tint = interp1(dureg_thr, dureg_fpr, ref_thr);
-        %     dureg_border = reshape(beta(border_net, :), [edge, edge]);
-        %     dureg_ref1 = reshape(beta(ref_net1, :), [edge, edge]);
-        %     dureg_ref2 = reshape(beta(ref_net2, :), [edge, edge]);
-            dureg_clean(:,:,n_id, s_id) = dureg_clean(:,:,n_id, s_id) + beta;
+            % Store the results
+            dureg_tpr_store(:, n_id, s_id, i_id) = dureg_tpr_fint;
+            dureg_thr_store(:, 1, n_id, s_id, i_id) = dureg_tpr_tint;
+            dureg_thr_store(:, 2, n_id, s_id, i_id) = dureg_fpr_tint;
+            dureg_auc_store(n_id, s_id, i_id) = dureg_auc;
+            % Store the maps also
+            dureg_clean(:,n_id, s_id) = dureg_clean(:,n_id, s_id) + dureg_corner';
         end
     end
 end
-stab_clean_avg = stab_clean/n_perm;
+stab_clean_avg = scores_clean/n_perm;
 seed_clean_avg = seed_clean/n_perm;
 dureg_clean_avg = dureg_clean/n_perm;
 
