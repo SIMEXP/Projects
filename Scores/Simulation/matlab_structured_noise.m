@@ -15,6 +15,7 @@ ref_net1 = 2;
 ref_net2 = 5;
 networks = [1 2 5 6];
 n_nets = length(networks);
+net_names = {'corner', 'reference1', 'reference2', 'border'};
 noise_levels = [0.1, 1, 5];
 n_perm = 2;
 
@@ -350,4 +351,69 @@ for net_id = 1:n_nets
     end
 end
 
-%% Start visualizing things
+%% Plot the maps of networks of interest
+% Plot them noise by method (separate figures for the networks)
+
+% Maps:
+% 1 (clean/noise)
+% 2 (voxels)
+% 3 (networks)
+% 4 (noise levels)
+% 5 (permutations)
+
+pos_mat = reshape(1:12, [3 4])';
+opt_v.limits = [-1 1];
+opt_v.color_map = niak_hot_cold;
+net_names = {'corner', 'reference1', 'reference2', 'border', 'clean'};
+% iterate across networks
+for net_id = 1:n_nets
+    network = networks(net_id);
+    f = figure(net_id);
+    % Iterate across noise levels, last one is clean
+    for n_id  = 1:4
+        noise_id = n_id - 1;
+        if n_id == 1
+            % Scores
+            scores = reshape(mean(squeeze(scores_map(1, :, network, 1, :)),2), [edge edge]);
+            % Seed
+            seed = reshape(mean(squeeze(seed_map(1, :, network, 1, :)),2), [edge edge]);
+            % Dureg
+            dureg = reshape(mean(squeeze(dureg_map(1, :, network, 1, :)),2), [edge edge]);
+        else
+            % Scores
+            scores = reshape(mean(squeeze(scores_map(2, :, network, noise_id, :)),2), [edge edge]);
+            % Seed
+            seed = reshape(mean(squeeze(seed_map(2, :, network, noise_id, :)),2), [edge edge]);
+            % Dureg
+            dureg = reshape(mean(squeeze(dureg_map(2, :, network, noise_id, :)),2), [edge edge]);
+        end
+        
+        figure(net_id);
+        % Scores
+        pos = pos_mat(n_id, 1);
+        subplot(4,3,pos);
+        niak_visu_matrix(scores, opt_v);
+        if n_id == 1
+            title('Scores');
+        end
+        if n_id == 1
+            ylabel('no structured noise');
+        else
+            ylabel(sprintf('noise %.3f', noise_levels(noise_id)));
+        end
+        % Seed
+        pos = pos_mat(n_id, 2);
+        subplot(4,3,pos);
+        niak_visu_matrix(seed, opt_v);
+        if n_id == 1
+            title('Seed');
+        end
+        % Dureg
+        pos = pos_mat(n_id, 3);
+        subplot(4,3,pos);
+        niak_visu_matrix(dureg, opt_v);
+        if n_id == 1
+            title('Dual Regression');
+        end
+    end
+end
