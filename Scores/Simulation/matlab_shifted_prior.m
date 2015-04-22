@@ -13,7 +13,7 @@ networks = [1 2 5 6];
 n_nets = length(networks);
 net_names = {'corner', 'reference1', 'reference2', 'border'};
 
-n_perm = 2;
+n_perm = 10;
 % Define the shifts
 shifts = [0 1 2 4 8 10];
 n_shifts = length(shifts);
@@ -28,6 +28,7 @@ opt_s.t = 100;
 opt_s.n = edge*edge;
 opt_s.nb_clusters = [4 16];
 opt_s.fwhm = 4;
+opt_s.variance = 0.05;
 
 % Scores options
 opt_scores.sampling.type = 'bootstrap';
