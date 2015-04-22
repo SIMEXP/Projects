@@ -29,14 +29,14 @@ ref_thr = linspace(-1,1,n_ref);
 %% Dry run to get the priors
 [tseries,opt_mplm] = niak_simus_scenario(opt_s);
 % Get the priors
-prior_regular_vec = opt_mplm.space.mpart{2};
-prior_regular = reshape(prior_regular_vec, [edge, edge]);
+prior_true_vec = opt_mplm.space.mpart{2};
+prior_true = reshape(prior_true_vec, [edge, edge]);
 
-corner_regular_labels = prior_regular==corner_net;
-corner_regular_labels = corner_regular_labels(:);
+corner_true_labels = prior_true==corner_net;
+corner_true_labels = corner_true_labels(:);
 
-border_regular_labels = prior_regular==border_net;
-border_regular_labels = border_regular_labels(:);
+border_true_labels = prior_true==border_net;
+border_true_labels = border_true_labels(:);
 
 opt_scores.flag_verbose = false;
 
@@ -74,9 +74,9 @@ for n_id = 1:3
         %% Run methods without the noise
         %% Scores
         opt_scores.flag_target = false;
-        res_scores = niak_stability_cores(tseries,prior_regular_vec,opt_scores);
+        res_scores = niak_stability_cores(tseries,prior_true_vec,opt_scores);
         scores_corner = res_scores.stab_maps(:, corner_net);
-        [scores_fpr, scores_tpr, scores_thr, scores_auc] = perfcurve(corner_regular_labels, scores_corner, true);
+        [scores_fpr, scores_tpr, scores_thr, scores_auc] = perfcurve(corner_true_labels, scores_corner, true);
         % Append -1 and 1 to the threshold and fix the fpr and tpr
         % values so the interpolation doesn't fuck it up
         scores_thr = [1; scores_thr; -1];
@@ -100,10 +100,10 @@ for n_id = 1:3
         %% Seed
         opt_t.type_center = 'mean';
         opt_t.correction = 'mean_var';
-        tseed = niak_build_tseries(tseries,prior_regular_vec,opt_t);
+        tseed = niak_build_tseries(tseries,prior_true_vec,opt_t);
         seed_tmp = niak_fisher(corr(tseries,tseed))';
         seed_map = seed_tmp(corner_net, :);
-        [seed_fpr, seed_tpr, seed_thr, seed_auc] = perfcurve(corner_regular_labels, seed_map, true);
+        [seed_fpr, seed_tpr, seed_thr, seed_auc] = perfcurve(corner_true_labels, seed_map, true);
         % Append -1 and 1 to the threshold and fix the fpr and tpr
         % values so the interpolation doesn't fuck it up
         seed_thr = [1; seed_thr; -1];
@@ -127,13 +127,13 @@ for n_id = 1:3
         %% Dual Regression
         opt_t.type_center = 'mean';
         opt_t.correction = 'mean_var';
-        tseed = niak_build_tseries(tseries,prior_regular_vec,opt_t);
+        tseed = niak_build_tseries(tseries,prior_true_vec,opt_t);
         tseed = niak_normalize_tseries(tseed);
         tseries_dual = niak_normalize_tseries(tseries);
         beta = niak_lse(tseries_dual,tseed);
         % Get corner for ROC
         dureg_corner = beta(corner_net, :);
-        [dureg_fpr, dureg_tpr, dureg_thr, dureg_auc] = perfcurve(corner_regular_labels, dureg_corner, true);
+        [dureg_fpr, dureg_tpr, dureg_thr, dureg_auc] = perfcurve(corner_true_labels, dureg_corner, true);
         % Append -1 and 1 to the threshold and fix the fpr and tpr
         % values so the interpolation doesn't fuck it up
         dureg_thr = [1; dureg_thr; -1];
