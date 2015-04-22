@@ -478,6 +478,6 @@ for net_id = 1:n_nets
         end
     end
     set(f_map,'PaperPositionMode','auto');
-    print(f_map, [fig_path filesep sprintf('average_map_%s_network.png', net_name)], '-dpng');
+    print(f_map, [fig_path filesep sprintf('separation_%s_network.png', net_name)], '-dpng');
 end
         
