@@ -228,11 +228,11 @@ for net_id = 1:n_nets
             [scores_fpr, scores_tpr] = clean_dupl(scores_fpr, scores_tpr);
             scores_tpr_fint = interp1(scores_fpr, scores_tpr, ref_fpr);
             % Store the results
-            scores_roc(2, :, net_id, 1, n_id, i_id) = scores_tpr_fint;
-            scores_roc(2, :, net_id, 2, n_id, i_id) = scores_tpr_tint;
-            scores_roc(2, :, net_id, 3, n_id, i_id) = scores_fpr_tint;
+            scores_roc(2, :, network, 1, n_id, i_id) = scores_tpr_fint;
+            scores_roc(2, :, network, 2, n_id, i_id) = scores_tpr_tint;
+            scores_roc(2, :, network, 3, n_id, i_id) = scores_fpr_tint;
             % AUC
-            scores_auc(2, net_id, n_id, i_id) = scores_auc_tmp;
+            scores_auc(2, network, n_id, i_id) = scores_auc_tmp;
             
             % Seed
             [seed_fpr, seed_tpr, seed_thr, seed_auc_tmp] = perfcurve(label_mask, seed_net_noise, true);
@@ -250,11 +250,11 @@ for net_id = 1:n_nets
             [seed_fpr, seed_tpr] = clean_dupl(seed_fpr, seed_tpr);
             seed_tpr_fint = interp1(seed_fpr, seed_tpr, ref_fpr);
             % Store the results
-            seed_roc(2, :, net_id, 1, n_id, i_id) = seed_tpr_fint;
-            seed_roc(2, :, net_id, 2, n_id, i_id) = seed_tpr_tint;
-            seed_roc(2, :, net_id, 3, n_id, i_id) = seed_fpr_tint;
+            seed_roc(2, :, network, 1, n_id, i_id) = seed_tpr_fint;
+            seed_roc(2, :, network, 2, n_id, i_id) = seed_tpr_tint;
+            seed_roc(2, :, network, 3, n_id, i_id) = seed_fpr_tint;
             % AUC
-            seed_auc(2, net_id, n_id, i_id) = seed_auc_tmp;
+            seed_auc(2, network, n_id, i_id) = seed_auc_tmp;
 
             % Dual Regression
             [dureg_fpr, dureg_tpr, dureg_thr, dureg_auc_tmp] = perfcurve(label_mask, dureg_net_noise, true);
@@ -272,11 +272,11 @@ for net_id = 1:n_nets
             [dureg_fpr, dureg_tpr] = clean_dupl(dureg_fpr, dureg_tpr);
             dureg_tpr_fint = interp1(dureg_fpr, dureg_tpr, ref_fpr);
             % Store the results
-            dureg_roc(2, :, net_id, 1, n_id, i_id) = dureg_tpr_fint;
-            dureg_roc(2, :, net_id, 2, n_id, i_id) = dureg_tpr_tint;
-            dureg_roc(2, :, net_id, 3, n_id, i_id) = dureg_fpr_tint;
+            dureg_roc(2, :, network, 1, n_id, i_id) = dureg_tpr_fint;
+            dureg_roc(2, :, network, 2, n_id, i_id) = dureg_tpr_tint;
+            dureg_roc(2, :, network, 3, n_id, i_id) = dureg_fpr_tint;
             % AUC
-            dureg_auc(2, net_id, n_id, i_id) = dureg_auc_tmp;
+            dureg_auc(2, network, n_id, i_id) = dureg_auc_tmp;
             
         end
         % Now do the same thing, but for the clean data
@@ -299,11 +299,11 @@ for net_id = 1:n_nets
         [scores_fpr, scores_tpr] = clean_dupl(scores_fpr, scores_tpr);
         scores_tpr_fint = interp1(scores_fpr, scores_tpr, ref_fpr);
         % Store the results
-        scores_roc(1, :, net_id, 1, n_id, i_id) = scores_tpr_fint;
-        scores_roc(1, :, net_id, 2, n_id, i_id) = scores_tpr_tint;
-        scores_roc(1, :, net_id, 3, n_id, i_id) = scores_fpr_tint;
+        scores_roc(1, :, network, 1, n_id, i_id) = scores_tpr_fint;
+        scores_roc(1, :, network, 2, n_id, i_id) = scores_tpr_tint;
+        scores_roc(1, :, network, 3, n_id, i_id) = scores_fpr_tint;
         % AUC
-        scores_auc(1, net_id, n_id, i_id) = scores_auc_tmp;
+        scores_auc(1, network, n_id, i_id) = scores_auc_tmp;
         
         % Seed
         [seed_fpr, seed_tpr, seed_thr, seed_auc] = perfcurve(label_mask, seed_net_clean, true);
@@ -321,11 +321,11 @@ for net_id = 1:n_nets
         [seed_fpr, seed_tpr] = clean_dupl(seed_fpr, seed_tpr);
         seed_tpr_fint = interp1(seed_fpr, seed_tpr, ref_fpr);
         % Store the results
-        seed_roc(1, :, net_id, 1, n_id, i_id) = seed_tpr_fint;
-        seed_roc(1, :, net_id, 2, n_id, i_id) = seed_tpr_tint;
-        seed_roc(1, :, net_id, 3, n_id, i_id) = seed_fpr_tint;
+        seed_roc(1, :, network, 1, n_id, i_id) = seed_tpr_fint;
+        seed_roc(1, :, network, 2, n_id, i_id) = seed_tpr_tint;
+        seed_roc(1, :, network, 3, n_id, i_id) = seed_fpr_tint;
         % AUC
-        seed_auc(1, net_id, n_id, i_id) = seed_auc;
+        seed_auc(1, network, n_id, i_id) = seed_auc;
         
         % Dual Regression
         [dureg_fpr, dureg_tpr, dureg_thr, dureg_auc_tmp] = perfcurve(label_mask, dureg_net_clean, true);
@@ -343,11 +343,11 @@ for net_id = 1:n_nets
         [dureg_fpr, dureg_tpr] = clean_dupl(dureg_fpr, dureg_tpr);
         dureg_tpr_fint = interp1(dureg_fpr, dureg_tpr, ref_fpr);
         % Store the results
-        dureg_roc(1, :, net_id, 1, n_id, i_id) = dureg_tpr_fint;
-        dureg_roc(1, :, net_id, 2, n_id, i_id) = dureg_tpr_tint;
-        dureg_roc(1, :, net_id, 3, n_id, i_id) = dureg_fpr_tint;
+        dureg_roc(1, :, network, 1, n_id, i_id) = dureg_tpr_fint;
+        dureg_roc(1, :, network, 2, n_id, i_id) = dureg_tpr_tint;
+        dureg_roc(1, :, network, 3, n_id, i_id) = dureg_fpr_tint;
         % AUC
-        dureg_auc(1, net_id, n_id, i_id) = dureg_auc_tmp;
+        dureg_auc(1, network, n_id, i_id) = dureg_auc_tmp;
     end
 end
 
@@ -386,6 +386,107 @@ for net_id = 1:n_nets
             seed = reshape(mean(squeeze(seed_map(2, :, network, noise_id, :)),2), [edge edge]);
             % Dureg
             dureg = reshape(mean(squeeze(dureg_map(2, :, network, noise_id, :)),2), [edge edge]);
+        end
+        
+        figure(figs{net_id});
+        % Scores
+        pos = pos_mat(n_id, 1);
+        subplot(4,3,pos);
+        niak_visu_matrix(scores, opt_v);
+        if n_id == 1
+            title('Scores');
+        end
+        if n_id == 1
+            ylabel('no structured noise');
+        else
+            ylabel(sprintf('noise %.3f', noise_levels(noise_id)));
+        end
+        % Seed
+        pos = pos_mat(n_id, 2);
+        subplot(4,3,pos);
+        niak_visu_matrix(seed, opt_v);
+        if n_id == 1
+            title('Seed');
+        end
+        % Dureg
+        pos = pos_mat(n_id, 3);
+        subplot(4,3,pos);
+        niak_visu_matrix(dureg, opt_v);
+        if n_id == 1
+            title('Dual Regression');
+        end
+    end
+    figure(figs{net_id});
+    suptitle(sprintf('%s network', net_names{net_id}));
+end
+
+%% Plot ROC curves for the different networks
+
+% ROC
+% 1 (clean/noise)
+% 2 (FPR/THR values)
+% 3 (networks of interest)
+% 4 (TPR_F/TPR_T/FPR_T)
+% 5 (noise levels)
+% 6 (permutations)
+
+f_roc = figure(1);
+for n_id = 1:3
+    noise = noise_levels(n_id);
+    subplot(1,3,n_id);
+    hold on;
+    % scores
+    plot(ref_fpr, mean(squeeze(scores_tpr_store(:, n_id, :)),2), 'g');
+    scores_auc = mean(scores_auc_store(n_id, :));
+    % seed
+    plot(ref_fpr, mean(squeeze(seed_tpr_store(:, n_id, :)),2), 'r');
+    seed_auc = mean(seed_auc_store(n_id, :));
+    % dureg
+    plot(ref_fpr, mean(squeeze(dureg_tpr_store(:, n_id, :)),2), 'b');
+    dureg_auc = mean(dureg_auc_store(n_id, :));
+    % labels
+    labels = {sprintf('scores (%.3f)', scores_auc), sprintf('seed (%.3f)', seed_auc), sprintf('dual regression (%.3f)', dureg_auc)};
+    title(sprintf('Noise level %.2f', noise));
+    legend(labels, 'Location', 'southeast');
+end
+
+pos_mat = reshape(1:12, [3 4])';
+opt_v.limits = [-1 1];
+opt_v.color_map = niak_hot_cold;
+figs = cell(n_nets, 1);
+% iterate across networks
+for net_id = 1:n_nets
+    network = networks(net_id);
+    figs{net_id} = figure('position',[0 0 1200 1200]);
+    % Iterate across noise levels, last one is clean
+    for n_id  = 1:4
+        noise_id = n_id - 1;
+        if n_id == 1
+            % Scores
+            scores_tprf = mean(squeeze(scores_roc(1, :, network, 1, 1, :)),2);
+            scores_tprt = mean(squeeze(scores_roc(1, :, network, 2, 1, :)),2);
+            scores_fprt = mean(squeeze(scores_roc(1, :, network, 3, 1, :)),2);
+            % Seed
+            seed_tprf = mean(squeeze(seed_roc(1, :, network, 1, 1, :)),2);
+            seed_tprt = mean(squeeze(seed_roc(1, :, network, 2, 1, :)),2);
+            seed_fprt = mean(squeeze(seed_roc(1, :, network, 3, 1, :)),2);
+            % Dureg
+            dureg_tprf = mean(squeeze(dureg_roc(1, :, network, 1, 1, :)),2);
+            dureg_tprt = mean(squeeze(dureg_roc(1, :, network, 2, 1, :)),2);
+            dureg_fprt = mean(squeeze(dureg_roc(1, :, network, 3, 1, :)),2);
+        else
+            % Scores
+            scores_tprf = mean(squeeze(scores_roc(2, :, network, 1, noise_id, :)),2);
+            scores_tprt = mean(squeeze(scores_roc(2, :, network, 2, noise_id, :)),2);
+            scores_fprt = mean(squeeze(scores_roc(2, :, network, 3, noise_id, :)),2);
+            % Seed
+            seed_tprf = mean(squeeze(seed_roc(2, :, network, 1, noise_id, :)),2);
+            seed_tprt = mean(squeeze(seed_roc(2, :, network, 2, noise_id, :)),2);
+            seed_fprt = mean(squeeze(seed_roc(2, :, network, 3, noise_id, :)),2);
+            % Dureg
+            dureg_tprf = mean(squeeze(dureg_roc(2, :, network, 1, noise_id, :)),2);
+            dureg_tprt = mean(squeeze(dureg_roc(2, :, network, 2, noise_id, :)),2);
+            dureg_fprt = mean(squeeze(dureg_roc(2, :, network, 3, noise_id, :)),2);
         end
         
         figure(figs{net_id});
