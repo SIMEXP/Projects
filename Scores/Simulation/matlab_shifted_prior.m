@@ -318,8 +318,6 @@ end
 f_roc = figure('position',[0 0 1500 2400]);
 pos_mat = reshape(1:12, [3, 4])';
 cc=jet(n_shifts);
-labels = shift_labels;
-labels{end+1} = 'chance';
 % Iterate over networks
 for net_id = 1:n_nets
     network_id = networks(net_id);
@@ -328,7 +326,27 @@ for net_id = 1:n_nets
     scores = squeeze(mean(squeeze(scores_roc(:, 1, :, net_id, :)),2));
     seed = squeeze(mean(squeeze(seed_roc(:, 1, :, net_id, :)),2));
     dureg = squeeze(mean(squeeze(dureg_roc(:, 1, :, net_id, :)),2));
+    % Make the labels (with the AUC)
     
+    scores_labels = cell(n_shifts+1,1);
+    seed_labels = cell(n_shifts+1,1);
+    dureg_labels = cell(n_shifts+1,1);
+    for s_id = 1:n_shifts
+        shift = shifts(s_id);
+        perc_shift = (shift*100)/16;
+        % AUC
+        tmp_scores_auc = mean(scores_auc(:, net_id, s_id),1);
+        tmp_seed_auc = mean(seed_auc(:, net_id, s_id),1);
+        tmp_dureg_auc = mean(dureg_auc(:, net_id, s_id),1);
+        
+        scores_labels{s_id} = sprintf('%.2f%% (%.3f)', perc_shift, tmp_scores_auc);
+        seed_labels{s_id} = sprintf('%.2f%% (%.3f)', perc_shift, tmp_seed_auc);
+        dureg_labels{s_id} = sprintf('%.2f%% (%.3f)', perc_shift, tmp_dureg_auc);
+    end
+    scores_labels{end} = 'chance';
+    seed_labels{end} = 'chance';
+    dureg_labels{end} = 'chance';
+        
     % Scores
     subplot(4,3,pos_mat(net_id, 1));
     hold on;
@@ -336,7 +354,7 @@ for net_id = 1:n_nets
     colormap(cc);
     plot(ref_fpr, ref_fpr, 'k');
     hold off;
-    legend(shift_labels, 'Location', 'southeast');
+    legend(scores_labels, 'Location', 'southeast');
     if net_id == 1
         title('Scores');
     end
@@ -349,7 +367,7 @@ for net_id = 1:n_nets
     colormap(cc);
     plot(ref_fpr, ref_fpr, 'k');
     hold off;
-    legend(shift_labels, 'Location', 'southeast');
+    legend(seed_labels, 'Location', 'southeast');
     if net_id == 1
         title('Seed');
     end
@@ -361,17 +379,36 @@ for net_id = 1:n_nets
     colormap(cc);
     plot(ref_fpr, ref_fpr, 'k');
     hold off;
-    legend(shift_labels, 'Location', 'southeast');
+    legend(dureg_labels, 'Location', 'southeast');
     if net_id == 1
         title('Dual Regression');
     end
-    
 end
+set(f_roc,'PaperPositionMode','auto');
+print(f_roc, [fig_path filesep 'roc_overview.png'], '-dpng');
 
 %% 4. AUC plot
 % 4. Two AUC plot in one figure, one for each network
 
 f_auc = figure('position',[0 0 1500 2400]);
+for net_id = 1:n_nets
+    network_id = networks(net_id);
+    net_name = net_names{net_id};
+    % Get the average AUC values
+    auc_all = [squeeze(mean(scores_auc(:, net_id, :),1)), squeeze(mean(seed_auc(:, net_id, :),1)), squeeze(mean(dureg_auc(:, net_id, :),1))];
+    std_all = [squeeze(std(scores_auc(:, net_id, :),[],1)), squeeze(std(seed_auc(:, net_id, :),[],1)), squeeze(std(dureg_auc(:, net_id, :),[],1))];
+    
+    subplot(4,1,net_id)
+    % Combine them all into one big plot
+    barwitherr(std_all, auc_all);
+    legend({'scores', 'seed', 'dual regression'}, 'Location', 'eastoutside');
+    title(sprintf('AUC for %s network', net_name));
+    set(gca,'xlim',[0 n_shifts+1],'ylim', [0.3 1], 'XTickLabel', shift_labels);
+    xlabel('noise level');
+    ylabel('AUC');
+end
+set(f_auc,'PaperPositionMode','auto');
+print(f_auc, [fig_path filesep 'auc_overview.png'], '-dpng');
 
 %% 5. Separation Plot
 
