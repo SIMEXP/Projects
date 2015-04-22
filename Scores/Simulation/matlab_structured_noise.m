@@ -491,7 +491,7 @@ figs = cell(n_nets, 1);
 for net_id = 1:n_nets
     network = networks(net_id);
     n_pos = net_id+1;
-    figs{net_id} = figure('position',[0 0 1200 1200], 'visible','off');
+    figs{net_id} = figure('position',[0 0 1600 1200]);%, 'visible','off');
     clf;
     suptitle(sprintf('%s network', net_names{net_id}));
     % Iterate across noise levels, last one is clean
@@ -523,10 +523,7 @@ for net_id = 1:n_nets
             dureg_tprt = mean(squeeze(dureg_roc(2, :, net_id, 2, noise_id, :)),2);
             dureg_fprt = mean(squeeze(dureg_roc(2, :, net_id, 3, noise_id, :)),2);
             dureg_ab = (trapz(ref_thr, dureg_tprt) - trapz(ref_thr, dureg_fprt))/2;
-        end
-        
-        figure(figs{net_id});
-        
+        end        
         % Scores
         pos = pos_mat(n_id, 1);
         subplot(4,3,pos);
@@ -535,11 +532,11 @@ for net_id = 1:n_nets
         X = [ref_thr, fliplr(ref_thr)];
         Y = [scores_fprt', fliplr(scores_tprt')];
         h = fill(X, Y, 'b');
-        set(h,'facealpha',.1);
+        %set(h,'facealpha',.1);
         plot(ref_thr, scores_tprt, 'g');
         plot(ref_thr, scores_fprt, 'r');
         hold off;
-        legend({'TPR', 'FPR', sprintf('TPR-FPR (%.3f)', scores_ab)}, 'Location', 'southwest');
+        legend({sprintf('TPR-FPR (%.3f)', seed_ab), 'TPR', 'FPR'}, 'Location', 'southwest');
         if n_id == 1
             title('Scores');
         end
@@ -557,11 +554,11 @@ for net_id = 1:n_nets
         X = [ref_thr, fliplr(ref_thr)];
         Y = [seed_fprt', fliplr(seed_tprt')];
         h = fill(X, Y, 'b');
-        set(h,'facealpha',.1);
+        %set(h,'facealpha',.1);
         plot(ref_thr, seed_tprt, 'g');
         plot(ref_thr, seed_fprt, 'r');
         hold off;
-        legend({'TPR', 'FPR', sprintf('TPR-FPR (%.3f)', seed_ab)}, 'Location', 'southwest');
+        legend({sprintf('TPR-FPR (%.3f)', seed_ab), 'TPR', 'FPR'}, 'Location', 'southwest');
         if n_id == 1
             title('Seed');
         end
@@ -574,15 +571,15 @@ for net_id = 1:n_nets
         X = [ref_thr, fliplr(ref_thr)];
         Y = [dureg_fprt', fliplr(dureg_tprt')];
         h = fill(X, Y, 'b');
-        set(h,'facealpha',.1);
+        %set(h,'facealpha',.1);
         plot(ref_thr, dureg_tprt, 'g');
         plot(ref_thr, dureg_fprt, 'r');
         hold off;
-        legend({'TPR', 'FPR', sprintf('TPR-FPR (%.3f)', dureg_ab)}, 'Location', 'southwest');
+        legend({sprintf('TPR-FPR (%.3f)', seed_ab), 'TPR', 'FPR'}, 'Location', 'southwest');
         if n_id == 1
             title('Dual Regression');
         end
     end
-    set(figs{net_id},'PaperPositionMode','auto');
-    print(figs{net_id}, [fig_path filesep sprintf('method_separation_%s_network.png', net_names{net_id})], '-dpng');
+    set(gcf,'PaperPositionMode','auto');
+    print(gcf, [fig_path filesep sprintf('method_separation_%s_network.png', net_names{net_id})], '-dpng');
 end
