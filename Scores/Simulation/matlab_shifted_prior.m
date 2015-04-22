@@ -216,3 +216,89 @@ for net_id = 1:n_nets
         end
     end
 end
+
+%% Start visualizing things
+% Here are the figures that I want:
+% 1. 2 by 3 plot of the shifted priors (with the 0 guy)
+% 2. One plot each for the average corner and border network maps across
+%    shifts. Columns are methods, rows are shifts. Maybe add the shifted
+%    prior overview in the first column (4 x 6). Also add the grid of the
+%    true signal over the maps
+% 3. One 2x3 plot of ROC, all shifts in one plot, cols are methods, rows
+%    networks
+% 4. Two AUC plot in one figure, one for each network
+% 5. Separation of FPR and TPR by shifts. One figure per network
+
+%% 1. Show the priors
+f_priors = figure('position',[0 0 1200 800]);
+
+for s_id = 1:n_shifts
+    shift = shifts(s_id);
+    perc_shift = (shift*100)/16;
+    % Get the prior
+    prior = prior_shift_store(:, :, s_id);
+    % Plot it
+    subplot(2,3,s_id);
+    imagesc(prior);
+    title(sprintf('Shift %.2f%%', perc_shift));
+    set(gca, 'XTick', linspace(16,edge,4), 'YTick', linspace(16,edge,4),...
+        'XColor', [1 1 1], 'YColor', [1 1 1],...
+        'XTickLabel', [], 'YTickLabel', []);
+    grid on;
+end
+suptitle('Different levels of prior shift');
+
+%% 2. Plot the average maps across shifts and methods
+pos_mat = reshape(1:18, [3, 6])';
+opt_v.limits = [-1 1];
+opt_v.color_map = niak_hot_cold;
+
+for net_id = 1:n_nets
+    network_id = networks(net_id);
+    % Generate the figure
+    f_map = figure('position',[0 0 1500 2400]);
+    % Generate the 2D label for an overlay
+    label_mask = prior_true==network_id;
+    [x, y] = find(label_mask);
+    pos_vec = [min(x), min(y), n_edge, n_edge];
+    % Iterate over the shift levels
+    for s_id = 1:n_shifts
+        shift = shifts(s_id);
+        perc_shift = (shift*100)/16;
+        % Get the average map across permutations
+        scores = reshape(mean(scores_map(:, :, network_id, s_id),2), [edge edge]);
+        seed = reshape(mean(seed_map(:, :, network_id, s_id),2), [edge edge]);
+        dureg = reshape(mean(dureg_map(:, :, network_id, s_id),2), [edge edge]);
+        
+        % Plot them
+        % Scores
+        subplot(6, 3, pos_mat(s_id, 1));
+        niak_visu_matrix(scores, opt_v);
+        rectangle('Position', pos_vec, 'EdgeColor','w','LineWidth',2);
+        set(gca,'XTickLabel', [], 'YTickLabel', []);
+        ylabel(sprintf('Shift %.2f%%', perc_shift));
+    
+        if s_id == 1
+            title('Scores');
+        end
+    
+        % Seed
+        subplot(6, 3, pos_mat(s_id, 2));
+        niak_visu_matrix(seed, opt_v);
+        rectangle('Position', pos_vec, 'EdgeColor','w','LineWidth',2);
+        set(gca,'XTickLabel', [], 'YTickLabel', []);
+        if s_id == 1
+            title('Seed');
+        end
+    
+        % Dual Regression
+        subplot(6, 3, pos_mat(s_id, 3));
+        niak_visu_matrix(dureg, opt_v);
+        rectangle('Position', pos_vec, 'EdgeColor','w','LineWidth',2);
+        set(gca,'XTickLabel', [], 'YTickLabel', []);
+        if s_id == 1
+            title('Dual Regression');
+        end
+    end
+end
+        
