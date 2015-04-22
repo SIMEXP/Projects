@@ -17,6 +17,11 @@ n_perm = 2;
 % Define the shifts
 shifts = [0 1 2 4 8 10];
 n_shifts = length(shifts);
+shift_labels = cell(n_shifts,1);
+for s_id = 1:n_shifts
+    shift = shifts(s_id);
+    shift_labels{s_id} = sprintf('%.2f%%', (100*shift)/n_edge);
+end
 
 opt_s.type = 'checkerboard';
 opt_s.t = 100;
@@ -309,92 +314,64 @@ for net_id = 1:n_nets
     print(f_map, [fig_path filesep sprintf('average_map_%s_network.png', net_name)], '-dpng');
 end
 
-%% 5. Separation Plot
-
-pos_mat = reshape(1:18, [3, 6])';
-opt_v.limits = [-1 1];
-opt_v.color_map = niak_hot_cold;
+%% 3. ROC Plot
+f_roc = figure('position',[0 0 1500 2400]);
+pos_mat = reshape(1:12, [3, 4])';
+cc=jet(n_shifts);
+labels = shift_labels;
+labels{end+1} = 'chance';
+% Iterate over networks
 for net_id = 1:n_nets
     network_id = networks(net_id);
     net_name = net_names{net_id};
-    % Generate the figure
-    f_map = figure('position',[0 0 1500 2400]);
-    % Generate the 2D label for an overlay
-    label_mask = prior_true==network_id;
-    [x, y] = find(label_mask);
-    pos_vec = [min(x), min(y), n_edge, n_edge];
-    % Iterate over the shift levels
-    for s_id = 1:n_shifts
-        shift = shifts(s_id);
-        perc_shift = (shift*100)/16;
-        % Get the average map across permutations
-        scores_tprt = mean(scores_roc(:, 2, :, net_id, s_id),2);
-        scores_fprt = mean(scores_roc(:, 3, :, net_id, s_id),2);
-        
-        seed_tprt = mean(seed_roc(:, 2, :, net_id, s_id),2);
-        seed_fprt = mean(seed_roc(:, 3, :, net_id, s_id),2);
-        
-        dureg_tprt = mean(dureg_roc(:, 2, :, net_id, s_id),2);
-        dureg_fprt = mean(dureg_roc(:, 3, :, net_id, s_id),2);
-
-        % Plot them
-        % Scores
-        subplot(6, 3, pos_mat(s_id, 1));
-        hold on;
-        % Generate filled area
-        X = [ref_thr, fliplr(ref_thr)];
-        Y = [scores_fprt', fliplr(scores_tprt')];
-        h = fill(X, Y, 'b');
-        %set(h,'facealpha',.1);
-        plot(ref_thr, scores_tprt, 'g');
-        plot(ref_thr, scores_fprt, 'r');
-        hold off;
-        legend({sprintf('TPR-FPR (%.3f)', seed_ab), 'TPR', 'FPR'}, 'Location', 'southwest');
-        if n_id == 1
-            title('Scores');
-        end
-        ylabel(sprintf('Shift %.2f%%', perc_shift));
-        
-        % Seed
-        subplot(6, 3, pos_mat(s_id, 2));
-        hold on;
-        % Generate filled area
-        X = [ref_thr, fliplr(ref_thr)];
-        Y = [seed_fprt', fliplr(seed_tprt')];
-        h = fill(X, Y, 'b');
-        %set(h,'facealpha',.1);
-        plot(ref_thr, seed_tprt, 'g');
-        plot(ref_thr, seed_fprt, 'r');
-        hold off;
-        legend({sprintf('TPR-FPR (%.3f)', seed_ab), 'TPR', 'FPR'}, 'Location', 'southwest');
-        if n_id == 1
-            title('Seed');
-        end
-        
-        % Dureg
-        subplot(6, 3, pos_mat(s_id, 3));
-        hold on;
-        % Generate filled area
-        X = [ref_thr, fliplr(ref_thr)];
-        Y = [dureg_fprt', fliplr(dureg_tprt')];
-        h = fill(X, Y, 'b');
-        %set(h,'facealpha',.1);
-        plot(ref_thr, dureg_tprt, 'g');
-        plot(ref_thr, dureg_fprt, 'r');
-        hold off;
-        legend({sprintf('TPR-FPR (%.3f)', seed_ab), 'TPR', 'FPR'}, 'Location', 'southwest');
-        if n_id == 1
-            title('Dual Regression');
-        end
+    % Get the TPR values for this network and the different shifts
+    scores = squeeze(mean(squeeze(scores_roc(:, 1, :, net_id, :)),2));
+    seed = squeeze(mean(squeeze(seed_roc(:, 1, :, net_id, :)),2));
+    dureg = squeeze(mean(squeeze(dureg_roc(:, 1, :, net_id, :)),2));
+    
+    % Scores
+    subplot(4,3,pos_mat(net_id, 1));
+    hold on;
+    plot(ref_fpr, scores);
+    colormap(cc);
+    plot(ref_fpr, ref_fpr, 'k');
+    hold off;
+    legend(shift_labels, 'Location', 'southeast');
+    if net_id == 1
+        title('Scores');
     end
-    set(f_map,'PaperPositionMode','auto');
-    print(f_map, [fig_path filesep sprintf('average_map_%s_network.png', net_name)], '-dpng');
+    ylabel(sprintf('%s network', net_name));
+    
+    % Seed
+    subplot(4,3,pos_mat(net_id, 2));
+    hold on;
+    plot(ref_fpr, seed);
+    colormap(cc);
+    plot(ref_fpr, ref_fpr, 'k');
+    hold off;
+    legend(shift_labels, 'Location', 'southeast');
+    if net_id == 1
+        title('Seed');
+    end
+    
+    % Dureg
+    subplot(4,3,pos_mat(net_id, 3));
+    hold on;
+    plot(ref_fpr, dureg);
+    colormap(cc);
+    plot(ref_fpr, ref_fpr, 'k');
+    hold off;
+    legend(shift_labels, 'Location', 'southeast');
+    if net_id == 1
+        title('Dual Regression');
+    end
+    
 end
 
+%% 4. AUC plot
+% 4. Two AUC plot in one figure, one for each network
 
-%% 3. ROC Plot
-% 3. One 2x3 plot of ROC, all shifts in one plot, cols are methods, rows
-%    networks
+f_auc = figure('position',[0 0 1500 2400]);
 
 %% 5. Separation Plot
 
@@ -405,7 +382,7 @@ for net_id = 1:n_nets
     network_id = networks(net_id);
     net_name = net_names{net_id};
     % Generate the figure
-    f_map = figure('position',[0 0 1500 2400]);
+    f_sep = figure('position',[0 0 1500 2400]);
     % Generate the 2D label for an overlay
     label_mask = prior_true==network_id;
     [x, y] = find(label_mask);
@@ -477,7 +454,6 @@ for net_id = 1:n_nets
             title('Dual Regression');
         end
     end
-    set(f_map,'PaperPositionMode','auto');
-    print(f_map, [fig_path filesep sprintf('separation_%s_network.png', net_name)], '-dpng');
-end
-        
+    set(f_sep,'PaperPositionMode','auto');
+    print(f_sep, [fig_path filesep sprintf('separation_%s_network.png', net_name)], '-dpng');
+end     
