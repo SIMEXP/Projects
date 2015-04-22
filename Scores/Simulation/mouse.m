@@ -1,0 +1,15 @@
+[rr cc] = meshgrid(1:32);
+%C = sqrt((rr-16).^2+(cc-16).^2)<=10;
+x = 16;
+y = 16;
+left_ear = sqrt((rr-8).^2+(cc-8).^2)<=7;
+right_ear = sqrt((rr-24).^2+(cc-8).^2)<=7;
+face = sqrt((rr-16).^2+(cc-20).^2)<=10;
+left_eye = sqrt((rr-12).^2+(cc-16).^2)<=2;
+right_eye = sqrt((rr-20).^2+(cc-16).^2)<=2;
+mouth = zeros(32,32);
+mouth(24:25,12:20) = 1;
+mousy = logical(left_ear + right_ear + face) - left_eye - right_eye - mouth;
+%C = logical(C);
+mouse_mask = logical(mousy);
+niak_visu_matrix(mouse_mask);
