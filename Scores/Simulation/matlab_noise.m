@@ -9,7 +9,7 @@ corner_net = 1;
 border_net = 6;
 ref_net1 = 2;
 ref_net2 = 5;
-n_perm = 2;
+n_perm = 30;
 
 noise_levels = [0.001, 0.01, 0.1];
 
@@ -17,7 +17,6 @@ opt_s.type = 'checkerboard';
 opt_s.t = 100;
 opt_s.n = edge*edge;
 opt_s.nb_clusters = [4 16];
-opt_s.variance = 0.1;
 opt_s.fwhm = 4;
 
 opt_scores.sampling.type = 'bootstrap';
