@@ -536,7 +536,7 @@ for net_id = 1:n_nets
         plot(ref_thr, scores_tprt, 'g');
         plot(ref_thr, scores_fprt, 'r');
         hold off;
-        legend({sprintf('TPR-FPR (%.3f)', seed_ab), 'TPR', 'FPR'}, 'Location', 'southwest');
+        legend({sprintf('TPR-FPR (%.3f)', scores_ab), 'TPR', 'FPR'}, 'Location', 'southwest');
         if n_id == 1
             title('Scores');
         end
@@ -575,7 +575,7 @@ for net_id = 1:n_nets
         plot(ref_thr, dureg_tprt, 'g');
         plot(ref_thr, dureg_fprt, 'r');
         hold off;
-        legend({sprintf('TPR-FPR (%.3f)', seed_ab), 'TPR', 'FPR'}, 'Location', 'southwest');
+        legend({sprintf('TPR-FPR (%.3f)', dureg_ab), 'TPR', 'FPR'}, 'Location', 'southwest');
         if n_id == 1
             title('Dual Regression');
         end
