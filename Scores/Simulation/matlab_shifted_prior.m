@@ -494,4 +494,34 @@ for net_id = 1:n_nets
     end
     set(f_sep,'PaperPositionMode','auto');
     print(f_sep, [fig_path filesep sprintf('separation_%s_network.png', net_name)], '-dpng');
-end     
+end
+
+%% Mass-Univariate Ttest of AUC
+%% 4. AUC plot
+% 4. Two AUC plot in one figure, one for each network
+% Make a storage for the values
+% 1 - types of values (5 t, p, mean, std, df)
+% 2 - values (n_shifts)
+% 3 - tests (3: scores/seed, scores/dureg, seed/dureg)
+% 4 - networks
+t_auc_store = zeros(5, n_shifts, 3, n_nets);
+
+for net_id = 1:n_nets
+    network_id = networks(net_id);
+    net_name = net_names{net_id};
+    % Get the average AUC values
+    tmp_scores_auc = squeeze(scores_auc(:, net_id, :));
+    tmp_seed_auc = squeeze(seed_auc(:, net_id, :));
+    tmp_dureg_auc = squeeze(dureg_auc(:, net_id, :));
+    % Run the t-test
+    % 1 scores-seed
+    [t1, p1, m1, s1, d1] = niak_ttest(tmp_scores_auc, tmp_seed_auc, true);
+    % 2 scores-dureg
+    [t2, p2, m2, s2, d2] = niak_ttest(tmp_scores_auc, tmp_dureg_auc, true);
+    % 3 seed-dureg
+    [t3, p3, m3, s3, d3] = niak_ttest(tmp_seed_auc, tmp_dureg_auc, true);
+    % Store the stuff
+    t_auc_store(:, :, 1, net_id) = [t1; p1; m1; s1; d1];
+    t_auc_store(:, :, 2, net_id) = [t2; p2; m2; s2; d2];
+    t_auc_store(:, :, 3, net_id) = [t3; p3; m3; s3; d3];
+end
