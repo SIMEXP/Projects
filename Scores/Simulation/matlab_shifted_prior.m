@@ -15,7 +15,7 @@ net_names = {'corner', 'reference1', 'reference2', 'border'};
 
 n_perm = 10;
 % Define the shifts
-shifts = [0 1 2 4 8 10];
+shifts = [0 2 4 6 8 10];
 n_shifts = length(shifts);
 shift_labels = cell(n_shifts,1);
 for s_id = 1:n_shifts
@@ -271,7 +271,7 @@ for net_id = 1:n_nets
     % Generate the 2D label for an overlay
     label_mask = prior_true==network_id;
     [x, y] = find(label_mask);
-    pos_vec = [min(x), min(y), n_edge, n_edge];
+    pos_vec = [min(y), min(x), n_edge, n_edge];
     % Iterate over the shift levels
     for s_id = 1:n_shifts
         shift = shifts(s_id);
