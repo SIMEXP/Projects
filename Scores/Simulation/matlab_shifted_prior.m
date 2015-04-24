@@ -13,7 +13,7 @@ networks = [1 2 5 6];
 n_nets = length(networks);
 net_names = {'corner', 'reference1', 'reference2', 'border'};
 
-n_perm = 10;
+n_perm = 100;
 % Define the shifts
 shifts = [0 2 4 6 8 10];
 n_shifts = length(shifts);
@@ -497,14 +497,12 @@ for net_id = 1:n_nets
 end
 
 %% Mass-Univariate Ttest of AUC
-%% 4. AUC plot
-% 4. Two AUC plot in one figure, one for each network
 % Make a storage for the values
-% 1 - types of values (5 t, p, mean, std, df)
+% 1 - types of values (8 t, p, mean, std, df, pooled_std, cohensd, bonferroni)
 % 2 - values (n_shifts)
 % 3 - tests (3: scores/seed, scores/dureg, seed/dureg)
 % 4 - networks
-t_auc_store = zeros(5, n_shifts, 3, n_nets);
+t_auc_store = zeros(7, n_shifts, 3, n_nets);
 
 for net_id = 1:n_nets
     network_id = networks(net_id);
@@ -521,7 +519,20 @@ for net_id = 1:n_nets
     % 3 seed-dureg
     [t3, p3, m3, s3, d3] = niak_ttest(tmp_seed_auc, tmp_dureg_auc, true);
     % Store the stuff
-    t_auc_store(:, :, 1, net_id) = [t1; p1; m1; s1; d1];
-    t_auc_store(:, :, 2, net_id) = [t2; p2; m2; s2; d2];
-    t_auc_store(:, :, 3, net_id) = [t3; p3; m3; s3; d3];
+    t_auc_store(1:5, :, 1, net_id) = [t1; p1; m1; s1; d1];
+    t_auc_store(1:5, :, 2, net_id) = [t2; p2; m2; s2; d2];
+    t_auc_store(1:5, :, 3, net_id) = [t3; p3; m3; s3; d3];
+    % Add the pooled variance
+    t_auc_store(6, :, 1, net_id) = ( (( n_perm - 1) .* std(tmp_scores_auc)) + (( n_perm - 1) .* std(tmp_seed_auc))) / (n_perm + n_perm -2);
+    t_auc_store(6, :, 2, net_id) = ( (( n_perm - 1) .* std(tmp_scores_auc)) + (( n_perm - 1) .* std(tmp_dureg_auc))) / (n_perm + n_perm -2);
+    t_auc_store(6, :, 3, net_id) = ( (( n_perm - 1) .* std(tmp_seed_auc)) + (( n_perm - 1) .* std(tmp_dureg_auc))) / (n_perm + n_perm -2);
+    % Compute Cohensd
+    t_auc_store(7, :, 1, net_id) = t_auc_store(3, :, 1, net_id) ./ t_auc_store(6, :, 1, net_id);
+    t_auc_store(7, :, 2, net_id) = t_auc_store(3, :, 2, net_id) ./ t_auc_store(6, :, 2, net_id);
+    t_auc_store(7, :, 3, net_id) = t_auc_store(3, :, 3, net_id) ./ t_auc_store(6, :, 3, net_id);
 end
+% Do the bonferroni correction
+p = squeeze(t_auc_store(2, :, :, :));
+p_mask = p < q/numel(p);
+t_auc_store(8, :, :, :) = p_mask;
+save([fig_path filesep 'ttest_results_auc.mat'], 't_auc_store');

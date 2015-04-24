@@ -4,10 +4,7 @@ fig_path = '/home/surchs/Code/Projects/Scores/Simulation/figures/structured';
 psom_mkdir(fig_path);
 
 edge = 64;
-shifts = 0:9;
-n_shifts = length(shifts);
 n_edge = edge/4;
-shift = 6;
 % Define the three networks
 corner_net = 1;
 border_net = 6;
@@ -17,7 +14,7 @@ networks = [1 2 5 6];
 n_nets = length(networks);
 net_names = {'corner', 'reference1', 'reference2', 'border'};
 noise_levels = [0.1, 1, 5];
-n_perm = 20;
+n_perm = 100;
 
 opt_s.type = 'checkerboard';
 opt_s.t = 100;
@@ -37,15 +34,15 @@ ref_thr = linspace(-1,1,n_ref);
 %% Dry run to get the priors
 [tseries,opt_mplm] = niak_simus_scenario(opt_s);
 % Get the priors
-prior_regular_vec = opt_mplm.space.mpart{2};
-prior_regular = reshape(prior_regular_vec, [edge, edge]);
+prior_true_vec = opt_mplm.space.mpart{2};
+prior_true = reshape(prior_true_vec, [edge, edge]);
 
-corner_regular_labels = prior_regular==corner_net;
-corner_regular_labels = corner_regular_labels(:);
+corner_true_labels = prior_true==corner_net;
+corner_true_labels = corner_true_labels(:);
 
-border_regular_labels = prior_regular==border_net;
-border_regular_labels = border_regular_labels(:);
-target_prior = repmat(prior_regular_vec, 1,2);
+border_true_labels = prior_true==border_net;
+border_true_labels = border_true_labels(:);
+target_prior = repmat(prior_true_vec, 1,2);
 
 %% Generate the noise masks
 % Generate a 3 wide mask for the structured noise
@@ -117,20 +114,20 @@ for i_id = 1:n_perm
     %% Run methods without structured noise
     %% Scores
     opt_scores.flag_target = false;
-    res_scores = niak_stability_cores(tseries,prior_regular_vec,opt_scores);
+    res_scores = niak_stability_cores(tseries,prior_true_vec,opt_scores);
     % Do nothing here, just save the maps
     scores_map(1, :, :, 1, i_id) = res_scores.stab_maps;
     %% Seed
     opt_t.type_center = 'mean';
     opt_t.correction = 'mean_var';
-    tseed = niak_build_tseries(tseries,prior_regular_vec,opt_t);
+    tseed = niak_build_tseries(tseries,prior_true_vec,opt_t);
     seed_tmp = niak_fisher(corr(tseries,tseed))';
     % Do nothing here, just save the maps
     seed_map(1, :, :, 1, i_id) = seed_tmp';
     %% Dual Regression
     opt_t.type_center = 'mean';
     opt_t.correction = 'mean_var';
-    tseed = niak_build_tseries(tseries,prior_regular_vec,opt_t);
+    tseed = niak_build_tseries(tseries,prior_true_vec,opt_t);
     tseed = niak_normalize_tseries(tseed);
     tseries_dual = niak_normalize_tseries(tseries);
     beta = niak_lse(tseries_dual,tseed);
@@ -159,14 +156,14 @@ for i_id = 1:n_perm
         %% Run the methods with structured noise
         %% Scores
         opt_scores.flag_target = false;
-        res_scores_d = niak_stability_cores(d_tseries,prior_regular_vec,opt_scores);
+        res_scores_d = niak_stability_cores(d_tseries,prior_true_vec,opt_scores);
         % Do nothing here, just save the maps
         scores_map(2, :, :, n_id, i_id) = res_scores_d.stab_maps;
         
         %% Seed
         opt_t.type_center = 'mean';
         opt_t.correction = 'mean_var';
-        tseed = niak_build_tseries(d_tseries,prior_regular_vec,opt_t);
+        tseed = niak_build_tseries(d_tseries,prior_true_vec,opt_t);
         seed_tmp = niak_fisher(corr(d_tseries,tseed))';
         % Do nothing here, just save the maps
         seed_map(2, :, :, n_id, i_id) = seed_tmp';
@@ -174,7 +171,7 @@ for i_id = 1:n_perm
         %% Dual Regression
         opt_t.type_center = 'mean';
         opt_t.correction = 'mean_var';
-        tseed = niak_build_tseries(d_tseries,prior_regular_vec,opt_t);
+        tseed = niak_build_tseries(d_tseries,prior_true_vec,opt_t);
         tseed = niak_normalize_tseries(tseed);
         tseries_dual = niak_normalize_tseries(d_tseries);
         beta = niak_lse(tseries_dual,tseed);
@@ -193,7 +190,7 @@ for net_id = 1:n_nets
     seed_net = squeeze(seed_map(:, :, network, :, :));
     dureg_net = squeeze(dureg_map(:, :, network, :, :));
     % Generate a label mask
-    label_mask = prior_regular_vec == network;
+    label_mask = prior_true_vec == network;
     % Iterate over the permutations
     for i_id = 1:n_perm
         % Get the current permutation
@@ -358,6 +355,10 @@ for net_id = 1:n_nets
     n_pos = net_id+1;
     figs{net_id} = figure('position',[0 0 1200 1200], 'visible','off');
     clf;
+    % Generate the 2D label for an overlay
+    label_mask = prior_true==network;
+    [x, y] = find(label_mask);
+    pos_vec = [min(y), min(x), n_edge, n_edge];
     % Iterate across noise levels, last one is clean
     for n_id  = 1:4
         noise_id = n_id - 1;
@@ -382,6 +383,8 @@ for net_id = 1:n_nets
         pos = pos_mat(n_id, 1);
         subplot(4,3,pos);
         niak_visu_matrix(scores, opt_v);
+        rectangle('Position', pos_vec, 'EdgeColor','w','LineWidth',1);
+        set(gca,'XTickLabel', [], 'YTickLabel', []);
         if n_id == 1
             title('Scores');
         end
@@ -394,6 +397,8 @@ for net_id = 1:n_nets
         pos = pos_mat(n_id, 2);
         subplot(4,3,pos);
         niak_visu_matrix(seed, opt_v);
+        rectangle('Position', pos_vec, 'EdgeColor','w','LineWidth',1);
+        set(gca,'XTickLabel', [], 'YTickLabel', []);
         if n_id == 1
             title('Seed');
         end
@@ -401,6 +406,8 @@ for net_id = 1:n_nets
         pos = pos_mat(n_id, 3);
         subplot(4,3,pos);
         niak_visu_matrix(dureg, opt_v);
+        rectangle('Position', pos_vec, 'EdgeColor','w','LineWidth',1);
+        set(gca,'XTickLabel', [], 'YTickLabel', []);
         if n_id == 1
             title('Dual Regression');
         end
@@ -414,8 +421,6 @@ end
 %% Plot ROC curves for the different networks
 % Plot all networks onto one plot of network by noise and all methods in
 % one ROC
-
-
 pos_mat = reshape(1:20, [4 5])';
 opt_v.limits = [-1 1];
 opt_v.color_map = niak_hot_cold;
@@ -428,7 +433,7 @@ for net_id = 1:n_nets
     pos = pos_mat(1, net_id);
     subplot(5,4,pos);
     
-    imagesc(reshape(prior_regular_vec == network, [edge edge]));
+    imagesc(reshape(prior_true_vec == network, [edge edge]));
     colormap(cool);
     set(gca, 'XTick', linspace(16,edge,4), 'YTick', linspace(16,edge,4));
     grid on;
@@ -482,6 +487,73 @@ end
 
 set(fig,'PaperPositionMode','auto');
 print(fig, [fig_path filesep 'roc_overview.png'], '-dpng');
+
+%% 4. AUC plot
+f_auc = figure('position',[0 0 1500 2400]);
+labels = [{'no structural noise'}; cellstr(num2str(noise_levels'))];
+for net_id = 1:n_nets
+    network_id = networks(net_id);
+    net_name = net_names{net_id};
+    % Get the average AUC values
+    auc_all = [[mean(squeeze(scores_auc(1, net_id, 1, :))); mean(squeeze(scores_auc(2, net_id, :, :)),2)],...
+               [mean(squeeze(seed_auc(1, net_id, 1, :))); mean(squeeze(seed_auc(2, net_id, :, :)),2)],...
+               [mean(squeeze(dureg_auc(2, net_id, 1, :))); mean(squeeze(dureg_auc(2, net_id, :, :)),2)]];
+    std_all = [[std(squeeze(scores_auc(1, net_id, 1, :))); std(squeeze(scores_auc(2, net_id, :, :)),[],2)],...
+               [std(squeeze(seed_auc(1, net_id, 1, :))); std(squeeze(seed_auc(2, net_id, :, :)),[],2)],...
+               [std(squeeze(dureg_auc(1, net_id, 1, :))); std(squeeze(dureg_auc(2, net_id, :, :)),[],2)]];
+    
+    subplot(4,1,net_id)
+    % Combine them all into one big plot
+    barwitherr(std_all, auc_all);
+    legend({'scores', 'seed', 'dual regression'}, 'Location', 'eastoutside');
+    title(sprintf('AUC for %s network', net_name));
+    set(gca,'xlim',[0 5],'ylim', [0.3 1], 'XTickLabel', labels);
+    xlabel('noise level');
+    ylabel('AUC');
+end
+set(f_auc,'PaperPositionMode','auto');
+print(f_auc, [fig_path filesep 'auc_overview.png'], '-dpng');
+
+%% Mass-Univariate Ttest of AUC
+% Make a storage for the values
+% 1 - types of values (8 t, p, mean, std, df, pooled_std, cohensd, bonferroni)
+% 2 - values (noise levels)
+% 3 - tests (3: scores/seed, scores/dureg, seed/dureg)
+% 4 - networks
+t_auc_store = zeros(7, 3, 3, n_nets);
+q = 0.01;
+for net_id = 1:n_nets
+    network_id = networks(net_id);
+    net_name = net_names{net_id};
+    % Get the average AUC values
+    tmp_scores_auc = squeeze(scores_auc(2, net_id, :, :))';
+    tmp_seed_auc = squeeze(seed_auc(2, net_id, :, :))';
+    tmp_dureg_auc = squeeze(dureg_auc(2, net_id, :, :))';
+    % Run the t-test
+    % 1 scores-seed
+    [t1, p1, m1, s1, d1] = niak_ttest(tmp_scores_auc, tmp_seed_auc, true);
+    % 2 scores-dureg
+    [t2, p2, m2, s2, d2] = niak_ttest(tmp_scores_auc, tmp_dureg_auc, true);
+    % 3 seed-dureg
+    [t3, p3, m3, s3, d3] = niak_ttest(tmp_seed_auc, tmp_dureg_auc, true);
+    % Store the stuff
+    t_auc_store(1:5, :, 1, net_id) = [t1; p1; m1; s1; d1];
+    t_auc_store(1:5, :, 2, net_id) = [t2; p2; m2; s2; d2];
+    t_auc_store(1:5, :, 3, net_id) = [t3; p3; m3; s3; d3];
+    % Add the pooled variance
+    t_auc_store(6, :, 1, net_id) = ( (( n_perm - 1) .* std(tmp_scores_auc)) + (( n_perm - 1) .* std(tmp_seed_auc))) / (n_perm + n_perm -2);
+    t_auc_store(6, :, 2, net_id) = ( (( n_perm - 1) .* std(tmp_scores_auc)) + (( n_perm - 1) .* std(tmp_dureg_auc))) / (n_perm + n_perm -2);
+    t_auc_store(6, :, 3, net_id) = ( (( n_perm - 1) .* std(tmp_seed_auc)) + (( n_perm - 1) .* std(tmp_dureg_auc))) / (n_perm + n_perm -2);
+    % Compute Cohensd
+    t_auc_store(7, :, 1, net_id) = t_auc_store(3, :, 1, net_id) ./ t_auc_store(6, :, 1, net_id);
+    t_auc_store(7, :, 2, net_id) = t_auc_store(3, :, 2, net_id) ./ t_auc_store(6, :, 2, net_id);
+    t_auc_store(7, :, 3, net_id) = t_auc_store(3, :, 3, net_id) ./ t_auc_store(6, :, 3, net_id);
+end
+% Do the bonferroni correction
+p = squeeze(t_auc_store(2, :, :, :));
+p_mask = p < q/numel(p);
+t_auc_store(8, :, :, :) = p_mask;
+save([fig_path filesep 'ttest_results_auc.mat'], 't_auc_store');
 
 %% Plot the FPR and TPR curves over the thresholds
 

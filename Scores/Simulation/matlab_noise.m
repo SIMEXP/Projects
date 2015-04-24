@@ -9,9 +9,9 @@ corner_net = 1;
 border_net = 6;
 ref_net1 = 2;
 ref_net2 = 5;
-n_perm = 30;
+n_perm = 100;
 
-noise_levels = [0.001, 0.01, 0.1];
+noise_levels = [0.1, 0.05, 0.001];
 
 opt_s.type = 'checkerboard';
 opt_s.t = 100;
@@ -160,8 +160,10 @@ stab_clean_avg = scores_clean/n_perm;
 seed_clean_avg = seed_clean/n_perm;
 dureg_clean_avg = dureg_clean/n_perm;
 
+save([fig_path filesep 'auc_store.mat'], 'scores_auc_store', 'seed_auc_store', 'dureg_auc_store');
+
 %% Plot the ROC curves as a function of noise levels
-f_roc = figure(1);
+f_roc = figure('position',[0 0 1000 400]);
 for n_id = 1:3
     noise = noise_levels(n_id);
     subplot(1,3,n_id);
@@ -169,36 +171,53 @@ for n_id = 1:3
     % scores
     plot(ref_fpr, mean(squeeze(scores_tpr_store(:, n_id, :)),2), 'g');
     scores_auc = mean(scores_auc_store(n_id, :));
+    if n_id == 1
+        ylabel('TPR');
+    end
+    xlabel('FPR');
     % seed
     plot(ref_fpr, mean(squeeze(seed_tpr_store(:, n_id, :)),2), 'r');
     seed_auc = mean(seed_auc_store(n_id, :));
+    xlabel('FPR');
     % dureg
     plot(ref_fpr, mean(squeeze(dureg_tpr_store(:, n_id, :)),2), 'b');
     dureg_auc = mean(dureg_auc_store(n_id, :));
+    xlabel('FPR');
     % labels
     labels = {sprintf('scores (%.3f)', scores_auc), sprintf('seed (%.3f)', seed_auc), sprintf('dual regression (%.3f)', dureg_auc)};
-    title(sprintf('Noise level %.2f', noise));
+    title(sprintf('Signal variance %.2f', noise));
     legend(labels, 'Location', 'southeast');
 end
 
+set(f_roc, 'PaperPositionMode','auto');
+print(f_roc, [fig_path filesep 'roc_overview.png'], '-dpng');
+
 %% Plot the AUC bars with standard deviation
 % Combine them all into one big plot
-f_auc = figure(2);
+f_auc = figure('position',[0 0 1000 400]);
 auc_all = [mean(scores_auc_store, 2), mean(seed_auc_store, 2), mean(dureg_auc_store, 2)];
 std_all = [std(scores_auc_store,[], 2), std(seed_auc_store,[], 2), std(dureg_auc_store,[], 2)];
 barwitherr(std_all, auc_all);
 legend({'scores', 'seed', 'dual regression'}, 'Location', 'eastoutside');
-title('AUC over different noise levels');
+title('AUC over different signal variance levels');
 set(gca,'xlim',[0 4],'ylim', [0.5 1], 'XTickLabel', cellstr(num2str(noise_levels')));
-xlabel('noise level');
+xlabel('signal variance');
 ylabel('AUC');
 
+set(f_auc, 'PaperPositionMode','auto');
+print(f_auc, [fig_path filesep 'auc_overview.png'], '-dpng');
+
 %% Show the maps for the different methods and noise levels
-f_maps = figure(3);
+f_maps = figure('position',[0 0 1000 800]);
 
 opt_v.limits = [-1 1];
 opt_v.color_map = niak_hot_cold;
 pos_mat = reshape(1:9, [3 3]);
+
+% Generate the 2D label for an overlay
+label_mask = prior_true==1;
+[x, y] = find(label_mask);
+pos_vec = [min(y), min(x), n_edge, n_edge];
 for n_id = 1:3
     noise = noise_levels(n_id);
     % Get the values
@@ -214,6 +233,8 @@ for n_id = 1:3
     pos = pos_mat(1, n_id);
     subplot(3,3, pos);
     niak_visu_matrix(scores_map, opt_v);
+    rectangle('Position', pos_vec, 'EdgeColor','w','LineWidth',1);
+    set(gca,'XTickLabel', [], 'YTickLabel', []);
     ylabel(sprintf('noise %.3f', noise));
     if n_id == 1
         title('Scores');
@@ -223,6 +244,8 @@ for n_id = 1:3
     pos = pos_mat(2, n_id);
     subplot(3,3, pos);
     niak_visu_matrix(seed_map, opt_v);
+    rectangle('Position', pos_vec, 'EdgeColor','w','LineWidth',1);
+    set(gca,'XTickLabel', [], 'YTickLabel', []);
     if n_id == 1
         title('Seed');
     end
@@ -231,14 +254,19 @@ for n_id = 1:3
     pos = pos_mat(3, n_id);
     subplot(3,3, pos);
     niak_visu_matrix(dureg_map, opt_v);
+    rectangle('Position', pos_vec, 'EdgeColor','w','LineWidth',1);
+    set(gca,'XTickLabel', [], 'YTickLabel', []);
     if n_id == 1
         title('Scores');
     end
 end
 suptitle('Corner network maps across different noise levels');
 
+set(f_maps, 'PaperPositionMode','auto');
+print(f_maps, [fig_path filesep 'average_maps.png'], '-dpng');
+
 %% Plot the FPR and TPR curves over the thresholds
-f_thr = figure(3);
+f_thr = figure('position',[0 0 1500 1000]);
 pos_mat = reshape(1:9, [3 3]);
 
 for n_id = 1:3
@@ -267,7 +295,6 @@ for n_id = 1:3
     X = [ref_thr, fliplr(ref_thr)];
     Y = [scores_fpr', fliplr(scores_tpr')];
     h = fill(X, Y, 'b');
-    set(h,'facealpha',.1);
     plot(ref_thr, scores_tpr, 'g');
     plot(ref_thr, scores_fpr, 'r');
     hold off;
@@ -277,6 +304,7 @@ for n_id = 1:3
     elseif n_id == 3
         xlabel('threshold');
     end
+    ylabel(sprintf('sig var %.3f', noise));
     
     % Seed
     pos = pos_mat(2, n_id);
@@ -286,7 +314,6 @@ for n_id = 1:3
     X = [ref_thr, fliplr(ref_thr)];
     Y = [seed_fpr', fliplr(seed_tpr')];
     h = fill(X, Y, 'b');
-    set(h,'facealpha',.1);
     plot(ref_thr, seed_tpr, 'g');
     plot(ref_thr, seed_fpr, 'r');
     hold off;
@@ -305,7 +332,6 @@ for n_id = 1:3
     X = [ref_thr, fliplr(ref_thr)];
     Y = [dureg_fpr', fliplr(dureg_tpr')];
     h = fill(X, Y, 'b');
-    set(h,'facealpha',.1);
     plot(ref_thr, dureg_tpr, 'g');
     plot(ref_thr, dureg_fpr, 'r');
     hold off;
@@ -316,3 +342,6 @@ for n_id = 1:3
         xlabel('threshold');
     end
 end
+
+set(f_thr, 'PaperPositionMode','auto');
+print(f_thr, [fig_path filesep 'tprfpr_surface.png'], '-dpng');
