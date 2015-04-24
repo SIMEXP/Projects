@@ -1,15 +1,18 @@
-[rr cc] = meshgrid(1:32);
+
+edge = 64;
+n_edge = edge/4;
+
+[rr cc] = meshgrid(1:edge);
 %C = sqrt((rr-16).^2+(cc-16).^2)<=10;
 x = 16;
 y = 16;
-left_ear = sqrt((rr-8).^2+(cc-8).^2)<=7;
-right_ear = sqrt((rr-24).^2+(cc-8).^2)<=7;
-face = sqrt((rr-16).^2+(cc-20).^2)<=10;
-left_eye = sqrt((rr-12).^2+(cc-16).^2)<=2;
-right_eye = sqrt((rr-20).^2+(cc-16).^2)<=2;
-mouth = zeros(32,32);
-mouth(24:25,12:20) = 1;
+left_ear = sqrt((rr-n_edge).^2+(cc-n_edge).^2)<=n_edge;
+right_ear = sqrt((rr-n_edge*3).^2+(cc-n_edge).^2)<=n_edge;
+face = sqrt((rr-n_edge*2).^2+(cc-n_edge*2.5).^2)<=n_edge*1.4;
+left_eye = sqrt((rr-n_edge*1.5).^2+(cc-n_edge*2).^2)<=6;
+right_eye = sqrt((rr-n_edge*2.5).^2+(cc-n_edge*2).^2)<=6;
+mouth = zeros(edge,edge);
+mouth(n_edge*3:n_edge*3+4,n_edge*1.5:n_edge*2.5) = 1;
 mousy = logical(left_ear + right_ear + face) - left_eye - right_eye - mouth;
 %C = logical(C);
 mouse_mask = logical(mousy);
-niak_visu_matrix(mouse_mask);
