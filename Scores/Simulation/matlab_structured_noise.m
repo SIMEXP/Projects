@@ -1,6 +1,6 @@
 clear all; close all;
 %% Set the settings
-fig_path = '/home/surchs/Code/Projects/Scores/Simulation/figures/structured';
+fig_path = '/home/surchs/Code/Projects/Scores/Simulation/figures/structured_mouse';
 psom_mkdir(fig_path);
 
 edge = 64;
@@ -58,6 +58,22 @@ pos(:, 2) = (1:4)*edge/4;
 pos_vec = pos(:);
 square_mask(pos_vec, :) = 1;
 square_mask(:, pos_vec) = 1;
+% Mouse
+
+[rr cc] = meshgrid(1:edge);
+%C = sqrt((rr-16).^2+(cc-16).^2)<=10;
+x = 16;
+y = 16;
+left_ear = sqrt((rr-n_edge).^2+(cc-n_edge).^2)<=n_edge;
+right_ear = sqrt((rr-n_edge*3).^2+(cc-n_edge).^2)<=n_edge;
+face = sqrt((rr-n_edge*2).^2+(cc-n_edge*2.5).^2)<=n_edge*1.4;
+left_eye = sqrt((rr-n_edge*1.5).^2+(cc-n_edge*2).^2)<=6;
+right_eye = sqrt((rr-n_edge*2.5).^2+(cc-n_edge*2).^2)<=6;
+mouth = zeros(edge,edge);
+mouth(n_edge*3:n_edge*3+4,n_edge*1.5:n_edge*2.5) = 1;
+mousy = logical(left_ear + right_ear + face) - left_eye - right_eye - mouth;
+%C = logical(C);
+mouse_mask = logical(mousy);
 
 %% Storage
 % We need to store everything for all 3 noise levels and for both the clean
@@ -144,14 +160,17 @@ for i_id = 1:n_perm
         % Multiply the noise with the noise mask to get the desired shape
         s_noise_vol = repmat(square_mask, 1, 1, opt_s.t) .* noise_vol;
         d_noise_vol = repmat(diag_mask, 1, 1, opt_s.t) .* noise_vol;
+        m_noise_vol = repmat(mouse_mask, 1, 1, opt_s.t) .* noise_vol;
         % Now turn these things back into vectors because that's how we represent
         % the time series
         s_noise_vec = reshape(s_noise_vol, [edge*edge, opt_s.t]);
         d_noise_vec = reshape(d_noise_vol, [edge*edge, opt_s.t]);
+        m_noise_vec = reshape(m_noise_vol, [edge*edge, opt_s.t]);
         % And add the noise to the time series, but flip it because niak uses a
         % retarded notation
-        s_tseries = tseries + s_noise_vec';
-        d_tseries = tseries + d_noise_vec';
+        %s_tseries = tseries + s_noise_vec';
+        %d_tseries = tseries + d_noise_vec';
+        d_tseries = tseries + m_noise_vec';
         
         %% Run the methods with structured noise
         %% Scores
