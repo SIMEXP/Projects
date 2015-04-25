@@ -20,6 +20,25 @@ opt_s.fwhm = 4;
 opt_s.variance = 0.05;
 [tseries_smooth,~] = niak_simus_scenario(opt_s);
 
+%% Show the priors
+prior_low_vec = opt_mplm.space.mpart{2};
+prior_low = reshape(prior_low_vec, [edge, edge]);
+
+prior_high_vec = opt_mplm.space.mpart{1};
+prior_high = reshape(prior_high_vec, [edge, edge]);
+fig = figure('position',[0 0 1200 600]);
+subplot(121);
+imagesc(prior_low);
+set(gca,'XTick', 1:edge, 'XTickLabel', [], 'YTickLabel', 1:edge, 'YTick', []);
+grid on;
+
+subplot(122);
+imagesc(prior_high);
+set(gca,'XTick', 1:edge, 'XTickLabel', [], 'YTickLabel', [], 'YTick', 1:edge);
+grid on;
+
+set(fig,'PaperPositionMode','auto');
+print(fig, [fig_path filesep 'priors.png'], '-dpng');
 %% Show noise signal
 fig = figure('position',[0 0 600 600]);
 

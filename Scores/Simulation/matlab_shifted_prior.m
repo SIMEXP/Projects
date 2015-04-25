@@ -405,7 +405,7 @@ for net_id = 1:n_nets
     legend({'scores', 'seed', 'dual regression'}, 'Location', 'eastoutside');
     title(sprintf('AUC for %s network', net_name));
     set(gca,'xlim',[0 n_shifts+1],'ylim', [0.3 1], 'XTickLabel', shift_labels);
-    xlabel('noise level');
+    xlabel('shift');
     ylabel('AUC');
 end
 set(f_auc,'PaperPositionMode','auto');
