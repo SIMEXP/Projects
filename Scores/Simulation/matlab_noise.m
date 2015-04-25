@@ -185,7 +185,7 @@ for n_id = 1:3
     xlabel('FPR');
     % labels
     labels = {sprintf('scores (%.3f)', scores_auc), sprintf('seed (%.3f)', seed_auc), sprintf('dual regression (%.3f)', dureg_auc)};
-    title(sprintf('Signal variance %.2f', noise));
+    title(sprintf('Signal variance %.3f', noise));
     legend(labels, 'Location', 'southeast');
 end
 
@@ -317,7 +317,7 @@ for n_id = 1:3
     plot(ref_thr, seed_tpr, 'g');
     plot(ref_thr, seed_fpr, 'r');
     hold off;
-    legend({'TPR', 'FPR', sprintf('TPR-FPR (%.3f)', seed_ab)}, 'Location', 'southwest');
+    legend({'TPR', 'FPR', sprintf('TPR-FPR (%.3￼f)', seed_ab)}, 'Location', 'southwest');
     if n_id == 1
         title('Seed');
     elseif n_id == 3

@@ -1,6 +1,6 @@
 clear all; close all;
 %% Set the settings
-fig_path = '/home/surchs/Code/Projects/Scores/Simulation/figures/structured_mouse';
+fig_path = '/home/surchs/Code/Projects/Scores/Simulation/figures/structured_mouse_nosmooth';
 psom_mkdir(fig_path);
 
 edge = 64;
@@ -14,14 +14,14 @@ networks = [1 2 5 6];
 n_nets = length(networks);
 net_names = {'corner', 'reference1', 'reference2', 'border'};
 noise_levels = [0.1, 1, 5];
-n_perm = 100;
+n_perm = 10;
 
 opt_s.type = 'checkerboard';
 opt_s.t = 100;
 opt_s.n = edge*edge;
 opt_s.nb_clusters = [4 16];
 opt_s.variance = 0.05;
-opt_s.fwhm = 2;
+opt_s.fwhm = 0;
 
 opt_scores.sampling.type = 'bootstrap';
 opt_scores.sampling.opt = opt_s;
