@@ -1,6 +1,6 @@
 clear all; close all;
 %% Make signal
-edge = 32;
+edge = 64;
 corner_net = 1;
 border_net = 6;
 legends = {'scores', 'seed', 'dual regression'};
@@ -14,16 +14,16 @@ opt_s.fwhm = 1;
 opt_s.variance = 0.05;
 
 [tseries_noise,opt_mplm] = niak_simus_scenario(opt_s);
-opt_s.variance = 0.5;
-[tseries_clean,~] = niak_simus_scenario(opt_s);
-opt_s.fwhm = 5; 
-[tseries_smooth,~] = niak_simus_scenario(opt_s);
-opt_s.fwhm = 1; 
-opt_s.t = 1000;
-[tseries_long,~] = niak_simus_scenario(opt_s);
+% opt_s.variance = 0.5;
+% [tseries_clean,~] = niak_simus_scenario(opt_s);
+% opt_s.fwhm = 5; 
+% [tseries_smooth,~] = niak_simus_scenario(opt_s);
+% opt_s.fwhm = 1; 
+% opt_s.t = 1000;
+% [tseries_long,~] = niak_simus_scenario(opt_s);
 
 %% Show noise signal
-fig = figure('position',[0 0 400 400]);
+fig = figure('position',[0 0 600 600]);
 
 R_noise = corr(tseries_noise);
 hier_noise = niak_hierarchical_clustering(R_noise);
