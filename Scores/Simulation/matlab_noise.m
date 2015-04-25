@@ -257,7 +257,7 @@ for n_id = 1:3
     rectangle('Position', pos_vec, 'EdgeColor','w','LineWidth',1);
     set(gca,'XTickLabel', [], 'YTickLabel', []);
     if n_id == 1
-        title('Scores');
+        title('Dual Regression');
     end
 end
 suptitle('Corner network maps across different noise levels');
