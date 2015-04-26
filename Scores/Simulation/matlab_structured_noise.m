@@ -1,6 +1,6 @@
 clear all; close all;
 %% Set the settings
-fig_path = '/home/surchs/Code/Projects/Scores/Simulation/figures/structured_mouse_nosmooth';
+fig_path = '/home/surchs/Code/Projects/Scores/Simulation/figures/structured_mouse';
 psom_mkdir(fig_path);
 
 edge = 64;
@@ -14,14 +14,14 @@ networks = [1 2 5 6];
 n_nets = length(networks);
 net_names = {'corner', 'reference1', 'reference2', 'border'};
 noise_levels = [0.1, 1, 5];
-n_perm = 10;
+n_perm = 100;
 
 opt_s.type = 'checkerboard';
 opt_s.t = 100;
 opt_s.n = edge*edge;
 opt_s.nb_clusters = [4 16];
 opt_s.variance = 0.05;
-opt_s.fwhm = 0;
+opt_s.fwhm = 4;
 
 opt_scores.sampling.type = 'bootstrap';
 opt_scores.sampling.opt = opt_s;
@@ -573,6 +573,24 @@ p = squeeze(t_auc_store(2, :, :, :));
 p_mask = p < q/numel(p);
 t_auc_store(8, :, :, :) = p_mask;
 save([fig_path filesep 'ttest_results_auc.mat'], 't_auc_store');
+
+%% Show the results in a nice way
+for net_id = 1:n_nets
+    network_id = networks(net_id);
+    net_name = net_names{net_id};
+    fprintf('%s network\n', net_name);
+    test_name = {'scores vs seed', 'scores vs dureg', 'seed vs dureg'};
+    for t_id = 1:3
+        fprintf('    %s\n', test_name{t_id});
+        pval = t_auc_store(2, :, t_id, net_id)';
+        bonf =  t_auc_store(8, :, t_id, net_id)';
+        pval(~bonf) = 1;
+        effect =  t_auc_store(7, :, t_id, net_id)';
+        tval =  t_auc_store(1, :, t_id, net_id)';
+        df =  t_auc_store(5, :, t_id, net_id)';
+        T = table(bonf, pval, tval, df, effect, 'RowNames', cellstr(num2str(noise_levels')))
+    end
+end
 
 %% Plot the FPR and TPR curves over the thresholds
 
