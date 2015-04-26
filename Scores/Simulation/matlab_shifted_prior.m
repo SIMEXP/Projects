@@ -536,3 +536,21 @@ p = squeeze(t_auc_store(2, :, :, :));
 p_mask = p < q/numel(p);
 t_auc_store(8, :, :, :) = p_mask;
 save([fig_path filesep 'ttest_results_auc.mat'], 't_auc_store');
+
+%% Generate some tables
+for net_id = 1:n_nets
+    network_id = networks(net_id);
+    net_name = net_names{net_id};
+    fprintf('%s network\n', net_name);
+    test_name = {'scores vs seed', 'scores vs dureg', 'seed vs dureg'};
+    for t_id = 1:3
+        fprintf('    %s\n', test_name{t_id});
+        pval = t_auc_store(2, :, t_id, net_id)';
+        bonf =  t_auc_store(8, :, t_id, net_id)';
+        pval(~bonf) = 1;
+        effect =  t_auc_store(7, :, t_id, net_id)';
+        tval =  t_auc_store(1, :, t_id, net_id)';
+        df =  t_auc_store(5, :, t_id, net_id)';
+        T = table(bonf, pval, tval, df, effect, 'RowNames', cellstr(num2str(shifts')))
+    end
+end

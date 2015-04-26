@@ -215,13 +215,21 @@ print(f_auc, [fig_path filesep 'auc_overview.png'], '-dpng');
 [t3, p3, m3, s3, d3] = niak_ttest(seed_auc_store', dureg_auc_store', true);
 
 % Add the pooled variance
-sp1 = ( (( n_perm - 1) .* std(scores_auc_store')) + (( n_perm - 1) .* std(seed_auc_store'))) / (n_perm + n_perm -2);
-sp2 = ( (( n_perm - 1) .* std(scores_auc_store')) + (( n_perm - 1) .* std(dureg_auc_store'))) / (n_perm + n_perm -2);
-sp3 = ( (( n_perm - 1) .* std(seed_auc_store')) + (( n_perm - 1) .* std(dureg_auc_store'))) / (n_perm + n_perm -2);
+sp1 = ( (( n_perm - 1) .* std(scores_auc_store,[],2)) + (( n_perm - 1) .* std(seed_auc_store,[],2))) / (n_perm + n_perm -2);
+sp2 = ( (( n_perm - 1) .* std(scores_auc_store,[],2)) + (( n_perm - 1) .* std(dureg_auc_store,[],2))) / (n_perm + n_perm -2);
+sp3 = ( (( n_perm - 1) .* std(seed_auc_store,[],2)) + (( n_perm - 1) .* std(dureg_auc_store,[],2))) / (n_perm + n_perm -2);
 % Compute Cohensd
 chd1 = m1 ./ sp1;
 chd2 = m2 ./ sp2;
 chd3 = m3 ./ sp3;
+
+% Bonferroni correction
+q = 0.01;
+p = [p1; p2; p3];
+p_mask = p < q/numel(p);
+ch = [chd1; chd2; chd3];
+% The organization of these things is tests in rows and noise in columns
+
 
 %% Show the maps for the different methods and noise levels
 f_maps = figure('position',[0 0 1000 800]);
