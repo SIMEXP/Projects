@@ -185,7 +185,7 @@ for n_id = 1:3
     xlabel('FPR');
     % labels
     labels = {sprintf('scores (%.3f)', scores_auc), sprintf('seed (%.3f)', seed_auc), sprintf('dual regression (%.3f)', dureg_auc)};
-    title(sprintf('Signal variance %.3f', noise));
+    title(sprintf('SNR %.3f', noise));
     legend(labels, 'Location', 'southeast');
 end
 
@@ -199,13 +199,29 @@ auc_all = [mean(scores_auc_store, 2), mean(seed_auc_store, 2), mean(dureg_auc_st
 std_all = [std(scores_auc_store,[], 2), std(seed_auc_store,[], 2), std(dureg_auc_store,[], 2)];
 barwitherr(std_all, auc_all);
 legend({'scores', 'seed', 'dual regression'}, 'Location', 'eastoutside');
-title('AUC over different signal variance levels');
+title('AUC over different SNR levels');
 set(gca,'xlim',[0 4],'ylim', [0.5 1], 'XTickLabel', cellstr(num2str(noise_levels')));
-xlabel('signal variance');
+xlabel('SNR');
 ylabel('AUC');
 
 set(f_auc, 'PaperPositionMode','auto');
 print(f_auc, [fig_path filesep 'auc_overview.png'], '-dpng');
+
+%% Mass-Univariate Ttest of AUC
+[t1, p1, m1, s1, d1] = niak_ttest(scores_auc_store', seed_auc_store', true);
+% 2 scores-dureg
+[t2, p2, m2, s2, d2] = niak_ttest(scores_auc_store', dureg_auc_store', true);
+% 3 seed-dureg
+[t3, p3, m3, s3, d3] = niak_ttest(seed_auc_store', dureg_auc_store', true);
+
+% Add the pooled variance
+sp1 = ( (( n_perm - 1) .* std(scores_auc_store')) + (( n_perm - 1) .* std(seed_auc_store'))) / (n_perm + n_perm -2);
+sp2 = ( (( n_perm - 1) .* std(scores_auc_store')) + (( n_perm - 1) .* std(dureg_auc_store'))) / (n_perm + n_perm -2);
+sp3 = ( (( n_perm - 1) .* std(seed_auc_store')) + (( n_perm - 1) .* std(dureg_auc_store'))) / (n_perm + n_perm -2);
+% Compute Cohensd
+chd1 = m1 ./ sp1;
+chd2 = m2 ./ sp2;
+chd3 = m3 ./ sp3;
 
 %% Show the maps for the different methods and noise levels
 f_maps = figure('position',[0 0 1000 800]);
@@ -235,7 +251,7 @@ for n_id = 1:3
     niak_visu_matrix(scores_map, opt_v);
     rectangle('Position', pos_vec, 'EdgeColor','w','LineWidth',1);
     set(gca,'XTickLabel', [], 'YTickLabel', []);
-    ylabel(sprintf('noise %.3f', noise));
+    ylabel(sprintf('SNR %.3f', noise));
     if n_id == 1
         title('Scores');
     end
@@ -260,7 +276,7 @@ for n_id = 1:3
         title('Dual Regression');
     end
 end
-suptitle('Corner network maps across different noise levels');
+suptitle('Corner network maps across different SNR levels');
 
 set(f_maps, 'PaperPositionMode','auto');
 print(f_maps, [fig_path filesep 'average_maps.png'], '-dpng');
@@ -304,7 +320,7 @@ for n_id = 1:3
     elseif n_id == 3
         xlabel('threshold');
     end
-    ylabel(sprintf('sig var %.3f', noise));
+    ylabel(sprintf('SNR %.3f', noise));
     
     % Seed
     pos = pos_mat(2, n_id);
@@ -317,7 +333,7 @@ for n_id = 1:3
     plot(ref_thr, seed_tpr, 'g');
     plot(ref_thr, seed_fpr, 'r');
     hold off;
-    legend({'TPR', 'FPR', sprintf('TPR-FPR (%.3￼f)', seed_ab)}, 'Location', 'southwest');
+    legend({'TPR', 'FPR', sprintf('TPR-FPR (%.3f)', seed_ab)}, 'Location', 'southwest');
     if n_id == 1
         title('Seed');
     elseif n_id == 3

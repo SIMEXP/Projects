@@ -1,6 +1,6 @@
 clear all; close all;
 %% Make the signal for smooth and shifted prior
-fig_path = '/home/surchs/Code/Projects/Scores/Simulation/figures/shifted';
+fig_path = '/home/surchs/Code/Projects/Scores/Simulation/figures/shifted_right';
 psom_mkdir(fig_path);
 
 edge = 64;
@@ -63,7 +63,7 @@ prior_shift_store = zeros(edge, edge, n_shifts);
 for s_id = 1:n_shifts
     shift = shifts(s_id);
     %% Make the priors
-    prior_shift = circshift(prior_true, [shift shift]);
+    prior_shift = circshift(prior_true, [0 shift]);
     prior_shift_vec = reshape(prior_shift, [dot(edge, edge), 1]);
     prior_shift_vec_store(:, s_id) = prior_shift_vec;
     prior_shift_store(:, :, s_id) = prior_shift;
@@ -503,7 +503,7 @@ end
 % 3 - tests (3: scores/seed, scores/dureg, seed/dureg)
 % 4 - networks
 t_auc_store = zeros(7, n_shifts, 3, n_nets);
-
+q = 0.01;
 for net_id = 1:n_nets
     network_id = networks(net_id);
     net_name = net_names{net_id};
