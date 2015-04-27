@@ -538,6 +538,7 @@ t_auc_store(8, :, :, :) = p_mask;
 save([fig_path filesep 'ttest_results_auc.mat'], 't_auc_store');
 
 %% Generate some tables
+%load([fig_path filesep 'ttest_results_auc.mat']);
 for net_id = 1:n_nets
     network_id = networks(net_id);
     net_name = net_names{net_id};
