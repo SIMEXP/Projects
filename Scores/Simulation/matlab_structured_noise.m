@@ -26,7 +26,6 @@ opt_s.fwhm = 4;
 opt_scores.sampling.type = 'bootstrap';
 opt_scores.sampling.opt = opt_s;
 
-
 n_ref = 100;
 ref_fpr = linspace(0,1,n_ref);
 ref_thr = linspace(-1,1,n_ref);
@@ -534,12 +533,13 @@ set(f_auc,'PaperPositionMode','auto');
 print(f_auc, [fig_path filesep 'auc_overview.png'], '-dpng');
 
 %% Mass-Univariate Ttest of AUC
+
 % Make a storage for the values
 % 1 - types of values (8 t, p, mean, std, df, pooled_std, cohensd, bonferroni)
 % 2 - values (noise levels)
 % 3 - tests (3: scores/seed, scores/dureg, seed/dureg)
 % 4 - networks
-t_auc_store = zeros(7, 3, 3, n_nets);
+t_auc_store = zeros(8, 3, 3, n_nets);
 q = 0.01;
 for net_id = 1:n_nets
     network_id = networks(net_id);
@@ -575,6 +575,7 @@ t_auc_store(8, :, :, :) = p_mask;
 save([fig_path filesep 'ttest_results_auc.mat'], 't_auc_store');
 
 %% Show the results in a nice way
+%load([fig_path filesep 'ttest_results_auc.mat']);
 for net_id = 1:n_nets
     network_id = networks(net_id);
     net_name = net_names{net_id};
