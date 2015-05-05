@@ -109,15 +109,26 @@ opt_g.min_nb_vol = 1;     % The minimum number of volumes for an fMRI dataset to
 opt_g.min_xcorr_func = 0.5; % The minimum xcorr score for an fMRI dataset to be included. This metric is a tool for quality control which assess the quality of non-linear coregistration of functional images in stereotaxic space. Manual inspection of the values during QC is necessary to properly set this threshold.
 opt_g.min_xcorr_anat = 0.5; % The minimum xcorr score for an fMRI dataset to be included. This metric is a tool for quality control which assess the quality of non-linear coregistration of the anatomical image in stereotaxic space. Manual inspection of the values during QC is necessary to properly set this threshold.
 opt_g.type_files = 'fir'; % Specify to the grabber to prepare the files for the STABILITY_FIR pipeline
-
+if ismember(opt.trial,{'run1','run2'})
+    switch opt.trial
+    case 'run1'
+        opt_g.filter.run = {[lower(task)(1:2) 'lr']};
+    case 'run2'
+        opt_g.filter.run = {[lower(task)(1:2) 'rl']};
+    end
+end
 %%%%%%%%%%%%%%Temporary grabber for debugging%%%%%%%%%%%%%%%%%%%%%
 %liste_exclude = dir ([root_path 'fmri_preprocess_' upper(task) '_' exp '/anat']);
 %liste_exclude = liste_exclude(23:end -1);
 %liste_exclude = {liste_exclude.name};
 %opt_g.exclude_subject = liste_exclude;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+if ismember(opt.trial,{'run1','run2'})
+   opt_g.exclude_subject ={'HCP168139','HCP123925','HCP130316'};% to be investigated later , it make the pipelne crash, strange artifact in functional images
+else
+   opt_g.exclude_subject ={'HCP168139'};% to be investigated later , it make the pipelne crash, strange artifact in functional images
+end
 
-opt_g.exclude_subject ={'HCP168139'}; % to be investigated later , it make the pipelne crash, strange artifact in functional images
 files_in = niak_grab_fmri_preprocess([root_path 'fmri_preprocess_' upper(task) '_' exp],opt_g); % Replace the folder by the path where the results of the fMRI preprocessing pipeline were stored. 
 
 %%%%%%%%%%%%%%%%%%%%
@@ -140,17 +151,35 @@ end
 
 %% loop over subjects and runs and create individual time events models
 data.ind_model = fieldnames(files_in.fmri);
-for list = 1:length(data.ind_model)
-    opt_model.run = 'lr'; %run1
-    path_folder = [ root_path 'fmri_preprocess_' upper(task) '_' exp '/EVs/' data.ind_model{list} '/lr/']; %lr run
-    eval([ 'hcp_ind_model_' lower(task) '_csv(path_folder,opt_model)']);
-    files_in.timing.(data.ind_model{list}).session1.([lower(task)(1:2) 'LR']) = [path_folder 'hcp_model_intrarun_' lower(opt.task) '_' lower(opt.trial) '.csv'];
-    opt_model.run = 'rl';%run2
-    path_folder = [ root_path 'fmri_preprocess_' upper(task) '_' exp '/EVs/' data.ind_model{list} '/rl/']; %rl run
-    eval([ 'hcp_ind_model_' lower(task) '_csv(path_folder,opt_model)']);
-    files_in.timing.(data.ind_model{list}).session1.([lower(task)(1:2) 'RL']) = [path_folder 'hcp_model_intrarun_' lower(opt.task) '_' lower(opt.trial) '.csv'];
+if ismember(opt.trial,{'run1','run2'})
+   switch opt.trial
+         case 'run1'
+            for list = 1:length(data.ind_model)
+                opt_model.run = 'lr'; %run1
+                path_folder = [ root_path 'fmri_preprocess_' upper(task) '_' exp '/EVs/' data.ind_model{list} '/lr/']; %lr run
+                eval([ 'hcp_ind_model_' lower(task) '_csv(path_folder,opt_model)']);
+                files_in.timing.(data.ind_model{list}).session1.([lower(task)(1:2) 'LR']) = [path_folder 'hcp_model_intrarun_' lower(opt.task) '_' lower(opt.trial) '.csv'];
+            end
+         case 'run2'
+            for list = 1:length(data.ind_model)
+                opt_model.run = 'rl';%run2
+                path_folder = [ root_path 'fmri_preprocess_' upper(task) '_' exp '/EVs/' data.ind_model{list} '/rl/']; %rl run
+                eval([ 'hcp_ind_model_' lower(task) '_csv(path_folder,opt_model)']);
+                files_in.timing.(data.ind_model{list}).session1.([lower(task)(1:2) 'RL']) = [path_folder 'hcp_model_intrarun_' lower(opt.task) '_' lower(opt.trial) '.csv'];
+            end
+   end
+else
+   for list = 1:length(data.ind_model)
+       opt_model.run = 'lr'; %run1
+       path_folder = [ root_path 'fmri_preprocess_' upper(task) '_' exp '/EVs/' data.ind_model{list} '/lr/']; %lr run
+       eval([ 'hcp_ind_model_' lower(task) '_csv(path_folder,opt_model)']);
+       files_in.timing.(data.ind_model{list}).session1.([lower(task)(1:2) 'LR']) = [path_folder 'hcp_model_intrarun_' lower(opt.task) '_' lower(opt.trial) '.csv'];
+       opt_model.run = 'rl';%run2
+       path_folder = [ root_path 'fmri_preprocess_' upper(task) '_' exp '/EVs/' data.ind_model{list} '/rl/']; %rl run
+       eval([ 'hcp_ind_model_' lower(task) '_csv(path_folder,opt_model)']);
+       files_in.timing.(data.ind_model{list}).session1.([lower(task)(1:2) 'RL']) = [path_folder 'hcp_model_intrarun_' lower(opt.task) '_' lower(opt.trial) '.csv'];
+   end
 end
-
 
 %%%%%%%%%%%%%
 %% Options %%
@@ -168,8 +197,14 @@ if psom_exist(mstep_file)
 else
    warning ('The file %s does not exist, I will use the specified scale maps',mstep_file); 
    opt.scales_maps = []; % Usually, this is initially left empty. After the pipeline ran a first time, the results of the MSTEPS procedure are used to select the final scales 
-end      
-opt.stability_fir.nb_samps = 100;    % Number of bootstrap samples at the individual level. 100: the CI on indidividual stability is +/-0.1
+end
+% the Number of bootstrap samples at the individual level is 1 intrial run1 and run2 
+if ismember(opt.trial,{'run1','run2'})
+   opt.stability_fir.nb_samps = 1;
+else 
+   opt.stability_fir.nb_samps = 100;   % Number of bootstrap samples at the individual level. 100: the CI on indidividual stability is +/-0.1
+end
+
 opt.stability_fir.std_noise = 0;     % The standard deviation of the judo noise. The value 0 will not use judo noise. 
 opt.stability_group.nb_samps = 500;  % Number of bootstrap samples at the group level. 500: the CI on group stability is +/-0.05
 opt.nb_min_fir = 1;    % the minimum response windows number. By defaut is set to 1
