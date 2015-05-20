@@ -1,0 +1,41 @@
+2013-06-19: Andrew Reid just finished uploading the data on peupier. It has been retrieved on May 2013 from the INDI server. I (PB) just started to unpack it in the raw_nii folder.
+
+2013-06-19: Started the conversion in minc. There are 182 subjects in there. 
+
+2013-06-20: Started the transfer on mammouth. All the processing will run there. 
+
+2013-06-20: Started the preprocessing using /svn/projects/andrew/andrew_preprocess_nki_enhanced.m revision 1340.
+
+2013-07-23: Finished the individual QC of coregistration steps.
+
+2013-07-23: Downloaded the motion parameters distributed by the INDI folks at http://fcon_1000.projects.nitrc.org/indi/enhanced/download.html
+            More specifically:
+            wget ftp://www.nitrc.org//export1/gforge/home/groups/fcon_1000/htdocs/indi/enhanced/data/nki-rs_lite_r1_v1_RfMRI_mx_645_rest_motion_parameters.csv
+            wget ftp://www.nitrc.org//export1/gforge/home/groups/fcon_1000/htdocs/indi/enhanced/data/nki-rs_lite_r1_v1_RfMRI_mx_1400_rest_motion_parameters.csv
+            wget ftp://www.nitrc.org//export1/gforge/home/groups/fcon_1000/htdocs/indi/enhanced/data/nki-rs_lite_r1_v1_RfMRI_std_2500_rest_motion_parameters.csv
+            The files are located is <path nki>/motion
+            I generated manually some simplifed versions with only the FD measure
+                fd_cpac_mx_645_r1.csv
+                fd_cpac_mx_1400_r1.csv
+                fd_cpac_std_2500_r1.csv
+            Finally I used the script andrew_check_motion.m to generate some head-to-head comparison in the following files:
+                motion_niak_vs_cpac_mx_645.csv
+                motion_niak_vs_cpac_mx_1400.csv
+                motion_niak_vs_cpac_std_2500.csv
+            The FD measures generated with the two packages correlated at around 0.95, altough some systematic bias was found 
+            between the two packages for mx_645 and std_2500. Interestingly, no bias was observed for mx_1400, which has a 
+            higher spatial resolution of 2mm isotropic.
+       
+2013-07-23: Copied a bunch of templates sent by Andrew a long time ago in /media/database3/nki_enhanced/andrew_time_series
+                template_andrew_r1.mnc.gz
+                template_andrew_r1.nii.gz
+            Then started on mammouth the script script_andrew_nki_enhanced_tseries.m
+            to extract time series for all subjects and all runs in /media/database3/nki_enhanced/andrew_time_series
+
+2014-07-21: I am coding a new pipeline to generate voxel-level connectivity maps for Andrew.
+            The analysis is going to run on peuplier in /media/database8/nki_enhanced/rmap_cambridge
+            For rmap_cambridge the template and seeds are the standard NIAK ones.
+            
+2014-07-21: I am also going to run a rmap_template_monkey using Andrew's template
+            I have copied template_andrew_r1_masked.mnc.gz from the andrew_tseries_nki_enhanced experiment. 
+            I have prepared a file called list_seeds_template_monkey.csv with a parcel in the PCC and one in the aMPFC.
