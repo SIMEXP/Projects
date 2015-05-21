@@ -25,6 +25,7 @@ system('mincresample -like target_test_niak_mnc1-2015-05-15/demoniak_preproc/qua
 %% All present and accounted for, let's call the pipeline
 opt_scores = struct;
 opt_scores.folder_out = [pwd filesep 'scores_demoniak'];
+opt_scores.flag_vol = true; 
 in_data.part = [template_data filesep 'supersmall_mask_007.mnc'];
 %% Call the pipeline
 [pipeline, opt_scores] = niak_pipeline_stability_scores(in_data, opt_scores);
