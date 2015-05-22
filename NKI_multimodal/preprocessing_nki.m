@@ -76,7 +76,17 @@ for num_s = 1:length(list_subject)
     
     files_in.(id).fmri.sess1.rest645 = [path_raw subject filesep 'session_1', filesep,'RfMRI_mx_645' filesep 'rest.mnc.gz'];
     files_in.(id).fmri.sess1.rest1400 = [path_raw subject filesep 'session_1', filesep,'RfMRI_mx_1400' filesep 'rest.mnc.gz'];
-    files_in.(id).fmri.sess1.rest2500 = [path_raw subject filesep 'session_1', filesep,'RfMRI_mx_2500' filesep 'rest.mnc.gz'];
+    files_in.(id).fmri.sess1.rest2500 = [path_raw subject filesep 'session_1', filesep,'RfMRI_std_2500' filesep 'rest.mnc.gz'];
+    
+    files_c = psom_files2cell(files_in.(id).fmri.sess1);
+    for num_f = 1:length(files_c)
+        if ~psom_exist(files_c{num_f})
+            warning ('The file %s does not exist, I suppressed that file from the pipeline %s',files_c{num_f},subject);
+            files_in.(id).fmri.sess1 = rmfield(files_in.(id).fmri.sess1,fieldnames(files_in.(id).fmri.sess1)(num_f));
+            break
+        end        
+    end
+    
     
     files_c = psom_files2cell(files_in.(id).anat);
     for num_f = 1:length(files_c)
@@ -87,14 +97,7 @@ for num_s = 1:length(list_subject)
         end        
     end
     
-    files_c = psom_files2cell(files_in.(id).fmri.sess1);
-    for num_f = 1:length(files_c)
-        if ~psom_exist(files_c{num_f})
-            warning ('The file %s does not exist, I suppressed that file from the pipeline %s',files_c{num_f},subject);
-            files_in.(id).fmri.sess1 = rmfield(files_in.(id).fmri.sess1,num_f);
-            break
-        end        
-    end
+    
 end
 
 %  warning: The file /media/database4/nki_enhanced/raw_mnc/0103714/TfMRI_breathHold_1400/func.mnc.gz does not exist, I suppressed subject 0103714
