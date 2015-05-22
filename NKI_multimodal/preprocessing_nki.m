@@ -25,6 +25,9 @@
 % THE SOFTWARE.
 
 clear all
+% load lib
+addpath(genpath('/sb/project/gsf-624-aa/quarantaine/niak-boss-0.12.18/'))
+
 %%%%%%%%%%%%%%%%%%%%%
 %% Parameters
 %%%%%%%%%%%%%%%%%%%%%
