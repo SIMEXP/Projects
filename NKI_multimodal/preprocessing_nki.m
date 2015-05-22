@@ -1,5 +1,5 @@
 %%% NKI_enhanced preprocessing pipeline
-% Copyright (c) Pierre Bellec, Yassine Benhajali
+% Copyright (c) AmanPreet Badhwar
 % Research Centre of the Montreal Geriatric Institute
 % & Department of Computer Science and Operations Research
 % University of Montreal, Québec, Canada, 2010-2012
