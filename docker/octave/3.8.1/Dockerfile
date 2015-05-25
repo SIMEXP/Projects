@@ -24,6 +24,7 @@ RUN apt-get install -y \
   libxmu6 \  
   octave=3.8.1-1ubuntu1~octave1~precise1 \
   unzip
+  graphviz
   
 # Fetch Octave forge packages
 RUN mkdir /home/octave
