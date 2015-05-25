@@ -35,30 +35,9 @@ exp   = 'all';
 %task  = 'all';
 
 %% Setting input/output files 
-[status,cmdout] = system ('uname -n');
-server          = strtrim(cmdout);
-if strfind(server,'lg-1r') % This is guillimin
+% This is guillimin
     root_path = '/sb/project/gsf-624-aa/database/nki_multimodal/';
     path_out = '/gs/scratch/abadhwar/NKI_enhanced/';
-    fprintf ('server: %s (Guillimin) \n ',server)
-    my_user_name = getenv('USER');
-elseif strfind(server,'ip05') % this is mammouth
-    root_path = '/mnt/parallel_scratch_ms2_wipe_on_april_2015/pbellec/benhajal/NKI_enhanced/';
-    fprintf ('server: %s (Mammouth) \n',server)
-    my_user_name = getenv('USER');
-else
-    switch server
-        case 'peuplier' % this is peuplier
-        root_path = '/media/database4/nki_enhanced/';
-        fprintf ('server: %s\n',server)
-        my_user_name = getenv('USER');
-        
-        case 'noisetier' % this is noisetier
-        root_path = '/media/database1/';
-        fprintf ('server: %s\n',server)
-        my_user_name = getenv('USER');
-    end
-end
 
 %% Grab the raw data
 path_raw = [root_path 'raw_mnc_all/'];
