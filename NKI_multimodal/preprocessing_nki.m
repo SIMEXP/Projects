@@ -1,3 +1,5 @@
+#!/software/CentOS-6/applications/octave/3.8.1/bin/octave
+
 %%% NKI_enhanced preprocessing pipeline
 % Copyright (c) AmanPreet Badhwar
 % Research Centre of the Montreal Geriatric Institute
