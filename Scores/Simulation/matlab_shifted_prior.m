@@ -114,7 +114,6 @@ for p_id = 1:n_perm
         % Get the corresponding shifted prior
         prior_shift_vec = prior_shift_vec_store(:, s_id);
         %% Run the analyses
-        
         % Scores
         res_scores = niak_stability_cores(tseries, prior_shift_vec, opt_scores);
         % Do nothing here, just save the maps
