@@ -24,12 +24,12 @@ res_in.target = 'target_test_niak_mnc1-2015-05-15/demoniak_preproc/quality_contr
 res_in.source = 'template_cambridge_basc_multiscale_mnc_asym/template_cambridge_basc_multiscale_asym_scale007.mnc.gz';
 res_out = 'template_cambridge_basc_multiscale_mnc_asym/supersmall_mask_007.mnc.gz';
 res_opt = struct;
-niak_brick_resample_vol(res_in,res_out,res_opt)
+niak_brick_resample_vol(res_in,res_out,res_opt);
 
 %% All present and accounted for, let's call the pipeline
 opt_scores = struct;
-opt_scores.scores.folder_out = [pwd filesep 'pipe_out'];
-opt_scores.scores.flag_vol = true;
+opt_scores.folder_out = [pwd filesep 'scores_demoniak'];
+opt_scores.flag_vol = true;
 in_data.part = [template_data filesep 'supersmall_mask_007.mnc.gz'];
 in_data.mask = [template_data filesep 'supersmall_mask_007.mnc.gz'];
 %% Call the pipeline
