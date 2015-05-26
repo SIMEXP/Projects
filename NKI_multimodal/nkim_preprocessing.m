@@ -1,3 +1,5 @@
+#!/software/CentOS-6/applications/octave/3.8.1/bin/octave
+
 %%% NKI_enhanced preprocessing pipeline
 % Copyright (c) AmanPreet Badhwar
 % Research Centre of the Montreal Geriatric Institute
@@ -25,6 +27,9 @@
 % THE SOFTWARE.
 
 clear all
+% load lib
+addpath(genpath('/sb/project/gsf-624-aa/quarantaine/niak-boss-0.13.0/'))
+
 %%%%%%%%%%%%%%%%%%%%%
 %% Parameters
 %%%%%%%%%%%%%%%%%%%%%
@@ -33,15 +38,23 @@ exp   = 'all';
 
 %% Setting input/output files 
 % This is guillimin
+<<<<<<< HEAD:NKI_multimodal/preprocessing_nki.m
 root_path = '/sb/project/gsf-624-aa/database/nki_multimodal/';
 path_out = '/gs/scratch/abadhwar/NKI_enhanced/';
     
+=======
+    root_path = '/sb/project/gsf-624-aa/database/nki_multimodal/';
+    path_out = '/gs/scratch/abadhwar/NKI_enhanced/';
+
+>>>>>>> 56ad8d87b372ed8c18d9d056b8ce900695778f76:NKI_multimodal/nkim_preprocessing.m
 %% Grab the raw data
 path_raw = [root_path 'raw_mnc_all/'];
 list_subject = dir(path_raw);
 list_subject = {list_subject.name};
 list_subject = list_subject(~ismember(list_subject,{'.','..'}));
 
+% For now let's preprocess only 4 subjects
+list_subject = list_subject(1:4);
 for num_s = 1:length(list_subject)
     subject = list_subject{num_s};
     id = ['s' subject];
@@ -52,17 +65,28 @@ for num_s = 1:length(list_subject)
     
     files_in.(id).fmri.sess1.rest645 = [path_raw subject filesep 'session_1', filesep,'RfMRI_mx_645' filesep 'rest.mnc.gz'];
     files_in.(id).fmri.sess1.rest1400 = [path_raw subject filesep 'session_1', filesep,'RfMRI_mx_1400' filesep 'rest.mnc.gz'];
-    files_in.(id).fmri.sess1.rest2500 = [path_raw subject filesep 'session_1', filesep,'RfMRI_mx_2500' filesep 'rest.mnc.gz'];
+    files_in.(id).fmri.sess1.rest2500 = [path_raw subject filesep 'session_1', filesep,'RfMRI_std_2500' filesep 'rest.mnc.gz'];
     
-    
-    files_c = psom_files2cell(files_in.(id));
+    files_c = psom_files2cell(files_in.(id).fmri.sess1);
     for num_f = 1:length(files_c)
         if ~psom_exist(files_c{num_f})
-            warning ('The file %s does not exist, I suppressed subject %s',files_c{num_f},subject);
+            warning ('The file %s does not exist, I suppressed that file from the pipeline %s',files_c{num_f},subject);
+            files_in.(id).fmri.sess1 = rmfield(files_in.(id).fmri.sess1,fieldnames(files_in.(id).fmri.sess1)(num_f));
+            break
+        end        
+    end
+    
+    
+    files_c = psom_files2cell(files_in.(id).anat);
+    for num_f = 1:length(files_c)
+        if ~psom_exist(files_c{num_f})
+            warning ('The file %s does not exist, I suppressed that subject %s',files_c{num_f},subject);
             files_in = rmfield(files_in,id);
             break
         end        
     end
+    
+    
 end
 
 %  warning: The file /media/database4/nki_enhanced/raw_mnc/0103714/TfMRI_breathHold_1400/func.mnc.gz does not exist, I suppressed subject 0103714
