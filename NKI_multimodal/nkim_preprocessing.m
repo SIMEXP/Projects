@@ -37,16 +37,10 @@ exp   = 'all';
 %task  = 'all';
 
 %% Setting input/output files 
-% This is guillimin
-<<<<<<< HEAD:NKI_multimodal/preprocessing_nki.m
+%% This is guillimin
 root_path = '/sb/project/gsf-624-aa/database/nki_multimodal/';
 path_out = '/gs/scratch/abadhwar/NKI_enhanced/';
-    
-=======
-    root_path = '/sb/project/gsf-624-aa/database/nki_multimodal/';
-    path_out = '/gs/scratch/abadhwar/NKI_enhanced/';
 
->>>>>>> 56ad8d87b372ed8c18d9d056b8ce900695778f76:NKI_multimodal/nkim_preprocessing.m
 %% Grab the raw data
 path_raw = [root_path 'raw_mnc_all/'];
 list_subject = dir(path_raw);
