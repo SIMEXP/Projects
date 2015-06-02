@@ -48,8 +48,6 @@ list_subject = {list_subject.name};
 list_subject = list_subject(~ismember(list_subject,{'.','..'}));
 
 
-% Processing subjects 1-6 except for subject 3
-list_subject = list_subject([1:2 4:6]);
 for num_s = 1:length(list_subject)
     subject = list_subject{num_s};
     id = ['s' subject];
