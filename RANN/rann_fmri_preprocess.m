@@ -35,6 +35,50 @@
 %% Setting input/output files %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+
+
+root_path = '/gs/project/gsf-624-aadatabase/RANN/';
+path_out = '/gs/scratch/pferre/RANN/';
+
+%% Grab the raw data
+path_raw = [root_path 'raw_mnc/'];
+list_subject = dir(path_raw);
+list_subject = {list_subject.name};
+list_subject = list_subject(~ismember(list_subject,{'.','..'}));
+
+
+for num_s = 1:length(list_subject)
+    subject = list_subject{num_s};
+    files_in.(subject).anat = [path_raw subject filesep 'T1' filesep 'T1_' subject '_*.mnc.gz'];
+    files_in.(subject).fmri.sess1.ant = [path_raw subject filesep 'Ant_r1_' subject '_*.mnc.gz'];
+    files_in.(subject).fmri.sess1.syn = [path_raw subject filesep 'Syn_r1_' subject '_*.mnc.gz'];
+    files_in.(subject).fmri.sess1.picname = [path_raw subject filesep 'PictName_r1_' subject '_*.mnc.gz'];    
+    files_in.(subject).fmri.sess1.rest = [path_raw subject filesep 'REST_BOLD_' subject '_*.mnc.gz']; 
+    
+    files_c = psom_files2cell(files_in.(subject).fmri.sess1);
+    for num_f = 1:length(files_c)
+        if ~psom_exist(files_c{num_f})
+            warning ('The file %s does not exist, I suppressed that file from the pipeline %s',files_c{num_f},subject);
+            files_in.(subject).fmri.sess1 = rmfield(files_in.(subject).fmri.sess1,fieldnames(files_in.(subject).fmri.sess1)(num_f));
+            break
+        end        
+    end
+    
+    
+    files_c = psom_files2cell(files_in.(subject).anat);
+    for num_f = 1:length(files_c)
+        if ~psom_exist(files_c{num_f})
+            warning ('The file %s does not exist, I suppressed that subject %s',files_c{num_f},subject);
+            files_in = rmfield(files_in,subject);
+            break
+        end        
+    end
+    
+    
+end
+
+
+
 %% WARNING: Do not use underscores '_' in the IDs of subject, sessions or runs. This may cause bugs in subsequent pipelines.
 
 % Structural scan
