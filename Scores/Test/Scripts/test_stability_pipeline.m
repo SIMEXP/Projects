@@ -30,6 +30,7 @@ niak_brick_resample_vol(res_in,res_out,res_opt);
 opt_scores = struct;
 opt_scores.folder_out = [pwd filesep 'scores_demoniak'];
 opt_scores.flag_vol = true;
+
 in_data.part = [template_data filesep 'supersmall_mask_007.mnc.gz'];
 in_data.mask = [template_data filesep 'supersmall_mask_007.mnc.gz'];
 %% Call the pipeline
