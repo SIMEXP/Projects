@@ -39,7 +39,7 @@ exp   = 'all';
 %% Setting input/output files 
 %% This is guillimin
 root_path = '/sb/project/gsf-624-aa/database/nki_multimodal/';
-path_out = '/gs/scratch/abadhwar/NKI_enhanced/';
+path_out = '/gs/scratch/abadhwar/NKI_enhanced_subject_granular/';
 
 %% Grab the raw data
 path_raw = [root_path 'raw_mnc_all/'];
