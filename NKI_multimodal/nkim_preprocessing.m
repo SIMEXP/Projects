@@ -150,6 +150,7 @@ opt.smooth_vol.flag_skip = 0;  % Skip spatial smoothing (0: don't skip, 1 : skip
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Run the fmri_preprocess pipeline  %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+opt.psom.mode_pipeline_manager = 'background'; 
 opt.psom.qsub_options = '-q sw -l nodes=1:ppn=4,walltime=48:00:00';
 opt.granularity = 'subject'; 
 opt.psom.max_queued = 150;
