@@ -153,5 +153,6 @@ opt.smooth_vol.flag_skip = 0;  % Skip spatial smoothing (0: don't skip, 1 : skip
 opt.psom.mode_pipeline_manager = 'background';
 opt.psom.qsub_options = '-q sw -l nodes=1:ppn=4,walltime=48:00:00';
 opt.granularity = 'subject'; 
-opt.psom.max_queued = 150;
+opt.psom.max_queued = 450;
+opt.time_between_checks = 60;
 [pipeline,opt] = niak_pipeline_fmri_preprocess(files_in,opt);
