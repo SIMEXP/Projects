@@ -49,7 +49,7 @@ list_subject = list_subject(~ismember(list_subject,{'.','..'}));
 
 for num_s = 1:length(list_subject)
     subject = list_subject{num_s};
-    files_in.(subject).anat = [path_raw subject filesep 'T1' filesep 'T1_' subject '_*.mnc.gz'];
+    files_in.(subject).anat = [path_raw subject filesep 'T1_' subject '_*.mnc.gz'];
     files_in.(subject).fmri.sess1.ant = [path_raw subject filesep 'Ant_r1_' subject '_*.mnc.gz'];
     files_in.(subject).fmri.sess1.syn = [path_raw subject filesep 'Syn_r1_' subject '_*.mnc.gz'];
     files_in.(subject).fmri.sess1.pictname = [path_raw subject filesep 'PictName_r1_' subject '_*.mnc.gz'];    
