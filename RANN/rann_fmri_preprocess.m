@@ -35,7 +35,7 @@
 %% Setting input/output files %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
+addpath(genpath('/sb/project/gsf-624-aa/quarantaine/niak-boss-0.13.0'))
 
 root_path = '/gs/project/gsf-624-aadatabase/RANN/';
 path_out = '/gs/scratch/pferre/RANN/preprocess_data';
