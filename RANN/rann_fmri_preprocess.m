@@ -34,6 +34,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Setting input/output files %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+clear all
 
 addpath(genpath('/sb/project/gsf-624-aa/quarantaine/niak-boss-0.13.0'))
 
@@ -49,30 +50,60 @@ list_subject = list_subject(~ismember(list_subject,{'.','..'}));
 
 for num_s = 1:length(list_subject)
     subject = list_subject{num_s};
-    files_in.(subject).anat = [path_raw subject filesep 'T1_' subject '_*.mnc.gz'];
-    files_in.(subject).fmri.sess1.ant = [path_raw subject filesep 'Ant_r1_' subject '_*.mnc.gz'];
-    files_in.(subject).fmri.sess1.syn = [path_raw subject filesep 'Syn_r1_' subject '_*.mnc.gz'];
-    files_in.(subject).fmri.sess1.pictname = [path_raw subject filesep 'PictName_r1_' subject '_*.mnc.gz'];    
-    files_in.(subject).fmri.sess1.rest = [path_raw subject filesep 'REST_BOLD_' subject '_*.mnc.gz']; 
+    tmp_path_subj = [path_raw subject filesep];
+    files_in.(subject).anat = [];
+    files_in.(subject).fmri.session1 = [];
     
-    files_c = psom_files2cell(files_in.(subject).fmri.sess1);
-    for num_f = 1:length(files_c)
-        if ~psom_exist(files_c{num_f})
-            warning ('The file %s does not exist, I suppressed that file from the pipeline %s',files_c{num_f},subject);
-            files_in.(subject).fmri.sess1 = rmfield(files_in.(subject).fmri.sess1,fieldnames(files_in.(subject).fmri.sess1)(num_f));
-            break
-        end        
+    try 
+        files_in.(subject).fmri.session1.ant = [tmp_path_subj dir([tmp_path_subj 'Ant_r1_' subject '_*.mnc.gz'])(1).name];
+    catch exception
+        warning ('The file %s does not exist, I suppressed that file from the pipeline %s','ant',subject);
     end
-    
-    
-    files_c = psom_files2cell(files_in.(subject).anat);
-    for num_f = 1:length(files_c)
-        if ~psom_exist(files_c{num_f})
-            warning ('The file %s does not exist, I suppressed that subject %s',files_c{num_f},subject);
-            files_in = rmfield(files_in,subject);
-            break
-        end        
+
+    try
+        files_in.(subject).fmri.session1.syn = [tmp_path_subj dir([tmp_path_subj 'Syn_r1_' subject '_*.mnc.gz'])(1).name];
+    catch exception
+        warning ('The file %s does not exist, I suppressed that file from the pipeline %s','syn',subject);
     end
+
+    try
+        files_in.(subject).fmri.session1.pictname = [tmp_path_subj dir([tmp_path_subj 'PictName_r1_' subject '_*.mnc.gz'])(1).name];    
+    catch exception
+        warning ('The file %s does not exist, I suppressed that file from the pipeline %s','pictname',subject);
+    end
+
+    try
+        files_in.(subject).fmri.session1.rest = [tmp_path_subj dir([tmp_path_subj 'REST_BOLD_' subject '_*.mnc.gz'])(1).name]; 
+    catch exception
+	warning ('The file %s does not exist, I suppressed that file from the pipeline %s','rest',subject);
+    end
+
+    try
+        files_in.(subject).anat = [tmp_path_subj dir([tmp_path_subj 'T1_' subject '_*.mnc.gz'])(1).name];
+    catch exception
+        warning ('The file %s does not exist, I suppressed that subject %s','ANATOMIC',subject);
+        files_in = rmfield(files_in,subject);
+
+    end
+
+    %files_c = psom_files2cell(files_in.(subject).fmri.sess1);
+    %for num_f = 1:length(files_c)
+    %    if ~psom_exist(files_c{num_f})
+    %        warning ('The file %s does not exist, I suppressed that file from the pipeline %s',files_c{num_f},subject);
+    %        files_in.(subject).fmri.sess1 = rmfield(files_in.(subject).fmri.sess1,fieldnames(files_in.(subject).fmri.sess1)(num_f));
+    %        break
+    %    end        
+    %end
+    
+    
+    %files_c = psom_files2cell(files_in.(subject).anat);
+    %for num_f = 1:length(files_c)
+    %    if ~psom_exist(files_c{num_f})
+    %        warning ('The file %s does not exist, I suppressed that subject %s',files_c{num_f},subject);
+    %        files_in = rmfield(files_in,subject);
+    %        break
+    %    end        
+    %end
     
     
 end
