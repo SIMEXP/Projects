@@ -37,8 +37,8 @@
 
 addpath(genpath('/sb/project/gsf-624-aa/quarantaine/niak-boss-0.13.0'))
 
-root_path = '/gs/project/gsf-624-aadatabase/RANN/';
-path_out = '/gs/scratch/pferre/RANN/preprocess_data';
+root_path = '/gs/project/gsf-624-aa/database2/Projects/RANN/';
+path_out = '/gs/scratch/perrine/RANN/preprocess_data/';
 
 %% Grab the raw data
 path_raw = [root_path 'raw_mnc/'];
