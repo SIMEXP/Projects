@@ -190,5 +190,5 @@ opt.smooth_vol.flag_skip = 0;  % Skip spatial smoothing (0: don't skip, 1 : skip
 % opt.psom.mode                  = 'batch'; % Process jobs in the background
 % opt.psom.mode_pipeline_manager = 'batch'; % Run the pipeline manager in the background : if I unlog, keep working
 opt.psom.max_queued              =  100;       % Number of jobs that can run in parallel. In batch mode, this is usually the number of cores.
-
+opt.time_between_checks = 60; 
 [pipeline,opt] = niak_pipeline_fmri_preprocess(files_in,opt);
