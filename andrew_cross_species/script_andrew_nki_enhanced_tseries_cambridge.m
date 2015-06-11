@@ -1,9 +1,9 @@
 clear
 
 %% Folder names
-path_preproc = '/media/database4/nki_enhanced/fmri_preprocess/';
-path_write = '/media/database4/nki_enhanced/andrew_time_series_cambridge/';
-file_template_mnc  = ['/media/database4/nki_enhanced/template_cambridge_basc_multiscale_mnc_sym/template_cambridge_basc_multiscale_sym_scale122.mnc.gz'];
+path_preproc = '/peuplier/database4/nki_enhanced/fmri_preprocess/';
+path_write = '/peuplier/database4/nki_enhanced/andrew_time_series_cambridge/';
+file_template_mnc  = ['/peuplier/database4/nki_enhanced/template_cambridge_basc_multiscale_mnc_sym/template_cambridge_basc_multiscale_sym_scale122_roi.mnc.gz'];
 
 %% Grab preprocessing & templates
 opt_g.min_nb_vol = 0;
@@ -13,6 +13,7 @@ files = niak_grab_fmri_preprocess(path_preproc,opt_g);
 
 %% Generate time series
 list_subject = fieldnames(files.data);
+pipeline = struct;
 for num_s = 1:length(list_subject)
     clear job_in job_out job_opt
     subject = list_subject{num_s};
