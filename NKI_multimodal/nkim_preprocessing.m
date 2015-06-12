@@ -48,6 +48,8 @@ list_subject = {list_subject.name};
 list_subject = list_subject(~ismember(list_subject,{'.','..'}));
 
 
+% Changing first batch to preprocess 108 subjects to restart from existing logs
+list_subject = list_subject(1:108);
 for num_s = 1:length(list_subject)
     subject = list_subject{num_s};
     id = ['s' subject];
