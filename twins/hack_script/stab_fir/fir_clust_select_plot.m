@@ -12,11 +12,11 @@ function [] = fir_clust_select_plot(clust_select,path_folder,fdr_file,partition_
 %  %  partition_nii_file='brain_partition_threshold_group_sci140_scg140_scf147'                          % write the file_name without .nii.gz extension
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 clear
-seed = psom_set_rand_seed(0);
-clust_select=[1 6 13];                                                                           % clusters must be beteween braquet
-path_folder= '/home/yassinebha/Dropbox/twins_study_basc/basc_fir/stability_fir_all_sad_blocs_EXP2_test1/FIR_EXP2_test1_nii/sci10_scg7_scf7'; % the hole path folder
-fdr_file='fdr_group_average_sci10_scg7_scf7';                                                  % write the file_name without .mat extension
-partition_nii_file='brain_partition_consensus_group_sci10_scg7_scf7';                          % write the file_name without .nii.gz extension
+
+clust_select=[1 2 3];                                                                           % clusters must be beteween braquet
+path_folder= '/peuplier/database10/nki_enhanced/stability_fir_shape_breathhold_1400_noscrub/stability_group/sci5_scg4_scf4_nii'; % the hole path folder
+fdr_file='fdr_group_average_sci5_scg4_scf4';                                                  % write the file_name without .mat extension
+partition_nii_file='brain_partition_consensus_group_sci5_scg4_scf4';                          % write the file_name without .nii.gz extension
 
 
 

@@ -177,8 +177,8 @@ opt.flag_std = false;
     
 %      files_out = strcat(namesave,'.pdf');
 %      print(files_out,'-dpdf','-r600')
-    files_out = strcat(namesave,'.svg');
-    print(files_out,'-dsvg','-r600');
+    files_out = strcat(namesave,'.png');
+    print(files_out,'-dpng');
     
 %      clear test_fir.mean
 %      load(strcat(name,'.mat'));
@@ -186,8 +186,8 @@ opt.flag_std = false;
     figure,plot(test_fir.mean)
 %      files_out = strcat(namesave,'_all_in_one.pdf');
 %      print(files_out,'-dpdf','-r600')
-    files_out = strcat(namesave,'_all_in_one.svg');
-    print(files_out,'-dsvg','-r600');
+    files_out = strcat(namesave,'_all_in_one.png');
+    print(files_out,'-dpng');
     
     
 %  %      isolated scale networks figure 
@@ -199,7 +199,7 @@ opt.flag_std = false;
     else
     system(['mricron ~/database/white_template.nii.gz -c -0 -o ',partition_nii_file,'_reorder_00',num2str(i),'.nii.gz -c jet_linear -l 0.1 -h ',num2str(B),' -z & ']);
     system(['echo ',partition_nii_file,'_reorder_000',num2str(i)]);
-    endif
+    end
     end
     system(['echo ',partition_nii_file,'_reorder_all']);
-endfunction
+
