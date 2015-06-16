@@ -39,7 +39,7 @@ exp   = 'all';
 %% Setting input/output files 
 %% This is guillimin
 root_path = '/sb/project/gsf-624-aa/database/nki_multimodal/';
-path_out = '/gs/scratch/abadhwar/NKI_enhanced_granular_wall_ground/';
+path_out = '/gs/scratch/abadhwar/NKI_enhanced_granular_wall_ground_b1/';
 
 %% Grab the raw data
 path_raw = [root_path 'raw_mnc_all/'];
@@ -48,6 +48,8 @@ list_subject = {list_subject.name};
 list_subject = list_subject(~ismember(list_subject,{'.','..'}));
 
 
+% Run preprocessing in batches, first 85 subjects
+list_subject = list_subject(1:85);
 for num_s = 1:length(list_subject)
     subject = list_subject{num_s};
     id = ['s' subject];
