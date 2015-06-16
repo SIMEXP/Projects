@@ -1,9 +1,9 @@
 clear
 
 %% Folder names
-path_preproc = '/peuplier/database4/nki_enhanced/fmri_preprocess_no_smoothing/';
-path_write = '/peuplier/database4/nki_enhanced/andrew_time_series_cambridge_no_smoothing/';
-file_template_mnc  = ['/peuplier/database4/nki_enhanced/template_cambridge_basc_multiscale_mnc_sym/template_cambridge_basc_multiscale_sym_scale122_roi.mnc.gz'];
+path_preproc = '/peuplier/database4/andrew_cross_species/fmri_preprocess_no_smoothing/';
+path_write = '/peuplier/database4/andrew_cross_species/andrew_time_series_cambridge_no_smoothing/';
+file_template_mnc  = ['/peuplier/database4/andrew_cross_species/template_cambridge_basc_multiscale_mnc_sym/template_cambridge_basc_multiscale_sym_scale122_roi.mnc.gz'];
 
 %% Grab preprocessing & templates
 opt_g.min_nb_vol = 0;
