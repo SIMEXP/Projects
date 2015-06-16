@@ -12,8 +12,9 @@ function [] = fir_clust_select_plot(clust_select,path_folder,fdr_file,partition_
 %  %  partition_nii_file='brain_partition_threshold_group_sci140_scg140_scf147'                          % write the file_name without .nii.gz extension
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 clear
-
-clust_select=[1 2 3];                                                                           % clusters must be beteween braquet
+addpath(genpath('/home/yassinebha/github_repos'))
+seed = psom_set_rand_seed(0);
+clust_select=[1 2 3 4];                                                                           % clusters must be beteween braquet
 path_folder= '/peuplier/database10/nki_enhanced/stability_fir_shape_breathhold_1400_noscrub/stability_group/sci5_scg4_scf4_nii'; % the hole path folder
 fdr_file='fdr_group_average_sci5_scg4_scf4';                                                  % write the file_name without .mat extension
 partition_nii_file='brain_partition_consensus_group_sci5_scg4_scf4';                          % write the file_name without .nii.gz extension
@@ -63,8 +64,9 @@ niak_write_vol(hdr,vol2);
 
 
 % show brain patition reordered with mricron
-B=size(test_fir.mean)(2);
-system(['mricron ~/database/white_template.nii.gz -c -0 -o ' path_folder filesep partition_nii_file '_select_clust' char(str) '.nii.gz -m  ~/.mricron/multislice/default.ini -c jet_linear -l 0.02 -h ' num2str(B) ' -z & ']);
+B=size(test_fir.mean);
+B=B(2);
+system(['~/mricron/./mricron ~/database/white_template.nii.gz -c -0 -o ' path_folder filesep partition_nii_file '_select_clust' char(str) '.nii.gz  -c jet_linear -l 0.02 -h ' num2str(B) ' -z & ']);
 
 % plot fir
 linewidth = 0.1;
@@ -145,8 +147,8 @@ end
     
 % save .pdf and .svg files 
 namesave = [ path_folder filesep 'plot_fir_select_clust' char(str)];
-files_out = strcat(namesave,'.svg');
-print(files_out,'-dsvg','-r600');
+files_out = strcat(namesave,'.png');
+print(files_out,'-dpng');
     
 %  split cluster partition
 cd ([ path_folder filesep]);
