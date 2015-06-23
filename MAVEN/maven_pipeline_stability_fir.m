@@ -92,7 +92,7 @@ if strfind(server,'lg-1r') % This is guillimin
     fprintf ('server: %s (Guillimin) \n ',server)
     my_user_name = getenv('USER');
 elseif strfind(server,'ip05') % this is mammouth
-    root_path = '/mnt/parallel_scratch_ms2_wipe_on_april_2015/pbellec/benhajal/MAVEN/';
+    root_path = '/mnt/parallel_scratch_ms2_wipe_on_december_2016/pbellec/benhajal/MAVEN/';
     fprintf ('server: %s (Mammouth) \n',server)
     my_user_name = getenv('USER');
 else
@@ -144,7 +144,7 @@ opt_g.filter.run = {task};
 %liste_exclude = dir ([root_path 'fmri_preprocess_INSCAPE_REST_all/anat']);
 %liste_exclude = liste_exclude(43:end -1);
 %liste_exclude = {liste_exclude.name};
-%opt_g.exclude_subject = liste_exclude;
+opt_g.exclude_subject = {'C2065'};
 
 files_in = niak_grab_fmri_preprocess([root_path 'fmri_preprocess_INSCAPE_REST_all/'],opt_g); % Replace the folder by the path where the results of the fMRI preprocessing pipeline were stored. 
 %% Event times
