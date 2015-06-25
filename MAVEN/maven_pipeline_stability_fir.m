@@ -88,7 +88,7 @@ fprintf ('script to run nki_stability_fir pipeline \n Task: %s \n tr: %s\n norma
 [status,cmdout] = system ('uname -n');
 server          = strtrim(cmdout);
 if strfind(server,'lg-1r') % This is guillimin
-    root_path = '/sb/project/gsf-624-aa/database/MAVEN/';
+    root_path = '/gs/scratch/yassinebha/MAVEN/';
     fprintf ('server: %s (Guillimin) \n ',server)
     my_user_name = getenv('USER');
 elseif strfind(server,'ip05') % this is mammouth
