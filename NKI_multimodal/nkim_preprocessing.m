@@ -39,7 +39,7 @@ exp   = 'all';
 %% Setting input/output files 
 %% This is guillimin
 root_path = '/sb/project/gsf-624-aa/database/nki_multimodal/';
-path_out = '/gs/scratch/abadhwar/NKI_enhanced/';
+path_out = '/gs/scratch/abadhwar/NKI_enhanced_granular_wall_ground_b1/';
 
 %% Grab the raw data
 path_raw = [root_path 'raw_mnc_all/'];
@@ -48,6 +48,8 @@ list_subject = {list_subject.name};
 list_subject = list_subject(~ismember(list_subject,{'.','..'}));
 
 
+% Run preprocessing in batches, first 85 subjects
+list_subject = list_subject(1:85);
 for num_s = 1:length(list_subject)
     subject = list_subject{num_s};
     id = ['s' subject];
@@ -150,8 +152,9 @@ opt.smooth_vol.flag_skip = 0;  % Skip spatial smoothing (0: don't skip, 1 : skip
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Run the fmri_preprocess pipeline  %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-opt.psom.qsub_options = '-q sw -l nodes=1:ppn=4,walltime=05:00:00';
+opt.psom.mode_pipeline_manager = 'background';
+opt.psom.qsub_options = '-q sw -l nodes=1:ppn=4,walltime=48:00:00';
 opt.granularity = 'subject'; 
-opt.psom.max_queued = 150;
+opt.psom.max_queued = 450;
+opt.time_between_checks = 60;
 [pipeline,opt] = niak_pipeline_fmri_preprocess(files_in,opt);
-
