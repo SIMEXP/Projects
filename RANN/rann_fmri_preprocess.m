@@ -34,11 +34,12 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Setting input/output files %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+clear all
 
+addpath(genpath('/sb/project/gsf-624-aa/quarantaine/niak-boss-0.13.0'))
 
-
-root_path = '/gs/project/gsf-624-aadatabase/RANN/';
-path_out = '/gs/scratch/pferre/RANN/';
+root_path = '/gs/project/gsf-624-aa/database2/Projects/RANN/';
+path_out = '/gs/scratch/perrine/RANN/preprocess_data/';
 
 %% Grab the raw data
 path_raw = [root_path 'raw_mnc/'];
@@ -49,30 +50,60 @@ list_subject = list_subject(~ismember(list_subject,{'.','..'}));
 
 for num_s = 1:length(list_subject)
     subject = list_subject{num_s};
-    files_in.(subject).anat = [path_raw subject filesep 'T1' filesep 'T1_' subject '_*.mnc.gz'];
-    files_in.(subject).fmri.sess1.ant = [path_raw subject filesep 'Ant_r1_' subject '_*.mnc.gz'];
-    files_in.(subject).fmri.sess1.syn = [path_raw subject filesep 'Syn_r1_' subject '_*.mnc.gz'];
-    files_in.(subject).fmri.sess1.picname = [path_raw subject filesep 'PictName_r1_' subject '_*.mnc.gz'];    
-    files_in.(subject).fmri.sess1.rest = [path_raw subject filesep 'REST_BOLD_' subject '_*.mnc.gz']; 
+    tmp_path_subj = [path_raw subject filesep];
+    files_in.(subject).anat = [];
+    files_in.(subject).fmri.session1 = [];
     
-    files_c = psom_files2cell(files_in.(subject).fmri.sess1);
-    for num_f = 1:length(files_c)
-        if ~psom_exist(files_c{num_f})
-            warning ('The file %s does not exist, I suppressed that file from the pipeline %s',files_c{num_f},subject);
-            files_in.(subject).fmri.sess1 = rmfield(files_in.(subject).fmri.sess1,fieldnames(files_in.(subject).fmri.sess1)(num_f));
-            break
-        end        
+    try 
+        files_in.(subject).fmri.session1.ant = [tmp_path_subj dir([tmp_path_subj 'Ant_r1_' subject '_*.mnc.gz'])(1).name];
+    catch exception
+        warning ('The file %s does not exist, I suppressed that file from the pipeline %s','ant',subject);
     end
-    
-    
-    files_c = psom_files2cell(files_in.(subject).anat);
-    for num_f = 1:length(files_c)
-        if ~psom_exist(files_c{num_f})
-            warning ('The file %s does not exist, I suppressed that subject %s',files_c{num_f},subject);
-            files_in = rmfield(files_in,subject);
-            break
-        end        
+
+    try
+        files_in.(subject).fmri.session1.syn = [tmp_path_subj dir([tmp_path_subj 'Syn_r1_' subject '_*.mnc.gz'])(1).name];
+    catch exception
+        warning ('The file %s does not exist, I suppressed that file from the pipeline %s','syn',subject);
     end
+
+    try
+        files_in.(subject).fmri.session1.pictname = [tmp_path_subj dir([tmp_path_subj 'PictName_r1_' subject '_*.mnc.gz'])(1).name];    
+    catch exception
+        warning ('The file %s does not exist, I suppressed that file from the pipeline %s','pictname',subject);
+    end
+
+    try
+        files_in.(subject).fmri.session1.rest = [tmp_path_subj dir([tmp_path_subj 'REST_BOLD_' subject '_*.mnc.gz'])(1).name]; 
+    catch exception
+	warning ('The file %s does not exist, I suppressed that file from the pipeline %s','rest',subject);
+    end
+
+    try
+        files_in.(subject).anat = [tmp_path_subj dir([tmp_path_subj 'T1_' subject '_*.mnc.gz'])(1).name];
+    catch exception
+        warning ('The file %s does not exist, I suppressed that subject %s','ANATOMIC',subject);
+        files_in = rmfield(files_in,subject);
+
+    end
+
+    %files_c = psom_files2cell(files_in.(subject).fmri.sess1);
+    %for num_f = 1:length(files_c)
+    %    if ~psom_exist(files_c{num_f})
+    %        warning ('The file %s does not exist, I suppressed that file from the pipeline %s',files_c{num_f},subject);
+    %        files_in.(subject).fmri.sess1 = rmfield(files_in.(subject).fmri.sess1,fieldnames(files_in.(subject).fmri.sess1)(num_f));
+    %        break
+    %    end        
+    %end
+    
+    
+    %files_c = psom_files2cell(files_in.(subject).anat);
+    %for num_f = 1:length(files_c)
+    %    if ~psom_exist(files_c{num_f})
+    %        warning ('The file %s does not exist, I suppressed that subject %s',files_c{num_f},subject);
+    %        files_in = rmfield(files_in,subject);
+    %        break
+    %    end        
+    %end
     
     
 end
@@ -82,9 +113,9 @@ end
 %% WARNING: Do not use underscores '_' in the IDs of subject, sessions or runs. This may cause bugs in subsequent pipelines.
 
 % Structural scan
-files_in.P00004801.anat                = '/home/perrine/Documents/RANNtest1_mnc/P00004801/S0001/T1/T1_P00004801_S0001.mnc';       
+%files_in.P00004801.anat                = '/home/perrine/Documents/RANNtest1_mnc/P00004801/S0001/T1/T1_P00004801_S0001.mnc';       
 % fMRI run 1
-files_in.P00004801.fmri.session1.syn = '/home/perrine/Documents/RANNtest1_mnc/P00004801/S0001/Syn_r1/Syn_r1_P00004801_S0001.mnc';
+%files_in.P00004801.fmri.session1.syn = '/home/perrine/Documents/RANNtest1_mnc/P00004801/S0001/Syn_r1/Syn_r1_P00004801_S0001.mnc';
 
 
 
@@ -94,17 +125,13 @@ files_in.P00004801.fmri.session1.syn = '/home/perrine/Documents/RANNtest1_mnc/P0
 
 %% General
 % Where to store the results
-opt.folder_out  = '/home/perrine/Documents/RANNtest1_preproc/';  % Where to store the results
+opt.folder_out  = path_out;  % Where to store the results
 opt.size_output = 'quality_control';                             % The amount of outputs that are generated by the pipeline. 'all' will keep intermediate outputs, 'quality_control' will only keep the quality control outputs. 
 
 %% Pipeline manager 
 %% It is recommended to edit a file psom_gb_vars_local.m based on psom_gb_vars.m located in the extensions/psom-rxxx/ subfolder of the NIAK folder 
 %% See http://code.google.com/p/psom/wiki/ConfigurationPsom for more details
 %% It is also possible to change the configuration of PSOM manually by uncommenting the following instructions:
-
-% opt.psom.mode                  = 'batch'; % Process jobs in the background
-% opt.psom.mode_pipeline_manager = 'batch'; % Run the pipeline manager in the background : if I unlog, keep working
-opt.psom.max_queued            = 4;       % Number of jobs that can run in parallel. In batch mode, this is usually the number of cores.
 
 %% Slice timing correction (niak_brick_slice_timing)
 opt.slice_timing.type_acquisition = 'interleaved ascending'; % Slice timing order (available options : 'sequential ascending', 'sequential descending', 'interleaved ascending', 'interleaved descending')
@@ -137,7 +164,7 @@ opt.regress_confounds.flag_wm = true;            % Turn on/off the regression of
 opt.regress_confounds.flag_vent = true;          % Turn on/off the regression of the average of the ventricles (true: apply / false : don't apply)
 opt.regress_confounds.flag_motion_params = true; % Turn on/off the regression of the motion parameters (true: apply / false : don't apply)
 opt.regress_confounds.flag_gsc = false;          % Turn on/off the regression of the PCA-based estimation of the global signal (true: apply / false : don't apply)
-opt.regress_confounds.flag_scrubbing = true;     % Turn on/off the scrubbing of time frames with excessive motion (true: apply / false : don't apply)
+opt.regress_confounds.flag_scrubbing = false;     % Turn on/off the scrubbing of time frames with excessive motion (true: apply / false : don't apply)
 opt.regress_confounds.thre_fd = 0.5;             % The threshold on frame displacement that is used to determine frames with excessive motion in the scrubbing procedure
 
 % Correction of physiological noise (niak_pipeline_corsica)
@@ -158,4 +185,10 @@ opt.smooth_vol.flag_skip = 0;  % Skip spatial smoothing (0: don't skip, 1 : skip
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Run the fmri_preprocess pipeline  %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+% opt.psom.mode                  = 'batch'; % Process jobs in the background
+% opt.psom.mode_pipeline_manager = 'batch'; % Run the pipeline manager in the background : if I unlog, keep working
+opt.psom.max_queued              =  100;       % Number of jobs that can run in parallel. In batch mode, this is usually the number of cores.
+opt.time_between_checks = 60; 
 [pipeline,opt] = niak_pipeline_fmri_preprocess(files_in,opt);

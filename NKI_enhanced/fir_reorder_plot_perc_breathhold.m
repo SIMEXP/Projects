@@ -15,6 +15,12 @@ function [] = fir_reorder_plot_perc(time,path_folder,fdr_file,partition_nii_file
 %  %  sync_order= true or false % TRUE is for sychronise plot order with the last executed fir_reorder_plot function
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+clear
+addpath(genpath('/home/yassinebha/github_repos'))
+time=9			% time in sec must be integer
+path_folder= '/peuplier/database10/nki_enhanced/stability_fir_perc_breathhold_1400_noscrub/stability_group/sci5_scg4_scf4_nii/'; % the hole path folder
+fdr_file='fdr_group_average_sci5_scg4_scf4';                                                  % write the file_name without .mat extension
+partition_nii_file='brain_partition_consensus_group_sci5_scg4_scf4';                          % write the file_name without .nii.gz extension
 
 
 seed = psom_set_rand_seed(0);
@@ -88,7 +94,7 @@ niak_brick_clusters_to_3d(strcat(partition_nii_file,'_reorder.nii.gz'));
 A=[test_fir.mean(time,:)];
 B=num2str(length(A));
 
-system(['mricron ~/database/white_template.nii.gz -c -0 -o ',partition_nii_file,'_reorder.nii.gz -m  ~/.mricron/multislice/fir_multi_slice.ini -c jet_linear -l 0.1 -h ',B,' -z & '])
+system(['~/mricron/./mricron ~/database/white_template.nii.gz -c -0 -o ',partition_nii_file,'_reorder.nii.gz  -c jet_linear -l 0.1 -h ',B,' -z & '])
 
 
 %  plot reordered fir.mean matrix
@@ -194,10 +200,10 @@ opt.flag_std = false;
     B=sizesubclust
     for i=1:B;
     if i < 10
-    system(['mricron ~/database/white_template.nii.gz -c -0 -o ',partition_nii_file,'_reorder_000',num2str(i),'.nii.gz -c jet_linear -l 0.1 -h ',num2str(B),' -z & ']);
+    system(['~/mricron/./mricron ~/database/white_template.nii.gz -c -0 -o ',partition_nii_file,'_reorder_000',num2str(i),'.nii.gz -c jet_linear -l 0.1 -h ',num2str(B),' -z & ']);
     system(['echo ',partition_nii_file,'_reorder_000',num2str(i)]);
     else
-    system(['mricron ~/database/white_template.nii.gz -c -0 -o ',partition_nii_file,'_reorder_00',num2str(i),'.nii.gz -c jet_linear -l 0.1 -h ',num2str(B),' -z & ']);
+    system(['~/mricron/./mricron ~/database/white_template.nii.gz -c -0 -o ',partition_nii_file,'_reorder_00',num2str(i),'.nii.gz -c jet_linear -l 0.1 -h ',num2str(B),' -z & ']);
     system(['echo ',partition_nii_file,'_reorder_000',num2str(i)]);
     end
     end

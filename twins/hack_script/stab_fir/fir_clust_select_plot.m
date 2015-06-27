@@ -12,11 +12,12 @@ function [] = fir_clust_select_plot(clust_select,path_folder,fdr_file,partition_
 %  %  partition_nii_file='brain_partition_threshold_group_sci140_scg140_scf147'                          % write the file_name without .nii.gz extension
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 clear
+addpath(genpath('/home/yassinebha/github_repos'))
 seed = psom_set_rand_seed(0);
-clust_select=[1 6 13];                                                                           % clusters must be beteween braquet
-path_folder= '/home/yassinebha/Dropbox/twins_study_basc/basc_fir/stability_fir_all_sad_blocs_EXP2_test1/FIR_EXP2_test1_nii/sci10_scg7_scf7'; % the hole path folder
-fdr_file='fdr_group_average_sci10_scg7_scf7';                                                  % write the file_name without .mat extension
-partition_nii_file='brain_partition_consensus_group_sci10_scg7_scf7';                          % write the file_name without .nii.gz extension
+clust_select=[ 84 , 128 , 59 , 149 , 110 , 83 ];                                                                          % clusters must be beteween braquet
+path_folder= '/peuplier/database10/nki_enhanced/stability_fir_perc_breathhold_1400_noscrub/stability_group/sci150_scg150_scf153_nii'; % the hole path folder
+fdr_file='fdr_group_average_sci150_scg150_scf153';                                                  % write the file_name without .mat extension
+partition_nii_file='brain_partition_consensus_group_sci150_scg150_scf153';                          % write the file_name without .nii.gz extension
 
 
 
@@ -63,11 +64,12 @@ niak_write_vol(hdr,vol2);
 
 
 % show brain patition reordered with mricron
-B=size(test_fir.mean)(2);
-system(['mricron ~/database/white_template.nii.gz -c -0 -o ' path_folder filesep partition_nii_file '_select_clust' char(str) '.nii.gz -m  ~/.mricron/multislice/default.ini -c jet_linear -l 0.02 -h ' num2str(B) ' -z & ']);
+B=size(test_fir.mean);
+B=B(2);
+system(['~/mricron/./mricron ~/database/white_template.nii.gz -c -0 -o ' path_folder filesep partition_nii_file '_select_clust' char(str) '.nii.gz  -c jet_linear -l 0.02 -h ' num2str(B) ' -z & ']);
 
 % plot fir
-linewidth = 0.1;
+linewidth = 0.3;
 background = [0.9 0.9 0.9]; % color of the background for non-significant responses
 opt_fig.flag_legend = false;
 
@@ -145,8 +147,8 @@ end
     
 % save .pdf and .svg files 
 namesave = [ path_folder filesep 'plot_fir_select_clust' char(str)];
-files_out = strcat(namesave,'.svg');
-print(files_out,'-dsvg','-r600');
+files_out = strcat(namesave,'.png');
+print(files_out,'-dpng');
     
 %  split cluster partition
 cd ([ path_folder filesep]);
@@ -155,25 +157,14 @@ niak_brick_clusters_to_3d([partition_nii_file '_select_clust' char(str) '.nii.gz
 %   isolated scale networks figure in mricron
 for i=1:size(test_fir.mean)(2)
     if i < 10
-    system(['mricron ~/database/white_template.nii.gz -c -0 -o ' path_folder filesep partition_nii_file '_select_clust' char(str) '_000' num2str(i) '.nii.gz -c jet_linear -l 0.02 -h ' num2str(B) ' -z & ']);
+    system(['~/mricron/./mricron ~/database/white_template.nii.gz -c -0 -o ' path_folder filesep partition_nii_file '_select_clust' char(str) '_000' num2str(i) '.nii.gz -c jet_linear -l 0.02 -h ' num2str(B) ' -z & ']);
     system(['echo ' 'fig_' partition_nii_file '_select_clust' char(str) '_000' num2str(i)]);
     else
-    system(['mricron ~/database/white_template.nii.gz -c -0 -o ' path_folder filesep partition_nii_file '_select_clust' char(str) '_00' num2str(i) '.nii.gz -c jet_linear -l 0.02 -h ' num2str(B) ' -z & ']);
+    system(['~/mricron/./mricron ~/database/white_template.nii.gz -c -0 -o ' path_folder filesep partition_nii_file '_select_clust' char(str) '_00' num2str(i) '.nii.gz -c jet_linear -l 0.02 -h ' num2str(B) ' -z & ']);
     system(['echo ' 'fig_' partition_nii_file '_select_clust' char(str) '_00' num2str(i)]);
     endif
     system(['echo ' 'fig_' partition_nii_file '_select_clust' char(str) '_all']);
 end
+system(['echo ' 'fig_' partition_nii_file '_select_clust' char(str) '_all']);
 
-
-for i=1:size(test_fir.mean)(2)
-    if i < 10
-    system(['mricron ~/database/white_template.nii.gz -c -0 -o ' path_folder filesep partition_nii_file '_000' num2str(i) '.nii.gz -c jet_linear -l 0.02 -h ' num2str(B) ' -z & ']);
-    system(['echo ' 'fig_' partition_nii_file '_s7_000' num2str(i)]);
-    else
-    system(['mricron ~/database/white_template.nii.gz -c -0 -o ' path_folder filesep partition_nii_file '_select_clust' char(str) '_00' num2str(i) '.nii.gz -c jet_linear -l 0.02 -h ' num2str(B) ' -z & ']);
-    system(['echo ' 'fig_' partition_nii_file '_select_clust' char(str) '_00' num2str(i)]);
-    endif
-    
-end
-system(['echo ' 'fig_' partition_nii_file '_s' num2str(B) '_all']);
 endfunction
