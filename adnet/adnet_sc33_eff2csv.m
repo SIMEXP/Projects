@@ -47,3 +47,13 @@ for num_seed = 1:length(list_seed)
 
     save(file_res,'tab','list_site','list_contrast','list_subject','list_sig');
 end
+
+%% notes to do the plots
+% data_cne = tab{2,1};
+% data_mci = tab{3,1};
+% clf
+% for num_sig = 1:size(data_cne,2)
+%     hold on
+%     plot(num_sig-0.2+0.1*rand(size(data_cne,1),1),data_cne(:,num_sig),'.')
+%    plot(num_sig+0.2+0.1*rand(size(data_mci,1),1),data_mci(:,num_sig),'.')
+% end
