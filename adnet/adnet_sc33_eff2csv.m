@@ -1,6 +1,6 @@
 clear
 
-%% This script shows how to extract the beta values and the significance for a number of connections
+%% This script shows how to extract the beta values, the std of beta  and the significance for a number of connections
 %% from the results of the glm_connectome pipeline.
 %%
 %% This script will download and extract some data in the current folder, if it can't find a number of datasets.
@@ -13,23 +13,21 @@ clear
 
 % this will write a csv for one seed of interest
 
-%% add niak path
-addpath(genpath('/sb/project/gsf-624-aa/quarantaine/niak-boss-0.12.18'))
-
-%% Select the scale and contrast
+%% Parameters
+path_data = '/home/pbellec/database/adnet/adnet_main_results/';
+seed = 10; % select seed of interest
 scale = 'sci35_scg35_scf33'; % select scale
-contrast = {'avg_ctrl','avg_mci','ctrlvsmci'}; % list the contrasts of interest
-contrast1 = 'ctrlvsmci'; % specify contrasts
-% contrast2 = 'ctrlvsad';
-% contrast3 = 'mcivsad';
+list_contrast = { 'ctrlvsmci' , 'avg_ctrl' , 'avg_mci' }; % list the contrasts of interest
+list_site = { 'pooled' , 'adni2' , 'criugmmci' , 'adpd' , 'mnimci' }; % list of the sites.
 
 %% First read the networks and find a few significant seeds
-[hdr,netwk] = niak_read_vol([pwd filesep 'glm30b_20141216_nii' filesep scale filesep 'networks_' scale '.nii.gz']);
-[hdr,tmap1] = niak_read_vol([pwd filesep 'glm30b_20141216_nii' filesep scale filesep contrast1 filesep 'fdr_' contrast1 '_' scale '.nii.gz']);
-% [hdr,tmap2] = niak_read_vol([pwd filesep 'glm17d_nii' filesep scale filesep contrast2 filesep 'fdr_' contrast2 '_' scale '.nii.gz']);
-% [hdr,tmap3] = niak_read_vol([pwd filesep 'glm17d_nii' filesep scale filesep contrast3 filesep 'fdr_' contrast3 '_' scale '.nii.gz']); 
-seed = 10; % select seed of interest
+[hdr,netwk] = niak_read_vol([path_data 'glm30b_' list_site{1} '_' scale filesep 'networks_' scale '.nii.gz']);
+[hdr,tmap1] = niak_read_vol([[path_data 'glm30b_' list_site{1} '_' scale filesep list_contrast{1} filesep 'fdr_' list_contrast{1} '_' scale '.nii.gz']);
 list_sig = unique(netwk((tmap1(:,:,:,seed)~=0))); %| (tmap2(:,:,:,seed)~=0) | (tmap3(:,:,:,seed)~=0)));  % conditions for list_sig; can also do list_sig = unique(netwk((tmap1(:,:,:,7)~=0)&(tmap2(:,:,:,7)~=0)));
+
+for num_c = 1:length(list_contrast)
+    contrast = list_contrast{num_c};
+end
 
 %% Extract the info for each contrast
 
