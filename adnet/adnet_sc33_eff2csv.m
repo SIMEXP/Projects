@@ -2,12 +2,12 @@ clear
 
 %% This script shows how to extract the connectivity values for different contrasts and seeds in the ADNET analysis.
 
-% this will write a csv for one seed of interest
+% this will write a csv for seeds of interest
 clear all
 
 %% Parameters
-path_data = '/home/pbellec/database/adnet/adnet_main_results/';
-list_seed = [10]; % select seed of interest
+path_data = '/home/atam/database/adnet/results/main_results/';
+list_seed = [2; 9; 10; 22]; % select seed of interest 
 scale = 'sci35_scg35_scf33'; % select scale
 list_contrast = { 'ctrlvsmci' , 'avg_ctrl' , 'avg_mci' }; % list the contrasts of interest
 list_site = { 'adni2' , 'criugmmci' , 'adpd' , 'mnimci' }; % list of the sites.
@@ -48,12 +48,118 @@ for num_seed = 1:length(list_seed)
     save(file_res,'tab','list_site','list_contrast','list_subject','list_sig');
 end
 
-%% notes to do the plots
-% data_cne = tab{2,1};
-% data_mci = tab{3,1};
-% clf
-% for num_sig = 1:size(data_cne,2)
-%     hold on
-%     plot(num_sig-0.2+0.1*rand(size(data_cne,1),1),data_cne(:,num_sig),'.')
-%    plot(num_sig+0.2+0.1*rand(size(data_mci,1),1),data_mci(:,num_sig),'.')
-% end
+%% to do the plots (overlay of boxplot with raw data points)
+
+figure
+
+%% adni2 subplot
+subplot(2,2,1) 
+adni_cne = tab{2,1};
+adni_mci = tab{3,1};
+
+% plotting raw data points
+for num_sig = 1:size(adni_cne,2)
+    hold on
+    adni_plot_cne = plot(num_sig-0.05+0.1*rand(size(adni_cne,1),1),adni_cne(:,num_sig),'.','Marker','o','MarkerSize',3,'MarkerFaceColor','red','MarkerEdgeColor','red');
+    adni_plot_mci = plot(num_sig+0.25+0.1*rand(size(adni_mci,1),1),adni_mci(:,num_sig),'.','Marker','o','MarkerSize',3,'MarkerFaceColor','blue','MarkerEdgeColor','blue');
+end
+
+% making box plots
+adni_position_cne = 1:1:num_sig; % set position of cne boxes to be placed from 1 to num_sig
+adni_position_mci = 1.3:1:num_sig+0.3; % set position of mci boxes to be shifted from cne by 0.3
+adni_box_cne = boxplot(adni_cne,'colors','k','width',0.18,'positions',adni_position_cne,'symbol','');
+set(gca,'XTickLabel',{' '}) % temporarily get rid of xtick labels
+hold on
+adni_box_mci = boxplot(adni_mci,'colors','k','width',0.18,'positions',adni_position_mci,'symbol',''); 
+
+% aesthetics
+ylim([-1 1.5])
+labels_parcels = {list_sig(1:num_sig)}; 
+set(gca,'XTick',1.15:num_sig+0.15,'XTickLabel',labels_parcels) % automatically label with parcels with significant connections to seed
+title('ADNI2') % first subplot title
+
+%% criugmmci subplot
+subplot(2,2,2)
+criugmmci_cne = tab{2,2};
+criugmmci_mci = tab{3,2};
+
+% plotting raw data points
+for num_sig = 1:size(criugmmci_cne,2)
+    hold on
+    criugmmci_plot_cne = plot(num_sig-0.05+0.1*rand(size(criugmmci_cne,1),1),criugmmci_cne(:,num_sig),'.','Marker','o','MarkerSize',3,'MarkerFaceColor','red','MarkerEdgeColor','red');
+    criugmmci_plot_mci = plot(num_sig+0.25+0.1*rand(size(criugmmci_mci,1),1),criugmmci_mci(:,num_sig),'.','Marker','o','MarkerSize',3,'MarkerFaceColor','blue','MarkerEdgeColor','blue');
+end
+
+% making box plots
+criugmmci_position_cne = 1:1:num_sig; % set position of cne boxes to be placed from 1 to num_sig
+criugmmci_position_mci = 1.3:1:num_sig+0.3; % set position of mci boxes to be shifted from cne by 0.3
+criugmmci_box_cne = boxplot(criugmmci_cne,'colors','k','width',0.18,'positions',criugmmci_position_cne,'symbol','');
+set(gca,'XTickLabel',{' '}) % temporarily get rid of xtick labels
+hold on
+criugmmci_box_mci = boxplot(criugmmci_mci,'colors','k','width',0.18,'positions',criugmmci_position_mci,'symbol',''); 
+
+% aesthetics
+ylim([-1 1.5])
+labels_parcels = {list_sig(1:num_sig)}; 
+set(gca,'XTick',1.15:num_sig+0.15,'XTickLabel',labels_parcels) % automatically label with parcels with significant connections to seed
+title('CRIUGMa') % second subplot title
+
+%% adpd subplot
+subplot(2,2,3)
+adpd_cne = tab{2,3};
+adpd_mci = tab{3,3};
+
+% plotting raw data points
+for num_sig = 1:size(adpd_cne,2)
+    hold on
+    adpd_plot_cne = plot(num_sig-0.05+0.1*rand(size(adpd_cne,1),1),adpd_cne(:,num_sig),'.','Marker','o','MarkerSize',3,'MarkerFaceColor','red','MarkerEdgeColor','red');
+    adpd_plot_mci = plot(num_sig+0.25+0.1*rand(size(adpd_mci,1),1),adpd_mci(:,num_sig),'.','Marker','o','MarkerSize',3,'MarkerFaceColor','blue','MarkerEdgeColor','blue');
+end
+
+% making box plots
+adpd_position_cne = 1:1:num_sig; % set position of cne boxes to be placed from 1 to num_sig
+adpd_position_mci = 1.3:1:num_sig+0.3; % set position of mci boxes to be shifted from cne by 0.3
+adpd_box_cne = boxplot(adpd_cne,'colors','k','width',0.18,'positions',adpd_position_cne,'symbol','');
+set(gca,'XTickLabel',{' '}) % temporarily get rid of xtick labels
+hold on
+adpd_box_mci = boxplot(adpd_mci,'colors','k','width',0.18,'positions',adpd_position_mci,'symbol',''); 
+
+% aesthetics 
+ylim([-1 1.5])
+labels_parcels = {list_sig(1:num_sig)};
+set(gca,'XTick',1.15:num_sig+0.15,'XTickLabel',labels_parcels) % automatically label with parcels with significant connections to seed
+title('CRIUGMb') % third subplot title
+
+%% mnimci subplot
+subplot(2,2,4)
+mnimci_cne = tab{2,4};
+mnimci_mci = tab{3,4};
+
+% plotting raw data points
+for num_sig = 1:size(mnimci_cne,2)
+    hold on
+    mnimci_plot_cne = plot(num_sig-0.05+0.1*rand(size(mnimci_cne,1),1),mnimci_cne(:,num_sig),'.','Marker','o','MarkerSize',3,'MarkerFaceColor','red','MarkerEdgeColor','red');
+    mnimci_plot_mci = plot(num_sig+0.25+0.1*rand(size(mnimci_mci,1),1),mnimci_mci(:,num_sig),'.','Marker','o','MarkerSize',3,'MarkerFaceColor','blue','MarkerEdgeColor','blue');
+end
+
+% making box plots
+mnimci_position_cne = 1:1:num_sig; % set position of cne boxes to be placed from 1 to num_sig
+mnimci_position_mci = 1.3:1:num_sig+0.3; % set position of mci boxes to be shifted from cne by 0.3
+mnimci_box_cne = boxplot(mnimci_cne,'colors','k','width',0.18,'positions',mnimci_position_cne,'symbol','');
+set(gca,'XTickLabel',{' '}) % temporarily get rid of xtick labels
+hold on
+mnimci_box_mci = boxplot(mnimci_mci,'colors','k','width',0.18,'positions',mnimci_position_mci,'symbol',''); 
+
+% aesthetics 
+ylim([-1 1.5])
+labels_parcels = {list_sig(1:num_sig)};
+set(gca,'XTick',1.15:num_sig+0.15,'XTickLabel',labels_parcels) % automatically label with parcels with significant connections to seed
+title('MNI') % fourth subplot title
+
+%% other aesthetics of whole figure
+ylabel('Mean connectivity with seed','FontSize',11,'FontName','Helvetica')
+xlabel('Parcel','FontSize',11,'FontName','Helvetica')
+legend('CN','MCI')
+
+%print -painters -dpdf -r600 figure.pdf
+
