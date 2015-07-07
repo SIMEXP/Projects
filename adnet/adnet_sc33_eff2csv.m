@@ -2,12 +2,12 @@ clear
 
 %% This script shows how to extract the connectivity values for different contrasts and seeds in the ADNET analysis.
 
-% this will write a csv for one seed of interest
+% this will write a csv for seeds of interest
 clear all
 
 %% Parameters
-path_data = '/home/pbellec/database/adnet/adnet_main_results/';
-list_seed = [10]; % select seed of interest
+path_data = '/home/atam/database/adnet/results/main_results/';
+list_seed = [2; 9; 10; 22]; % select seed of interest 
 scale = 'sci35_scg35_scf33'; % select scale
 list_contrast = { 'ctrlvsmci' , 'avg_ctrl' , 'avg_mci' }; % list the contrasts of interest
 list_site = { 'adni2' , 'criugmmci' , 'adpd' , 'mnimci' }; % list of the sites.
@@ -48,12 +48,33 @@ for num_seed = 1:length(list_seed)
     save(file_res,'tab','list_site','list_contrast','list_subject','list_sig');
 end
 
-%% notes to do the plots
-% data_cne = tab{2,1};
-% data_mci = tab{3,1};
-% clf
-% for num_sig = 1:size(data_cne,2)
-%     hold on
-%     plot(num_sig-0.2+0.1*rand(size(data_cne,1),1),data_cne(:,num_sig),'.')
-%    plot(num_sig+0.2+0.1*rand(size(data_mci,1),1),data_mci(:,num_sig),'.')
-% end
+%% to do the plots (overlay of boxplot with raw data points)
+% adni2
+data_cne = tab{2,1};
+data_mci = tab{3,1};
+
+% plotting raw data points
+clf
+for num_sig = 1:size(data_cne,2)
+    hold on
+    plot_cne = plot(num_sig-0.05+0.1*rand(size(data_cne,1),1),data_cne(:,num_sig),'.','Marker','o','MarkerSize',5,'MarkerFaceColor','red','MarkerEdgeColor','red');
+    plot_mci = plot(num_sig+0.25+0.1*rand(size(data_mci,1),1),data_mci(:,num_sig),'.','Marker','o','MarkerSize',5,'MarkerFaceColor','blue','MarkerEdgeColor','blue');
+end
+
+% making box plots
+position_cne = 1:1:num_sig; % set position of cne boxes to be placed from 1 to num_sig
+position_mci = 1.3:1:num_sig+0.3; % set position of mci boxes to be shifted from cne by 0.3
+box_cne = boxplot(data_cne,'colors','r','width',0.18,'positions',position_cne,'symbol','');
+set(gca,'XTickLabel',{' '}) % temporarily get rid of xtick labels
+hold on
+box_mci = boxplot(data_mci,'colors','b','width',0.18,'positions',position_mci,'symbol',''); 
+
+% other aesthetics of figure
+ylim auto
+labels_parcels = {list_sig(1:num_sig)}; 
+set(gca,'XTick',1.15:num_sig+0.15,'XTickLabel',labels_parcels) % automatically label with parcels with significant connections to seed
+ylabel('Mean connectivity with seed (ADNI2)','FontSize',11,'FontName','Helvetica')
+xlabel('Parcel','FontSize',11,'FontName','Helvetica')
+legend('CN','MCI')
+
+
