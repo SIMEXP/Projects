@@ -53,7 +53,7 @@ end
 figure
 
 %% adni2 subplot
-subplot(4,1,1) 
+subplot(2,2,1) 
 adni_cne = tab{2,1};
 adni_mci = tab{3,1};
 
@@ -79,7 +79,7 @@ set(gca,'XTick',1.15:num_sig+0.15,'XTickLabel',labels_parcels) % automatically l
 title('ADNI2') % first subplot title
 
 %% criugmmci subplot
-subplot(4,1,2)
+subplot(2,2,2)
 criugmmci_cne = tab{2,2};
 criugmmci_mci = tab{3,2};
 
@@ -105,7 +105,7 @@ set(gca,'XTick',1.15:num_sig+0.15,'XTickLabel',labels_parcels) % automatically l
 title('CRIUGMa') % second subplot title
 
 %% adpd subplot
-subplot(4,1,3)
+subplot(2,2,3)
 adpd_cne = tab{2,3};
 adpd_mci = tab{3,3};
 
@@ -131,7 +131,7 @@ set(gca,'XTick',1.15:num_sig+0.15,'XTickLabel',labels_parcels) % automatically l
 title('CRIUGMb') % third subplot title
 
 %% mnimci subplot
-subplot(4,1,4)
+subplot(2,2,4)
 mnimci_cne = tab{2,4};
 mnimci_mci = tab{3,4};
 
