@@ -60,8 +60,8 @@ adni_mci = tab{3,1};
 % plotting raw data points
 for num_sig = 1:size(adni_cne,2)
     hold on
-    adni_plot_cne = plot(num_sig-0.05+0.1*rand(size(adni_cne,1),1),adni_cne(:,num_sig),'.','Marker','o','MarkerSize',5,'MarkerFaceColor','red','MarkerEdgeColor','red');
-    adni_plot_mci = plot(num_sig+0.25+0.1*rand(size(adni_mci,1),1),adni_mci(:,num_sig),'.','Marker','o','MarkerSize',5,'MarkerFaceColor','blue','MarkerEdgeColor','blue');
+    adni_plot_cne = plot(num_sig-0.05+0.1*rand(size(adni_cne,1),1),adni_cne(:,num_sig),'.','Marker','o','MarkerSize',3,'MarkerFaceColor','red','MarkerEdgeColor','red');
+    adni_plot_mci = plot(num_sig+0.25+0.1*rand(size(adni_mci,1),1),adni_mci(:,num_sig),'.','Marker','o','MarkerSize',3,'MarkerFaceColor','blue','MarkerEdgeColor','blue');
 end
 
 % making box plots
@@ -86,8 +86,8 @@ criugmmci_mci = tab{3,2};
 % plotting raw data points
 for num_sig = 1:size(criugmmci_cne,2)
     hold on
-    criugmmci_plot_cne = plot(num_sig-0.05+0.1*rand(size(criugmmci_cne,1),1),criugmmci_cne(:,num_sig),'.','Marker','o','MarkerSize',5,'MarkerFaceColor','red','MarkerEdgeColor','red');
-    criugmmci_plot_mci = plot(num_sig+0.25+0.1*rand(size(criugmmci_mci,1),1),criugmmci_mci(:,num_sig),'.','Marker','o','MarkerSize',5,'MarkerFaceColor','blue','MarkerEdgeColor','blue');
+    criugmmci_plot_cne = plot(num_sig-0.05+0.1*rand(size(criugmmci_cne,1),1),criugmmci_cne(:,num_sig),'.','Marker','o','MarkerSize',3,'MarkerFaceColor','red','MarkerEdgeColor','red');
+    criugmmci_plot_mci = plot(num_sig+0.25+0.1*rand(size(criugmmci_mci,1),1),criugmmci_mci(:,num_sig),'.','Marker','o','MarkerSize',3,'MarkerFaceColor','blue','MarkerEdgeColor','blue');
 end
 
 % making box plots
@@ -112,8 +112,8 @@ adpd_mci = tab{3,3};
 % plotting raw data points
 for num_sig = 1:size(adpd_cne,2)
     hold on
-    adpd_plot_cne = plot(num_sig-0.05+0.1*rand(size(adpd_cne,1),1),adpd_cne(:,num_sig),'.','Marker','o','MarkerSize',5,'MarkerFaceColor','red','MarkerEdgeColor','red');
-    adpd_plot_mci = plot(num_sig+0.25+0.1*rand(size(adpd_mci,1),1),adpd_mci(:,num_sig),'.','Marker','o','MarkerSize',5,'MarkerFaceColor','blue','MarkerEdgeColor','blue');
+    adpd_plot_cne = plot(num_sig-0.05+0.1*rand(size(adpd_cne,1),1),adpd_cne(:,num_sig),'.','Marker','o','MarkerSize',3,'MarkerFaceColor','red','MarkerEdgeColor','red');
+    adpd_plot_mci = plot(num_sig+0.25+0.1*rand(size(adpd_mci,1),1),adpd_mci(:,num_sig),'.','Marker','o','MarkerSize',3,'MarkerFaceColor','blue','MarkerEdgeColor','blue');
 end
 
 % making box plots
@@ -138,8 +138,8 @@ mnimci_mci = tab{3,4};
 % plotting raw data points
 for num_sig = 1:size(mnimci_cne,2)
     hold on
-    mnimci_plot_cne = plot(num_sig-0.05+0.1*rand(size(mnimci_cne,1),1),mnimci_cne(:,num_sig),'.','Marker','o','MarkerSize',5,'MarkerFaceColor','red','MarkerEdgeColor','red');
-    mnimci_plot_mci = plot(num_sig+0.25+0.1*rand(size(mnimci_mci,1),1),mnimci_mci(:,num_sig),'.','Marker','o','MarkerSize',5,'MarkerFaceColor','blue','MarkerEdgeColor','blue');
+    mnimci_plot_cne = plot(num_sig-0.05+0.1*rand(size(mnimci_cne,1),1),mnimci_cne(:,num_sig),'.','Marker','o','MarkerSize',3,'MarkerFaceColor','red','MarkerEdgeColor','red');
+    mnimci_plot_mci = plot(num_sig+0.25+0.1*rand(size(mnimci_mci,1),1),mnimci_mci(:,num_sig),'.','Marker','o','MarkerSize',3,'MarkerFaceColor','blue','MarkerEdgeColor','blue');
 end
 
 % making box plots
@@ -161,4 +161,5 @@ ylabel('Mean connectivity with seed','FontSize',11,'FontName','Helvetica')
 xlabel('Parcel','FontSize',11,'FontName','Helvetica')
 legend('CN','MCI')
 
+%print -painters -dpdf -r600 figure.pdf
 
