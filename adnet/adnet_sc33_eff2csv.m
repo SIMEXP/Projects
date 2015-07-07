@@ -76,7 +76,6 @@ adni_box_mci = boxplot(adni_mci,'colors','k','width',0.18,'positions',adni_posit
 ylim auto
 labels_parcels = {list_sig(1:num_sig)}; 
 set(gca,'XTick',1.15:num_sig+0.15,'XTickLabel',labels_parcels) % automatically label with parcels with significant connections to seed
-
 title('ADNI2') % first subplot title
 
 %% criugmmci subplot
@@ -99,6 +98,10 @@ set(gca,'XTickLabel',{' '}) % temporarily get rid of xtick labels
 hold on
 criugmmci_box_mci = boxplot(criugmmci_mci,'colors','k','width',0.18,'positions',criugmmci_position_mci,'symbol',''); 
 
+% aesthetics
+ylim auto
+labels_parcels = {list_sig(1:num_sig)}; 
+set(gca,'XTick',1.15:num_sig+0.15,'XTickLabel',labels_parcels) % automatically label with parcels with significant connections to seed
 title('CRIUGMa') % second subplot title
 
 %% adpd subplot
@@ -121,6 +124,10 @@ set(gca,'XTickLabel',{' '}) % temporarily get rid of xtick labels
 hold on
 adpd_box_mci = boxplot(adpd_mci,'colors','k','width',0.18,'positions',adpd_position_mci,'symbol',''); 
 
+% aesthetics 
+ylim auto
+labels_parcels = {list_sig(1:num_sig)};
+set(gca,'XTick',1.15:num_sig+0.15,'XTickLabel',labels_parcels) % automatically label with parcels with significant connections to seed
 title('CRIUGMb') % third subplot title
 
 %% mnimci subplot
@@ -147,9 +154,9 @@ mnimci_box_mci = boxplot(mnimci_mci,'colors','k','width',0.18,'positions',mnimci
 ylim auto
 labels_parcels = {list_sig(1:num_sig)};
 set(gca,'XTick',1.15:num_sig+0.15,'XTickLabel',labels_parcels) % automatically label with parcels with significant connections to seed
-title('MNI') % third subplot title
+title('MNI') % fourth subplot title
 
-%% other aesthetics of figure
+%% other aesthetics of whole figure
 ylabel('Mean connectivity with seed','FontSize',11,'FontName','Helvetica')
 xlabel('Parcel','FontSize',11,'FontName','Helvetica')
 legend('CN','MCI')
