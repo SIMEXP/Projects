@@ -1,6 +1,6 @@
 %% script for overlay of boxplot with raw data points per (parcel to parcel) connection
 
-% load glm file that came out of adnet_sc33_eff2csv.m first
+% load .mat file that came out of adnet_sc33_eff2csv.m first
 
 figure
 
@@ -32,20 +32,15 @@ end
 
 %% making box plots
 for jj = 1:length(data_cne)
-    maxpos = size(data_cne,2);
-    position_cne = 1:1:maxpos; % set position of cne boxes to be placed from 1 to length(data_cne)
-    position_mci = 1.3:1:maxpos+0.3; % set position of mci boxes to be shifted from cne by 0.3
+    maxpos = size(data_cne{jj},2);
+    position_cne = linspace(1,maxpos,maxpos); % set position of cne boxes to be placed from 1 to length(data_cne)
+    position_mci = position_cne+0.3; % set position of mci boxes to be shifted from cne by 0.3
     boxplot(data_cne{jj},'colors','k','width',0.18,'positions',position_cne,'symbol','');
     set(gca,'XTickLabel',{' '}) % temporarily get rid of xtick labels
     hold on
-    boxplot(data_mci{jj},'colors','k','width',0.18,'positions',position_mci,'symbol',''); 
+    boxplot(data_mci{jj},'colors','k','width',0.18,'positions',position_mci + 0.1*randn(size(position_mci)),'symbol',''); 
 end
-
-% %% box plots
-%     data_all = [data_cne;data_mci];
-%     group = {data_cne,data_mci};
-%     boxplot(data_all,group,'factorgap',10,'color','kk')
-%     
+    
 %% aesthetics
 ylim([-1 1.5])
 labels_sites = 1:maxpos; 
