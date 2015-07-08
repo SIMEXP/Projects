@@ -26,8 +26,8 @@ data_mci = {adni_mci,criugmmci_mci,adpd_mci,mnimci_mci};
 %% plotting raw data points for all sites for one connection
 for ii = 1:length(data_cne)
     hold on
-    plot(ii-0.05+0.1*rand(size(data_cne,1),1),data_cne{ii}(:,connec),'.','Marker','o','MarkerSize',3,'MarkerFaceColor','red','MarkerEdgeColor','red');
-    plot(ii+0.25+0.1*rand(size(data_mci,1),1),data_mci{ii}(:,connec),'.','Marker','o','MarkerSize',3,'MarkerFaceColor','blue','MarkerEdgeColor','blue');
+    plot(ii-0.05+0.1*rand(size(data_cne{ii},1),1),data_cne{ii}(:,connec),'.','Marker','o','MarkerSize',3,'MarkerFaceColor','red','MarkerEdgeColor','red');
+    plot(ii+0.25+0.1*rand(size(data_mci{ii},1),1),data_mci{ii}(:,connec),'.','Marker','o','MarkerSize',3,'MarkerFaceColor','blue','MarkerEdgeColor','blue');
 end
 
 %% making box plots
