@@ -4,8 +4,8 @@
 
 figure
 
+%% specify data
 connec = 1; % specify connection (from 1:length(list_sig))
-num_site = 4; % specify number of sites
 
 % adni2 data
 adni_cne = tab{2,1}(:,connec);
@@ -33,22 +33,19 @@ end
 %% making box plots
 for jj = 1:length(data_cne)
     maxpos = size(data_cne,2);
-    position_cne = 1:1:num_site; % set position of cne boxes to be placed from 1 to length(data_cne)
-    position_mci = 1.3:1:num_site+0.3; % set position of mci boxes to be shifted from cne by 0.3
+    position_cne = 1:1:maxpos; % set position of cne boxes to be placed from 1 to length(data_cne)
+    position_mci = 1.3:1:maxpos+0.3; % set position of mci boxes to be shifted from cne by 0.3
     boxplot(data_cne{jj},'colors','k','width',0.18,'positions',position_cne,'symbol','');
     set(gca,'XTickLabel',{' '}) % temporarily get rid of xtick labels
     hold on
     boxplot(data_mci{jj},'colors','k','width',0.18,'positions',position_mci,'symbol',''); 
 end
 
-%% box plots
-for jj = 1:length(data_cne)
-    data_all = [data_cne;data_mci];
-    maxpos = size(data_cne,2);
-    box_cne = data_cne{jj}(:,1:2:maxpos);
-    box_mci = data_mci{jj}(:,2:2:maxpos);
-    boxplot(
-
+% %% box plots
+%     data_all = [data_cne;data_mci];
+%     group = {data_cne,data_mci};
+%     boxplot(data_all,group,'factorgap',10,'color','kk')
+%     
 %% aesthetics
 ylim([-1 1.5])
 labels_sites = 1:maxpos; 
