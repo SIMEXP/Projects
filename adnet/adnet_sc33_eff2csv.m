@@ -7,7 +7,7 @@ clear all
 
 %% Parameters
 path_data = '/home/atam/database/adnet/results/main_results/';
-list_seed = [2; 9; 10; 22]; % select seed of interest 
+list_seed = [2; 9; 12; 22]; % select seed of interest 
 scale = 'sci35_scg35_scf33'; % select scale
 list_contrast = { 'ctrlvsmci' , 'avg_ctrl' , 'avg_mci' }; % list the contrasts of interest
 list_site = { 'adni2' , 'criugmmci' , 'adpd' , 'mnimci' }; % list of the sites.
