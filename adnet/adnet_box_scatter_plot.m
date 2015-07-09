@@ -2,11 +2,10 @@
 
 % load .mat file that came out of adnet_sc33_eff2csv.m first
 
-clf
+figure('position',[0 0 800 800]);
 
 %% specify data
 connec = 1; % specify connection (from 1:length(list_sig))
-num_site = 4; % specify number of sites
 
 % adni2 data
 adni_cne = tab{2,1}(:,connec);
@@ -32,30 +31,30 @@ for i = 1:4
     all_data = [all_data;data_cne{i}];
     labels_data = [labels_data;repmat(10*(i),length(data_cne{i}),1)];
     
-    all_data = [all_data;data_mci{i}]
+    all_data = [all_data;data_mci{i}];
     labels_data = [labels_data;repmat(10*(i+0.5),length(data_mci{i}),1)];
 end
 
 hold on
 %% plotting raw data points for all sites for one connection
 for ii = 1:4
-    idx = ii*2-1
-    plot(idx-0.05+0.1*rand(size(data_cne{ii},1),1),data_cne{ii}(:,connec),'.','Marker','o','MarkerSize',3,'MarkerFaceColor','red','MarkerEdgeColor','red');
+    idx = ii*2-1;
+    plot(idx-0.1+0.2*rand(size(data_cne{ii},1),1),data_cne{ii}(:,connec),'.','Marker','o','MarkerSize',3,'MarkerFaceColor','red','MarkerEdgeColor','red');
 end
 
 for ii = 1:4
-    idx = ii*2
-    plot(idx-0.05+0.1*rand(size(data_mci{ii},1),1),data_mci{ii}(:,connec),'.','Marker','o','MarkerSize',3,'MarkerFaceColor','blue','MarkerEdgeColor','blue');
+    idx = ii*2;
+    plot(idx-0.1+0.2*rand(size(data_mci{ii},1),1),data_mci{ii}(:,connec),'.','Marker','o','MarkerSize',3,'MarkerFaceColor','blue','MarkerEdgeColor','blue');
 end
 
 %% overlay box plots
-boxplot(all_data,labels_data,'color','k','symbol','','width',0.18);
+boxplot(all_data,labels_data,'color','k','symbol','','width',0.5);
+hold off
 
 %% aesthetics
 ylim([-1 1.5])
-labels_sites = ['ADNI2','CRIUGMa','CRIUGMb','MNI'];
-set(gca,'XTick',1.15:num_site+0.15,'XTickLabel',labels_sites) % automatically label with parcels with significant connections to seedylabel('Mean connectivity with seed','FontSize',11,'FontName','Helvetica')
+set(gca,'XTick',1.5:2:8.5,'XTickLabel',[' ADNI2 ';'CRIUGMa';'CRIUGMb';'  MNI  ']); 
 xlabel('Sample','FontSize',11,'FontName','Helvetica')
-legend('CN','MCI')
+ylabel('Mean connectivity with seed','FontSize',11,'FontName','Helvetica')
 
-%print -painters -dpdf -r600 figure.pdf
+print -painters -dpdf -r600 figure.pdf
