@@ -5,7 +5,7 @@
 figure('position',[0 0 800 800]); % set figure to specific size
 
 %% specify data
-connec = 1; % specify desired connection (from 1:length(list_sig))
+connec = 2; % specify desired connection (from 1:length(list_sig))
 
 % adni2 data
 adni_cne = tab{2,1}(:,connec); 
@@ -37,12 +37,12 @@ hold on
 %% plotting raw data points for all sites for one connection
 for ii = 1:4
     idx = ii*2-1;
-    plot(idx-0.1+0.2*rand(size(data_cne{ii},1),1),data_cne{ii}(:,connec),'.','Marker','o','MarkerSize',3,'MarkerFaceColor','red','MarkerEdgeColor','red');
+    plot(idx-0.1+0.2*rand(size(data_cne{ii},1),1),data_cne{ii},'.','Marker','o','MarkerSize',3,'MarkerFaceColor','red','MarkerEdgeColor','red');
 end
 
 for ii = 1:4
     idx = ii*2;
-    plot(idx-0.1+0.2*rand(size(data_mci{ii},1),1),data_mci{ii}(:,connec),'.','Marker','o','MarkerSize',3,'MarkerFaceColor','blue','MarkerEdgeColor','blue');
+    plot(idx-0.1+0.2*rand(size(data_mci{ii},1),1),data_mci{ii},'.','Marker','o','MarkerSize',3,'MarkerFaceColor','blue','MarkerEdgeColor','blue');
 end
 
 %% overlay box plots
@@ -56,6 +56,6 @@ set(gca,'XTick',1.5:2:8.5,'XTickLabel',[' ADNI2 ';'CRIUGMa';'CRIUGMb';'  MNI  ']
 xlabel('Sample','FontSize',11,'FontName','Helvetica')
 ylabel('Mean connectivity with seed','FontSize',11,'FontName','Helvetica')
 set(bp,'linewidth',1.5);
-title('Frontal Inf Tri (7)')
+title('connection name')
 
 print -painters -dpdf -r600 figure1.pdf
