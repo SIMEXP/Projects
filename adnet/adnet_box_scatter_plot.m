@@ -56,5 +56,6 @@ set(gca,'XTick',1.5:2:8.5,'XTickLabel',[' ADNI2 ';'CRIUGMa';'CRIUGMb';'  MNI  ']
 xlabel('Sample','FontSize',11,'FontName','Helvetica')
 ylabel('Mean connectivity with seed','FontSize',11,'FontName','Helvetica')
 set(bp,'linewidth',1.5);
+title('Frontal Inf Tri (7)')
 
 print -painters -dpdf -r600 figure1.pdf
