@@ -1,6 +1,8 @@
 %% script for overlay of boxplot with raw data points per (parcel to parcel) connection for each site
 
-% load .mat file that came out of adnet_sc33_eff2csv.m first
+clear all
+
+load adnet_main_results_seed22 % load .mat file that came out of adnet_sc33_eff2csv.m first
 
 figure('position',[0 0 800 800]); % set figure to specific size
 
