@@ -2,13 +2,13 @@
 
 % load .mat file that came out of adnet_sc33_eff2csv.m first
 
-figure('position',[0 0 800 800]);
+figure('position',[0 0 800 800]); % set figure to specific size
 
 %% specify data
-connec = 1; % specify connection (from 1:length(list_sig))
+connec = 1; % specify desired connection (from 1:length(list_sig))
 
 % adni2 data
-adni_cne = tab{2,1}(:,connec);
+adni_cne = tab{2,1}(:,connec); 
 adni_mci = tab{3,1}(:,connec);
 % criugmmci data
 criugmmci_cne = tab{2,2}(:,connec);
@@ -22,8 +22,6 @@ mnimci_mci = tab{3,4}(:,connec);
 
 data_cne = {adni_cne,criugmmci_cne,adpd_cne,mnimci_cne};
 data_mci = {adni_mci,criugmmci_mci,adpd_mci,mnimci_mci};
-%data_all = {data_cne,data_mci};
-
 
 all_data=[];
 labels_data=[];
@@ -48,7 +46,8 @@ for ii = 1:4
 end
 
 %% overlay box plots
-boxplot(all_data,labels_data,'color','k','symbol','','width',0.5);
+bp = boxplot(all_data,labels_data,'color','k','symbol','','width',0.5);
+
 hold off
 
 %% aesthetics
@@ -56,5 +55,6 @@ ylim([-1 1.5])
 set(gca,'XTick',1.5:2:8.5,'XTickLabel',[' ADNI2 ';'CRIUGMa';'CRIUGMb';'  MNI  ']); 
 xlabel('Sample','FontSize',11,'FontName','Helvetica')
 ylabel('Mean connectivity with seed','FontSize',11,'FontName','Helvetica')
+set(bp,'linewidth',2);
 
 print -painters -dpdf -r600 figure.pdf
