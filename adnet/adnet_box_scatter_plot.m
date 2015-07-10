@@ -4,7 +4,9 @@ clear all
 
 load adnet_main_results_seed22 % load .mat file that came out of adnet_sc33_eff2csv.m first
 
-figure('position',[0 0 800 800]); % set figure to specific size
+fig1 = figure('position',[0 0 600 800]); % set figure to specific size
+set(fig1,'PaperPositionMode','auto'); % To keep the custom figure settings
+%set(fig1,'PaperOrientation','landscape');
 
 %% specify data
 connec = 2; % specify desired connection (from 1:length(list_sig))
@@ -49,6 +51,7 @@ end
 
 %% overlay box plots
 bp = boxplot(all_data,labels_data,'color','k','symbol','','width',0.5);
+set(findobj(gcf,'LineStyle','--'),'LineStyle','-')
 
 hold off
 
@@ -57,7 +60,7 @@ ylim([-1 1.5])
 set(gca,'XTick',1.5:2:8.5,'XTickLabel',[' ADNI2 ';'CRIUGMa';'CRIUGMb';'  MNI  ']); 
 xlabel('Sample','FontSize',11,'FontName','Helvetica')
 ylabel('Mean connectivity with seed','FontSize',11,'FontName','Helvetica')
-set(bp,'linewidth',1.5);
+set(bp,'linewidth',0.5);
 title('connection name')
 
-print -painters -dpdf -r600 figure1.pdf
+print -painters -dpdf -r600 figure2.pdf
