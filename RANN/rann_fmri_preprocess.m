@@ -178,9 +178,9 @@ opt.smooth_vol.flag_skip = 0;  % Skip spatial smoothing (0: don't skip, 1 : skip
 
 % how to specify a different parameter for two subjects (here subject1 and subject2)
 opt.tune(8).subject = 'P00004507';
-opt.tune(8).param.t1_preprocess.nu_correct.arg = '-distance 50';
+opt.tune(8).param.t1_preprocess.nu_correct.arg = '-distance 100';
 opt.tune(9).subject = 'P00004563';
-opt.tune(9).param.t1_preprocess.nu_correct.arg = '-distance 50';
+opt.tune(9).param.t1_preprocess.nu_correct.arg = '-distance 100';
 
 opt.tune(1).subject = 'P00004216';
 opt.tune(1).param.anat2func.init = 'center';
