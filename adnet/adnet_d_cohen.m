@@ -11,7 +11,7 @@ for ssite = 1:size(tab,2)
     for ss = 1:(size(list_sig,1))
      
         m1 = mean(tab{2,ssite}(:,ss));   % mean connectivity of cne
-        n2 = size(tab{2,ssite}(:,ss),1); % number of cne
+        n1 = size(tab{2,ssite}(:,ss),1); % number of cne
         s1 = std(tab{2,ssite}(:,ss));    % std connectivity of cne
     
         m2 = mean(tab{3,ssite}(:,ss));   % mean connectivity of mci
