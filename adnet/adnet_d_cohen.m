@@ -4,8 +4,8 @@
 % 4 effect sizes (1 for each site) PER CONNECTION
 
 % load .mat file
-d_cohen = zeros(length(list_sig),size(tab,2)); % a connection x site table with Cohen's d
-std_d   = zeros(length(list_sig),size(tab,2)); % a connection x site table with standard deviation of Cohen's d
+cd = zeros(length(list_sig),size(tab,2)); % a connection x site table with Cohen's d
+wd   = zeros(length(list_sig),size(tab,2)); % a connection x site table with the inverse of the variance of Cohen's d
 
 for ssite = 1:size(tab,2)
     for ss = 1:(size(list_sig,1))
@@ -19,9 +19,15 @@ for ssite = 1:size(tab,2)
         s2 = std(tab{3,ssite}(:,ss));    % std connectivity of mci
 
         s_pool = sqrt(((n1-1)*s1^2 + (n2-1)*s2^2)/(n1+n2-2)); % pooled standard deviation
-        d_cohen(ss,ssite) = (m1 - m2)/s_pool;
-        std_d(ss,ssite) = ((n1+n2)/(n1*n2) + (d_cohen(ss,ssite)^2)/(2*(n1+n2-2)))*((n1+n2)/(n1+n2-2)); 
+        cd(ss,ssite) = (m1 - m2)/s_pool;
+        wd(ss,ssite) = (((n1+n2)/(n1*n2) + (cd(ss,ssite)^2)/(2*(n1+n2-2)))*((n1+n2)/(n1+n2-2)))^(-1); 
     end
 end
 
-   
+%% now compute pooled effect size
+eff_size = zeros(length(list_sig),1); % a connection x 1 vector of pooled d estimates
+for ss = 1:(size(list_sig,1))
+   b = cd(ss,:);
+   w = wd(ss,:);
+   eff_size(ss) = sum(b.*w)/sum(w);
+end
