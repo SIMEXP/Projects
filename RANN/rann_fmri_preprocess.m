@@ -83,9 +83,8 @@ for num_s = 1:length(list_subject)
     catch exception
         warning ('The file %s does not exist, I suppressed that subject %s','ANATOMIC',subject);
         files_in = rmfield(files_in,subject);
-
     end
-
+    
     %files_c = psom_files2cell(files_in.(subject).fmri.sess1);
     %for num_f = 1:length(files_c)
     %    if ~psom_exist(files_c{num_f})
@@ -108,17 +107,10 @@ for num_s = 1:length(list_subject)
     
 end
 
-    try
-        files_in.(subject).fmri.session1.pictname = [tmp_path_subj dir([tmp_path_subj 'PictName_r1_' P00004507 '_*.mnc.gz'])(1).name];    
-    catch exception
-        warning ('The file %s does not exist, I suppressed that file from the pipeline %s','pictname',subject);
-    end
-    
-    try
-        files_in.(subject).fmri.session1.pictname = [tmp_path_subj dir([tmp_path_subj 'PictName_r1_' P00004563 '_*.mnc.gz'])(1).name];    
-    catch exception
-        warning ('The file %s does not exist, I suppressed that file from the pipeline %s','pictname',subject);
-    end
+% exclude PIC NAMING (only) for P00004507 and P00004563
+files_in.P00004507.fmri.session1 = rmfield(files_in.P00004507.fmri.session1,'pictname');
+files_in.P00004563.fmri.session1 = rmfield(files_in.P00004563.fmri.session1,'pictname');
+
 
 %% WARNING: Do not use underscores '_' in the IDs of subject, sessions or runs. This may cause bugs in subsequent pipelines.
 
