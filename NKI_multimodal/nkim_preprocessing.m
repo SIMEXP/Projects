@@ -146,11 +146,14 @@ opt.smooth_vol.flag_skip = 0;  % Skip spatial smoothing (0: don't skip, 1 : skip
 %% Tune the parameters for specific subjects %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 opt.tune(1).subject = 's0101463';
-opt.tune(1).param.slice_timing.flag_center = true;
+opt.tune (1).param.slice_timing.arg_nu_correct = '-distance 100';
+opt.tune(1).param.slice_timing.flag_center = false;
 opt.tune(2).subject = 's0103645';
-opt.tune(2).param.slice_timing.flag_center = true;
+opt.tune(2).param.slice_timing.arg_nu_correct = '-distance 100';
+opt.tune(2).param.slice_timing.flag_center = false;
 opt.tune(3).subject = 's0103714';
-opt.tune(3).param.slice_timing.flag_center = true;
+opt.tune(3).param.slice_timing.arg_nu_correct = '-distance 100';
+opt.tune(3).param.slice_timing.flag_center = false;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Run the fmri_preprocess pipeline  %%
