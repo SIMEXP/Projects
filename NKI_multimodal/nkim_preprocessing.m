@@ -85,9 +85,9 @@ for num_s = 1:length(list_subject)
 end
 
 % exclude subjects s0101463, s0103645, and s0103714
-files_in = rmfield(files_in.s0101463);
-files_in = rmfield(files_in.s0103645);
-files_in = rmfield(files_in.s0103714);
+files_in = rmfield(files_in, 's0101463');
+files_in = rmfield(files_in, 's0103645');
+files_in = rmfield(files_in, 's0103714');
 
 %  warning: The file /media/database4/nki_enhanced/raw_mnc/0103714/TfMRI_breathHold_1400/func.mnc.gz does not exist, I suppressed subject 0103714
 %  warning: The file /media/database4/nki_enhanced/raw_mnc/0118439/TfMRI_breathHold_1400/func.mnc.gz does not exist, I suppressed subject 0118439
