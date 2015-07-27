@@ -84,6 +84,11 @@ for num_s = 1:length(list_subject)
     
 end
 
+% exclude subjects s0101463, s0103645, and s0103714
+files_in = rmfield(files_in.s0101463);
+files_in = rmfield(files_in.s0103645);
+files_in = rmfield(files_in.s0103714);
+
 %  warning: The file /media/database4/nki_enhanced/raw_mnc/0103714/TfMRI_breathHold_1400/func.mnc.gz does not exist, I suppressed subject 0103714
 %  warning: The file /media/database4/nki_enhanced/raw_mnc/0118439/TfMRI_breathHold_1400/func.mnc.gz does not exist, I suppressed subject 0118439
 %  warning: The file /media/database4/nki_enhanced/raw_mnc/0120538/TfMRI_breathHold_1400/func.mnc.gz does not exist, I suppressed subject 0120538
@@ -145,15 +150,15 @@ opt.smooth_vol.flag_skip = 0;  % Skip spatial smoothing (0: don't skip, 1 : skip
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Tune the parameters for specific subjects %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-opt.tune(1).subject = 's0101463';
-opt.tune (1).param.slice_timing.arg_nu_correct = '-distance 100';
-opt.tune(1).param.slice_timing.flag_center = false;
-opt.tune(2).subject = 's0103645';
-opt.tune(2).param.slice_timing.arg_nu_correct = '-distance 100';
-opt.tune(2).param.slice_timing.flag_center = false;
-opt.tune(3).subject = 's0103714';
-opt.tune(3).param.slice_timing.arg_nu_correct = '-distance 100';
-opt.tune(3).param.slice_timing.flag_center = false;
+%opt.tune(1).subject = 's0101463';
+%opt.tune (1).param.slice_timing.arg_nu_correct = '-distance 100';
+%opt.tune(1).param.slice_timing.flag_center = false;
+%opt.tune(2).subject = 's0103645';
+%opt.tune(2).param.slice_timing.arg_nu_correct = '-distance 100';
+%opt.tune(2).param.slice_timing.flag_center = false;
+%opt.tune(3).subject = 's0103714';
+%opt.tune(3).param.slice_timing.arg_nu_correct = '-distance 100';
+%opt.tune(3).param.slice_timing.flag_center = false;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Run the fmri_preprocess pipeline  %%
