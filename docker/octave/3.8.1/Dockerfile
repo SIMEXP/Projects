@@ -6,6 +6,7 @@ RUN apt-get update
 RUN apt-get install python-software-properties -y
 RUN apt-add-repository ppa:octave/stable -y
 RUN apt-get update
+RUN apt-get install --fix-missing
 
 # Install octave
 RUN apt-get install -y \
@@ -23,7 +24,9 @@ RUN apt-get install -y \
   libxmu-headers \
   libxmu6 \  
   octave=3.8.1-1ubuntu1~octave1~precise1 \
-  unzip
+  unzip \
+  graphviz \
+  evince
   
 # Fetch Octave forge packages
 RUN mkdir /home/octave
@@ -51,7 +54,7 @@ RUN echo save_default_options\(\'-7\'\)\; >> /etc/octave.conf
 RUN echo graphics_toolkit gnuplot >> /etc/octave.conf
 
 # Command for build
-# docker build -t="simexp/octave:3.8.1" .
+# docker build --no-cache -t="simexp/octave:3.8.1" .
 
 # Command to run bash (don't start octave)
 # docker run -i -t --rm --name octavebash -v $HOME:$HOME --user $UID:$GID simexp/octave:3.8.1 /bin/bash -c "export HOME=$HOME; cd $HOME; source /opt/minc-itk4/minc-toolkit-config.sh; exec bash"
