@@ -25,7 +25,7 @@ files_in.fmri = niak_grab_fmri_preprocess('/home/yassinebha/scratch/MAVEN/fmri_p
 %%%%%%%%%%%%
 
 %% Group
-%files_in.model.group = '/home/yassinebha/scratch/MAVEN/model/maven_model_group.csv';
+files_in.model.group = '/home/yassinebha/scratch/MAVEN/model/maven_group_model.csv';
 
 %% inter_run
 subject_id = fieldnames(files_in.fmri);
@@ -56,19 +56,19 @@ opt.flag_rand = false; % if the flag is false, the pipeline is deterministic. Ot
 opt.test.rest1VSinscape.inter_run.select(1).label    = 'rest1VSinscape' ;
 opt.test.rest1VSinscape.inter_run.select(1).values = [1 -1] ;
 opt.test.rest1VSinscape.inter_run.contrast.rest1VSinscape= 1 ;
-%opt.test.rest1VSinscape.group.contrast.FD = 0;
+opt.test.rest1VSinscape.group.contrast.FD = 0;
 
 % contrast rest1 vs rest2
 opt.test.rest1VSrest2.inter_run.select.label    = 'rest1VSrest2' ;
 opt.test.rest1VSrest2.inter_run.select.values = [1 -1] ;
 opt.test.rest1VSrest2.inter_run.contrast.rest1VSrest2= 1 ;
-%opt.test.rest1VSrest2.group.contrast.FD = 0;
+opt.test.rest1VSrest2.group.contrast.FD = 0;
 
 % contrast rest2 vs inscape
 opt.test.rest2VSinscape.inter_run.select.label    = 'rest2VSinscape' ;
 opt.test.rest2VSinscape.inter_run.select.values = [1 -1] ;
 opt.test.rest2VSinscape.inter_run.contrast.rest2VSinscape= 1 ;
-%opt.test.rest2VSinscape.group.contrast.FD = 0;
+opt.test.rest2VSinscape.group.contrast.FD = 0;
 
 %%%%%%%%%%%%
 %% Run the pipeline
