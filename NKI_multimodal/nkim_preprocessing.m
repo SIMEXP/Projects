@@ -28,7 +28,7 @@
 
 clear all
 % load lib
-addpath(genpath('/sb/project/gsf-624-aa/quarantaine/niak-boss-0.13.0/'))
+addpath(genpath('/sb/project/gsf-624-aa/quarantaine/niak-boss-0.13.1/'))
 
 %%%%%%%%%%%%%%%%%%%%%
 %% Parameters
