@@ -48,8 +48,8 @@ list_subject = {list_subject.name};
 list_subject = list_subject(~ismember(list_subject,{'.','..'}));
 
 
-% Run preprocessing in batches, first 85 subjects
-list_subject = list_subject(1:85);
+% Run preprocessing with a mix of subjects that passed or failed QC
+list_subject = list_subject([34:42 51:57]);
 for num_s = 1:length(list_subject)
     subject = list_subject{num_s};
     id = ['s' subject];
@@ -85,9 +85,9 @@ for num_s = 1:length(list_subject)
 end
 
 % exclude subjects s0101463, s0103645, and s0103714
-files_in = rmfield(files_in, 's0101463');
-files_in = rmfield(files_in, 's0103645');
-files_in = rmfield(files_in, 's0103714');
+%files_in = rmfield(files_in, 's0101463');
+%files_in = rmfield(files_in, 's0103645');
+%files_in = rmfield(files_in, 's0103714');
 
 %  warning: The file /media/database4/nki_enhanced/raw_mnc/0103714/TfMRI_breathHold_1400/func.mnc.gz does not exist, I suppressed subject 0103714
 %  warning: The file /media/database4/nki_enhanced/raw_mnc/0118439/TfMRI_breathHold_1400/func.mnc.gz does not exist, I suppressed subject 0118439
