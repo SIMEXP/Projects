@@ -1,14 +1,12 @@
 % Twins Movie subgoups fir
-
 %  EXP1a: Scrubbing off - Normalisation 'fir_shape' - scale sci10_scg7_scf7
-
 clear all
 
 %% Parameters
 path_root =  '/media/yassinebha/database2/twins_movie/twins_tmp/';
-scale =  'sci280_scg280_scf298';
+scale =  'sci10_scg7_scf7';
+%scale =  'sci280_scg280_scf298';
 num_scale = str2num(scale(strfind(scale,'scf')+3:end));
-tr = '3000';
 
 fir = 'fir_shape';
 scrub = '_noscrub';
@@ -91,7 +89,8 @@ system('mricron  ~/database/white_template.nii.gz -c -0 -o max_abs_eff.nii.gz -c
 system(['mricron ~/database/white_template.nii.gz -c -0 -o ' path_scales '_nii/brain_partition_consensus_group_' scale '.nii.gz -c NIH -l 1 -h ' num2str(num_scale+1 ) ' -z &']);
 
 %% Hierarchical clustering, subtypes and glm analysis
-list_ind = [171 260 130 51 292];
+%list_ind = [171 260 130 51 292];
+list_ind = [ 1:7];
 list_color = {'r','b','g','k','p'};
 for ii = 1:length(list_ind)
     % Clustering of subtypes
