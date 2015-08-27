@@ -12,7 +12,7 @@
 clear all
 
 path_data = '/peuplier/scratch1/simons_vip/raw_dicom/';
-path_out ='/peuplier/scratch1/simons_vip/raw_dicom/';
+path_out ='/peuplier/scratch1/simons_vip/raw_mnc/';
 
 % Grab the raw data
 %% list subject id
