@@ -17,7 +17,7 @@ opt_g.min_xcorr_anat = 0.5; % The minimum xcorr score for an fMRI dataset to be 
 %opt_g.exclude_subject = {'subject1','subject2'}; % If for whatever reason some subjects have to be excluded that were not caught by the quality control metrics, it is possible to manually specify their IDs here.
 opt_g.type_files = 'glm_connectome'; % Specify to the grabber to prepare the files for the glm_connectome pipeline
 %opt_g.filter.session = {'session1'}; % Just grab session 1
-%opt_g.filter.run = {'rest'}; % Just grab the "rest" run
+opt_g.exclude_subject = {'A1522b' 'D2354b'}; % exclude unwanted subjects
 files_in.fmri = niak_grab_fmri_preprocess('/home/yassinebha/scratch/MAVEN/fmri_preprocess_INSCAPE_REST_all',opt_g).fmri; % Replace the folder by the path where the results of the fMRI preprocessing pipeline were stored.
 
 %%%%%%%%%%%%
