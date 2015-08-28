@@ -3,8 +3,8 @@
 clear all
 
 %% Parameters
-path_root =  '/media/yassinebha/database2/twins_movie/twins_tmp/';
-scale =  'sci10_scg7_scf7';
+path_root =  '/home/yassinebha/Google_Drive/twins_movie/';
+scale =  'sci20_scg16_scf17';
 %scale =  'sci280_scg280_scf298';
 num_scale = str2num(scale(strfind(scale,'scf')+3:end));
 
@@ -15,7 +15,7 @@ list_remove_pheno = { 'frames_OK','frames_scrubbed'};
 
 %%Load phenotypes and scrubbing data
 %combine pheno and scrubbing
-pheno_raw = niak_read_csv_cell('~/github_repos/twins/script/models/twins/dominic_dep_group0a1_minus_group11a20_tmp2.csv');
+pheno_raw = niak_read_csv_cell('~/github_repos/Projects/twins/script/models/twins/dominic_dep_group0a1_minus_group11a20_tmp2.csv');
 master_cell = pheno_raw;
 files_out  = niak_grab_all_preprocess([path_root 'fmri_preprocess_EXP2_test2']);
 slave_cell = niak_read_csv_cell(files_out.quality_control.group_motion.scrubbing);
@@ -90,7 +90,7 @@ system(['mricron ~/database/white_template.nii.gz -c -0 -o ' path_scales '_nii/b
 
 %% Hierarchical clustering, subtypes and glm analysis
 %list_ind = [171 260 130 51 292];
-list_ind = [ 1:7];
+list_ind = [ 1:17];
 list_color = {'r','b','g','k','p'};
 for ii = 1:length(list_ind)
     % Clustering of subtypes
