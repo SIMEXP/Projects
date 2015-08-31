@@ -28,7 +28,7 @@
 
 clear all
 % load lib
-addpath(genpath('/sb/project/gsf-624-aa/quarantaine/niak-boss-0.13.1.1/'))
+addpath(genpath('/sb/project/gsf-624-aa/quarantaine/niak-boss-0.13.1/'))
 
 %%%%%%%%%%%%%%%%%%%%%
 %% Parameters
@@ -39,7 +39,7 @@ exp   = 'all';
 %% Setting input/output files 
 %% This is guillimin
 root_path = '/sb/project/gsf-624-aa/database/nki_multimodal/';
-path_out = '/gs/scratch/abadhwar/NKI_enhanced_granular_wall_ground_qniakC/';
+path_out = '/gs/scratch/abadhwar/NKI_enhanced_nniakB/';
 
 %% Grab the raw data
 path_raw = [root_path 'raw_mnc_all/'];
