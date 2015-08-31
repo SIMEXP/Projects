@@ -13,11 +13,9 @@ path_out     = [path_root 'stability_fir_all_sad_blocs_EXP2_test2/'];
 max_scrub = 4 ; % maximum of scubbed volume accepted
 %set subject list and discard empty subject from the list
 load ([path_subtypes 'fir_shape_subtypes_weights_scale_' scale '_all_networks.mat'])
-list_subj =list_files;
-list_subj = {list_subj(3:end).name};
+list_subj =fir_sub.labels_x;
 for nn = 1:length(list_subj)
-    subject_file = strtrim(list_subj{nn});
-    subject      = strrep(strrep(subject_file,'.mat',''),'fir_','');
+    subject = list_subj{nn};
     file_extra   = [path_fmri filesep 'fmri/fmri_' subject '_session1_run1_extra.mat'];
     extra        = load(file_extra); % Load the scrubbing masks
     file_fir     = [path_fir filesep subject_file];
