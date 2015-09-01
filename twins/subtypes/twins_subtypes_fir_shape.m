@@ -5,9 +5,7 @@ clear all
 %% Parameters
 path_root =  '/media/yassinebha/database2/Google_Drive/twins_movie/';
 scale =  'sci20_scg16_scf17';
-%scale =  'sci280_scg280_scf298';
 num_scale = str2num(scale(strfind(scale,'scf')+3:end));
-
 fir_norm = 'shape';
 scrub = '_noscrub';
 list_cov = { 'dominic_dep','sexe','FD' };
@@ -159,4 +157,4 @@ end
 fir_sub.labels_x = list_files_csv;
 fir_sub.labels_y =  [opt.labels_id opt.labels_y];
 name_save_mat = [path_root 'stability_fir_all_sad_blocs_EXP2_test2/fir_'  fir_norm  '_subtypes_weights_scale_'  scale '_all_networks.mat' ];
-save(name_save_mat, 'fir_sub')
+save(name_save_mat, 'fir_sub','scale','list_ind','nb_clust','fir_norm','scrub')
