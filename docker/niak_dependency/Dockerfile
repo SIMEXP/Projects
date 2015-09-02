@@ -2,7 +2,10 @@ FROM simexp/octave:3.8.1
 MAINTAINER Pierre-Olivier Quirion <poq@criugm.qc.ca>
 
 # Install PSOM
-RUN mkdir -p /home/niak/extensions && cd /home/niak/extensions && wget http://www.nitrc.org/frs/download.php/7065/psom-1.0.2.zip && unzip psom-1.0.2.zip && rm psom-1.0.2.zip
+RUN  mkdir -p /home/niak/extensions && cd /home/niak/extensions && wget -qO- https://github.com/SIMEXP/psom/archive/v1.2.0.tar.gz | tar -xvz
+
+#To remove the psom version number
+#RUN  kdir -p /home/niak/extensions && cd /home/niak/extensions && wget -qO- https://github.com/SIMEXP/psom/archive/v1.2.0.tar.gz | tar --transform 's/^psom-[0-9]\+.[0-9]\+.[0-9]\+/psom/' -xvz
 
 # Install BCT
 RUN cd /home/niak/extensions && wget https://sites.google.com/site/bctnet/Home/functions/BCT.zip && unzip BCT.zip && rm BCT.zip
