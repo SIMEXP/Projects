@@ -35,28 +35,30 @@ if flag_fd == true
     list_subj(cellfun(@isempty,list_subj)) = [];   %remove empty cells 
 end
 
-%% Loop over individual fir and grab the subtypes all networks
-
-
-nt = num_scale; % nb of clusters
-nn = nb_subtypes+1; % nb of subtypes       
-sub_weights.(scales).label_x= fir_sub.labels_x;
-sub_weights.(scales).label_y= cell(1,((length(fir_sub.labels_y)-1)*num_scale)+1); %empty cell for label_y
-for cc = 1:nn
-for tt = 1:nt 
-     sub_weights.(scales).label_y{1,nt*(cc -1) + tt + 1} = sprintf('clust_%i_v%i', cc, tt); % write subsequent clusters headers
+%Concatenate networks then combine with pedigree
+%% fill header 
+sub_weights.(scale).label_x= fir_sub.labels_x;
+sub_weights.(scale).label_y= cell(1,((length(fir_sub.labels_y)-1)*num_scale)+1); %empty cell for label_y
+sub_weights.(scale).label_y{1} = fir_sub.labels_y{1};
+net_label_y={};
+net_tmp = {};
+tab_tmp = [];
+tab = []
+for ll = 1:length(list_ind)
+      net_tmp = strcat(['net_' num2str(list_ind(ll))],'_',fir_sub.labels_y(1,2:end));
+      net_label_y = [net_label_y net_tmp];
+      tab_tmp = fir_sub.(['net_' num2str(list_ind(ll))]);
+      tab = [tab tab_tmp ];
 end
-for ss = 1:length(list_ind) %% list of network
+sub_weights.(scale).label_y(2:end) = net_label_y;
+sub_weights.(scale).tab = tab;
+%% Combine weghts and pedigree 
+tab_head = vertcat( sub_weights.(scale).label_y , [ sub_weights.(scale).label_x' num2cell(tab)] );
+pedigree = niak_read_csv_cell(path_pedigre);
+cell_combin = combine_cell_tab(tab_head,pedigree);
+namesave = [ 'combine_scan_pedig_fir_' fir_norm '_subtypes_weights_scale_' scale '.csv'];
+niak_write_csv_cell([path_out namesave],cell_combin)
 
-
-    %% fill table
-    for zz = 1:length(scales)
-        fir.(scales{zz})(xx+1,:)= [ {subject} num2cell(ind_fir.(scales{zz}).fir_mean(:)')]; % fill table for each scale
-    end
-
-end    
-
-%write each scale cells to a .csv file
 for dd = 1:length(scales)
     namesave = ['fir_' scales{dd} '.csv'];
     fir_mean = fir.(scales{dd});
