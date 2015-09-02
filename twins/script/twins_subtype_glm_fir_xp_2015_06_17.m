@@ -3,12 +3,13 @@
 clear all
 
 %% Parameters
-path_root =  '/media/yassinebha/database2/Google_Drive/twins_movie/';
-scale =  'sci20_scg16_scf17';
+path_root =  '/home/yassinebha/Google_Drive/twins_movie/';
+%path_root =  '/media/yassinebha/database2/Google_Drive/twins_movie/';
+scale =  'sci10_scg11_scf13';
 %scale =  'sci280_scg280_scf298';
 num_scale = str2num(scale(strfind(scale,'scf')+3:end));
 
-fir_norm = 'shape';
+fir_norm = 'perc';
 scrub = '_noscrub';
 list_cov = { 'dominic_dep','sexe','FD' };
 list_remove_pheno = { 'frames_OK','frames_scrubbed'};
@@ -43,7 +44,7 @@ ly = pheno(1,2:end)';
 pheno = pheno(2:end,2:end);
 
 %% Load data
-path_read  = [path_root 'stability_fir_all_sad_blocs_EXP2_test2/stability_group/fir/'];
+path_read  = [path_root 'stability_fir_all_sad_blocs_EXP2_perc/stability_group/fir/'];
 path_fmri  = [path_root 'fmri_preprocess_EXP2_test2/fmri/'];
 list_files = dir([path_read 'fir_group_level_*']);
 list_files = {list_files.name};
@@ -80,7 +81,7 @@ for xx = 1:size(pheno_r,1)
 end
 
 %% visualise the partition (optional)
-path_scales =  [path_root 'stability_fir_all_sad_blocs_EXP2_test2/stability_group/' scale ];
+path_scales =  [path_root 'stability_fir_all_sad_blocs_EXP2_perc/stability_group/' scale ];
 opt.flag_zip = true;
 niak_brick_mnc2nii(path_scales,[path_scales '_nii'],opt)
 cd([path_scales '_nii'])
@@ -90,7 +91,7 @@ system(['mricron ~/database/white_template.nii.gz -c -0 -o ' path_scales '_nii/b
 
 %% Hierarchical clustering, subtypes and glm analysis
 %list_ind = [171 260 130 51 292];
-list_ind = [ 1:17];
+list_ind = [ 1: num_scale];
 list_color = {'r','b','g','k','p'};
 for ii = 1:length(list_ind)
     % Clustering of subtypes
