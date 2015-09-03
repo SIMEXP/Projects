@@ -3,13 +3,27 @@ MAINTAINER Pierre Bellec <pierre.bellec@criugm.qc.ca>
 
 # Update repository list
 RUN apt-get update
-RUN apt-get install python-software-properties -y
-RUN apt-add-repository ppa:octave/stable -y
+RUN apt-get install python-software-properties dpkg-dev -y
 RUN apt-get update
 RUN apt-get install --fix-missing
 
+RUN wget --directory-prefix=/local_repo/octave \
+  https://launchpad.net/~octave/+archive/ubuntu/stable/+build/5921916/+files/liboctave2_3.8.1-1ubuntu1~octave1~precise1_amd64.deb \
+  https://launchpad.net/~octave/+archive/ubuntu/stable/+build/5921916/+files/octave_3.8.1-1ubuntu1~octave1~precise1_amd64.deb \
+  https://launchpad.net/~octave/+archive/ubuntu/stable/+build/5921916/+files/liboctave-dev_3.8.1-1ubuntu1~octave1~precise1_amd64.deb \
+  https://launchpad.net/~octave/+archive/ubuntu/stable/+build/5921916/+files/octave-dbg_3.8.1-1ubuntu1~octave1~precise1_amd64.deb \
+  https://launchpad.net/~octave/+archive/ubuntu/stable/+files/octave-common_3.8.1-1ubuntu1~octave1~precise1_all.deb \
+  https://launchpad.net/~octave/+archive/ubuntu/stable/+files/octave-doc_3.8.1-1ubuntu1~octave1~precise1_all.deb \
+  https://launchpad.net/~octave/+archive/ubuntu/stable/+files/octave-info_3.8.1-1ubuntu1~octave1~precise1_all.deb
+
+RUN cd /local_repo/octave && dpkg-scanpackages . /dev/null | gzip -9c > Packages.gz
+
+RUN echo "deb [arch=amd64] file:/local_repo/octave ./" >> /etc/apt/sources.list
+
+RUN apt-get update
+
 # Install octave
-RUN apt-get install -y \
+RUN apt-get install --force-yes -y \
   bison \
   build-essential \
   cmake \
@@ -17,17 +31,17 @@ RUN apt-get install -y \
   flex \  
   g++ \
   imagemagick \
-  liboctave-dev=3.8.1-1ubuntu1~octave1~precise1 \
   libxi-dev \
   libxi6 \
   libxmu-dev \
   libxmu-headers \
   libxmu6 \  
-  octave=3.8.1-1ubuntu1~octave1~precise1 \
   unzip \
   graphviz \
-  evince
+  xpdf \
+  liboctave-dev
   
+
 # Fetch Octave forge packages
 RUN mkdir /home/octave
 RUN wget http://sourceforge.net/projects/octave/files/Octave%20Forge%20Packages/Individual%20Package%20Releases/control-2.8.0.tar.gz -P /home/octave
