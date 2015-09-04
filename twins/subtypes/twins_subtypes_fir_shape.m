@@ -8,73 +8,16 @@ scale =  'sci20_scg16_scf17';
 num_scale = str2num(scale(strfind(scale,'scf')+3:end));
 fir_norm = 'shape';
 scrub = '_noscrub';
-list_cov = { 'dominic_dep','sexe','FD' };
-list_remove_pheno = { 'frames_OK','frames_scrubbed'};
-
-%%Load phenotypes and scrubbing data
-%combine pheno and scrubbing
-pheno_raw = niak_read_csv_cell('~/github_repos/Projects/twins/script/models/twins/dominic_dep_group0a1_minus_group11a20_tmp2.csv');
-master_cell = pheno_raw;
-files_out  = niak_grab_all_preprocess([path_root 'fmri_preprocess_EXP2_test2']);
-slave_cell = niak_read_csv_cell(files_out.quality_control.group_motion.scrubbing);
-ly = slave_cell(1,:);
-slave_cell = slave_cell(2:end,:);
-slave_cell = [ly; slave_cell];
-for cc = 1:length(slave_cell)-1;
-    slave_cell{cc+1,1} = slave_cell{cc+1,1}(1:end-14);
-end
-pheno = combine_cell_tab(master_cell,slave_cell);
-niak_write_csv_cell('/home/yassinebha/Desktop/pheno_test.csv',pheno)
-
-%%cleannig data
-%remove unused tab
-mask_remove_pheno = ones(1,size(pheno,2));
-for cc = 1: length(list_remove_pheno)
-    mask_tmp = strfind(pheno(1,:),list_remove_pheno{cc});
-    mask_tmp = cellfun(@isempty,mask_tmp);
-    mask_remove_pheno = mask_remove_pheno & mask_tmp ;
-end
-pheno(:,~mask_remove_pheno)=[];
-pheno(:,9)=[];%remove extra id colomn
-lx = pheno(2:end,1);
-ly = pheno(1,2:end)';
-pheno = pheno(2:end,2:end);
 
 %% Load data
 path_read  = [path_root 'stability_fir_all_sad_blocs_EXP2_test2/stability_group/fir/'];
 path_fmri  = [path_root 'fmri_preprocess_EXP2_test2/fmri/'];
 list_files = dir([path_read 'fir_group_level_*']);
 list_files = {list_files.name};
-% discard subject if is not member of pheno list
 for ff = 1:length(list_files);
     subject = list_files{ff}(17:end-4);
-    ind_s = find(ismember(lx,subject));
-    if isempty(ind_s)
-        warning('Could not find subject %s',subject)
-        list_files{ff}= [];
-       % lx
-    end
-end 
-list_files(cellfun(@isempty,list_files)) = [];
-% load all fir
-pheno_r = cell(length(list_files),size(pheno,2));
-for ff = 1:length(list_files);
-    subject = list_files{ff}(17:end-4);
-    ind_s = find(ismember(lx,subject));
-    pheno_r(ff,:) = pheno(ind_s,:);
     data = load([path_read list_files{ff}],scale);
     fir_all(:,:,ff) = data.(scale).fir_mean;
-end
-% convert all pheno from string to numeric
-pheno_num = zeros(size(pheno_r));
-for xx = 1:size(pheno_r,1)
-    for yy = 1:size(pheno_r,2)
-        if isempty(pheno_r{xx,yy})
-            pheno_num(xx,yy) = NaN;
-        else
-            pheno_num(xx,yy) = str2num(pheno_r{xx,yy});
-        end
-    end
 end
 
 %% visualise the partition (optional)
