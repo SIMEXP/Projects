@@ -22,31 +22,30 @@ fir_norm   = 'shape'
 scale = 'sci20_scg16_scf17'
 scrub = '_noscrub'
 num_clusters  =  str2num(substr(scale, start=strfind(scale,"scf")+3,nchar(scale)))# the number of clusters 
-num_clusters =1
 permute = 1 # set the number of permutations
 subtypes = 5 
 cluster = seq(num_clusters) # set the liste of  clusters
 #num_clusters = length(cluster)
 #-------------------------------------------------------------------
 #Read fir_pedigree combined file
-myTwinData <- read.csv(paste("/media/yassinebha/database2/Google_Drive/twins_movie/stability_fir_all_sad_blocs_EXP2_test2/combine_scan_pedig_fir_",fir_norm,"_subtypes_weights_scale_",scale,".csv",sep=''), header=TRUE, na.strings="NaN")
-#names(myTwinData)[1000] <- "subj_id" # put the header for the scan's id
-myTwinData$X <- as.character(myTwinData$X)
-myTwinData <- myTwinData[complete.cases(myTwinData$X), ] # remove NA rows
+myTwinData <- read.csv(paste("~/Google_Drive/twins_movie/stability_fir_all_sad_blocs_EXP2_test2/combine_scan_pedig_fir_",fir_norm,"_subtypes_weights_scale_",scale,".csv",sep=''), header=TRUE, na.strings="NaN")
+names(myTwinData)[1] <- "subj_id" # put the header for the scan's id
+myTwinData$subj_id <- as.character(myTwinData$subj_id)
+myTwinData <- myTwinData[complete.cases(myTwinData$subj_id), ] # remove NA rows
 allDup <- function (value) 
 { 
   duplicated(value) | duplicated(value, fromLast = TRUE) # function to detect non duplicated variable
 }
 
 myTwinData  <- myTwinData[allDup(myTwinData$nofamill),]  # remove non twins based on the familly id
-write.csv(myTwinData,"/media/yassinebha/database2/Google_Drive/twins_movie/stability_fir_all_sad_blocs_EXP2_test2/test.csv")# write a test table 
+write.csv(myTwinData,"~/Google_Drive/twins_movie/stability_fir_all_sad_blocs_EXP2_test2/test.csv")# write a test table 
 # check for duplicated subject IDs
 if (any(duplicated(myTwinData$subj_id) == TRUE )) { warning( "the duplicated subjects ID are: \n" ,(myTwinData$subj_id[duplicated(myTwinData$subj_id)]),"\n") }
 myTwinData <- myTwinData[!duplicated(myTwinData$subj_id),] # remove the dulicated subject
 
 # build an empty table to store the result 
-TabResult <- matrix(, nrow = (subtypes*num_clusters), ncol = 13) # empty matrix to hold results for each fir times point
-colnames(TabResult) <- cbind("clust_vol","a2","a2_p","c2","c2_p","e2","e2_p","LL_ACE","LL_ACE_p","fir_mean","fir_var","shapiroPvalue_Tw1","shapiroPvalue_Tw2")
+TabResult <- matrix(, nrow = ((subtypes+1)*num_clusters), ncol = 11) # empty matrix to hold results for each fir times point
+colnames(TabResult) <- cbind("clust_subt","a2","a2_p","c2","c2_p","e2","e2_p","LL_ACE","LL_ACE_p","shapiroPvalue_Tw1","shapiroPvalue_Tw2")
 TabResult <- data.frame(TabResult)
 
 for (ii in seq(num_clusters)) {
@@ -55,12 +54,12 @@ for (ii in seq(num_clusters)) {
     if (ss == 1){
       clust_sub_tmp <- paste("net_",cc,"_part",sep='')
     } else {
-    clust_sub_tmp <- paste("net_",cc,"_weight_subtype_",ss,sep='')
+    clust_sub_tmp <- paste("net_",cc,"_weight_subtype_",ss-1,sep='')
     }
-    myTwinDataVars <- subset(myTwinData, sexe >= 0, c("subj_id","nofamill","sexe","zygotie",clust_sub_tmp)) #subset variable of interest
+    myTwinDataVars <- subset(myTwinData, zygotie == 0 | zygotie == 1, c("subj_id","nofamill","sexe","zygotie",clust_sub_tmp)) #subset variable of interest
     myTwinDataVars  <- myTwinDataVars[allDup(myTwinDataVars$nofamill),] #remove the remaining non twins aftre subsetting variale
     myTwinDataVars <- myTwinDataVars[order(myTwinDataVars$nofamill),] # oredr table assending 
-    TabTmp <- matrix(, nrow = dim(myTwinDataVars)[1]+1, ncol = dim(myTwinDataVars)[2]+3) # create empty matrix to hold Twin1 and Twin2 fir times point
+    TabTmp <- matrix(, nrow = dim(myTwinDataVars)[1]+1, ncol = dim(myTwinDataVars)[2]+3) # create empty matrix to hold Twin1 and Twin2 subtypes wheights and sexe
     colnames(TabTmp) <- cbind(paste(names(myTwinDataVars['subj_id']),"_twin1",sep=''),
                               paste(names(myTwinDataVars['subj_id']),"_twin2",sep=''),
                               names(myTwinDataVars['nofamill']),
@@ -92,13 +91,23 @@ for (ii in seq(num_clusters)) {
     TabTmp[['sexe_twin2']] <- as.numeric(TabTmp[['sexe_twin2']])
     TabTmp[['zygotie']] <- as.numeric(TabTmp[['zygotie']])
     
-    # create  permutation vector for fir_t1 and fir_t2
+    # create  permutation vector for weight_t1 and weight_t2
+#     
+#     set.seed(200)
+#     permTab<-replicate(permute,sample(TabTmp$zygotie)) # create permutation table
+#     permTab <- cbind(TabTmp$zygotie,permTab) # first colomn as the real data
     
     set.seed(200)
-    permTab<-replicate(permute,sample(TabTmp$zygotie))
-    permTab <- cbind(TabTmp$zygotie,permTab)
-    for (pp in seq(permute+1)) { #permutation test for zygotie column
-      TabTmp$zygotie <- permTab[,pp]
+    permTab_t1 <- replicate(permute,sample(TabTmp[[paste(clust_sub_tmp,"_twin1",sep='')]]))
+    permTab_t1 <- cbind(TabTmp[[paste(clust_sub_tmp,"_twin1",sep='')]],permTab_t1) # first colomn as the real data
+    set.seed(100)
+    permTab_t2<-replicate(permute,sample(TabTmp[[paste(clust_sub_tmp,"_twin2",sep='')]]))
+    permTab_t2 <- cbind(TabTmp[[paste(clust_sub_tmp,"_twin2",sep='')]],permTab_t2) # first colomn as the real data
+    permTab <- cbind(permTab_t1,permTab_t2)
+    
+    for (pp in seq(permute+1)) { #permutation test for subtype weight column
+      TabTmp[[paste(clust_sub_tmp,"_twin1",sep='')]] <- permTab[,pp]
+      TabTmp[[paste(clust_sub_tmp,"_twin2",sep='')]] <- permTab[,pp+permute+1]
       selVars <- c(paste(clust_sub_tmp,"_twin1",sep=''),paste(clust_sub_tmp,"_twin2",sep=''))
       mzData <- as.matrix(subset(TabTmp, zygotie == 1,selVars))
       dzData <- as.matrix(subset(TabTmp, zygotie == 0, selVars))
@@ -224,8 +233,7 @@ for (ii in seq(num_clusters)) {
         ACEest <- rbind(cbind(A,C,E),cbind(a2,c2,e2))
         LL_ACE <- mxEval(objective, twinACEFit)
         
-        fir_mean <- mean(myTwinDataVars[[clust_sub_tmp]])
-        fir_var <- var(myTwinDataVars[[clust_sub_tmp]])
+        # test nornality of subtypes distribution
         shapiroPvalue_Tw1 <- shapiro.test(TabTmp[[paste(clust_sub_tmp,"_twin1",sep='')]])
         shapiroPvalue_Tw2 <- shapiro.test(TabTmp[[paste(clust_sub_tmp,"_twin2",sep='')]]) 
       }else {
@@ -247,7 +255,7 @@ for (ii in seq(num_clusters)) {
     e2_p = sum(abs(e2[2:NROW(e2)]) >= abs(e2[1])) / permute
     LL_ACE_p = sum(abs(LL_ACE[2:NROW(LL_ACE)]) >= abs(LL_ACE[1])) / permute
     
-    TabResult[subtypes*(cc-1)+ss,] <- cbind(clust_sub_tmp,a2[1],a2_p,c2[1],c2_p,e2[1],e2_p,LL_ACE[1],LL_ACE_p,fir_mean,fir_var,shapiroPvalue_Tw1$p.value,shapiroPvalue_Tw2$p.value)
+    TabResult[subtypes*(cc-1)+ss+1,] <- cbind(clust_sub_tmp,a2[1],a2_p,c2[1],c2_p,e2[1],e2_p,LL_ACE[1],LL_ACE_p,shapiroPvalue_Tw1$p.value,shapiroPvalue_Tw2$p.value)
    
   } 
 
@@ -275,7 +283,7 @@ for (ii in seq(num_clusters)) {
 #   py <- plotly(username="YassineBHA", key="8d314mov50")
 #   
 #   trace1 <- list(
-#     x = TabResult$clust_vol[subtypes*(cc-1)+seq(subtypes)], 
+#     x = TabResult$clust_subt[subtypes*(cc-1)+seq(subtypes)], 
 #     y = as.numeric(TabResult$a2[subtypes*(cc-1)+seq(subtypes)]),
 #     name = "$a^2$",
 #     fillcolor = "rgba(31, 119, 180, 0.55)",
@@ -284,7 +292,7 @@ for (ii in seq(num_clusters)) {
 #     type = "scatter"
 #   )
 #   trace2 <- list(
-#     x = TabResult$clust_vol[subtypes*(cc-1)+seq(subtypes)], 
+#     x = TabResult$clust_subt[subtypes*(cc-1)+seq(subtypes)], 
 #     y = as.numeric(TabResult$c2[subtypes*(cc-1)+seq(subtypes)]), 
 #     name = "$c^2$",
 #     mode = "markers",
@@ -292,7 +300,7 @@ for (ii in seq(num_clusters)) {
 #     type = "scatter"
 #   )
 #   trace3 <- list(
-#     x = TabResult$clust_vol[subtypes*(cc-1)+seq(subtypes)], 
+#     x = TabResult$clust_subt[subtypes*(cc-1)+seq(subtypes)], 
 #     y = as.numeric(TabResult$e2[subtypes*(cc-1)+seq(subtypes)]),
 #     name = "$e^2$",
 #     fill = "tonexty",
@@ -302,7 +310,7 @@ for (ii in seq(num_clusters)) {
 #   )
 #   fn <- function(x) x/max(x, na.rm = TRUE)
 #   trace4 <- list(
-#     x = TabResult$clust_vol[subtypes*(cc-1)+seq(subtypes)], 
+#     x = TabResult$clust_subt[subtypes*(cc-1)+seq(subtypes)], 
 #     y = fn(as.vector(scale(as.numeric(TabResult$fir_mean[subtypes*(cc-1)+seq(subtypes)])))),
 #     name = "fir_mean",
 #     type = "scatter",
@@ -314,7 +322,7 @@ for (ii in seq(num_clusters)) {
 #     )
 #   )
 #   trace5 <- list(
-#     x = TabResult$clust_vol[subtypes*(cc-1)+seq(subtypes)], 
+#     x = TabResult$clust_subt[subtypes*(cc-1)+seq(subtypes)], 
 #     y = as.numeric(TabResult$a2_p[subtypes*(cc-1)+seq(subtypes)]),
 #     name = "$a^2 P value$",
 #     mode = "lines",
@@ -350,12 +358,10 @@ for (ii in seq(num_clusters)) {
   TabResultTmp$e2_p <- as.numeric(TabResultTmp$e2_p)
   TabResultTmp$LL_ACE <- as.numeric(TabResultTmp$LL_ACE)
   TabResultTmp$LL_ACE_p <- as.numeric(TabResultTmp$LL_ACE_p)
-  TabResultTmp$fir_mean <- as.numeric(TabResultTmp$fir_mean)
-  TabResultTmp$fir_var <- as.numeric(TabResultTmp$fir_var)
   TabResultTmp$shapiroPvalue_Tw1 <- as.numeric(TabResultTmp$shapiroPvalue_Tw1)
   TabResultTmp$shapiroPvalue_Tw2 <- as.numeric(TabResultTmp$shapiroPvalue_Tw2)
   # Write csv copy of the results table for each cluster
-  write.csv(TabResultTmp, file = paste("/media/yassinebha/database2/Google_Drive/twins_movie/stability_fir_all_sad_blocs_EXP2_test2/" , paste("clust_",as.character(cc),"_",scale,"_",fir_norm,"_",scrub,"_",".csv",sep = ''),sep = ''))
+  write.csv(TabResultTmp, file = paste("~/Google_Drive/twins_movie/stability_fir_all_sad_blocs_EXP2_test2/" , paste("clust_",as.character(cc),"_",scale,"_",fir_norm,"_",scrub,"_",".csv",sep = ''),sep = ''))
   
 } 
 
@@ -368,8 +374,6 @@ TabResult$e2 <- as.numeric(TabResult$e2)
 TabResult$e2 <- as.numeric(TabResult$e2_p)
 TabResult$LL_ACE <- as.numeric(TabResult$LL_ACE)
 TabResult$LL_ACE <- as.numeric(TabResult$LL_ACE_p)
-TabResult$fir_mean <- as.numeric(TabResult$fir_mean)
-TabResult$fir_var <- as.numeric(TabResult$fir_var)
 TabResult$shapiroPvalue_Tw1 <- as.numeric(TabResult$shapiroPvalue_Tw1)
 TabResult$shapiroPvalue_Tw2 <- as.numeric(TabResult$shapiroPvalue_Tw2)
 
