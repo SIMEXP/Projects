@@ -19,16 +19,17 @@ require(pracma)
 rm(list = ls())
 #-----------------------------------------------------------------------
 fir_norm   = 'shape'
-scale = 'sci20_scg16_scf17'
-scrub = '_noscrub'
+scale = 'sci10_scg7_scf7'
+scrub = 'noscrub'
 num_clusters  =  str2num(substr(scale, start=strfind(scale,"scf")+3,nchar(scale)))# the number of clusters 
-permute = 1 # set the number of permutations
-subtypes = 5 
+permute = 1000 # set the number of permutations
+subtypes = 5 +1 # 5 subtytes plus one part
 cluster = seq(num_clusters) # set the liste of  clusters
 #num_clusters = length(cluster)
 #-------------------------------------------------------------------
 #Read fir_pedigree combined file
-myTwinData <- read.csv(paste("~/Google_Drive/twins_movie/stability_fir_all_sad_blocs_EXP2_test2/combine_scan_pedig_fir_",fir_norm,"_subtypes_weights_scale_",scale,".csv",sep=''), header=TRUE, na.strings="NaN")
+myTwinData <- read.csv(paste("/media/yassinebha/database2/Google_Drive/twins_movie/stability_fir_all_sad_blocs_", scrub ,"_" ,fir_norm, "/combine_scan_pedig_fir_",fir_norm,"_subtypes_weights_scale_",scale,".csv",sep=''), header=TRUE, na.strings="NaN")
+#myTwinData <- read.csv(paste("~/Google_Drive/twins_movie/stability_fir_all_sad_blocs_EXP2_test2/combine_scan_pedig_fir_",fir_norm,"_subtypes_weights_scale_",scale,".csv",sep=''), header=TRUE, na.strings="NaN")
 names(myTwinData)[1] <- "subj_id" # put the header for the scan's id
 myTwinData$subj_id <- as.character(myTwinData$subj_id)
 myTwinData <- myTwinData[complete.cases(myTwinData$subj_id), ] # remove NA rows
@@ -38,19 +39,20 @@ allDup <- function (value)
 }
 
 myTwinData  <- myTwinData[allDup(myTwinData$nofamill),]  # remove non twins based on the familly id
-write.csv(myTwinData,"~/Google_Drive/twins_movie/stability_fir_all_sad_blocs_EXP2_test2/test.csv")# write a test table 
+write.csv(myTwinData,paste("/media/yassinebha/database2/Google_Drive/twins_movie/stability_fir_all_sad_blocs_", scrub ,"_" ,fir_norm,"/test.csv",sep = ''))# write a test table 
+#write.csv(myTwinData,"~/Google_Drive/twins_movie/stability_fir_all_sad_blocs_EXP2_test2/test.csv")# write a test table 
 # check for duplicated subject IDs
 if (any(duplicated(myTwinData$subj_id) == TRUE )) { warning( "the duplicated subjects ID are: \n" ,(myTwinData$subj_id[duplicated(myTwinData$subj_id)]),"\n") }
 myTwinData <- myTwinData[!duplicated(myTwinData$subj_id),] # remove the dulicated subject
 
 # build an empty table to store the result 
-TabResult <- matrix(, nrow = ((subtypes+1)*num_clusters), ncol = 11) # empty matrix to hold results for each fir times point
+TabResult <- matrix( nrow = ((subtypes)*num_clusters), ncol = 11) # empty matrix to hold results for each fir times point
 colnames(TabResult) <- cbind("clust_subt","a2","a2_p","c2","c2_p","e2","e2_p","LL_ACE","LL_ACE_p","shapiroPvalue_Tw1","shapiroPvalue_Tw2")
 TabResult <- data.frame(TabResult)
 
 for (ii in seq(num_clusters)) {
   cc = cluster[ii]
-  for (ss in seq(subtypes+1)) {
+  for (ss in seq(subtypes)) {
     if (ss == 1){
       clust_sub_tmp <- paste("net_",cc,"_part",sep='')
     } else {
@@ -59,7 +61,7 @@ for (ii in seq(num_clusters)) {
     myTwinDataVars <- subset(myTwinData, zygotie == 0 | zygotie == 1, c("subj_id","nofamill","sexe","zygotie",clust_sub_tmp)) #subset variable of interest
     myTwinDataVars  <- myTwinDataVars[allDup(myTwinDataVars$nofamill),] #remove the remaining non twins aftre subsetting variale
     myTwinDataVars <- myTwinDataVars[order(myTwinDataVars$nofamill),] # oredr table assending 
-    TabTmp <- matrix(, nrow = dim(myTwinDataVars)[1]+1, ncol = dim(myTwinDataVars)[2]+3) # create empty matrix to hold Twin1 and Twin2 subtypes wheights and sexe
+    TabTmp <- matrix( nrow = dim(myTwinDataVars)[1]+1, ncol = dim(myTwinDataVars)[2]+3) # create empty matrix to hold Twin1 and Twin2 subtypes wheights and sexe
     colnames(TabTmp) <- cbind(paste(names(myTwinDataVars['subj_id']),"_twin1",sep=''),
                               paste(names(myTwinDataVars['subj_id']),"_twin2",sep=''),
                               names(myTwinDataVars['nofamill']),
@@ -255,10 +257,9 @@ for (ii in seq(num_clusters)) {
     e2_p = sum(abs(e2[2:NROW(e2)]) >= abs(e2[1])) / permute
     LL_ACE_p = sum(abs(LL_ACE[2:NROW(LL_ACE)]) >= abs(LL_ACE[1])) / permute
     
-    TabResult[subtypes*(cc-1)+ss+1,] <- cbind(clust_sub_tmp,a2[1],a2_p,c2[1],c2_p,e2[1],e2_p,LL_ACE[1],LL_ACE_p,shapiroPvalue_Tw1$p.value,shapiroPvalue_Tw2$p.value)
+    TabResult[subtypes*(cc-1)+ss,] <- cbind(clust_sub_tmp,a2[1],a2_p,c2[1],c2_p,e2[1],e2_p,LL_ACE[1],LL_ACE_p,shapiroPvalue_Tw1$p.value,shapiroPvalue_Tw2$p.value)
    
   } 
-
   # # # # # # # # # # plotly tools# # # # # # # # # # # # # 
   
 #   ## First, install and load the devtools package. From within the R console, enter:
@@ -278,78 +279,62 @@ for (ii in seq(num_clusters)) {
 #   
 #   ## Authentication : to be exuted only the first time using a Plotly API!
 #   # set_credentials_file(username="YassineBHA", api_key="8d314mov50")
-#   
-#   ###
-#   py <- plotly(username="YassineBHA", key="8d314mov50")
-#   
-#   trace1 <- list(
-#     x = TabResult$clust_subt[subtypes*(cc-1)+seq(subtypes)], 
-#     y = as.numeric(TabResult$a2[subtypes*(cc-1)+seq(subtypes)]),
-#     name = "$a^2$",
-#     fillcolor = "rgba(31, 119, 180, 0.55)",
-#     mode = "lines+markers",
-#     fill = "tozeroy", 
-#     type = "scatter"
-#   )
-#   trace2 <- list(
-#     x = TabResult$clust_subt[subtypes*(cc-1)+seq(subtypes)], 
-#     y = as.numeric(TabResult$c2[subtypes*(cc-1)+seq(subtypes)]), 
-#     name = "$c^2$",
-#     mode = "markers",
-#     fill = "tonexty", 
-#     type = "scatter"
-#   )
-#   trace3 <- list(
-#     x = TabResult$clust_subt[subtypes*(cc-1)+seq(subtypes)], 
-#     y = as.numeric(TabResult$e2[subtypes*(cc-1)+seq(subtypes)]),
-#     name = "$e^2$",
-#     fill = "tonexty",
-#     type = "scatter",
-#     fillcolor = "rgba(44, 160, 44, 0.24)",
-#     mode = "none"
-#   )
-#   fn <- function(x) x/max(x, na.rm = TRUE)
-#   trace4 <- list(
-#     x = TabResult$clust_subt[subtypes*(cc-1)+seq(subtypes)], 
-#     y = fn(as.vector(scale(as.numeric(TabResult$fir_mean[subtypes*(cc-1)+seq(subtypes)])))),
-#     name = "fir_mean",
-#     type = "scatter",
-#     error_y = list(
-#       type = "percent", 
-#       value = 10, 
-#       array = fn(as.vector(scale(as.numeric(TabResult$fir_mean[subtypes*(cc-1)+seq(subtypes)])))), 
-#       visible = TRUE
-#     )
-#   )
-#   trace5 <- list(
-#     x = TabResult$clust_subt[subtypes*(cc-1)+seq(subtypes)], 
-#     y = as.numeric(TabResult$a2_p[subtypes*(cc-1)+seq(subtypes)]),
-#     name = "$a^2 P value$",
-#     mode = "lines",
-#     yaxis = "y2",
-#     type = "scatter",
-#     color = "rgb(148, 103, 189)"
-#   )
-#   data <- list(trace1, trace2, trace3, trace4, trace5)
-#   layout <- list(
-#     title = paste("clust_",as.character(cc),"_",scale,"_",fir_norm,"_",scrub,"_",sep = ''), 
-#     xaxis = list(title = "Fir Times Points"), 
-#     yaxis = list(title = "Heritability Estimate"), 
-#     yaxis2 = list(
-#       title = "P_value", 
-#       titlefont = list(color = "rgb(148, 103, 189)"), 
-#       tickfont = list(color = "rgb(148, 103, 189)"), 
-#       side = "right", 
-#       overlaying = "y"
-#     )
-#   )
-#   
-#   plot_ly(data, kwargs=list(filename=paste("clust_",as.character(cc),"_",scale,"_",fir_norm,"_",scrub,"_",sep = ''),
-#                                          layout = layout, 
-#                                          fileopt="overwrite"))
   
-  filename <- paste("clust_",as.character(cc),"_",scale,"_",fir_norm,"_",scrub,"_",sep = '')
-  TabResultTmp <- TabResult[subtypes*(cc-1)+seq(subtypes),]
+  trace1 <- list(
+    x = TabResult$clust_subt[subtypes*(cc-1)+seq(subtypes)], 
+    y = as.numeric(TabResult$a2[subtypes*(cc-1)+seq(subtypes)]),
+    name = "$a^2$",
+    fillcolor = "rgba(31, 119, 180, 0.55)",
+    mode = "lines+markers",
+    fill = "tozeroy", 
+    type = "scatter"
+  )
+  trace2 <- list(
+    x = TabResult$clust_subt[subtypes*(cc-1)+seq(subtypes)], 
+    y = as.numeric(TabResult$c2[subtypes*(cc-1)+seq(subtypes)]), 
+    name = "$c^2$",
+    mode = "markers",
+    fill = "tonexty", 
+    type = "scatter"
+  )
+  trace3 <- list(
+    x = TabResult$clust_subt[subtypes*(cc-1)+seq(subtypes)], 
+    y = as.numeric(TabResult$e2[subtypes*(cc-1)+seq(subtypes)]),
+    name = "$e^2$",
+    fill = "tonexty",
+    type = "scatter",
+    fillcolor = "rgba(44, 160, 44, 0.24)",
+    mode = "none"
+  )
+  trace4 <- list(
+    x = TabResult$clust_subt[subtypes*(cc-1)+seq(subtypes)], 
+    y = as.numeric(TabResult$a2_p[subtypes*(cc-1)+seq(subtypes)]),
+    name = "$a^2 P value$",
+    mode = "lines",
+    yaxis = "y2",
+    type = "scatter",
+    color = "rgb(148, 103, 189)"
+  )
+  data <- list(trace1, trace2, trace3, trace4)
+  layout <- list(
+    title = paste("clust_",as.character(cc),"_",scale,"_",fir_norm,"_",scrub,sep = ''), 
+    xaxis = list(title = "Fir Times Points"), 
+    yaxis = list(title = "Heritability Estimate"), 
+    yaxis2 = list(
+      title = "P_value", 
+      titlefont = list(color = "rgb(148, 103, 189)"), 
+      tickfont = list(color = "rgb(148, 103, 189)"), 
+      side = "right", 
+      overlaying = "y"
+    )
+  )
+  x = TabResult$clust_subt[subtypes*(cc-1)+seq(subtypes)]
+  plot_ly(x = x, y = trace1$y, name = trace1$name, line = list(shape = "linear"), filename=paste("clust_",as.character(cc),"_",scale,"_",fir_norm,"_",scrub,sep = '')) %>%
+    add_trace(y = trace2$y, name = trace2$name, line = list(shape = "linear")) %>%
+    add_trace(y = trace3$y, name = trace3$name, line = list(shape = "linear"))
+  
+  filename <- paste("clust_",as.character(cc),"_",scale,"_",fir_norm,"_",scrub,sep = '')
+  TabResultTmp <- TabResult[(subtypes)*(cc-1)+seq(subtypes),]
   TabResultTmp$a2 <- as.numeric(TabResultTmp$a2)
   TabResultTmp$a2_p <- as.numeric(TabResultTmp$a2_p)
   TabResultTmp$c2 <- as.numeric(TabResultTmp$c2)
@@ -361,7 +346,8 @@ for (ii in seq(num_clusters)) {
   TabResultTmp$shapiroPvalue_Tw1 <- as.numeric(TabResultTmp$shapiroPvalue_Tw1)
   TabResultTmp$shapiroPvalue_Tw2 <- as.numeric(TabResultTmp$shapiroPvalue_Tw2)
   # Write csv copy of the results table for each cluster
-  write.csv(TabResultTmp, file = paste("~/Google_Drive/twins_movie/stability_fir_all_sad_blocs_EXP2_test2/" , paste("clust_",as.character(cc),"_",scale,"_",fir_norm,"_",scrub,"_",".csv",sep = ''),sep = ''))
+  write.csv(TabResultTmp, file = paste("/media/yassinebha/database2/Google_Drive/twins_movie/stability_fir_all_sad_blocs_",scrub,"_",fir_norm,"/",paste("clust_",as.character(cc),"_",scale,"_",fir_norm,"_",scrub,".csv",sep = ''),sep = ''))
+  #write.csv(TabResultTmp, file = paste("~/Google_Drive/twins_movie/stability_fir_all_sad_blocs_EXP2_test2/" , paste("clust_",as.character(cc),"_",scale,"_",fir_norm,"_",scrub,"_",".csv",sep = ''),sep = ''))
   
 } 
 
@@ -378,15 +364,15 @@ TabResult$shapiroPvalue_Tw1 <- as.numeric(TabResult$shapiroPvalue_Tw1)
 TabResult$shapiroPvalue_Tw2 <- as.numeric(TabResult$shapiroPvalue_Tw2)
 
 # Write a hdf5 copy of the results table 
-# source("http://bioconductor.org/biocLite.R")
-# biocLite("rhdf5")
+source("http://bioconductor.org/biocLite.R")
+biocLite("rhdf5")
 library(rhdf5)
-h5createFile(paste("clust_",as.character(cc),"_",scale,"_",fir_norm,"_",scrub,"_",sep = ''))
-h5write(TabResult,paste("clust_",as.character(cc),"_",scale,"_",fir_norm,"_",scrub,"_",sep = ''),"TabResult")
+h5createFile(paste("clust_",as.character(cc),"_",scale,"_",fir_norm,"_",scrub,sep = ''))
+h5write(TabResult,paste("clust_",as.character(cc),"_",scale,"_",fir_norm,"_",scrub,sep = ''),"TabResult")
 
 # Write csv copy of the results table 
-write.csv(TabResult, file = paste("~/Dropbox/HCP_fir_heritability/" , paste("scale",num_clusters,"_",fir_norm,"_",scrub,"_",".csv",sep = ''),sep = ''))
-write.csv(TabTmp, file = paste("~/Dropbox/HCP_fir_heritability/" , paste("clust_",as.character(cc),"_",scale,"_TABTMP_",fir_norm,"_",scrub,"_",".csv",sep = ''),sep = ''))
+write.csv(TabResult, file = paste("/media/yassinebha/database2/Google_Drive/twins_movie/" , paste("scale",num_clusters,"_",fir_norm,"_",scrub,".csv",sep = ''),sep = ''))
+write.csv(TabTmp, file = paste("/media/yassinebha/database2/Google_Drive/twins_movie/" , paste("clust_",as.character(cc),"_",scale,"_TABTMP_",fir_norm,"_",scrub,".csv",sep = ''),sep = ''))
 
 
 

@@ -2,16 +2,17 @@
 % graber for individual subtypes weight for heritabylity analysis 
 clear
 path_root =  '/media/yassinebha/database2/Google_Drive/twins_movie/';
-path_subtypes     =[path_root 'stability_fir_all_sad_blocs_EXP2_test2/'];
-path_fmri    =[path_root 'fmri_preprocess_EXP2_test2'];
+scale =  'sci10_scg7_scf7';
+fir_norm = 'shape';
+scrub = 'noscrub';
 path_pedigre = '~/github_repos/Projects/twins/script/models/twins_pedigre_raw_all.csv';
-path_out     = [path_root 'stability_fir_all_sad_blocs_EXP2_test2/'];
-scale =  'sci20_scg16_scf17';
+path_fmri    =[path_root 'fmri_preprocess_' ];
+path_subtypes     =[path_root 'stability_fir_all_sad_blocs_' scrub '_' fir_norm '/'];
 load ([path_subtypes 'fir_shape_subtypes_weights_scale_' scale '_all_networks.mat'])
+path_out     = [path_root 'stability_fir_all_sad_blocs_' scrub '_' fir_norm '/'];
 nb_subtypes = nb_clust; % the nember of subtypes 
 num_scale = str2num(scale(strfind(scale,'scf')+3:end));
-fir_norm = 'shape';
-scrub = '_noscrub';
+
 
 
 %IF  flg_fd = true  it remove subjects with FD higher than max_fd (section not completed)
@@ -19,7 +20,7 @@ flag_fd = false
 max_fd = 4 ; % maximum FD allowed
 list_subj =fir_sub.labels_x;
 if flag_fd == true
-    list_out  = niak_grab_all_preprocess([path_root 'fmri_preprocess_EXP2_test2']);
+    list_out  = niak_grab_all_preprocess([path_root 'fmri_preprocess_' scrub '_' fir_norm ]);
     list_scrub = niak_read_csv_cell(list_out.quality_control.group_motion.scrubbing);
     for nn = 1:length(list_subj)
         subject = list_subj{nn};
@@ -58,13 +59,3 @@ pedigree = niak_read_csv_cell(path_pedigre);
 cell_combin = combine_cell_tab(tab_head,pedigree);
 namesave = [ 'combine_scan_pedig_fir_' fir_norm '_subtypes_weights_scale_' scale '.csv'];
 niak_write_csv_cell([path_out namesave],cell_combin)
-
-for dd = 1:length(scales)
-    namesave = ['fir_' scales{dd} '.csv'];
-    fir_mean = fir.(scales{dd});
-    niak_write_csv_cell (namesave,fir_mean);
-    niak_combine = niak_combine_csv_cell(namesave,path_pedigre);
-    niak_write_csv_cell ([path_out 'niak_combine_scan_pedig_' scales{dd} '_' exp '.csv'],niak_combine);
-    system([ 'scp -r ' path_out 'niak_combine_scan_pedig_' scales{dd} '_' exp '.csv noisetier:~/Dropbox/twins_fir_heritability/.'])
-end
-delete fir_sci*; % remove temporary  files

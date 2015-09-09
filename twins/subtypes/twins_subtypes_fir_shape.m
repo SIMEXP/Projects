@@ -4,14 +4,14 @@ clear all
 
 %% Parameters
 path_root =  '/media/yassinebha/database2/Google_Drive/twins_movie/';
-scale =  'sci20_scg16_scf17';
+scale =  'sci10_scg7_scf7';
 num_scale = str2num(scale(strfind(scale,'scf')+3:end));
 fir_norm = 'shape';
-scrub = '_noscrub';
+scrub = 'noscrub';
 
 %% Load data
-path_read  = [path_root 'stability_fir_all_sad_blocs_EXP2_test2/stability_group/fir/'];
-path_fmri  = [path_root 'fmri_preprocess_EXP2_test2/fmri/'];
+path_read  = [path_root 'stability_fir_all_sad_blocs_' scrub '_' fir_norm '/stability_group/fir/'];
+path_fmri  = [path_root 'fmri_preprocess_' scrub];
 list_files = dir([path_read 'fir_group_level_*']);
 list_files = {list_files.name};
 for ff = 1:length(list_files);
@@ -30,12 +30,12 @@ end
 %system(['mricron ~/database/white_template.nii.gz -c -0 -o ' path_scales '_nii/brain_partition_consensus_group_' scale '.nii.gz -c NIH -l 1 -h ' num2str(num_scale+1 ) ' -z &']);
 
 %% Hierarchical clustering, subtypes and glm analysis
-list_ind = [ 1:17];
+list_ind = [ 1:num_scale];
 list_color = {'r','b','g','k','p'};
 for ii = 1:length(list_ind)
     % Clustering of subtypes
-    figure(ii)
-    clf
+    %figure(ii)
+    %clf
     fir_td = squeeze(fir_all(:,list_ind(ii),:));
     fir_td = fir_td./repmat(sqrt(sum(fir_td.^2,1)),[size(fir_td,1) 1]);
     fir_td(isnan(fir_td)) = 0;
@@ -92,12 +92,12 @@ opt.labels_y = [{'part'} column_label ];
 opt.labels_id = 'subj_id';
 for vv = 1:length(list_ind)
       tab =fir_sub.(sprintf('net_%i', ii)); 
-      name_save = [path_root 'stability_fir_all_sad_blocs_EXP2_test2/fir_'  fir_norm  '_subtypes_weights_scale'  scale 'network_' num2str(vv) '.csv' ]
+      name_save = [path_root 'stability_fir_all_sad_blocs_' scrub '_' fir_norm '/fir_'  fir_norm  '_subtypes_weights_scale'  scale 'network_' num2str(vv) '.csv' ];
       niak_write_csv(name_save,tab,opt)
 end
 
 %save weights and part to matrix
 fir_sub.labels_x = list_files_csv;
 fir_sub.labels_y =  [opt.labels_id opt.labels_y];
-name_save_mat = [path_root 'stability_fir_all_sad_blocs_EXP2_test2/fir_'  fir_norm  '_subtypes_weights_scale_'  scale '_all_networks.mat' ];
+name_save_mat = [path_root 'stability_fir_all_sad_blocs_' scrub '_' fir_norm '/fir_'  fir_norm  '_subtypes_weights_scale_'  scale '_all_networks.mat' ];
 save(name_save_mat, 'fir_sub','scale','list_ind','nb_clust','fir_norm','scrub')
