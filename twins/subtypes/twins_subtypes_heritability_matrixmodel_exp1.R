@@ -18,18 +18,18 @@ require(pracma)
 #Prepare Data
 rm(list = ls())
 #-----------------------------------------------------------------------
-fir_norm   = 'shape'
-scale = 'sci10_scg7_scf7'
+fir_norm   = 'perc'
+scale = 'sci10_scg7_scf6'
 scrub = 'noscrub'
 num_clusters  =  str2num(substr(scale, start=strfind(scale,"scf")+3,nchar(scale)))# the number of clusters 
-permute = 1000 # set the number of permutations
+permute = 1 # set the number of permutations
 subtypes = 5 +1 # 5 subtytes plus one part
 cluster = seq(num_clusters) # set the liste of  clusters
 #num_clusters = length(cluster)
 #-------------------------------------------------------------------
 #Read fir_pedigree combined file
-myTwinData <- read.csv(paste("/media/yassinebha/database2/Google_Drive/twins_movie/stability_fir_all_sad_blocs_", scrub ,"_" ,fir_norm, "/combine_scan_pedig_fir_",fir_norm,"_subtypes_weights_scale_",scale,".csv",sep=''), header=TRUE, na.strings="NaN")
-#myTwinData <- read.csv(paste("~/Google_Drive/twins_movie/stability_fir_all_sad_blocs_EXP2_test2/combine_scan_pedig_fir_",fir_norm,"_subtypes_weights_scale_",scale,".csv",sep=''), header=TRUE, na.strings="NaN")
+#myTwinData <- read.csv(paste("/media/yassinebha/database2/Google_Drive/twins_movie/stability_fir_all_sad_blocs_", scrub ,"_" ,fir_norm, "/combine_scan_pedig_fir_",fir_norm,"_subtypes_weights_scale_",scale,".csv",sep=''), header=TRUE, na.strings="NaN")
+myTwinData <- read.csv(paste("~/Google_Drive/twins_movie/stability_fir_all_sad_blocs_", scrub ,"_" ,fir_norm, "/combine_scan_pedig_fir_",fir_norm,"_subtypes_weights_scale_",scale,".csv",sep=''), header=TRUE, na.strings="NaN")
 names(myTwinData)[1] <- "subj_id" # put the header for the scan's id
 myTwinData$subj_id <- as.character(myTwinData$subj_id)
 myTwinData <- myTwinData[complete.cases(myTwinData$subj_id), ] # remove NA rows
@@ -39,8 +39,8 @@ allDup <- function (value)
 }
 
 myTwinData  <- myTwinData[allDup(myTwinData$nofamill),]  # remove non twins based on the familly id
-write.csv(myTwinData,paste("/media/yassinebha/database2/Google_Drive/twins_movie/stability_fir_all_sad_blocs_", scrub ,"_" ,fir_norm,"/test.csv",sep = ''))# write a test table 
-#write.csv(myTwinData,"~/Google_Drive/twins_movie/stability_fir_all_sad_blocs_EXP2_test2/test.csv")# write a test table 
+#write.csv(myTwinData,paste("/media/yassinebha/database2/Google_Drive/twins_movie/stability_fir_all_sad_blocs_", scrub ,"_" ,fir_norm,"/test.csv",sep = ''))# write a test table 
+write.csv(myTwinData,paste("~/Google_Drive/twins_movie/stability_fir_all_sad_blocs_", scrub ,"_" ,fir_norm,"/test.csv",sep = ''))# write a test table 
 # check for duplicated subject IDs
 if (any(duplicated(myTwinData$subj_id) == TRUE )) { warning( "the duplicated subjects ID are: \n" ,(myTwinData$subj_id[duplicated(myTwinData$subj_id)]),"\n") }
 myTwinData <- myTwinData[!duplicated(myTwinData$subj_id),] # remove the dulicated subject
@@ -271,9 +271,6 @@ for (ii in seq(num_clusters)) {
 #   #devtools::install_github("ropensci/plotly")
 #   
 #   
-#   ## Next, install plotly. From within the R console, enter:
-#  #install_github("ropensci/plotly")
-#   
 #   ## import the Plotly R library
 #   library(plotly)
 #   
@@ -346,9 +343,8 @@ for (ii in seq(num_clusters)) {
   TabResultTmp$shapiroPvalue_Tw1 <- as.numeric(TabResultTmp$shapiroPvalue_Tw1)
   TabResultTmp$shapiroPvalue_Tw2 <- as.numeric(TabResultTmp$shapiroPvalue_Tw2)
   # Write csv copy of the results table for each cluster
-  write.csv(TabResultTmp, file = paste("/media/yassinebha/database2/Google_Drive/twins_movie/stability_fir_all_sad_blocs_",scrub,"_",fir_norm,"/",paste("clust_",as.character(cc),"_",scale,"_",fir_norm,"_",scrub,".csv",sep = ''),sep = ''))
-  #write.csv(TabResultTmp, file = paste("~/Google_Drive/twins_movie/stability_fir_all_sad_blocs_EXP2_test2/" , paste("clust_",as.character(cc),"_",scale,"_",fir_norm,"_",scrub,"_",".csv",sep = ''),sep = ''))
-  
+  #write.csv(TabResultTmp, file = paste("/media/yassinebha/database2/Google_Drive/twins_movie/stability_fir_all_sad_blocs_",scrub,"_",fir_norm,"/",paste("clust_",as.character(cc),"_",scale,"_",fir_norm,"_",scrub,".csv",sep = ''),sep = ''))
+  write.csv(TabResultTmp, file = paste("~/Google_Drive/twins_movie/stability_fir_all_sad_blocs_",scrub,"_",fir_norm,"/",paste("clust_",as.character(cc),"_",scale,"_",fir_norm,"_",scrub,".csv",sep = ''),sep = ''))  
 } 
 
 

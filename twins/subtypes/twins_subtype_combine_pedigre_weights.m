@@ -1,14 +1,14 @@
 
 % graber for individual subtypes weight for heritabylity analysis 
 clear
-path_root =  '/media/yassinebha/database2/Google_Drive/twins_movie/';
-scale =  'sci10_scg7_scf7';
-fir_norm = 'shape';
+path_root =  '~/Google_Drive/twins_movie/';
+scale =  'sci10_scg7_scf6';
+fir_norm = 'perc';
 scrub = 'noscrub';
 path_pedigre = '~/github_repos/Projects/twins/script/models/twins_pedigre_raw_all.csv';
 path_fmri    =[path_root 'fmri_preprocess_' ];
 path_subtypes     =[path_root 'stability_fir_all_sad_blocs_' scrub '_' fir_norm '/'];
-load ([path_subtypes 'fir_shape_subtypes_weights_scale_' scale '_all_networks.mat'])
+load ([path_subtypes 'fir_' fir_norm '_subtypes_weights_scale_' scale '_all_networks.mat'])
 path_out     = [path_root 'stability_fir_all_sad_blocs_' scrub '_' fir_norm '/'];
 nb_subtypes = nb_clust; % the nember of subtypes 
 num_scale = str2num(scale(strfind(scale,'scf')+3:end));
