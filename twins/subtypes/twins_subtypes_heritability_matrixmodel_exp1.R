@@ -343,8 +343,8 @@ for (ii in seq(num_clusters)) {
   TabResultTmp$shapiroPvalue_Tw1 <- as.numeric(TabResultTmp$shapiroPvalue_Tw1)
   TabResultTmp$shapiroPvalue_Tw2 <- as.numeric(TabResultTmp$shapiroPvalue_Tw2)
   # Write csv copy of the results table for each cluster
-  #write.csv(TabResultTmp, file = paste("/media/yassinebha/database2/Google_Drive/twins_movie/stability_fir_all_sad_blocs_",scrub,"_",fir_norm,"/",paste("clust_",as.character(cc),"_",scale,"_",fir_norm,"_",scrub,".csv",sep = ''),sep = ''))
-  write.csv(TabResultTmp, file = paste("~/Google_Drive/twins_movie/stability_fir_all_sad_blocs_",scrub,"_",fir_norm,"/",paste("clust_",as.character(cc),"_",scale,"_",fir_norm,"_",scrub,".csv",sep = ''),sep = ''))  
+  write.csv(TabResultTmp, file = paste("/media/yassinebha/database2/Google_Drive/twins_movie/stability_fir_all_sad_blocs_",scrub,"_",fir_norm,"/",paste("clust_",as.character(cc),"_",scale,"_",fir_norm,"_",scrub,".csv",sep = ''),sep = ''))
+  #write.csv(TabResultTmp, file = paste("~/Google_Drive/twins_movie/stability_fir_all_sad_blocs_",scrub,"_",fir_norm,"/",paste("clust_",as.character(cc),"_",scale,"_",fir_norm,"_",scrub,".csv",sep = ''),sep = ''))  
 } 
 
 
