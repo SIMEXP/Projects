@@ -18,8 +18,8 @@ require(pracma)
 #Prepare Data
 rm(list = ls())
 #-----------------------------------------------------------------------
-fir_norm   = 'perc'
-scale = 'sci10_scg7_scf6'
+fir_norm   = 'shape'
+scale = 'sci10_scg7_scf7'
 scrub = 'noscrub'
 num_clusters  =  str2num(substr(scale, start=strfind(scale,"scf")+3,nchar(scale)))# the number of clusters 
 permute = 1 # set the number of permutations
@@ -312,7 +312,18 @@ for (ii in seq(num_clusters)) {
     type = "scatter",
     color = "rgb(148, 103, 189)"
   )
-  data <- list(trace1, trace2, trace3, trace4)
+
+  trace5 <- list(
+    x = TabResult$clust_subt[subtypes*(cc-1)+seq(subtypes)], 
+    y = as.numeric(TabResult$c2_p[subtypes*(cc-1)+seq(subtypes)]),
+    name = "$c^2 P value$",
+    mode = "lines",
+    yaxis = "y2",
+    type = "scatter",
+    color = "rgb(148, 103, 189)"
+  )
+
+data <- list(trace1, trace2, trace3, trace4, trace5)
   layout <- list(
     title = paste("clust_",as.character(cc),"_",scale,"_",fir_norm,"_",scrub,sep = ''), 
     xaxis = list(title = "Fir Times Points"), 
@@ -328,7 +339,10 @@ for (ii in seq(num_clusters)) {
   x = TabResult$clust_subt[subtypes*(cc-1)+seq(subtypes)]
   plot_ly(x = x, y = trace1$y, name = trace1$name, line = list(shape = "linear"), filename=paste("clust_",as.character(cc),"_",scale,"_",fir_norm,"_",scrub,sep = '')) %>%
     add_trace(y = trace2$y, name = trace2$name, line = list(shape = "linear")) %>%
-    add_trace(y = trace3$y, name = trace3$name, line = list(shape = "linear"))
+    add_trace(y = trace3$y, name = trace3$name, line = list(shape = "linear")) %>%
+    add_trace(y = trace4$y, name = trace4$name,line = list(shape = "linear"), mode = "markers") %>%
+    add_trace(y = trace5$y, name = trace5$name,line = list(shape = "linear"), mode = "markers")
+  
   
   filename <- paste("clust_",as.character(cc),"_",scale,"_",fir_norm,"_",scrub,sep = '')
   TabResultTmp <- TabResult[(subtypes)*(cc-1)+seq(subtypes),]
@@ -370,7 +384,7 @@ h5write(TabResult,paste("clust_",as.character(cc),"_",scale,"_",fir_norm,"_",scr
 write.csv(TabResult, file = paste("/media/yassinebha/database2/Google_Drive/twins_movie/" , paste("scale",num_clusters,"_",fir_norm,"_",scrub,".csv",sep = ''),sep = ''))
 write.csv(TabTmp, file = paste("/media/yassinebha/database2/Google_Drive/twins_movie/" , paste("clust_",as.character(cc),"_",scale,"_TABTMP_",fir_norm,"_",scrub,".csv",sep = ''),sep = ''))
 
-
+TabResult<-read.csv("/home/yassinebha/Google_Drive/twins_movie/scale7_shape_noscrub.csv", header=TRUE, na.strings="NaN")
 
 
 
