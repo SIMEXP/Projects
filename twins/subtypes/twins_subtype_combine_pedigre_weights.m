@@ -1,9 +1,9 @@
 
 % graber for individual subtypes weight for heritabylity analysis 
 clear
-path_root =  '~/Google_Drive/twins_movie/';
+path_root =  '/media/yassinebha/database2/Google_Drive/twins_movie/';
 scale =  'sci10_scg7_scf6';
-fir_norm = 'perc';
+fir_norm = 'shape';
 scrub = 'noscrub';
 path_pedigre = '~/github_repos/Projects/twins/script/models/twins_pedigre_raw_all.csv';
 path_fmri    =[path_root 'fmri_preprocess_' ];

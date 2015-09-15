@@ -3,10 +3,10 @@
 clear all
 
 %% Parameters
-path_root =  '~/Google_Drive/twins_movie/';
+path_root =  '/media/yassinebha/database2/Google_Drive/twins_movie/';
 scale =  'sci10_scg7_scf6';
 num_scale = str2num(scale(strfind(scale,'scf')+3:end));
-fir_norm = 'perc';
+fir_norm = 'shape';
 scrub = 'noscrub';
 
 %% Load data
