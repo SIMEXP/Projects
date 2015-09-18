@@ -41,9 +41,9 @@ function cell_combin = combine_cell_tab(cell_master,cell_slave,opt)
 % COMMENTS:
 %
 % Copyright (c) Yassine Benhajali, Pierre Bellec,
-% Centre de recherche de l'institut de gériatrie de Montréal, 
+% Centre de recherche de l'institut de griatrie de Montral, 
 % Department of Computer Science and Operations Research
-% University of Montreal, Québec, Canada, 2013
+% University of Montreal, Qubec, Canada, 2013
 % Maintainer : pierre.bellec@criugm.qc.ca
 % See licensing information in the code.
 % Keywords : table, CSV
@@ -102,7 +102,7 @@ for n_cell_master = 2:size(cell_master(1:end,opt.combine_master_colomn),1)
     cell_combin(n_cell_master + n_shift ,:) = [ cell_master(n_cell_master,:) cell(size(cell_slave(n_cell_slave,:)))  ];
     end
 end
-cell_combin(cellfun(@isempty,cell_combin))='NaN';
+cell_combin(cellfun(@isempty,cell_combin))=NaN;
 
 % add tables headers
 cell_combin(1,:) = [ cell_master(1,:)  cell_slave(1,:) ];
