@@ -3,14 +3,14 @@
 clear all
 
 %% Parameters
-path_root =  '/home/yassinebha/Google_Drive/twins_movie/';
-%path_root =  '/media/yassinebha/database2/Google_Drive/twins_movie/';
-scale =  'sci10_scg11_scf13';
+%path_root =  '/home/yassinebha/Google_Drive/twins_movie/';
+path_root =  '/media/yassinebha/database2/Google_Drive/twins_movie/';
+scale =  'sci10_scg8_scf8';
 %scale =  'sci280_scg280_scf298';
 num_scale = str2num(scale(strfind(scale,'scf')+3:end));
 
 fir_norm = 'perc';
-scrub = '_noscrub';
+scrub = 'noscrub';
 list_cov = { 'dominic_dep','sexe','FD' };
 list_remove_pheno = { 'frames_OK','frames_scrubbed'};
 
@@ -18,7 +18,7 @@ list_remove_pheno = { 'frames_OK','frames_scrubbed'};
 %combine pheno and scrubbing
 pheno_raw = niak_read_csv_cell('~/github_repos/Projects/twins/script/models/twins/dominic_dep_group0a1_minus_group11a20_tmp2.csv');
 master_cell = pheno_raw;
-files_out  = niak_grab_all_preprocess([path_root 'fmri_preprocess_EXP2_test2']);
+files_out  = niak_grab_all_preprocess([path_root 'fmri_preprocess_' scrub]);
 slave_cell = niak_read_csv_cell(files_out.quality_control.group_motion.scrubbing);
 ly = slave_cell(1,:);
 slave_cell = slave_cell(2:end,:);
@@ -44,8 +44,8 @@ ly = pheno(1,2:end)';
 pheno = pheno(2:end,2:end);
 
 %% Load data
-path_read  = [path_root 'stability_fir_all_sad_blocs_EXP2_perc/stability_group/fir/'];
-path_fmri  = [path_root 'fmri_preprocess_EXP2_test2/fmri/'];
+path_read  = [path_root 'stability_fir_all_sad_blocs_' scrub '_' fir_norm '/stability_group/fir/'];
+path_fmri  = [path_root 'fmri_preprocess_' scrub];
 list_files = dir([path_read 'fir_group_level_*']);
 list_files = {list_files.name};
 % discard subject if is not member of pheno list
@@ -81,7 +81,7 @@ for xx = 1:size(pheno_r,1)
 end
 
 %% visualise the partition (optional)
-path_scales =  [path_root 'stability_fir_all_sad_blocs_EXP2_perc/stability_group/' scale ];
+path_scales =   [path_root 'stability_fir_all_sad_blocs_' scrub '_' fir_norm '/stability_group/' scale ];
 opt.flag_zip = true;
 niak_brick_mnc2nii(path_scales,[path_scales '_nii'],opt)
 cd([path_scales '_nii'])

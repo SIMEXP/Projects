@@ -4,9 +4,9 @@ clear all
 
 %% Parameters
 path_root =  '/media/yassinebha/database2/Google_Drive/twins_movie/';
-scale =  'sci10_scg7_scf6';
+scale =  'sci10_scg8_scf8';
 num_scale = str2num(scale(strfind(scale,'scf')+3:end));
-fir_norm = 'shape';
+fir_norm = 'perc';
 scrub = 'noscrub';
 
 %% Load data
@@ -20,21 +20,21 @@ for ff = 1:length(list_files);
     fir_all(:,:,ff) = data.(scale).fir_mean;
 end
 
-%% visualise the partition (optional)
-%path_scales =  [path_root 'stability_fir_all_sad_blocs_EXP2_test2/stability_group/' scale ];
-%opt.flag_zip = true;
-%niak_brick_mnc2nii(path_scales,[path_scales '_nii'],opt)
-%cd([path_scales '_nii'])
-%max_effect_vol(['brain_partition_consensus_group_' scale '.nii.gz'],['fdr_group_average_' scale '.mat']);
-%system('mricron  ~/database/white_template.nii.gz -c -0 -o max_abs_eff.nii.gz -c "5redyell" -l 0.005 -h 0.5 -z  &');
-%system(['mricron ~/database/white_template.nii.gz -c -0 -o ' path_scales '_nii/brain_partition_consensus_group_' scale '.nii.gz -c NIH -l 1 -h ' num2str(num_scale+1 ) ' -z &']);
+% visualise the partition (optional)
+path_scales =   [path_root 'stability_fir_all_sad_blocs_' scrub '_' fir_norm '/stability_group/' scale ];
+opt.flag_zip = true;
+niak_brick_mnc2nii(path_scales,[path_scales '_nii'],opt)
+cd([path_scales '_nii'])
+max_effect_vol(['brain_partition_consensus_group_' scale '.nii.gz'],['fdr_group_average_' scale '.mat']);
+system('mricron  ~/database/white_template.nii.gz -c -0 -o max_abs_eff.nii.gz -c "5redyell" -l 0.005 -h 0.5 -z  &');
+system(['mricron ~/database/white_template.nii.gz -c -0 -o ' path_scales '_nii/brain_partition_consensus_group_' scale '.nii.gz -c NIH -l 1 -h ' num2str(num_scale+1 ) ' -z &']);
 
 %% Hierarchical clustering, subtypes and glm analysis
 list_ind = [ 1:num_scale];
 list_color = {'r','b','g','k','p'};
 for ii = 1:length(list_ind)
     % Clustering of subtypes
-    %figure(ii)
+    figure(ii)
     %clf
     fir_td = squeeze(fir_all(:,list_ind(ii),:));
     fir_td = fir_td./repmat(sqrt(sum(fir_td.^2,1)),[size(fir_td,1) 1]);
@@ -49,27 +49,27 @@ for ii = 1:length(list_ind)
     fprintf('Twins_movie, max silhouette %1.2f at scale %i\n',val,nb_clust)
     part = niak_threshold_hierarchy (hier,struct('thresh',nb_clust));
     order = niak_hier2order (hier);
-%    subplot(3,1,1)
-%    niak_visu_matrix(D(order,order));
-%    title(sprintf('Twins movie scale %s cluster %i',scale,list_ind(ii)));
-%    subplot(3,1,2)
-%    niak_visu_part(part(order))
-%    subplot(3,1,3)
-%    plot(sil)
+    subplot(3,1,1)
+    niak_visu_matrix(D(order,order));
+    title(sprintf('Twins movie scale %s cluster %i',scale,list_ind(ii)));
+    subplot(3,1,2)
+    niak_visu_part(part(order))
+    subplot(3,1,3)
+    plot(sil)
     % Show the subtypes
-%    figure(ii+length(list_ind))
-%    clf
-%    for cc = 1:nb_clust
-%        subplot(nb_clust,1,cc)
-%        if cc == 1 
-%        title(sprintf('Twins-Movie  scale %s cluster %i  Subtype %s ',scale,list_ind(ii),num2str(cc)));
-%        else
-%        title(sprintf('Subtype %s ',num2str(cc)));
-%        end 
-%        hold on 
-%        plot(mean(fir_all(:,list_ind(ii),part==cc),3),list_color{cc})
-%    end
-%    hold off
+    figure(ii+length(list_ind))
+    clf
+    for cc = 1:nb_clust
+        subplot(nb_clust,1,cc)
+        if cc == 1 
+        title(sprintf('Twins-Movie  scale %s cluster %i  Subtype %s ',scale,list_ind(ii),num2str(cc)));
+        else
+        title(sprintf('Subtype %s ',num2str(cc)));
+        end 
+        hold on 
+        plot(mean(fir_all(:,list_ind(ii),part==cc),3),list_color{cc})
+    end
+    hold off
     % Build distance scores for all subtypes
     for cc = 1:nb_clust      
         avg_clust(:,cc,ii) = mean(fir_td(:,part==cc),2);

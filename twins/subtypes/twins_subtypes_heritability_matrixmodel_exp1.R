@@ -18,8 +18,8 @@ require(pracma)
 #Prepare Data
 rm(list = ls())
 #-----------------------------------------------------------------------
-fir_norm   = 'shape'
-scale = 'sci10_scg7_scf6'
+fir_norm   = 'perc'
+scale = 'sci10_scg8_scf8'
 scrub = 'noscrub'
 num_clusters  =  str2num(substr(scale, start=strfind(scale,"scf")+3,nchar(scale)))# the number of clusters 
 permute = 1000 # set the number of permutations
@@ -363,13 +363,13 @@ data <- list(trace1, trace2, trace3, trace4, trace5)
 
 
 TabResult$a2 <- as.numeric(TabResult$a2)
-TabResult$a2 <- as.numeric(TabResult$a2_p)
+TabResult$a2_p <- as.numeric(TabResult$a2_p)
 TabResult$c2 <- as.numeric(TabResult$c2)
-TabResult$c2 <- as.numeric(TabResult$c2_p)
+TabResult$c2_p <- as.numeric(TabResult$c2_p)
 TabResult$e2 <- as.numeric(TabResult$e2)
-TabResult$e2 <- as.numeric(TabResult$e2_p)
+TabResult$e2_p <- as.numeric(TabResult$e2_p)
 TabResult$LL_ACE <- as.numeric(TabResult$LL_ACE)
-TabResult$LL_ACE <- as.numeric(TabResult$LL_ACE_p)
+TabResult$LL_ACE_p <- as.numeric(TabResult$LL_ACE_p)
 TabResult$shapiroPvalue_Tw1 <- as.numeric(TabResult$shapiroPvalue_Tw1)
 TabResult$shapiroPvalue_Tw2 <- as.numeric(TabResult$shapiroPvalue_Tw2)
 
