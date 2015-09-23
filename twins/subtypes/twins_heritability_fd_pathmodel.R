@@ -5,7 +5,7 @@ require(OpenMx)
 path_root = '/home/yassinebha/Google_Drive/twins_movie/'
 scrub = 'noscrub'
 path_fmri = paste(path_root,'fmri_preprocess_',scrub,.Platform$file.sep,sep = '');
-permute = 1000 # set the number of permutations
+permute = 100000 # set the number of permutations
 
 # Load Data
 #Read fd_pedigree combined file
