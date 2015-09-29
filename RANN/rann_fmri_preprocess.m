@@ -46,7 +46,8 @@ path_raw = [root_path 'raw_mnc/'];
 list_subject = dir(path_raw);
 list_subject = {list_subject.name};
 list_subject = list_subject(~ismember(list_subject,{'.','..'}));
-
+%only 40 subjects whose QC has been completed-to compare most recent NIAK13.0.2 release
+list_subject = list_subject([1 5 14 15 17 18 21 22 25 26 28 34 35 36 37 38 39 41 45 46 50 51 55 57 58 59 62 63 65 74 76 104 116 145 150 158 161 165 2031206 282]);
 
 for num_s = 1:length(list_subject)
     subject = list_subject{num_s};
