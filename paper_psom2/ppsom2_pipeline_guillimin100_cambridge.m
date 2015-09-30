@@ -23,5 +23,6 @@ opt_g.path_database = path_mnc;
 files_in = fcon_get_files(list_subject,opt_g);
 
 opt.psom.max_queued = 100;
-opt.psom.nb_resub = 20;
+opt.psom.nb_resub = 0;
+opt.psom.flag_verbose = 1;
 [pipeline,opt] = niak_pipeline_fmri_preprocess(files_in,opt); 
