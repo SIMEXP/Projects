@@ -28,7 +28,8 @@
 
 clear all
 % load lib
-addpath(genpath('/sb/project/gsf-624-aa/quarantaine/niak-boss-0.13.1/'))
+% addpath adds folder to search path; genpath generates path string
+addpath(genpath('/sb/project/gsf-624-aa/quarantaine/niak-boss-0.13.2/'))
 
 %%%%%%%%%%%%%%%%%%%%%
 %% Parameters
@@ -38,18 +39,28 @@ exp   = 'all';
 
 %% Setting input/output files 
 %% This is guillimin
-root_path = '/sb/project/gsf-624-aa/database/nki_multimodal/';
-path_out = '/gs/scratch/abadhwar/NKI_enhanced_nniakB/';
+root_path = '/sb/project/gsf-624-aa/database/nki_multimodal_release1/';
+path_out = '/gs/scratch/abadhwar/NKI_release1_BatchA/';
 
 %% Grab the raw data
-path_raw = [root_path 'raw_mnc_all/'];
+% note that '/sb/project/gsf-624-aa/database/nki_multimodal_release1/' contains the directory 'raw_mnc'
+% assigns path_raw '/sb/project/gsf-624-aa/database/nki_multimodal_release1/raw_mnc/'
+path_raw = [root_path 'raw_mnc/'];
+
+% returns the folder listings of path_raw or '/sb/project/gsf-624-aa/database/nki_multimodal_release1/raw_mnc/' to list_subject
 list_subject = dir(path_raw);
+
+% returns the folder names to the variable list_subject
 list_subject = {list_subject.name};
+
+% ismember or array elements that are members of set array
 list_subject = list_subject(~ismember(list_subject,{'.','..'}));
 
 
-% Run preprocessing with a mix of subjects that passed or failed QC
-list_subject = list_subject([34:42 51:57]);
+
+
+%% Run preprocessing of subjects 1-90 in NKI_release 1
+list_subject = list_subject([1:90]);
 for num_s = 1:length(list_subject)
     subject = list_subject{num_s};
     id = ['s' subject];
@@ -165,6 +176,7 @@ opt.smooth_vol.flag_skip = 0;  % Skip spatial smoothing (0: don't skip, 1 : skip
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 opt.psom.mode_pipeline_manager = 'background';
 opt.psom.qsub_options = '-q sw -l nodes=1:ppn=1:sandybridge,walltime=48:00:00';
+opt.granularity = 'subject';
 opt.psom.max_queued = 100;
 opt.time_between_checks = 60;
 [pipeline,opt] = niak_pipeline_fmri_preprocess(files_in,opt);
