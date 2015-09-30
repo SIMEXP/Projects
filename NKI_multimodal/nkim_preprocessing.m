@@ -29,7 +29,8 @@
 clear all
 % load lib
 % addpath adds folder to search path; genpath generates path string
-addpath(genpath('/sb/project/gsf-624-aa/quarantaine/niak-boss-0.13.2/'))
+addpath(genpath('/gs/project/gsf-624-aa/quarantaine/niak-boss-0.13.2/'))
+
 
 %%%%%%%%%%%%%%%%%%%%%
 %% Parameters
