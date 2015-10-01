@@ -40,15 +40,15 @@ exp   = 'all';
 
 %% Setting input/output files 
 %% This is guillimin
-root_path = '/sb/project/gsf-624-aa/database/nki_multimodal_release1/';
-path_out = '/gs/scratch/abadhwar/NKI_release1_BatchA/';
+root_path = '/gs/project/gsf-624-aa/nki_multimodal_release1/';
+path_out = '/gs/project/gsf-624-aa/abadhwar/NKI_release1_BatchA/';
 
 %% Grab the raw data
-% note that '/sb/project/gsf-624-aa/database/nki_multimodal_release1/' contains the directory 'raw_mnc'
-% assigns path_raw '/sb/project/gsf-624-aa/database/nki_multimodal_release1/raw_mnc/'
+% note that '/gs/project/gsf-624-aa/nki_multimodal_release1/' contains the directory 'raw_mnc'
+% assigns path_raw '/gs/project/gsf-624-aa/nki_multimodal_release1/raw_mnc/'
 path_raw = [root_path 'raw_mnc/'];
 
-% returns the folder listings of path_raw or '/sb/project/gsf-624-aa/database/nki_multimodal_release1/raw_mnc/' to list_subject
+% returns the folder listings of path_raw or '/gs/project/gsf-624-aa/nki_multimodal_release1/raw_mnc/' to list_subject
 list_subject = dir(path_raw);
 
 % returns the folder names to the variable list_subject
@@ -60,8 +60,8 @@ list_subject = list_subject(~ismember(list_subject,{'.','..'}));
 
 
 
-%% Run preprocessing of subjects 1-90 in NKI_release 1
-list_subject = list_subject([1:90]);
+%% Run preprocessing on all subjects in NKI_release 1
+
 for num_s = 1:length(list_subject)
     subject = list_subject{num_s};
     id = ['s' subject];
