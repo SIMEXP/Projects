@@ -38,11 +38,11 @@ clear all
 
 addpath(genpath('/gs/project/gsf-624-aa/quarantaine/niak-boss-0.13.2'))
 
-root_path = '/gs/project/gsf-624-aa/database2/Projects/RANN/';
-path_out = '/gs/scratch/perrine/RANN/preprocess_data/';
+root_path = '/gs/project/gsf-624-aa/database2/Projects/ATLAS/';
+path_out = '/gs/scratch/perrine/ATLAS';
 
 %% Grab the raw data
-path_raw = [root_path 'raw_mnc/'];
+path_raw = [root_path 'test_preproc_mnc/'];
 list_subject = dir(path_raw);
 list_subject = {list_subject.name};
 list_subject = list_subject(~ismember(list_subject,{'.','..'}));
