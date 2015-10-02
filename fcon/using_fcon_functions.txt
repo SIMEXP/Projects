@@ -1,0 +1,100 @@
+======This will be a short tutorial on the basic tools implemented for the Functional Connectomes (fcon_1000) Project.======
+
+For the examples in this page, I will use a fictional databases named //Montreal// with the databases path set to ///database/fcon_1000/// and the user //lavoiecs//.
+
+For all fcon_ and the structrep functions, in matlab or octave type : //help "function_name"// for basic help on the function.
+
+=====Downloading a new database=====
+For new databases, create a new folder :
+  mkdir /database/fcon_1000/raw/Montreal/
+
+
+Then download the database to that folder with your favorite web browser or :
+  wget http://www.nitrc.org/frs/downloadlink.php/1234 /database/fcon_1000/raw/Montreal/Montreal.tar
+Assuming the download number for the file is 1234. Check on the website [[http://www.nitrc.org/frs/?group_id=296||All downloadable files]] to find it.
+
+
+Move to the directory for all other operations :
+  cd /database/fcon_1000/raw/Montreal/
+
+
+Since the databases are compressed in a tar format, use the command :
+  tar -xvf Montreal.tar && rm Montreal.tar
+Hint: Removing the file leaves you a bit more space on the disk.
+
+Once that is done you can start the pre-preprocessing process, but first go into octave or matlab and build your paths.
+  octave
+  cd /home/lavoiecs/Matlab/
+  build_path_peuplier({'psom-svn','niak-svn','projects'})
+  cd /database/fcon_1000/raw/Montreal/
+Switching ///home/lavoiecs/// for your home folder.
+
+
+=====Getting information on the age and sex of the subjects=====
+Although this is done in the pre-preprocessing step, it can be a good idea to do it before to see what kind of subjects are in the database. 
+  files_in = 'Montreal'
+  files_out = 'Montreal'
+  fcon_group_select(files_in,files_out)
+Also, it can be used to get the demographics of multiple databases :
+  files_in = fcon_get_databases or files_in = {'Montreal','database2','database3'}
+  files_out = 'Montreal_db2_db3'
+  fcon_group_select(files_in,files_out)
+Files produced are in the ///database/fcon_1000/raw/group_selects///. Two files are produced : a ".txt" file with a seperation by age class and by gender with all the subject numbers and a ".png" file with a nice bar graph of the ages and genders. When executed with //fcon_pipe_pre// files will be in ///database/fcon_1000/raw/Montreal/output///.
+
+
+=====Starting the pre-preprocessing step=====
+To begin the preprocessing step, we need to create the fmri_preprocessing pipeline, which requires a couples of operations to be done before, all included in the pipeline //fcon_pipe_pre// :
+  help fcon_pipe_pre
+To see all options you can set. Here is the basic variables to set, I suggest make a dry run (flag_test) before to set all the variables and check if they are set correctly :
+  files_in.database = 'Montreal'
+  opt.flag_test = 1
+  opt.flag_single = 1
+  files_out = ''
+  [pipeline,files_in,files_out,opt] = fcon_pipe_pre(files_in,files_out,opt)
+Once this is done you can check the files_in and files_out and opts to be sure all the paths are set correctly and options are the ones you want.
+
+
+You can also run the pipeline on all the databases already downloaded :
+  files_in.databases = fcon_get_databases
+  opt.flag_test = 1
+  files_out = ''
+  [pipeline,files_in,files_out,opt] = fcon_pipe_pre(files_in,files_out,opt)
+The databases already processed will not be reprocessed if you set the log path correctly so it could be a good idea to always use this method. Remember that using this method, setting options for fmri (opt.opt_fmri) will be applied to all databases and not just the new one.
+
+
+Now we run this pipeline :
+  opt.flag_test = 0
+  [pipeline,files_in,files_out,opt] = fcon_pipe_pre(files_in,files_out,opt)
+Check that all the jobs are ok and press any key to continue or ctrl-c (C^c for the fellow emacs fans) to cancel if something is not right.
+
+=====Starting the preprocessing step=====
+Wait for the pipeline to execute. Most jobs are pretty quick but the convert job takes a lot of time. Once this is done and no jobs failed, you will have a pipeline created for the fmri preprocessing step. It's a good idea to check some of the converted files to be sure they converted correctly with register. Load it and execute it : 
+  cd /database/fcon_1000/pipelines/
+  load Montreal_fmri.mat
+  opt_psom.path_logs = '/database/fcon_1000/logs/Montreal/fmri/'
+  psom_run_pipeline(pipeline,opt_psom)
+This should execute the pipeline, in case of problems, sometimes the motion correction job fails because the views for the anat and the func are too different, in this case you can do : 
+  pipeline = structrep(pipeline,'coregister_sub*.opt.init','center')
+  save('Montreal_fmri_center.mat',pipeline)
+  psom_run_pipeline(pipeline,opt_psom)
+It's always a good idea to save the pipeline to another file just in case.
+
+
+If you want to execute both pipelines on different machines and the paths are not the same you can do : 
+  pipeline = structrep(pipeline,'*.*.*','/database/fcon_1000/','/home/lavoiecs/database/fcon_1000/')
+  save('Montreal_fmri_krylov.mat',pipeline)
+Again a good idea the save the pipeline for further use. The above command will change all fields in the pipeline structure from ///database/fcon_1000/// to ///home/lavoiecs/database/fcon_1000///.
+
+
+This pipeline is very long to execute, so it's a good idea to leave it run overnight on a calculation center like krylov or mammouth. Once done, check some of the files to be sure everything went well, you can change some of the options for the jobs with the structrep function like mentionned above and rerun the jobs. For more information on what is a failed subject or failed job, see Pierre Bellec, director of the research project.
+
+=====Starting the basc processing step=====
+Once done, you can get the files for the basc processing step with :
+  files_in_basc.databases = 'Montreal' OR files_in_basc.databases = fcon_get_databases
+  files_in = fcon_basc_get_files(files_in_basc)
+Unfortunately, you only get the files and not all the options, see Pierre Bellec for the options and commands for the basc processing step.
+
+=====Conclusion=====
+That is all for this short tutorial on the fcon project.
+
+For any information, see Pierre Bellec or send an email to [[lavoiecs@iro.umontreal.ca]].
