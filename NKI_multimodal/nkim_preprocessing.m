@@ -29,7 +29,7 @@
 clear all
 % load lib
 % addpath adds folder to search path; genpath generates path string
-addpath(genpath('/gs/project/gsf-624-aa/quarantaine/niak-boss-0.13.2/'))
+addpath(genpath('/gs/project/gsf-624-aa/quarantaine/niak-boss-0.13.3b/'))
 
 
 %%%%%%%%%%%%%%%%%%%%%
@@ -60,8 +60,9 @@ list_subject = list_subject(~ismember(list_subject,{'.','..'}));
 
 
 
-%% Run preprocessing on all subjects in NKI_release 1
+%% Run preprocessing on subjects 1-5 in NKI_release 1
 
+list_subject = list_subject([1:5]);
 for num_s = 1:length(list_subject)
     subject = list_subject{num_s};
     id = ['s' subject];
@@ -177,7 +178,7 @@ opt.smooth_vol.flag_skip = 0;  % Skip spatial smoothing (0: don't skip, 1 : skip
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 opt.psom.mode_pipeline_manager = 'background';
 opt.psom.qsub_options = '-q sw -l nodes=1:ppn=1:sandybridge,walltime=48:00:00';
-opt.granularity = 'subject';
-opt.psom.max_queued = 100;
+%opt.granularity = 'subject';
+opt.psom.max_queued = 50;
 opt.time_between_checks = 60;
 [pipeline,opt] = niak_pipeline_fmri_preprocess(files_in,opt);
