@@ -36,7 +36,7 @@ clear all
 %%%%%%%%%%%%%%%%%%%%%
 %% Parameters
 %%%%%%%%%%%%%%%%%%%%%
-task  = 'inkscape_rest';
+task  = 'inscape_rest';
 exp   = 'all';
 %% Setting input/output files 
 [status,cmdout] = system ('uname -n');

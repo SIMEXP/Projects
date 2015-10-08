@@ -1,6 +1,6 @@
 % Script to run a STABILITY_FIR pipeline analysis on the twins database.
 %
-% Copyright (c) Pierre Bellec, 
+% Copyright (c) Pierre Bellec,
 %   Research Centre of the Montreal Geriatric Institute
 %   & Department of Computer Science and Operations Research
 %   University of Montreal, Québec, Canada, 2010-2012
@@ -25,7 +25,7 @@
 % OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 % THE SOFTWARE.
 
-clear 
+clear
 
 %%%%%%%%%%%%%%%%%%%%%
 %% Grabbing the results from the NIAK fMRI preprocessing pipeline
@@ -35,7 +35,7 @@ opt_g.min_nb_vol = 0;     % The minimum number of volumes for an fMRI dataset to
 opt_g.min_xcorr_func = 0.34; % The minimum xcorr score for an fMRI dataset to be included. This metric is a tool for quality control which assess the quality of non-linear coregistration of functional images in stereotaxic space. Manual inspection of the values during QC is necessary to properly set this threshold.
 opt_g.max_translation = 3 ; % the maximal transition (difference between two adjacent volumes) in translation motion parameters within-run (in mm)
 opt_g.max_rotation = 3 ; % the maximal transition (difference between two adjacent volumes) in rotation motion parameters within-run (in degrees)
-opt_g.type_files = 'fir'; % Specify to the grabber to prepare the files for the STABILITY_FIR pipeline
+opt_g.type_files = 'perc'; % Specify to the grabber to prepare the files for the STABILITY_FIR pipeline
 
 
 %tmp grabber for debugging
@@ -44,7 +44,7 @@ opt_g.type_files = 'fir'; % Specify to the grabber to prepare the files for the 
 %  liste_exclude = {liste_exclude.name};
 %  opt_g.exclude_subject = liste_exclude;
 
-files_in = niak_grab_fmri_preprocess('/mnt/scratch/bellec/bellec_group/twins/fmri_preprocess_EXP2_test2',opt_g);%  Replace the folder by the path where the results of the fMRI preprocessing pipeline were stored. 
+files_in = niak_grab_fmri_preprocess('/home/yassinebha/scratch/twins/fmri_preprocess_EXP2_test2',opt_g);%  Replace the folder by the path where the results of the fMRI preprocessing pipeline were stored.
 %%%%%%%%%%%%%%%%%%%%%
 %% Event times
 %%%%%%%%%%%%%%%%%%%%%
@@ -52,7 +52,7 @@ files_in = niak_grab_fmri_preprocess('/mnt/scratch/bellec/bellec_group/twins/fmr
 % The file for the final "clean" analysis with a TR of 3 sec
 
 %% Set the timing of events;
-files_in.timing ='/home/benhajal/svn/yassine/script/basc_fir/twins_timing_EXP2_test2_all_sad_blocs.csv';
+files_in.timing ='/home/yassinebha/scratch/twins/twins_timing_EXP2_test2_all_sad_blocs.csv';
 opt.name_condition = 'sad';
 opt.name_baseline  = 'rest';
 %%%%%%%%%%%%%
@@ -60,21 +60,23 @@ opt.name_baseline  = 'rest';
 %%%%%%%%%%%%%
 
 %% BASC
-opt.folder_out = ['/mnt/scratch/bellec/bellec_group/twins/stability_fir_all_sad_blocs_EXP2_test2/']; % Where to store the results
-opt.grid_scales = [10:10:100 120:20:200 240:40:500]' ; % Search for stable clusters in the range 10 to 500 
-opt.scales_maps = [ 10   7   7 ;
-                    20  16  17 ;
-                    40  36  36 ;
-                    80  72  73 ;
-                   140 140 151 ;
-                   280 280 298 ;
-                   400 480 438 ]; 
+opt.folder_out = ['/home/yassinebha/scratch/twins/stability_fir_all_sad_blocs_EXP2_perc/']; % Where to store the results
+opt.grid_scales = [10:10:100 120:20:200 240:40:500]' ; % Search for stable clusters in the range 10 to 500
+mstep_file = [ opt.folder_out filesep 'stability_group/msteps_group.mat'];
+if psom_exist(mstep_file)
+   warning ('The file %s exist, I will use MSTEP scale',mstep_file);
+   load (mstep_file);
+   opt.scales_maps = scales_final;
+else
+   warning ('The file %s does not exist, I will use the specified scale maps',mstep_file);
+   opt.scales_maps = []; % Usually, this is initially left empty. After the pipeline ran a first time, the results of the MSTEPS procedure are used to select the final scales
+end
 opt.stability_fir.nb_samps = 1;    % Number of bootstrap samples at the individual level. 100: the CI on indidividual stability is +/-0.1
-opt.stability_fir.std_noise = 0;     % The standard deviation of the judo noise. The value 0 will not use judo noise. 
+opt.stability_fir.std_noise = 0;     % The standard deviation of the judo noise. The value 0 will not use judo noise.
 opt.stability_group.nb_samps = 500;  % Number of bootstrap samples at the group level. 500: the CI on group stability is +/-0.05
 opt.stability_fir.nb_min_fir = 1;    % the minimum response windows number. By defaut is set to 3
 
-%% FIR estimation 
+%% FIR estimation
 opt.fir.type_norm     = 'fir_shape'; % The type of normalization of the FIR. "fir_shape" (starts at zero, unit sum-of-squares)or 'perc'(without normalisation)
 opt.fir.time_window   = 246;          % The size (in sec) of the time window to evaluate the response, in this cas it correspond to 90 volumes for tr=3s
 opt.fir.time_sampling = 3;         % The time between two samples for the estimated response. Do not go below 1/2 TR unless there is a very large number of trials.
@@ -92,7 +94,7 @@ opt.nb_samps_fdr = 10000; % The number of samples to estimate the false-discover
 %%%%%%%%%%%%%%%%%%%%%%
 %% Run the pipeline %%
 %%%%%%%%%%%%%%%%%%%%%%
-opt.psom.qsub_options = '-q qwork@ms -l nodes=1:m32G,walltime=05:00:00';
+%opt.psom.qsub_options = '-q qwork@ms -l nodes=1:m32G,walltime=05:00:00';
 opt.flag_test = false; % Put this flag to true to just generate the pipeline without running it. Otherwise the pipeline will start.
 %opt.psom.max_queued = 10; % Uncomment and change this parameter to set the number of parallel threads used to run the pipeline
 pipeline = niak_pipeline_stability_fir(files_in,opt);
