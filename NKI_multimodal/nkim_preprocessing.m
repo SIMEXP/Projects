@@ -28,7 +28,9 @@
 
 clear all
 % load lib
-addpath(genpath('/sb/project/gsf-624-aa/quarantaine/niak-boss-0.13.0/'))
+% addpath adds folder to search path; genpath generates path string
+addpath(genpath('/gs/project/gsf-624-aa/quarantaine/niak-boss-0.13.3b/'))
+
 
 %%%%%%%%%%%%%%%%%%%%%
 %% Parameters
@@ -38,18 +40,29 @@ exp   = 'all';
 
 %% Setting input/output files 
 %% This is guillimin
-root_path = '/sb/project/gsf-624-aa/database/nki_multimodal/';
-path_out = '/gs/scratch/abadhwar/NKI_enhanced_granular_wall_ground_b1/';
+root_path = '/gs/project/gsf-624-aa/nki_multimodal_release1/';
+path_out = '/gs/project/gsf-624-aa/abadhwar/NKI_release1_testBatch/';
 
 %% Grab the raw data
-path_raw = [root_path 'raw_mnc_all/'];
+% note that '/gs/project/gsf-624-aa/nki_multimodal_release1/' contains the directory 'raw_mnc'
+% assigns path_raw '/gs/project/gsf-624-aa/nki_multimodal_release1/raw_mnc/'
+path_raw = [root_path 'raw_mnc/'];
+
+% returns the folder listings of path_raw or '/gs/project/gsf-624-aa/nki_multimodal_release1/raw_mnc/' to list_subject
 list_subject = dir(path_raw);
+
+% returns the folder names to the variable list_subject
 list_subject = {list_subject.name};
+
+% ismember or array elements that are members of set array
 list_subject = list_subject(~ismember(list_subject,{'.','..'}));
 
 
-% Run preprocessing in batches, first 85 subjects
-list_subject = list_subject(1:85);
+
+
+%% Run preprocessing on subjects 1-5 in NKI_release 1
+
+list_subject = list_subject([1:5]);
 for num_s = 1:length(list_subject)
     subject = list_subject{num_s};
     id = ['s' subject];
@@ -83,6 +96,11 @@ for num_s = 1:length(list_subject)
     
     
 end
+
+% exclude subjects s0101463, s0103645, and s0103714
+%files_in = rmfield(files_in, 's0101463');
+%files_in = rmfield(files_in, 's0103645');
+%files_in = rmfield(files_in, 's0103714');
 
 %  warning: The file /media/database4/nki_enhanced/raw_mnc/0103714/TfMRI_breathHold_1400/func.mnc.gz does not exist, I suppressed subject 0103714
 %  warning: The file /media/database4/nki_enhanced/raw_mnc/0118439/TfMRI_breathHold_1400/func.mnc.gz does not exist, I suppressed subject 0118439
@@ -145,22 +163,22 @@ opt.smooth_vol.flag_skip = 0;  % Skip spatial smoothing (0: don't skip, 1 : skip
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Tune the parameters for specific subjects %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-opt.tune(1).subject = 's0101463';
-opt.tune (1).param.slice_timing.arg_nu_correct = '-distance 100';
-opt.tune(1).param.slice_timing.flag_center = false;
-opt.tune(2).subject = 's0103645';
-opt.tune(2).param.slice_timing.arg_nu_correct = '-distance 100';
-opt.tune(2).param.slice_timing.flag_center = false;
-opt.tune(3).subject = 's0103714';
-opt.tune(3).param.slice_timing.arg_nu_correct = '-distance 100';
-opt.tune(3).param.slice_timing.flag_center = false;
+%opt.tune(1).subject = 's0101463';
+%opt.tune (1).param.slice_timing.arg_nu_correct = '-distance 100';
+%opt.tune(1).param.slice_timing.flag_center = false;
+%opt.tune(2).subject = 's0103645';
+%opt.tune(2).param.slice_timing.arg_nu_correct = '-distance 100';
+%opt.tune(2).param.slice_timing.flag_center = false;
+%opt.tune(3).subject = 's0103714';
+%opt.tune(3).param.slice_timing.arg_nu_correct = '-distance 100';
+%opt.tune(3).param.slice_timing.flag_center = false;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Run the fmri_preprocess pipeline  %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 opt.psom.mode_pipeline_manager = 'background';
-opt.psom.qsub_options = '-q sw -l nodes=1:ppn=4,walltime=48:00:00';
-opt.granularity = 'subject'; 
-opt.psom.max_queued = 450;
+opt.psom.qsub_options = '-q sw -l nodes=1:ppn=1:sandybridge,walltime=48:00:00';
+%opt.granularity = 'subject';
+opt.psom.max_queued = 50;
 opt.time_between_checks = 60;
 [pipeline,opt] = niak_pipeline_fmri_preprocess(files_in,opt);
