@@ -17,6 +17,12 @@ subj_list = dir([path_data 'adni2/fmri_preprocess/anat/subject*']); % generate l
 for ii = 1:length(subj_list)
     subj_name = subj_list(ii).name;
     files_list = [path_data 'adni2/fmri_preprocess/anat/' subj_name '/func_' subj_name '_mean_stereonl.mnc.gz']; % grab the mean functional image
+    
+    % check if file exists; if file does not exist, continue to the bottom of the loop
+    if exist(files_list) == 0
+        continue;
+    end
+    
     [h,vol]=niak_read_vol(files_list);
     
     % calculate signal in one region
@@ -39,6 +45,12 @@ subj_list = dir([path_data 'ad_mtl/mni_mci/fmri_preprocess/anat/ad_*']); % gener
 for ii = 1:length(subj_list)
     subj_name = subj_list(ii).name;
     files_list = [path_data 'ad_mtl/mni_mci/fmri_preprocess/anat/' subj_name '/func_' subj_name '_mean_stereonl.mnc.gz']; % grab the mean functional image
+    
+    % check if file exists; if file does not exist, continue to the bottom of the loop
+    if exist(files_list) == 0
+        continue;
+    end
+    
     [h,vol]=niak_read_vol(files_list);
     
     % calculate signal in one region
@@ -61,6 +73,12 @@ subj_list = dir([path_data 'ad_mtl/criugm_mci/fmri_preprocess/anat/SB_*']); % ge
 for ii = 1:length(subj_list)
     subj_name = subj_list(ii).name;
     files_list = [path_data 'ad_mtl/criugm_mci/fmri_preprocess/anat/' subj_name '/func_' subj_name '_mean_stereonl.mnc.gz']; % grab the mean functional image
+    
+    % check if file exists; if file does not exist, continue to the bottom of the loop
+    if exist(files_list) == 0
+        continue;
+    end
+    
     [h,vol]=niak_read_vol(files_list);
     
     % calculate signal in one region
@@ -83,6 +101,12 @@ subj_list = dir([path_data 'ad_mtl/adpd/fmri_preprocess/anat/AD*']); % generate 
 for ii = 1:length(subj_list)
     subj_name = subj_list(ii).name;
     files_list = [path_data 'ad_mtl/adpd/fmri_preprocess/anat/' subj_name '/func_' subj_name '_mean_stereonl.mnc.gz']; % grab the mean functional image
+    
+    % check if file exists; if file does not exist, continue to the bottom of the loop
+    if exist(files_list) == 0
+        continue;
+    end
+    
     [h,vol]=niak_read_vol(files_list);
     
     % calculate signal in one region
@@ -103,5 +127,5 @@ end
 %% write csv
 opt.labels_y = {'snr'};
 opt.labels_x = subj_names;
-niak_write_csv(strcat(path_results,'adnet_vmpfc_sc33_snr.csv'),snr',opt)
+niak_write_csv(strcat(path_results,'adnet_vmpfc_sc33_snr_test1.csv'),snr',opt)
 
