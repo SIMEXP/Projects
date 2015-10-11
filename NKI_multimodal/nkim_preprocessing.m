@@ -41,7 +41,7 @@ exp   = 'all';
 %% Setting input/output files 
 %% This is guillimin
 root_path = '/gs/project/gsf-624-aa/nki_multimodal_release1/';
-path_out = '/gs/project/gsf-624-aa/abadhwar/NKI_release1_testBatch/';
+path_out = '/gs/project/gsf-624-aa/abadhwar/NKI_release1_testBatch2/';
 
 %% Grab the raw data
 % note that '/gs/project/gsf-624-aa/nki_multimodal_release1/' contains the directory 'raw_mnc'
