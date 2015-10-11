@@ -75,15 +75,18 @@ for num_s = 1:length(list_subject)
     files_in.(id).fmri.sess1.rest1400 = [path_raw subject filesep 'session_1', filesep,'RfMRI_mx_1400' filesep 'rest.mnc.gz'];
     files_in.(id).fmri.sess1.rest2500 = [path_raw subject filesep 'session_1', filesep,'RfMRI_std_2500' filesep 'rest.mnc.gz'];
     
-    files_c = psom_files2cell(files_in.(id).fmri.sess1);
-    for num_f = 1:length(files_c)
-        if ~psom_exist(files_c{num_f})
-            warning ('The file %s does not exist, I suppressed that file from the pipeline %s',files_c{num_f},subject);
-            files_in.(id).fmri.sess1 = rmfield(files_in.(id).fmri.sess1,fieldnames(files_in.(id).fmri.sess1)(num_f));
-            break
+    list_run = fieldnames(files_in.(id).fmri.sess1);
+    flag_ok = true(length(list_run),1);
+    for num_f = 1:length(list_run)
+        run = list_run{num_f};
+        if ~psom_exist(files_in.(id).fmri.sess1.(run))
+            warning ('The file %s does not exist, I suppressed that file from the pipeline %s',files_in.(id).fmri.sess1.(run));
+            flag_ok(num_f) = false;
         end        
     end
-    
+    if any(~flag_ok)
+        files_in.(id).fmri.sess1 = rmfield(files_in.(id).fmri.sess1,list_run(~flag_ok));
+    end
     
     files_c = psom_files2cell(files_in.(id).anat);
     for num_f = 1:length(files_c)
