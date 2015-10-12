@@ -86,15 +86,16 @@ for num_s = 1:length(list_subject)
     end
     if any(~flag_ok)
         files_in.(id).fmri.sess1 = rmfield(files_in.(id).fmri.sess1,list_run(~flag_ok));
+    elseif ~any(flag_ok)
+        warning('No functional data for subject %s, I suppressed it',subject);
+        files_in = rmfield(files_in,id);
+        break
     end
     
-    files_c = psom_files2cell(files_in.(id).anat);
-    for num_f = 1:length(files_c)
-        if ~psom_exist(files_c{num_f})
-            warning ('The file %s does not exist, I suppressed that subject %s',files_c{num_f},subject);
-            files_in = rmfield(files_in,id);
-            break
-        end        
+    
+    if ~psom_exist(files_in.(id).anat)
+        warning ('The file %s does not exist, I suppressed that subject %s',files_in.(id).anat,subject);
+        break
     end
     
     
