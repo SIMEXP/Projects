@@ -41,7 +41,7 @@ exp   = 'all';
 %% Setting input/output files 
 %% This is guillimin
 root_path = '/gs/project/gsf-624-aa/nki_multimodal_release1/';
-path_out = '/gs/project/gsf-624-aa/abadhwar/NKI_release1_testBatch/';
+path_out = '/gs/project/gsf-624-aa/abadhwar/NKI_release1_attempt2/';
 
 %% Grab the raw data
 % note that '/gs/project/gsf-624-aa/nki_multimodal_release1/' contains the directory 'raw_mnc'
@@ -60,9 +60,9 @@ list_subject = list_subject(~ismember(list_subject,{'.','..'}));
 
 
 
-%% Run preprocessing on subjects 1-5 in NKI_release 1
+%% Run preprocessing on all subjects in NKI_release 1
 
-list_subject = list_subject([1:5]);
+list_subject = list_subject([35:181]);
 for num_s = 1:length(list_subject)
     subject = list_subject{num_s};
     id = ['s' subject];
@@ -75,23 +75,25 @@ for num_s = 1:length(list_subject)
     files_in.(id).fmri.sess1.rest1400 = [path_raw subject filesep 'session_1', filesep,'RfMRI_mx_1400' filesep 'rest.mnc.gz'];
     files_in.(id).fmri.sess1.rest2500 = [path_raw subject filesep 'session_1', filesep,'RfMRI_std_2500' filesep 'rest.mnc.gz'];
     
-    files_c = psom_files2cell(files_in.(id).fmri.sess1);
-    for num_f = 1:length(files_c)
-        if ~psom_exist(files_c{num_f})
-            warning ('The file %s does not exist, I suppressed that file from the pipeline %s',files_c{num_f},subject);
-            files_in.(id).fmri.sess1 = rmfield(files_in.(id).fmri.sess1,fieldnames(files_in.(id).fmri.sess1)(num_f));
-            break
+    list_run = fieldnames(files_in.(id).fmri.sess1);
+    flag_ok = true(length(list_run),1);
+    for num_f = 1:length(list_run)
+        run = list_run{num_f};
+        if ~psom_exist(files_in.(id).fmri.sess1.(run))
+            warning ('The file %s does not exist, I suppressed that file from the pipeline %s',files_in.(id).fmri.sess1.(run));
+            flag_ok(num_f) = false;
         end        
     end
+    if ~any(flag_ok)
+        warning('No functional data for subject %s, I suppressed it',subject);
+        files_in = rmfield(files_in,id);
+    elseif any(~flag_ok)
+        files_in.(id).fmri.sess1 = rmfield(files_in.(id).fmri.sess1,list_run(~flag_ok));
+    end
     
-    
-    files_c = psom_files2cell(files_in.(id).anat);
-    for num_f = 1:length(files_c)
-        if ~psom_exist(files_c{num_f})
-            warning ('The file %s does not exist, I suppressed that subject %s',files_c{num_f},subject);
-            files_in = rmfield(files_in,id);
-            break
-        end        
+    if ~psom_exist(files_in.(id).anat)
+        warning ('The file %s does not exist, I suppressed that subject %s',files_in.(id).anat,subject);
+        files_in = rmfield(files_in,id);
     end
     
     
@@ -179,6 +181,6 @@ opt.smooth_vol.flag_skip = 0;  % Skip spatial smoothing (0: don't skip, 1 : skip
 opt.psom.mode_pipeline_manager = 'background';
 opt.psom.qsub_options = '-q sw -l nodes=1:ppn=1:sandybridge,walltime=48:00:00';
 %opt.granularity = 'subject';
-opt.psom.max_queued = 50;
+opt.psom.max_queued = 100;
 opt.time_between_checks = 60;
 [pipeline,opt] = niak_pipeline_fmri_preprocess(files_in,opt);
