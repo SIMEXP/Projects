@@ -41,7 +41,7 @@ exp   = 'all';
 %% Setting input/output files 
 %% This is guillimin
 root_path = '/gs/project/gsf-624-aa/nki_multimodal_release1/';
-path_out = '/gs/project/gsf-624-aa/abadhwar/NKI_release1_allsubjects/';
+path_out = '/gs/project/gsf-624-aa/abadhwar/NKI_release1_subjects35onwards/';
 
 %% Grab the raw data
 % note that '/gs/project/gsf-624-aa/nki_multimodal_release1/' contains the directory 'raw_mnc'
@@ -62,7 +62,7 @@ list_subject = list_subject(~ismember(list_subject,{'.','..'}));
 
 %% Run preprocessing on all subjects in NKI_release 1
 
-%list_subject = list_subject([1:5]);
+list_subject = list_subject([35:181]);
 for num_s = 1:length(list_subject)
     subject = list_subject{num_s};
     id = ['s' subject];
