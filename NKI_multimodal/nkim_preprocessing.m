@@ -84,19 +84,16 @@ for num_s = 1:length(list_subject)
             flag_ok(num_f) = false;
         end        
     end
-    if ~any(flag_ok)
-        warning('No functional data for subject %s, I suppressed it',subject);
+    if ~any(flag_ok)||~psom_exist(files_in.(id).anat)
+        if ~any(flag_ok)
+            warning('No functional data for subject %s, I suppressed it',subject);
+        else
+            warning ('The file %s does not exist, I suppressed that subject %s',files_in.(id).anat,subject);
+        end
         files_in = rmfield(files_in,id);
     elseif any(~flag_ok)
         files_in.(id).fmri.sess1 = rmfield(files_in.(id).fmri.sess1,list_run(~flag_ok));
     end
-    
-    if ~psom_exist(files_in.(id).anat)
-        warning ('The file %s does not exist, I suppressed that subject %s',files_in.(id).anat,subject);
-        files_in = rmfield(files_in,id);
-    end
-    
-    
 end
 
 % exclude subjects s0101463, s0103645, and s0103714
