@@ -80,7 +80,6 @@ for num_s = 1:length(list_subject)
     for num_f = 1:length(list_run)
         run = list_run{num_f};
         if ~psom_exist(files_in.(id).fmri.sess1.(run))
-            warning ('The file %s does not exist, I suppressed that file from the pipeline %s',files_in.(id).fmri.sess1.(run));
             flag_ok(num_f) = false;
         end        
     end
@@ -93,6 +92,12 @@ for num_s = 1:length(list_subject)
         files_in = rmfield(files_in,id);
     elseif any(~flag_ok)
         files_in.(id).fmri.sess1 = rmfield(files_in.(id).fmri.sess1,list_run(~flag_ok));
+        warning ('I suppressed the following runs for subject %s because the files were missing:',id);
+        list_not_ok = find(~flag_ok);
+        for ind_not_ok = list_not_ok(:)'
+            fprintf(' %s',list_run{ind_not_ok});
+        end
+        fprintf('\n')
     end
 end
 
