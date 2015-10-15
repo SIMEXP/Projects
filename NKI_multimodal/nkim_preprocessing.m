@@ -185,4 +185,5 @@ opt.psom.qsub_options = '-q sw -l nodes=1:ppn=1:sandybridge,walltime=48:00:00';
 %opt.granularity = 'subject';
 opt.psom.max_queued = 100;
 opt.time_between_checks = 60;
+opt.psom.nb_resub = Inf;
 [pipeline,opt] = niak_pipeline_fmri_preprocess(files_in,opt);
