@@ -27,6 +27,7 @@ opt.folder_out = [path_root 'stability_scores_' scrub '/']; % Where to store the
 opt.flag_vol = true;
 
 %% Generate the pipeline
+opt.psom.max_queued = 300;
 [pipeline, opt_scores] = niak_pipeline_scores(files_in,opt);
 
 %%extra
