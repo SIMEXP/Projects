@@ -64,9 +64,9 @@ list_subject = list_subject(~ismember(list_subject,{'.','..'}));
 
 
 
-%% Run preprocessing on all subjects in NKI_release 1
+%% Run preprocessing on all subjects in NKI_release 2
 
-list_subject = list_subject([35:181]);
+%list_subject = list_subject([35:181]);
 for num_s = 1:length(list_subject)
     subject = list_subject{num_s};
     id = ['s' subject];
