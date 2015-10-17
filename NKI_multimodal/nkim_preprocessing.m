@@ -40,8 +40,12 @@ exp   = 'all';
 
 %% Setting input/output files 
 %% This is guillimin
-root_path = '/gs/project/gsf-624-aa/nki_multimodal_release1/';
-path_out = '/gs/project/gsf-624-aa/abadhwar/NKI_release1_attempt2/';
+
+%root_path = '/gs/project/gsf-624-aa/nki_multimodal_release1/';
+%path_out = '/gs/project/gsf-624-aa/abadhwar/NKI_release1_attempt2/';
+
+root_path = '/gs/project/gsf-624-aa/nki_multimodal_release2/';
+path_out = '/gs/project/gsf-624-aa/abadhwar/NKI_release2_preprocessed/';
 
 %% Grab the raw data
 % note that '/gs/project/gsf-624-aa/nki_multimodal_release1/' contains the directory 'raw_mnc'
@@ -183,7 +187,8 @@ opt.smooth_vol.flag_skip = 0;  % Skip spatial smoothing (0: don't skip, 1 : skip
 opt.psom.mode_pipeline_manager = 'background';
 opt.psom.qsub_options = '-q sw -l nodes=1:ppn=2,pmem=3700m,walltime=36:00:00';
 %opt.granularity = 'subject';
-opt.psom.max_queued = 100;
+%opt.psom.max_queued = 100; (used for NKI_release1)
+opt.psom.max_queued = 14;
 opt.time_between_checks = 60;
 opt.psom.nb_resub = Inf;
 [pipeline,opt] = niak_pipeline_fmri_preprocess(files_in,opt);
