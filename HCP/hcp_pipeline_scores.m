@@ -1,4 +1,4 @@
-%% Grab HCP preproc for scores analysis 
+%% Grab HCP preproc for scores analysis
 clear all
 exp = 'hcp_preproc';
 task = 'LANGUAGE';
@@ -11,7 +11,7 @@ template.type =  'cambridge_template_mnc';
 niak_wget(template);
 
 %% Select a specific scale for template
-scale = 7 ; 
+scale = 7 ;
 template_name = sprintf('template_cambridge_basc_multiscale_sym_scale%03d.mnc.gz',scale);
 system([' cp -r ' template.path filesep template_name ' ' path_preproc '/anat/']);
 
@@ -23,6 +23,13 @@ opt_g.max_rotation = 3 ; % the maximal transition (difference between two adjace
 opt_g.type_files = 'scores'; % Specify to the grabber to prepare the files for the stability FIR pipeline
 files_in = niak_grab_fmri_preprocess(path_preproc,opt_g);
 
+% Resample the 3mm cambridge template to 2mm
+files_in_resamp.source =  [path_preproc '/anat/' template_name] ;
+files_in_resamp.target = files_in.mask;
+files_out_resamp       = files_in_resamp.source;
+opt_resamp.interpolation      = 'nearest_neighbour';
+niak_brick_resample_vol (files_in_resamp,files_out_resamp,opt_resamp);
+
 %% Set pipeline options
 opt.folder_out = [ '/home/yassinebha/scratch/HCP/stability_scores_' task '_' exp '/']; % Where to store the results
 opt.flag_vol = true;
@@ -33,4 +40,3 @@ opt.psom.max_queued = 300;
 
 %%extra
 system(['cp ' mfilename('fullpath') '.m ' opt.folder_out '/.']); % make a copie of this script to output folder
-
