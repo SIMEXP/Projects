@@ -1,8 +1,8 @@
 %% Grab HCP preproc for scores analysis 
 clear all
 exp = 'hcp_preproc';
-task = 'MOTOR';
-path_root = ['/home/yassinebha/database/HCP/'];
+task = 'LANGUAGE';
+path_root = ['/home/yassinebha/scratch/HCP/'];
 path_preproc = [path_root 'fmri_preprocess_' task '_hcp' ];
 
 %% Get the cambridge templates
