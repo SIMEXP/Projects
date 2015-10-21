@@ -1,7 +1,7 @@
 clear
 
 %% Add quarantaine 
-addpath(genpath('/home/bellecp1/quarantine/niak-2013-06-07'));
+addpath(genpath('/home/bellecp1/quarantine/niak-v0.13.3'));
 
 %% Global paths
 
