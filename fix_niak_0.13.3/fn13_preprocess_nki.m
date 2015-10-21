@@ -7,12 +7,14 @@ addpath(genpath('/home/bellecp1/quarantine/niak-2013-06-07'));
 
 % path_raw = '/media/database3/nki_enhanced/raw_mnc/';
 path_raw = '/home/bellecp1/database/nki_enhanced/raw_mnc/';
-path_preproc = '/home/bellecp1/database/nki_enhanced/fmri_preprocess/';
+path_preproc = '/home/bellecp1/database/fn13/nki_preprocess/';
 
 %% Grab the raw data
-list_subject = dir(path_raw);
-list_subject = {list_subject.name};
-list_subject = list_subject(~ismember(list_subject,{'.','..'}));
+%list_subject = dir(path_raw);
+%list_subject = {list_subject.name};
+%list_subject = list_subject(~ismember(list_subject,{'.','..'}));
+
+list_subject = {'0115824'};
 
 for num_s = 1:length(list_subject)
     subject = list_subject{num_s};
