@@ -1,9 +1,9 @@
 clear
 
 %% Add quarantaine 
-addpath(genpath('/home/bellecp1/git/niak');
-addpath(genpath('/home/bellecp1/git/psom');
-addpath(genpath('/home/bellecp1/git/projects');
+addpath(genpath('/home/bellecp1/git/niak'));
+addpath(genpath('/home/bellecp1/git/psom'));
+addpath(genpath('/home/bellecp1/git/projects'));
 
 %% Global paths
 
@@ -55,6 +55,7 @@ opt.size_output = 'quality_control';                             % The amount of
 
 %% Pipeline manager 
 opt.psom.qsub_options = '-q qwork@ms -l nodes=1:m32G,walltime=05:00:00';
+opt.psom.max_queued = 4;
 
 %% Slice timing correction (niak_brick_slice_timing)
 opt.slice_timing.type_acquisition = 'interleaved ascending'; % Slice timing order (available options : 'sequential ascending', 'sequential descending', 'interleaved ascending', 'interleaved descending')
