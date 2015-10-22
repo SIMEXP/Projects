@@ -88,6 +88,7 @@ for num_s = 1:length(list_subject)
         files_in = rmfield(files_in,subject);
     end
     
+    %inital loop command (but doesn't allow pipeline to run when single sub-files eg picnam is missing):
     %files_c = psom_files2cell(files_in.(subject).fmri.sess1);
     %for num_f = 1:length(files_c)
     %    if ~psom_exist(files_c{num_f})
@@ -220,5 +221,8 @@ opt.smooth_vol.flag_skip = 0;  % Skip spatial smoothing (0: don't skip, 1 : skip
 % opt.psom.mode_pipeline_manager = 'batch'; % Run the pipeline manager in the background : if I unlog, keep working
 opt.psom.max_queued              =  100;       % Number of jobs that can run in parallel. In batch mode, this is usually the number of cores.
 opt.time_between_checks = 60;
+%verbose opt
 opt.psom.nb_resub = Inf; 
+%so that workers stop beeing killed by walltime after 3h
+opt.psom.qsub_options = '-q sw -l walltime=48:00:00';
 [pipeline,opt] = niak_pipeline_fmri_preprocess(files_in,opt);
