@@ -1,13 +1,13 @@
 clear
 
 %% Add quarantaine 
-addpath(genpath('/home/bellecp1/quarantine/niak-v0.13.3'));
+addpath(genpath('/home/bellecp1/quarantine/niak-2013-06-07'));
 
 %% Global paths
 
 % path_raw = '/media/database3/nki_enhanced/raw_mnc/';
 path_raw = '/home/bellecp1/database/nki_enhanced/raw_mnc/';
-path_preproc = '/home/bellecp1/database/fn13/nki_preprocess/';
+path_preproc = '/home/bellecp1/database/fn13/nki_preprocess_old/';
 
 %% Grab the raw data
 %list_subject = dir(path_raw);
