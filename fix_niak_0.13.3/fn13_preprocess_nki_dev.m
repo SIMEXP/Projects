@@ -1,7 +1,9 @@
 clear
 
 %% Add quarantaine 
-build_path std
+addpath(genpath('/home/bellecp1/git/niak');
+addpath(genpath('/home/bellecp1/git/psom');
+addpath(genpath('/home/bellecp1/git/projects');
 
 %% Global paths
 
