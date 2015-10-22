@@ -31,13 +31,13 @@ data_adpd = load(mat_adpd);
 data_criugmmci = load(mat_criugmmci);
 data_mnimci = load(mat_mnimci);
 
-theshold = 0.05;
+threshold = 0.2;
 
 %% threshold on findings
-mask_adni = data_adni.pce <= theshold;
-mask_adpd = data_adpd.pce <= theshold;
-mask_criugmmci = data_criugmmci.pce <= theshold;
-mask_mnimci = data_mnimci.pce <= theshold;
+mask_adni = data_adni.pce <= threshold;
+mask_adpd = data_adpd.pce <= threshold;
+mask_criugmmci = data_criugmmci.pce <= threshold;
+mask_mnimci = data_mnimci.pce <= threshold;
 frequency_of_sites = double(mask_adni) + double(mask_adpd) + double(mask_criugmmci) + double(mask_mnimci); % summation of individual site masks
 
 aa = niak_lvec2mat(frequency_of_sites);
