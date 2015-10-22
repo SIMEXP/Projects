@@ -47,7 +47,7 @@ for ii = 1:length(path_scale)
         for kk =  1:length(data_cluster)
             
             % convert into a volume
-            partition = niak_read_vol(strcat(path_results,path_scale{ii},'/','networks_',path_scale{ii},'.nii.gz'));
+            [hdr,partition] = niak_read_vol(strcat(path_results,path_scale{ii},'/','networks_',path_scale{ii},'.nii.gz'));
             vol_freq_mask = niak_part2vol(partition,networks_mask);
             
             [hdr,fdr] = niak_read_vol(strcat(path_results,'/',path_scale{ii},'/',path_contrast{jj},'/fdr_',path_contrast{jj},'_',path_scale{ii},'.nii.gz'));
