@@ -25,4 +25,5 @@ files_in = fcon_get_files(list_subject,opt_g);
 opt.psom.max_queued = 100;
 opt.psom.nb_resub = 0;
 opt.psom.flag_verbose = 1;
+opt.psom.qsub_options = '-q qwork@ms -l walltime=12:00:00';
 [pipeline,opt] = niak_pipeline_fmri_preprocess(files_in,opt); 
