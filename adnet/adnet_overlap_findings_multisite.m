@@ -48,7 +48,7 @@ for ii = 1:length(path_scale)
             
             % convert into a volume
             partition = niak_read_vol(strcat(path_results,path_scale{ii},'/','networks_',path_scale{ii},'.nii.gz'));
-            vol_freq_mask = niak_part2vol(networks_mask,partition);
+            vol_freq_mask = niak_part2vol(partition,networks_mask);
             
             [hdr,fdr] = niak_read_vol(strcat(path_results,'/',path_scale{ii},'/',path_contrast{jj},'/fdr_',path_contrast{jj},'_',path_scale{ii},'.nii.gz'));
             for vv=1:size(vol_freq_mask,4)
