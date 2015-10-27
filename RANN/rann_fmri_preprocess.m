@@ -40,8 +40,8 @@ clear all
 %addpath(genpath('/sb/project/gsf-624-aa/quarantaine/niak-boss-0.13.0'))
 addpath(genpath('/gs/project/gsf-624-aa/quarantaine/niak-boss-0.13.4b'))
 
-root_path = '/gs/project/gsf-624-aa/database2/Projects/RANN/';
-path_out = '/gs/scratch/perrine/RANN/preprocess_data_oct_2015/';
+root_path = '/gs/project/gsf-624-aa/RANN/';
+path_out = '/gs/scratch/perrine/RANN/preprocess_data_oct_2015_2/';
 
 %% Grab the raw data
 path_raw = [root_path 'raw_mnc/'];
@@ -215,7 +215,7 @@ opt.smooth_vol.flag_skip = 0;  % Skip spatial smoothing (0: don't skip, 1 : skip
 
 % opt.psom.mode                  = 'batch'; % Process jobs in the background
 % opt.psom.mode_pipeline_manager = 'batch'; % Run the pipeline manager in the background : if I unlog, keep working
-opt.psom.max_queued              =  100;       % Number of jobs that can run in parallel. In batch mode, this is usually the number of cores.
+opt.psom.max_queued              =  304;       % Number of jobs that can run in parallel. In batch mode, this is usually the number of cores.
 opt.time_between_checks = 60;
 %verbose opt
 opt.psom.nb_resub = Inf; 
