@@ -38,7 +38,7 @@ clear all
 
 %old-path-removed(unsatisfyingregistratio/slack-general-28092015):
 %addpath(genpath('/sb/project/gsf-624-aa/quarantaine/niak-boss-0.13.0'))
-addpath(genpath('/gs/project/gsf-624-aa/quarantaine/niak-boss-0.13.4'))
+addpath(genpath('/gs/project/gsf-624-aa/quarantaine/niak-boss-0.13.4b'))
 
 root_path = '/gs/project/gsf-624-aa/database2/Projects/RANN/';
 path_out = '/gs/scratch/perrine/RANN/preprocess_data_oct_2015/';
