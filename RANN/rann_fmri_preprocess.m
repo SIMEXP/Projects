@@ -112,8 +112,8 @@ for num_s = 1:length(list_subject)
 end
 
 % exclude PIC NAMING (only) for P00004507 and P00004563
-%files_in.P00004507.fmri.session1 = rmfield(files_in.P00004507.fmri.session1,'pictname');
-%files_in.P00004563.fmri.session1 = rmfield(files_in.P00004563.fmri.session1,'pictname');
+files_in.P00004507.fmri.session1 = rmfield(files_in.P00004507.fmri.session1,'pictname');
+files_in.P00004563.fmri.session1 = rmfield(files_in.P00004563.fmri.session1,'pictname');
 
 
 %% WARNING: Do not use underscores '_' in the IDs of subject, sessions or runs. This may cause bugs in subsequent pipelines.
@@ -183,10 +183,6 @@ opt.smooth_vol.fwhm      = 6;  % Full-width at maximum (FWHM) of the Gaussian bl
 opt.smooth_vol.flag_skip = 0;  % Skip spatial smoothing (0: don't skip, 1 : skip)
 
 % how to specify a different parameter for two subjects (here subject1 and subject2)
-%opt.tune(8).subject = 'P00004507';
-%opt.tune(8).param.t1_preprocess.nu_correct.arg = '-distance 100';
-%opt.tune(9).subject = 'P00004563';
-%opt.tune(9).param.t1_preprocess.nu_correct.arg = '-distance 100';
 
 %opt.tune(1).subject = 'P00004216';
 %opt.tune(1).param.anat2func.init = 'center';
