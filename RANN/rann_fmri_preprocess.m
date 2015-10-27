@@ -38,7 +38,7 @@ clear all
 
 %old-path-removed(unsatisfyingregistratio/slack-general-28092015):
 %addpath(genpath('/sb/project/gsf-624-aa/quarantaine/niak-boss-0.13.0'))
-addpath(genpath('/gs/project/gsf-624-aa/quarantaine/niak-boss-0.13.3b'))
+addpath(genpath('/gs/project/gsf-624-aa/quarantaine/niak-boss-0.13.4b'))
 
 root_path = '/gs/project/gsf-624-aa/RANN/';
 path_out = '/gs/scratch/perrine/RANN/preprocess_data_oct_2015/';
@@ -88,6 +88,7 @@ for num_s = 1:length(list_subject)
         files_in = rmfield(files_in,subject);
     end
     
+    %inital loop command (but doesn't allow pipeline to run when single sub-files eg picnam is missing):
     %files_c = psom_files2cell(files_in.(subject).fmri.sess1);
     %for num_f = 1:length(files_c)
     %    if ~psom_exist(files_c{num_f})
@@ -111,8 +112,8 @@ for num_s = 1:length(list_subject)
 end
 
 % exclude PIC NAMING (only) for P00004507 and P00004563
-%files_in.P00004507.fmri.session1 = rmfield(files_in.P00004507.fmri.session1,'pictname');
-%files_in.P00004563.fmri.session1 = rmfield(files_in.P00004563.fmri.session1,'pictname');
+files_in.P00004507.fmri.session1 = rmfield(files_in.P00004507.fmri.session1,'pictname');
+files_in.P00004563.fmri.session1 = rmfield(files_in.P00004563.fmri.session1,'pictname');
 
 
 %% WARNING: Do not use underscores '_' in the IDs of subject, sessions or runs. This may cause bugs in subsequent pipelines.
@@ -182,10 +183,6 @@ opt.smooth_vol.fwhm      = 6;  % Full-width at maximum (FWHM) of the Gaussian bl
 opt.smooth_vol.flag_skip = 0;  % Skip spatial smoothing (0: don't skip, 1 : skip)
 
 % how to specify a different parameter for two subjects (here subject1 and subject2)
-%opt.tune(8).subject = 'P00004507';
-%opt.tune(8).param.t1_preprocess.nu_correct.arg = '-distance 100';
-%opt.tune(9).subject = 'P00004563';
-%opt.tune(9).param.t1_preprocess.nu_correct.arg = '-distance 100';
 
 %opt.tune(1).subject = 'P00004216';
 %opt.tune(1).param.anat2func.init = 'center';
@@ -220,5 +217,8 @@ opt.smooth_vol.flag_skip = 0;  % Skip spatial smoothing (0: don't skip, 1 : skip
 % opt.psom.mode_pipeline_manager = 'batch'; % Run the pipeline manager in the background : if I unlog, keep working
 opt.psom.max_queued              =  100;       % Number of jobs that can run in parallel. In batch mode, this is usually the number of cores.
 opt.time_between_checks = 60;
+%verbose opt
 opt.psom.nb_resub = Inf; 
+%so that workers stop beeing killed by walltime after 3h
+opt.psom.qsub_options = '-q sw -l walltime=48:00:00';
 [pipeline,opt] = niak_pipeline_fmri_preprocess(files_in,opt);
