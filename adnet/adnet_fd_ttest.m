@@ -28,8 +28,31 @@ post_criugmmci_mci = [0.137590224	0.209963917	0.139910602	0.105084617	0.24219513
 post_mnimci_mci = [0.122380935	0.200901759	0.312829188	0.149007246	0.184454681	0.13025977	0.135324793	0.143951618	0.162861019	0.267444953	0.266709743	0.125357444	0.237018914	0.237918359	0.16028874	0.131294525	0.154715055	0.10841309];
 
 %% t-tests
+
+%% pre vs post scrubbing
+%% cn (within site)
+% adni
+fdttest_adni_cn = ttest2(pre_adni2_cn,post_adni2_cn);
+% adpd
+fdttest_adpd_cn = ttest2(pre_adpd_cn,post_adpd_cn);
+% criugmmci
+fdttest_criugmmci_cn = ttest2(pre_criugmmci_cn,post_criugmmci_cn);
+% mnimci
+fdttest_mnimci_cn = ttest2(pre_mnimci_cn,post_mnimci_cn);
+
+%% mci (within site)
+% adni
+fdttest_adni_mci = ttest2(pre_adni2_mci,post_adni2_mci);
+% adpd
+fdttest_adpd_mci = ttest2(pre_adpd_mci,post_adpd_mci);
+% criugmmci
+fdttest_criugmmci_mci = ttest2(pre_criugmmci_mci,post_criugmmci_mci);
+% mnimci
+fdttest_mnimci_mci = ttest2(pre_mnimci_mci,post_mnimci_mci);
+
+
 %% pre scrubbing
-%% cn
+%% cn  (differences between sites)
 % adni2 vs adpd
 test_pre_cn_adni_adpd = ttest2(pre_adni2_cn,pre_adpd_cn);
 
@@ -48,7 +71,7 @@ test_pre_cn_adpd_mnimci = ttest2(pre_adpd_cn,pre_mnimci_cn);
 % criugmmci vs mnimci
 test_pre_cn_criugmmci_mnimci = ttest2(pre_criugmmci_cn,pre_mnimci_cn);
 
-%% mci
+%% mci  (differences between sites)
 % adni2 vs adpd
 test_pre_mci_adni_adpd = ttest2(pre_adni2_mci,pre_adpd_mci);
 
@@ -67,8 +90,8 @@ test_pre_mci_adpd_mnimci = ttest2(pre_adpd_mci,pre_mnimci_mci);
 % criugmmci vs mnimci
 test_pre_mci_criugmmci_mnimci = ttest2(pre_criugmmci_mci,pre_mnimci_mci);
 
-%% mci vs cn
-% adni
+%% mci vs cn (differences between groups/diagnosis; within site)
+% adni 
 test_pre_adni_groups = ttest2(pre_adni2_cn,pre_adni2_mci);
 
 % adpd
@@ -82,7 +105,7 @@ test_pre_mnimci_groups = ttest2(pre_mnimci_cn,pre_mnimci_mci);
 
 
 %% post scrubbing
-%% cn
+%% cn (differences between sites)
 % adni2 vs adpd
 test_post_cn_adni_adpd = ttest2(post_adni2_cn,post_adpd_cn);
 
@@ -101,7 +124,7 @@ test_post_cn_adpd_mnimci = ttest2(post_adpd_cn,post_mnimci_cn);
 % criugmmci vs mnimci
 test_post_cn_criugmmci_mnimci = ttest2(post_criugmmci_cn,post_mnimci_cn);
 
-%% mci
+%% mci (differences between sites)
 % adni2 vs adpd
 test_post_mci_adni_adpd = ttest2(post_adni2_mci,post_adpd_mci);
 
@@ -120,7 +143,7 @@ test_post_mci_adpd_mnimci = ttest2(post_adpd_mci,post_mnimci_mci);
 % criugmmci vs mnimci
 test_post_mci_criugmmci_mnimci = ttest2(post_criugmmci_mci,post_mnimci_mci);
 
-%% mci vs cn
+%% mci vs cn (differences between groups/diagnosis; within site)
 %adni
 test_post_adni_groups = ttest2(post_adni2_cn,post_adni2_mci);
 
