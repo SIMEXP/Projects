@@ -31,106 +31,107 @@ post_mnimci_mci = [0.122380935	0.200901759	0.312829188	0.149007246	0.184454681	0
 %% pre scrubbing
 %% cn
 % adni2 vs adpd
-pre_cn_adni_adpd = ttest2(pre_adni2_cn,pre_adpd_cn);
+test_pre_cn_adni_adpd = ttest2(pre_adni2_cn,pre_adpd_cn);
 
 % adni2 vs criugmmci
-pre_cn_adni_criugmmci = ttest2(pre_adni2_cn,pre_criugmmci_cn);
+test_pre_cn_adni_criugmmci = ttest2(pre_adni2_cn,pre_criugmmci_cn);
 
 % adni2 vs mnimci
-pre_cn_adni_mnimci = ttest2(pre_adni2_cn,pre_mnimci_cn);
+test_pre_cn_adni_mnimci = ttest2(pre_adni2_cn,pre_mnimci_cn);
 
 % adpd vs criugmmci
-pre_cn_adpd_criugmmci = ttest2(pre_adpd_cn,pre_criugmmci_cn);
+test_pre_cn_adpd_criugmmci = ttest2(pre_adpd_cn,pre_criugmmci_cn);
 
 % adpd vs mnimci
-pre_cn_adpd_mnimci = ttest2(pre_adpd_cn,pre_mnimci_cn);
+test_pre_cn_adpd_mnimci = ttest2(pre_adpd_cn,pre_mnimci_cn);
 
 % criugmmci vs mnimci
-pre_cn_criugmmci_mnimci = ttest2(pre_criugmmci_cn,pre_mnimci_cn);
+test_pre_cn_criugmmci_mnimci = ttest2(pre_criugmmci_cn,pre_mnimci_cn);
 
 %% mci
 % adni2 vs adpd
-pre_mci_adni_adpd = ttest2(pre_adni2_mci,pre_adpd_mci);
+test_pre_mci_adni_adpd = ttest2(pre_adni2_mci,pre_adpd_mci);
 
 % adni2 vs criugmmci
-pre_mci_adni_criugmmci = ttest2(pre_adni2_mci,pre_criugmmci_mci);
+test_pre_mci_adni_criugmmci = ttest2(pre_adni2_mci,pre_criugmmci_mci);
 
 % adni2 vs mnimci
-pre_mci_adni_mnimci = ttest2(pre_adni2_mci,pre_mnimci_mci);
+test_pre_mci_adni_mnimci = ttest2(pre_adni2_mci,pre_mnimci_mci);
 
 % adpd vs criugmmci
-pre_mci_adpd_criugmmci = ttest2(pre_adpd_mci,pre_criugmmci_mci);
+test_pre_mci_adpd_criugmmci = ttest2(pre_adpd_mci,pre_criugmmci_mci);
 
 % adpd vs mnimci
-pre_mci_adpd_mnimci = ttest2(pre_adpd_mci,pre_mnimci_mci);
+test_pre_mci_adpd_mnimci = ttest2(pre_adpd_mci,pre_mnimci_mci);
 
 % criugmmci vs mnimci
-pre_mci_criugmmci_mnimci = ttest2(pre_criugmmci_mci,pre_mnimci_mci);
+test_pre_mci_criugmmci_mnimci = ttest2(pre_criugmmci_mci,pre_mnimci_mci);
 
 %% mci vs cn
 % adni
-pre_adni_groups = ttest2(pre_adni2_cn,pre_adni2_mci);
+test_pre_adni_groups = ttest2(pre_adni2_cn,pre_adni2_mci);
 
 % adpd
-pre_adpd_groups = ttest2(pre_adpd_cn,pre_adpd_mci);
+test_pre_adpd_groups = ttest2(pre_adpd_cn,pre_adpd_mci);
 
 % criugmmci
-pre_criugmmci_groups = ttest2(pre_criugmmci_cn,pre_criugmmci_mci);
+test_pre_criugmmci_groups = ttest2(pre_criugmmci_cn,pre_criugmmci_mci);
 
 % mnimci
-pre_mnimci_groups = ttest2(pre_mnimci_cn,pre_mnimci_mci);
+test_pre_mnimci_groups = ttest2(pre_mnimci_cn,pre_mnimci_mci);
 
 
 %% post scrubbing
 %% cn
 % adni2 vs adpd
-post_cn_adni_adpd = ttest2(post_adni2_cn,post_adpd_cn);
+test_post_cn_adni_adpd = ttest2(post_adni2_cn,post_adpd_cn);
 
 % adni2 vs criugmmci
-post_cn_adni_criugmmci = ttest2(post_adni2_cn,post_criugmmci_cn);
+test_post_cn_adni_criugmmci = ttest2(post_adni2_cn,post_criugmmci_cn);
 
 % adni2 vs mnimci
-post_cn_adni_mnimci = ttest2(post_adni2_cn,post_mnimci_cn);
+test_post_cn_adni_mnimci = ttest2(post_adni2_cn,post_mnimci_cn);
 
 % adpd vs criugmmci
-post_cn_adpd_criugmmci = ttest2(post_adpd_cn,post_criugmmci_cn);
+test_post_cn_adpd_criugmmci = ttest2(post_adpd_cn,post_criugmmci_cn);
 
 % adpd vs mnimci
-post_cn_adpd_mnimci = ttest2(post_adpd_cn,post_mnimci_cn);
+test_post_cn_adpd_mnimci = ttest2(post_adpd_cn,post_mnimci_cn);
 
 % criugmmci vs mnimci
-post_cn_criugmmci_mnimci = ttest2(post_criugmmci_cn,post_mnimci_cn);
+test_post_cn_criugmmci_mnimci = ttest2(post_criugmmci_cn,post_mnimci_cn);
 
 %% mci
 % adni2 vs adpd
-post_mci_adni_adpd = ttest2(post_adni2_mci,post_adpd_mci);
+test_post_mci_adni_adpd = ttest2(post_adni2_mci,post_adpd_mci);
 
 % adni2 vs criugmmci
-post_mci_adni_criugmmci = ttest2(post_adni2_mci,post_criugmmci_mci);
+test_post_mci_adni_criugmmci = ttest2(post_adni2_mci,post_criugmmci_mci);
 
 % adni2 vs mnimci
-post_mci_adni_mnimci = ttest2(post_adni2_mci,post_mnimci_mci);
+test_post_mci_adni_mnimci = ttest2(post_adni2_mci,post_mnimci_mci);
 
 % adpd vs criugmmci
-post_mci_adpd_criugmmci = ttest2(post_adpd_mci,post_criugmmci_mci);
+test_post_mci_adpd_criugmmci = ttest2(post_adpd_mci,post_criugmmci_mci);
 
 % adpd vs mnimci
-post_mci_adpd_mnimci = ttest2(post_adpd_mci,post_mnimci_mci);
+test_post_mci_adpd_mnimci = ttest2(post_adpd_mci,post_mnimci_mci);
 
 % criugmmci vs mnimci
-post_mci_criugmmci_mnimci = ttest2(post_criugmmci_mci,post_mnimci_mci);
+test_post_mci_criugmmci_mnimci = ttest2(post_criugmmci_mci,post_mnimci_mci);
 
 %% mci vs cn
-post_adni_groups = ttest2(post_adni2_cn,post_adni2_mci);
+%adni
+test_post_adni_groups = ttest2(post_adni2_cn,post_adni2_mci);
 
 % adpd
-post_adpd_groups = ttest2(post_adpd_cn,post_adpd_mci);
+test_post_adpd_groups = ttest2(post_adpd_cn,post_adpd_mci);
 
 % criugmmci
-post_criugmmci_groups = ttest2(post_criugmmci_cn,post_criugmmci_mci);
+test_post_criugmmci_groups = ttest2(post_criugmmci_cn,post_criugmmci_mci);
 
 % mnimci
-post_mnimci_groups = ttest2(post_mnimci_cn,post_mnimci_mci);
+test_post_mnimci_groups = ttest2(post_mnimci_cn,post_mnimci_mci);
 
 filename = 'adnet_fd_ttest.mat';
 save(filename)
