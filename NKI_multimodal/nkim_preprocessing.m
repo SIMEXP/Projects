@@ -53,9 +53,12 @@ exp   = 'all';
 %path_out = '/gs/project/gsf-624-aa/abadhwar/NKI_release5_preprocessed/';
 %root_path = '/gs/project/gsf-624-aa/nki_multimodal_release1/';
 %path_out = '/gs/project/gsf-624-aa/abadhwar/NKI_release1_preprocessed_13_4b/';
+%root_path = '/gs/project/gsf-624-aa/nki_multimodal_release2/';
+%path_out = '/gs/project/gsf-624-aa/abadhwar/NKI_release2_preprocessed_13_4b/';
 
-root_path = '/gs/project/gsf-624-aa/nki_multimodal_release2/';
-path_out = '/gs/project/gsf-624-aa/abadhwar/NKI_release2_preprocessed_13_4b/';
+root_path = '/gs/project/gsf-624-aa/nki_multimodal_release3/';
+path_out = '/gs/project/gsf-624-aa/abadhwar/NKI_release3_preprocessed_13_4b/';
+
 
 %% Grab the raw data
 % note that '/gs/project/gsf-624-aa/nki_multimodal_releaseX/' contains the directory 'raw_mnc'
@@ -200,9 +203,9 @@ opt.psom.qsub_options = '-q sw -l nodes=1:ppn=2,pmem=3700m,walltime=36:00:00';
 %used for NKI_release1
 %opt.psom.max_queued = 181;
 %used for NKI_release2
-opt.psom.max_queued = 14;
+%opt.psom.max_queued = 14;
 %used for NKI_release3
-%opt.psom.max_queued = 46;
+opt.psom.max_queued = 46;
 %used for NKI_release4
 %opt.psom.max_queued = 88;
 %used for NKI_release5
