@@ -1,7 +1,7 @@
 %% Grab HCP preproc for scores analysis
 clear all
 exp = 'hcp_preproc';
-task = 'LANGUAGE';
+task = 'SOCIAL';
 path_root = ['/home/yassinebha/scratch/HCP/'];
 path_preproc = [path_root 'fmri_preprocess_' task '_hcp' ];
 
@@ -24,11 +24,11 @@ opt_g.type_files = 'scores'; % Specify to the grabber to prepare the files for t
 files_in = niak_grab_fmri_preprocess(path_preproc,opt_g);
 
 % Resample the 3mm cambridge template to 2mm
-files_in_resamp.source =  [path_preproc '/anat/' template_name] ;
-files_in_resamp.target = files_in.mask;
-files_out_resamp       = files_in_resamp.source;
-opt_resamp.interpolation      = 'nearest_neighbour';
-niak_brick_resample_vol (files_in_resamp,files_out_resamp,opt_resamp);
+%files_in_resamp.source =  [path_preproc '/anat/' template_name] ;
+%files_in_resamp.target = files_in.mask;
+%files_out_resamp       = files_in_resamp.source;
+%opt_resamp.interpolation      = 'nearest_neighbour';
+%niak_brick_resample_vol (files_in_resamp,files_out_resamp,opt_resamp);
 
 %% Set pipeline options
 opt.folder_out = [ '/home/yassinebha/scratch/HCP/stability_scores_' task '_' exp '/']; % Where to store the results
