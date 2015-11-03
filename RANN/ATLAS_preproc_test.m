@@ -38,7 +38,7 @@ clear all
 
 addpath(genpath('/gs/project/gsf-624-aa/quarantaine/niak-boss-0.13.4b'))
 
-root_path = '/gs/project/gsf-624-aa/database2/Projects/ATLAS/';
+root_path = '/gs/project/gsf-624-aa/ATLAS/';
 path_out = '/gs/scratch/perrine/ATLAS/preproc_nov2015/';
 
 %% Grab the raw data
