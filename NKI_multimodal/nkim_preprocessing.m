@@ -29,7 +29,7 @@
 clear all
 % load lib
 % addpath adds folder to search path; genpath generates path string
-addpath(genpath('/gs/project/gsf-624-aa/quarantaine/niak-boss-0.13.2/'))
+addpath(genpath('/gs/project/gsf-624-aa/quarantaine/niak-boss-0.13.4b/'))
 
 
 %%%%%%%%%%%%%%%%%%%%%
@@ -40,15 +40,32 @@ exp   = 'all';
 
 %% Setting input/output files 
 %% This is guillimin
-root_path = '/gs/project/gsf-624-aa/nki_multimodal_release1/';
-path_out = '/gs/project/gsf-624-aa/abadhwar/NKI_release1_BatchA/';
+
+%root_path = '/gs/project/gsf-624-aa/nki_multimodal_release1/';
+%path_out = '/gs/project/gsf-624-aa/abadhwar/NKI_release1_attempt2/';
+%root_path = '/gs/project/gsf-624-aa/nki_multimodal_release2/';
+%path_out = '/gs/project/gsf-624-aa/abadhwar/NKI_release2_preprocessed/';
+%root_path = '/gs/project/gsf-624-aa/nki_multimodal_release3/';
+%path_out = '/gs/project/gsf-624-aa/abadhwar/NKI_release3_preprocessed/';
+%root_path = '/gs/project/gsf-624-aa/nki_multimodal_release4/';
+%path_out = '/gs/project/gsf-624-aa/abadhwar/NKI_release4_preprocessed/';
+%root_path = '/gs/project/gsf-624-aa/nki_multimodal_release5/';
+%path_out = '/gs/project/gsf-624-aa/abadhwar/NKI_release5_preprocessed/';
+%root_path = '/gs/project/gsf-624-aa/nki_multimodal_release1/';
+%path_out = '/gs/project/gsf-624-aa/abadhwar/NKI_release1_preprocessed_13_4b/';
+%root_path = '/gs/project/gsf-624-aa/nki_multimodal_release2/';
+%path_out = '/gs/project/gsf-624-aa/abadhwar/NKI_release2_preprocessed_13_4b/';
+
+root_path = '/gs/project/gsf-624-aa/nki_multimodal_release3/';
+path_out = '/gs/project/gsf-624-aa/abadhwar/NKI_release3_preprocessed_13_4b/';
+
 
 %% Grab the raw data
-% note that '/gs/project/gsf-624-aa/nki_multimodal_release1/' contains the directory 'raw_mnc'
-% assigns path_raw '/gs/project/gsf-624-aa/nki_multimodal_release1/raw_mnc/'
+% note that '/gs/project/gsf-624-aa/nki_multimodal_releaseX/' contains the directory 'raw_mnc'
+% assigns path_raw '/gs/project/gsf-624-aa/nki_multimodal_releaseX/raw_mnc/'
 path_raw = [root_path 'raw_mnc/'];
 
-% returns the folder listings of path_raw or '/gs/project/gsf-624-aa/nki_multimodal_release1/raw_mnc/' to list_subject
+% returns the folder listings of path_raw or '/gs/project/gsf-624-aa/nki_multimodal_releaseX/raw_mnc/' to list_subject
 list_subject = dir(path_raw);
 
 % returns the folder names to the variable list_subject
@@ -59,9 +76,9 @@ list_subject = list_subject(~ismember(list_subject,{'.','..'}));
 
 
 
+%% Run preprocessing on all subjects in NKI_release X
 
-%% Run preprocessing on all subjects in NKI_release 1
-
+%list_subject = list_subject([35:181]);
 for num_s = 1:length(list_subject)
     subject = list_subject{num_s};
     id = ['s' subject];
@@ -74,26 +91,30 @@ for num_s = 1:length(list_subject)
     files_in.(id).fmri.sess1.rest1400 = [path_raw subject filesep 'session_1', filesep,'RfMRI_mx_1400' filesep 'rest.mnc.gz'];
     files_in.(id).fmri.sess1.rest2500 = [path_raw subject filesep 'session_1', filesep,'RfMRI_std_2500' filesep 'rest.mnc.gz'];
     
-    files_c = psom_files2cell(files_in.(id).fmri.sess1);
-    for num_f = 1:length(files_c)
-        if ~psom_exist(files_c{num_f})
-            warning ('The file %s does not exist, I suppressed that file from the pipeline %s',files_c{num_f},subject);
-            files_in.(id).fmri.sess1 = rmfield(files_in.(id).fmri.sess1,fieldnames(files_in.(id).fmri.sess1)(num_f));
-            break
+    list_run = fieldnames(files_in.(id).fmri.sess1);
+    flag_ok = true(length(list_run),1);
+    for num_f = 1:length(list_run)
+        run = list_run{num_f};
+        if ~psom_exist(files_in.(id).fmri.sess1.(run))
+            flag_ok(num_f) = false;
         end        
     end
-    
-    
-    files_c = psom_files2cell(files_in.(id).anat);
-    for num_f = 1:length(files_c)
-        if ~psom_exist(files_c{num_f})
-            warning ('The file %s does not exist, I suppressed that subject %s',files_c{num_f},subject);
-            files_in = rmfield(files_in,id);
-            break
-        end        
+    if ~any(flag_ok)||~psom_exist(files_in.(id).anat)
+        if ~any(flag_ok)
+            warning('No functional data for subject %s, I suppressed it',subject);
+        else
+            warning ('The file %s does not exist, I suppressed that subject %s',files_in.(id).anat,subject);
+        end
+        files_in = rmfield(files_in,id);
+    elseif any(~flag_ok)
+        files_in.(id).fmri.sess1 = rmfield(files_in.(id).fmri.sess1,list_run(~flag_ok));
+        warning ('I suppressed the following runs for subject %s because the files were missing:',id);
+        list_not_ok = find(~flag_ok);
+        for ind_not_ok = list_not_ok(:)'
+            fprintf(' %s',list_run{ind_not_ok});
+        end
+        fprintf('\n')
     end
-    
-    
 end
 
 % exclude subjects s0101463, s0103645, and s0103714
@@ -176,8 +197,19 @@ opt.smooth_vol.flag_skip = 0;  % Skip spatial smoothing (0: don't skip, 1 : skip
 %% Run the fmri_preprocess pipeline  %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 opt.psom.mode_pipeline_manager = 'background';
-opt.psom.qsub_options = '-q sw -l nodes=1:ppn=1:sandybridge,walltime=48:00:00';
-opt.granularity = 'subject';
-opt.psom.max_queued = 100;
+opt.psom.qsub_options = '-q sw -l nodes=1:ppn=2,pmem=3700m,walltime=36:00:00';
+%opt.granularity = 'subject';
+
+%used for NKI_release1
+%opt.psom.max_queued = 181;
+%used for NKI_release2
+%opt.psom.max_queued = 14;
+%used for NKI_release3
+opt.psom.max_queued = 46;
+%used for NKI_release4
+%opt.psom.max_queued = 88;
+%used for NKI_release5
+%opt.psom.max_queued = 89; 
 opt.time_between_checks = 60;
+opt.psom.nb_resub = Inf;
 [pipeline,opt] = niak_pipeline_fmri_preprocess(files_in,opt);

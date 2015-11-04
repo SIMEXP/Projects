@@ -11,7 +11,7 @@ template.path = [path_demo '/demoniak_preproc/anat/template_cambridge_basc_multi
 template.type =  'cambridge_template_mnc';
 niak_wget(template);
 
-%% Select a specific template
+%% Select a specific scale and template
 scale = 7 ; % select a scale
 template_data = [path_data 'template_cambridge_basc_multiscale_mnc_asym'];
 template_name = sprintf('template_cambridge_basc_multiscale_sym_scale%03d.mnc.gz',scale);
@@ -22,7 +22,7 @@ opt_g.min_nb_vol = 10; % the demo dataset is very short, so we have to lower con
 opt_g.type_files = 'scores'; % Specify to the grabber to prepare the files for the stability FIR pipeline
 files_in = niak_grab_fmri_preprocess([ path_demo '/demoniak_preproc/' ],opt_g);
 
-%% Set pipeline options 
+%% Set pipeline options
 opt.folder_out = [path_data 'demo_scores/']; % Where to store the results
 opt.flag_vol = true;
 
