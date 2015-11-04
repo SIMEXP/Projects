@@ -36,67 +36,33 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 clear all
 
-%old-path-removed(unsatisfyingregistratio/slack-general-28092015):
-%addpath(genpath('/sb/project/gsf-624-aa/quarantaine/niak-boss-0.13.0'))
 addpath(genpath('/gs/project/gsf-624-aa/quarantaine/niak-boss-0.13.4b'))
 
-root_path = '/gs/project/gsf-624-aa/RANN/';
-path_out = '/gs/scratch/perrine/RANN/preprocess_data_oct_2015_2/';
+root_path = '/gs/project/gsf-624-aa/ATLAS/';
+path_out = '/gs/scratch/perrine/ATLAS/preproc_nov2015/';
 
 %% Grab the raw data
 path_raw = [root_path 'raw_mnc/'];
 list_subject = dir(path_raw);
 list_subject = {list_subject.name};
 list_subject = list_subject(~ismember(list_subject,{'.','..'}));
-%only 40 subjects whose QC has been completed-to compare most recent NIAK13.0.2 release
-%list_subject = list_subject([1 5 14 15 17 18 21 22 25 26 28 34 35 36 37 38 39 41 45 46 50 51 55 57 58 59 62 63 65 74 76 104 116 145 150 158 161 165 2031206 282]);
 
 for num_s = 1:length(list_subject)
     subject = list_subject{num_s};
-    tmp_path_subj = [path_raw subject filesep];
-    files_in.(subject).anat = [];
-    files_in.(subject).fmri.session1 = [];
+    files_in.(subject).anat = [path_raw subject filesep 'anat' filesep '_3e1_mri.mnc' subject 'atlas_0*'];
+    files_in.(subject).fmri.sess1.REST = [path_raw subject filesep 'anat' filesep '_rest_*.mnc' subject 'atlas_0*'];
+    files_in.(subject).fmri.sess1.REP = [path_raw subject filesep 'anat' filesep '_REP_*.mnc' subject 'atlas_0*'];
+    files_in.(subject).fmri.sess1.NAMING = [path_raw subject filesep 'anat' filesep '_NAMING_*.mnc' subject 'atlas_0*'];
+    files_in.(subject).fmri.sess1.PPTT = [path_raw subject filesep 'anat' filesep '_PPTT_*.mnc' subject 'atlas_0*'];
+  
     
-    try 
-        files_in.(subject).fmri.session1.ant = [tmp_path_subj dir([tmp_path_subj 'Ant_r1_' subject '_*.mnc.gz'])(1).name];
-    catch exception
-        warning ('The file %s does not exist, I suppressed that file from the pipeline %s','ant',subject);
-    end
-
-    try
-        files_in.(subject).fmri.session1.syn = [tmp_path_subj dir([tmp_path_subj 'Syn_r1_' subject '_*.mnc.gz'])(1).name];
-    catch exception
-        warning ('The file %s does not exist, I suppressed that file from the pipeline %s','syn',subject);
-    end
-
-    try
-        files_in.(subject).fmri.session1.pictname = [tmp_path_subj dir([tmp_path_subj 'PictName_r1_' subject '_*.mnc.gz'])(1).name];    
-    catch exception
-        warning ('The file %s does not exist, I suppressed that file from the pipeline %s','pictname',subject);
-    end
-
-    try
-        files_in.(subject).fmri.session1.rest = [tmp_path_subj dir([tmp_path_subj 'REST_BOLD_' subject '_*.mnc.gz'])(1).name]; 
-    catch exception
-	warning ('The file %s does not exist, I suppressed that file from the pipeline %s','rest',subject);
-    end
-
-    try
-        files_in.(subject).anat = [tmp_path_subj dir([tmp_path_subj 'T1_' subject '_*.mnc.gz'])(1).name];
-    catch exception
-        warning ('The file %s does not exist, I suppressed that subject %s','ANATOMIC',subject);
-        files_in = rmfield(files_in,subject);
-    end
-    
-    %inital loop command (but doesn't allow pipeline to run when single sub-files eg picnam is missing):
-    %files_c = psom_files2cell(files_in.(subject).fmri.sess1);
-    %for num_f = 1:length(files_c)
-    %    if ~psom_exist(files_c{num_f})
-    %        warning ('The file %s does not exist, I suppressed that file from the pipeline %s',files_c{num_f},subject);
-    %        files_in.(subject).fmri.sess1 = rmfield(files_in.(subject).fmri.sess1,fieldnames(files_in.(subject).fmri.sess1)(num_f));
-    %        break
-    %    end        
-    %end
+    files_c = psom_files2cell(files_in.(subject).fmri.sess1);
+    for num_f = 1:length(files_c)
+        if ~psom_exist(files_c{num_f})
+            warning ('The file %s does not exist, I suppressed that file from the pipeline %s',files_c{num_f},subject);
+            files_in.(subject).fmri.sess1 = rmfield(files_in.(subject).fmri.sess1,fieldnames(files_in.(subject).fmri.sess1)(num_f));
+            break
+        end        
     
     
     %files_c = psom_files2cell(files_in.(subject).anat);
@@ -112,8 +78,8 @@ for num_s = 1:length(list_subject)
 end
 
 % exclude PIC NAMING (only) for P00004507 and P00004563
-files_in.P00004507.fmri.session1 = rmfield(files_in.P00004507.fmri.session1,'pictname');
-files_in.P00004563.fmri.session1 = rmfield(files_in.P00004563.fmri.session1,'pictname');
+%files_in.P00004507.fmri.session1 = rmfield(files_in.P00004507.fmri.session1,'pictname');
+%files_in.P00004563.fmri.session1 = rmfield(files_in.P00004563.fmri.session1,'pictname');
 
 
 %% WARNING: Do not use underscores '_' in the IDs of subject, sessions or runs. This may cause bugs in subsequent pipelines.
@@ -141,8 +107,8 @@ opt.size_output = 'quality_control';                             % The amount of
 
 %% Slice timing correction (niak_brick_slice_timing)
 opt.slice_timing.type_acquisition = 'interleaved ascending'; % Slice timing order (available options : 'sequential ascending', 'sequential descending', 'interleaved ascending', 'interleaved descending')
-opt.slice_timing.type_scanner     = 'Philips';                % Scanner manufacturer. Only the value 'Siemens' will actually have an impact
-opt.slice_timing.delay_in_tr      = 0;                       % The delay in TR ("blank" time between two volumes)
+opt.slice_timing.type_scanner     = 'Siemens';               % Scanner manufacturer. Only the value 'Siemens' will actually have an impact
+opt.slice_timing.delay_in_tr      = 0;                     % The delay in TR ("blank" time between two volumes)
 opt.slice_timing.suppress_vol     = 0;                       % Number of dummy scans to suppress.
 opt.slice_timing.flag_nu_correct  = 1;                       % Apply a correction for non-uniformities on the EPI volumes (1: on, 0: of). This is particularly important for 32-channels coil.
 opt.slice_timing.arg_nu_correct   = '-distance 200';         % The distance between control points for non-uniformity correction (in mm, lower values can capture faster varying slow spatial drifts).
@@ -154,7 +120,7 @@ opt.motion.session_ref  = 'session1'; % The session that is used as a reference.
 
 % resampling in stereotaxic space
 opt.resample_vol.interpolation = 'trilinear'; % The resampling scheme. The fastest and most robust method is trilinear. 
-opt.resample_vol.voxel_size    = [3 3 3];     % The voxel size to use in the stereotaxic space
+opt.resample_vol.voxel_size    = [3.5 3.5 3.5];     % The voxel size to use in the stereotaxic space
 opt.resample_vol.flag_skip     = 0;           % Skip resampling (data will stay in native functional space after slice timing/motion correction) (0: don't skip, 1 : skip)
 
 % Linear and non-linear fit of the anatomical image in the stereotaxic
@@ -183,25 +149,11 @@ opt.smooth_vol.fwhm      = 6;  % Full-width at maximum (FWHM) of the Gaussian bl
 opt.smooth_vol.flag_skip = 0;  % Skip spatial smoothing (0: don't skip, 1 : skip)
 
 % how to specify a different parameter for two subjects (here subject1 and subject2)
-
-%opt.tune(1).subject = 'P00004216';
-%opt.tune(1).param.anat2func.init = 'center';
-%opt.tune(2).subject = 'P00004225';
-%opt.tune(2).param.anat2func.init = 'center';
-%opt.tune(3).subject = 'P00004549';
-%opt.tune(3).param.anat2func.init = 'center';
-%opt.tune(4).subject = 'P00004577';
-%opt.tune(4).param.anat2func.init = 'center';
-%opt.tune(5).subject = 'P00004719';
-%opt.tune(5).param.anat2func.init = 'center';
-%opt.tune(6).subject = 'P00004744';
-%opt.tune(6).param.anat2func.init = 'center';
-%opt.tune(7).subject = 'P00004812';
-%opt.tune(7).param.anat2func.init = 'center';
 %opt.tune(8).subject = 'P00004507';
-%opt.tune(8).param.anat2func.init = 'center';
+%opt.tune(8).param.t1_preprocess.nu_correct.arg = '-distance 100';
 %opt.tune(9).subject = 'P00004563';
-%opt.tune(9).param.anat2func.init = 'center';
+%opt.tune(9).param.t1_preprocess.nu_correct.arg = '-distance 100';
+
 
 % Anything that usually goes in opt can go in param. What's specified in opt applies by default, but is overridden by tune.param
 %opt.tune(1).param.slice_timing.flag_center = true; % Anything that usually goes in opt can go in param. What's specified in opt applies by default, but is overridden by tune.param
@@ -215,10 +167,8 @@ opt.smooth_vol.flag_skip = 0;  % Skip spatial smoothing (0: don't skip, 1 : skip
 
 % opt.psom.mode                  = 'batch'; % Process jobs in the background
 % opt.psom.mode_pipeline_manager = 'batch'; % Run the pipeline manager in the background : if I unlog, keep working
-opt.psom.max_queued              =  304;       % Number of jobs that can run in parallel. In batch mode, this is usually the number of cores.
-opt.time_between_checks = 60;
-%verbose opt
-opt.psom.nb_resub = Inf; 
-%so that workers stop beeing killed by walltime after 3h
+opt.psom.max_queued              =  30;       % Number of jobs that can run in parallel. In batch mode, this is usually the number of cores.
+opt.time_between_checks = 60; 
+[pipeline,opt] = niak_pipeline_fmri_preprocess(files_in,opt);
 opt.psom.qsub_options = '-q sw -l walltime=48:00:00';
 [pipeline,opt] = niak_pipeline_fmri_preprocess(files_in,opt);

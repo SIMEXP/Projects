@@ -110,18 +110,18 @@ end
 opt.path_out = niak_full_path (opt.path_out);
 
 % copy or link option
-if opt.copy_out == 'link'
+if strcmp(opt.copy_out,'link')
    cp_opt = 'ln -s';
-elseif opt.copy_out == 'copy'
+elseif strcmp(opt.copy_out,'copy')
    cp_opt = 'cp';
 else
    error('%s is an unsupported type of copy options, opt.copy_out should be "copy" or "link" ',opt.copy_out)
 end
 
 % files extension
-if opt.file_ext == 'minc'
+if strcmp(opt.file_ext,'minc')
    ext = 'mnc.gz';
-elseif opt.file_ext == 'nifti'
+elseif strcmp(opt.file_ext,'nifti')
    ext = 'nii.gz';
 else 
    error('%s is an unsupported type of extention option, opt.file_ext should be "minc" or "nifti" ',opt.file_ext)
@@ -147,17 +147,21 @@ mkdir(EVs);
 %% Extract necessary files and format them in a NIAK like fmri preprocessed ouput folders and files
 % Read subjects list and Prune subject that dont have the necessecary folder and flag them in a message
 list_subject_raw = dir(path_data);
+discard_subj = [];
 nb_subject = 0;
+discard_nb = 0;
 for num_ss = 1:length(list_subject_raw)
-    if ~ismember(list_subject_raw(num_ss).name,{'.','..'}) && exist([ path_data list_subject_raw(num_ss).name filesep 'MNINonLinear/Results/tfMRI_' opt.type_task '_LR/' ],'dir')
+    if ~ismember(list_subject_raw(num_ss).name,{'.','..'}) && exist([ path_data list_subject_raw(num_ss).name filesep 'MNINonLinear/Results/tfMRI_' opt.type_task '_LR/tfMRI_' opt.type_task '_LR.nii.gz']) && exist([ path_data list_subject_raw(num_ss).name filesep 'MNINonLinear/Results/tfMRI_' opt.type_task '_RL/tfMRI_' opt.type_task '_RL.nii.gz']) && exist([ path_data list_subject_raw(num_ss).name filesep 'MNINonLinear/T1w.nii.gz'])
        nb_subject = nb_subject + 1;
        sprintf('Adding subject %s', list_subject_raw(num_ss).name)
        list_subject{nb_subject} = list_subject_raw(num_ss).name;     
     else 
        sprintf('subject %s is discarded', list_subject_raw(num_ss).name)
+       discard_nb=discard_nb+1
+       discard_subj{discard_nb} =  list_subject_raw(num_ss).name;
     end  
 end   
-    
+files_ind.discard = discard_subj;    
 % loop over subject and extract files
 for nn = 1:length(list_subject)
     subject_raw = strtrim(list_subject{nn}); % original subject name

@@ -36,10 +36,10 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 clear all
 
-addpath(genpath('/gs/project/gsf-624-aa/quarantaine/niak-boss-0.13.2'))
+addpath(genpath('/gs/project/gsf-624-aa/quarantaine/niak-boss-0.13.4b'))
 
-root_path = '/gs/project/gsf-624-aa/database2/Projects/ATLAS/';
-path_out = '/gs/scratch/perrine/ATLAS';
+root_path = '/gs/project/gsf-624-aa/ATLAS/';
+path_out = '/gs/scratch/perrine/ATLAS/preproc_nov2015/';
 
 %% Grab the raw data
 path_raw = [root_path 'raw_mnc/'];
@@ -49,11 +49,11 @@ list_subject = list_subject(~ismember(list_subject,{'.','..'}));
 
 for num_s = 1:length(list_subject)
     subject = list_subject{num_s};
-    files_in.(subject).anat = [path_raw subject filesep 'anat' filesep '_MEMPRAGE' subject '_*.mnc'];
-    files_in.(subject).fmri.sess1.REST = [path_raw subject filesep 'anat' filesep '_rest_' subject '_*.mnc'];
-   % files_in.(subject).fmri.sess1.REP = [path_raw subject filesep 'anat' filesep '_REP_' subject '_*.mnc'];
-   % files_in.(subject).fmri.sess1.NAMING = [path_raw subject filesep 'anat' filesep '_NAMING_' subject '_*.mnc'];
-   % files_in.(subject).fmri.sess1.PPTT = [path_raw subject filesep 'anat' filesep '_PPTT_' subject '_*.mnc'];
+    files_in.(subject).anat = [path_raw subject filesep 'anat' filesep '_3e1_mri.mnc' subject 'atlas_0*'];
+    files_in.(subject).fmri.sess1.REST = [path_raw subject filesep 'anat' filesep '_rest_*.mnc' subject 'atlas_0*'];
+    files_in.(subject).fmri.sess1.REP = [path_raw subject filesep 'anat' filesep '_REP_*.mnc' subject 'atlas_0*'];
+    files_in.(subject).fmri.sess1.NAMING = [path_raw subject filesep 'anat' filesep '_NAMING_*.mnc' subject 'atlas_0*'];
+    files_in.(subject).fmri.sess1.PPTT = [path_raw subject filesep 'anat' filesep '_PPTT_*.mnc' subject 'atlas_0*'];
   
     
     files_c = psom_files2cell(files_in.(subject).fmri.sess1);
@@ -72,14 +72,14 @@ for num_s = 1:length(list_subject)
     %        files_in = rmfield(files_in,subject);
     %        break
     %    end        
-    %end
+    end
     
     
 end
 
 % exclude PIC NAMING (only) for P00004507 and P00004563
-files_in.P00004507.fmri.session1 = rmfield(files_in.P00004507.fmri.session1,'pictname');
-files_in.P00004563.fmri.session1 = rmfield(files_in.P00004563.fmri.session1,'pictname');
+%files_in.P00004507.fmri.session1 = rmfield(files_in.P00004507.fmri.session1,'pictname');
+%files_in.P00004563.fmri.session1 = rmfield(files_in.P00004563.fmri.session1,'pictname');
 
 
 %% WARNING: Do not use underscores '_' in the IDs of subject, sessions or runs. This may cause bugs in subsequent pipelines.
@@ -108,7 +108,7 @@ opt.size_output = 'quality_control';                             % The amount of
 %% Slice timing correction (niak_brick_slice_timing)
 opt.slice_timing.type_acquisition = 'interleaved ascending'; % Slice timing order (available options : 'sequential ascending', 'sequential descending', 'interleaved ascending', 'interleaved descending')
 opt.slice_timing.type_scanner     = 'Siemens';               % Scanner manufacturer. Only the value 'Siemens' will actually have an impact
-opt.slice_timing.delay_in_tr      = 3.5;                     % The delay in TR ("blank" time between two volumes)
+opt.slice_timing.delay_in_tr      = 0;                     % The delay in TR ("blank" time between two volumes)
 opt.slice_timing.suppress_vol     = 0;                       % Number of dummy scans to suppress.
 opt.slice_timing.flag_nu_correct  = 1;                       % Apply a correction for non-uniformities on the EPI volumes (1: on, 0: of). This is particularly important for 32-channels coil.
 opt.slice_timing.arg_nu_correct   = '-distance 200';         % The distance between control points for non-uniformity correction (in mm, lower values can capture faster varying slow spatial drifts).
@@ -120,7 +120,7 @@ opt.motion.session_ref  = 'session1'; % The session that is used as a reference.
 
 % resampling in stereotaxic space
 opt.resample_vol.interpolation = 'trilinear'; % The resampling scheme. The fastest and most robust method is trilinear. 
-opt.resample_vol.voxel_size    = [3.5 3.5 3.5];     % The voxel size to use in the stereotaxic space
+opt.resample_vol.voxel_size    = [3 3 3];     % The voxel size to use in the stereotaxic space
 opt.resample_vol.flag_skip     = 0;           % Skip resampling (data will stay in native functional space after slice timing/motion correction) (0: don't skip, 1 : skip)
 
 % Linear and non-linear fit of the anatomical image in the stereotaxic
@@ -167,6 +167,8 @@ opt.smooth_vol.flag_skip = 0;  % Skip spatial smoothing (0: don't skip, 1 : skip
 
 % opt.psom.mode                  = 'batch'; % Process jobs in the background
 % opt.psom.mode_pipeline_manager = 'batch'; % Run the pipeline manager in the background : if I unlog, keep working
-opt.psom.max_queued              =  100;       % Number of jobs that can run in parallel. In batch mode, this is usually the number of cores.
+opt.psom.max_queued              =  30;       % Number of jobs that can run in parallel. In batch mode, this is usually the number of cores.
 opt.time_between_checks = 60; 
+[pipeline,opt] = niak_pipeline_fmri_preprocess(files_in,opt);
+opt.psom.qsub_options = '-q sw -l walltime=48:00:00';
 [pipeline,opt] = niak_pipeline_fmri_preprocess(files_in,opt);

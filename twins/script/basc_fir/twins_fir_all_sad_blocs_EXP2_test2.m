@@ -20,7 +20,7 @@
 % THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 % IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 % FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-% AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+%sd AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 % LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 % OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 % THE SOFTWARE.
@@ -35,7 +35,7 @@ opt_g.min_nb_vol = 0;     % The minimum number of volumes for an fMRI dataset to
 opt_g.min_xcorr_func = 0.34; % The minimum xcorr score for an fMRI dataset to be included. This metric is a tool for quality control which assess the quality of non-linear coregistration of functional images in stereotaxic space. Manual inspection of the values during QC is necessary to properly set this threshold.
 opt_g.max_translation = 3 ; % the maximal transition (difference between two adjacent volumes) in translation motion parameters within-run (in mm)
 opt_g.max_rotation = 3 ; % the maximal transition (difference between two adjacent volumes) in rotation motion parameters within-run (in degrees)
-opt_g.type_files = 'perc'; % Specify to the grabber to prepare the files for the STABILITY_FIR pipeline
+opt_g.type_files = 'fir'; % Specify to the grabber to prepare the files for the STABILITY_FIR pipeline
 
 
 %tmp grabber for debugging
@@ -44,7 +44,7 @@ opt_g.type_files = 'perc'; % Specify to the grabber to prepare the files for the
 %  liste_exclude = {liste_exclude.name};
 %  opt_g.exclude_subject = liste_exclude;
 
-files_in = niak_grab_fmri_preprocess('/home/yassinebha/scratch/twins/fmri_preprocess_EXP2_test2',opt_g);%  Replace the folder by the path where the results of the fMRI preprocessing pipeline were stored.
+files_in = niak_grab_fmri_preprocess('/home/yassinebha/scratch/twins/fmri_preprocess_noscrub',opt_g);%  Replace the folder by the path where the results of the fMRI preprocessing pipeline were stored.
 %%%%%%%%%%%%%%%%%%%%%
 %% Event times
 %%%%%%%%%%%%%%%%%%%%%
@@ -60,7 +60,7 @@ opt.name_baseline  = 'rest';
 %%%%%%%%%%%%%
 
 %% BASC
-opt.folder_out = ['/home/yassinebha/scratch/twins/stability_fir_all_sad_blocs_EXP2_perc/']; % Where to store the results
+opt.folder_out = ['/home/yassinebha/scratch/twins/stability_fir_all_sad_blocs_noscrub_perc/']; % Where to store the results
 opt.grid_scales = [10:10:100 120:20:200 240:40:500]' ; % Search for stable clusters in the range 10 to 500
 mstep_file = [ opt.folder_out filesep 'stability_group/msteps_group.mat'];
 if psom_exist(mstep_file)
@@ -77,7 +77,7 @@ opt.stability_group.nb_samps = 500;  % Number of bootstrap samples at the group 
 opt.stability_fir.nb_min_fir = 1;    % the minimum response windows number. By defaut is set to 3
 
 %% FIR estimation
-opt.fir.type_norm     = 'fir_shape'; % The type of normalization of the FIR. "fir_shape" (starts at zero, unit sum-of-squares)or 'perc'(without normalisation)
+opt.fir.type_norm     = 'fir'; % The type of normalization of the FIR. "fir_shape" (starts at zero, unit sum-of-squares)or 'perc'(without normalisation)
 opt.fir.time_window   = 246;          % The size (in sec) of the time window to evaluate the response, in this cas it correspond to 90 volumes for tr=3s
 opt.fir.time_sampling = 3;         % The time between two samples for the estimated response. Do not go below 1/2 TR unless there is a very large number of trials.
 opt.fir.max_interpolation = 15;
@@ -96,7 +96,7 @@ opt.nb_samps_fdr = 10000; % The number of samples to estimate the false-discover
 %%%%%%%%%%%%%%%%%%%%%%
 %opt.psom.qsub_options = '-q qwork@ms -l nodes=1:m32G,walltime=05:00:00';
 opt.flag_test = false; % Put this flag to true to just generate the pipeline without running it. Otherwise the pipeline will start.
-%opt.psom.max_queued = 10; % Uncomment and change this parameter to set the number of parallel threads used to run the pipeline
+opt.psom.qsub_options = '-q sw -l nodes=1:ppn=5,walltime=10:00:00';
 pipeline = niak_pipeline_stability_fir(files_in,opt);
 
 %%extra
