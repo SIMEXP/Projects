@@ -1,5 +1,5 @@
 % Template to write a script for the NIAK fMRI preprocessing pipeline
-% ADAPTED TO THE RANN DATASET (Perrine Ferre) 2015 05 05_TEST
+% ADAPTED TO THE ATLAS DATASET (Perrine Ferre) 2015 09-20
 %
 % To run a demo of the preprocessing, please see
 % NIAK_DEMO_FMRI_PREPROCESS.
@@ -47,13 +47,18 @@ list_subject = dir(path_raw);
 list_subject = {list_subject.name};
 list_subject = list_subject(~ismember(list_subject,{'.','..'}));
 
+%actual path: /gs/project/gsf-624-aa/ATLAS/raw_mnc/atlas_001_20150909_090839_3e1_mri.mnc
+
 for num_s = 1:length(list_subject)
     subject = list_subject{num_s};
-    files_in.(subject).anat = [path_raw subject filesep 'anat' filesep '_3e1_mri.mnc' subject 'atlas_0*'];
-    files_in.(subject).fmri.sess1.REST = [path_raw subject filesep 'anat' filesep '_rest_*.mnc' subject 'atlas_0*'];
-    files_in.(subject).fmri.sess1.REP = [path_raw subject filesep 'anat' filesep '_REP_*.mnc' subject 'atlas_0*'];
-    files_in.(subject).fmri.sess1.NAMING = [path_raw subject filesep 'anat' filesep '_NAMING_*.mnc' subject 'atlas_0*'];
-    files_in.(subject).fmri.sess1.PPTT = [path_raw subject filesep 'anat' filesep '_PPTT_*.mnc' subject 'atlas_0*'];
+    files_in.(subject).anat = [];
+    files_in.(subject).fmri.session1 = [];
+    
+    files_in.(subject).anat = [path_raw filesep subject 'atlas_0*'anat '_3e1_mri.mnc'];
+    files_in.(subject).fmri.sess1.REST = [path_raw filesep subject 'atlas_0*' rest'_rest_*.mnc'];
+    files_in.(subject).fmri.sess1.REP = [path_raw filesep subject 'atlas_0*' repetition '_REP_*.mnc'];
+    files_in.(subject).fmri.sess1.NAMING = [path_raw filesep subject 'atlas_0*' naming '_NAMING_*.mnc'];
+    files_in.(subject).fmri.sess1.PPTT = [path_raw filesep subject 'atlas_0*' PPTT '_PPTT_*.mnc'];
   
     
     files_c = psom_files2cell(files_in.(subject).fmri.sess1);
@@ -65,13 +70,13 @@ for num_s = 1:length(list_subject)
         end        
     
     
-    %files_c = psom_files2cell(files_in.(subject).anat);
-    %for num_f = 1:length(files_c)
-    %    if ~psom_exist(files_c{num_f})
-    %        warning ('The file %s does not exist, I suppressed that subject %s',files_c{num_f},subject);
-    %        files_in = rmfield(files_in,subject);
-    %        break
-    %    end        
+    files_c = psom_files2cell(files_in.(subject).anat);
+    for num_f = 1:length(files_c)
+        if ~psom_exist(files_c{num_f})
+           warning ('The file %s does not exist, I suppressed that subject %s',files_c{num_f},subject);
+            files_in = rmfield(files_in,subject);
+            break
+        end        
     end
     
     
