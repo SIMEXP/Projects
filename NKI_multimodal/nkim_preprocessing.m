@@ -55,9 +55,11 @@ exp   = 'all';
 %path_out = '/gs/project/gsf-624-aa/abadhwar/NKI_release1_preprocessed_13_4b/';
 %root_path = '/gs/project/gsf-624-aa/nki_multimodal_release2/';
 %path_out = '/gs/project/gsf-624-aa/abadhwar/NKI_release2_preprocessed_13_4b/';
+%root_path = '/gs/project/gsf-624-aa/nki_multimodal_release3/';
+%path_out = '/gs/project/gsf-624-aa/abadhwar/NKI_release3_preprocessed_13_4b/';
 
-root_path = '/gs/project/gsf-624-aa/nki_multimodal_release3/';
-path_out = '/gs/project/gsf-624-aa/abadhwar/NKI_release3_preprocessed_13_4b/';
+root_path = '/gs/project/gsf-624-aa/nki_multimodal_release4/';
+path_out = '/gs/project/gsf-624-aa/abadhwar/NKI_release4_preprocessed_13_4b/';
 
 
 %% Grab the raw data
@@ -205,9 +207,9 @@ opt.psom.qsub_options = '-q sw -l nodes=1:ppn=2,pmem=3700m,walltime=36:00:00';
 %used for NKI_release2
 %opt.psom.max_queued = 14;
 %used for NKI_release3
-opt.psom.max_queued = 46;
+%opt.psom.max_queued = 46;
 %used for NKI_release4
-%opt.psom.max_queued = 88;
+opt.psom.max_queued = 88;
 %used for NKI_release5
 %opt.psom.max_queued = 89; 
 opt.time_between_checks = 60;
