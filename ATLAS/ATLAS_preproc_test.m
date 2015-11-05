@@ -48,17 +48,18 @@ list_subject = {list_subject.name};
 list_subject = list_subject(~ismember(list_subject,{'.','..'}));
 
 %actual path: /gs/project/gsf-624-aa/ATLAS/raw_mnc/atlas_001_20150909_090839_3e1_mri.mnc
+%warning: The file /gs/project/gsf-624-aa/ATLAS/raw_mnc/atlas_015_REP_20150909_104517_4_mri.mncatlas_0*'_3e1_mri.mnc does not exist, I suppressed that subject atlas_015_REP_20150909_104517_4_mri.mnc
 
 for num_s = 1:length(list_subject)
     subject = list_subject{num_s};
     files_in.(subject).anat = [];
     files_in.(subject).fmri.session1 = [];
     
-    files_in.(subject).anat = [path_raw filesep subject 'atlas_0*'anat '_3e1_mri.mnc'];
-    files_in.(subject).fmri.sess1.REST = [path_raw filesep subject 'atlas_0*' rest'_rest_*.mnc'];
-    files_in.(subject).fmri.sess1.REP = [path_raw filesep subject 'atlas_0*' repetition '_REP_*.mnc'];
-    files_in.(subject).fmri.sess1.NAMING = [path_raw filesep subject 'atlas_0*' naming '_NAMING_*.mnc'];
-    files_in.(subject).fmri.sess1.PPTT = [path_raw filesep subject 'atlas_0*' PPTT '_PPTT_*.mnc'];
+    files_in.(subject).anat = [path_raw filesep subject 'atlas_0*''_3e1_mri.mnc'];
+    files_in.(subject).fmri.sess1.REST = [path_raw filesep subject 'atlas_0*' '_rest_*.mnc'];
+    files_in.(subject).fmri.sess1.REP = [path_raw filesep subject 'atlas_0*' '_REP_*.mnc'];
+    files_in.(subject).fmri.sess1.NAMING = [path_raw filesep subject 'atlas_0*' '_NAMING_*.mnc'];
+    files_in.(subject).fmri.sess1.PPTT = [path_raw filesep subject 'atlas_0*' '_PPTT_*.mnc'];
   
     
     files_c = psom_files2cell(files_in.(subject).fmri.sess1);
@@ -67,21 +68,22 @@ for num_s = 1:length(list_subject)
             warning ('The file %s does not exist, I suppressed that file from the pipeline %s',files_c{num_f},subject);
             files_in.(subject).fmri.sess1 = rmfield(files_in.(subject).fmri.sess1,fieldnames(files_in.(subject).fmri.sess1)(num_f));
             break
-        end        
-    
+        end
+    end
+            
     
     files_c = psom_files2cell(files_in.(subject).anat);
     for num_f = 1:length(files_c)
         if ~psom_exist(files_c{num_f})
-           warning ('The file %s does not exist, I suppressed that subject %s',files_c{num_f},subject);
+            warning ('The file %s does not exist, I suppressed that subject %s',files_c{num_f},subject);
             files_in = rmfield(files_in,subject);
             break
-        end        
+        end
     end
-    
-    
-end
 
+ end
+
+% exclude PIC NAMING (only) for P00004507 and P00004563
 % exclude PIC NAMING (only) for P00004507 and P00004563
 %files_in.P00004507.fmri.session1 = rmfield(files_in.P00004507.fmri.session1,'pictname');
 %files_in.P00004563.fmri.session1 = rmfield(files_in.P00004563.fmri.session1,'pictname');
@@ -131,7 +133,6 @@ opt.resample_vol.flag_skip     = 0;           % Skip resampling (data will stay 
 % Linear and non-linear fit of the anatomical image in the stereotaxic
 % space (niak_brick_t1_preprocess)
 opt.t1_preprocess.nu_correct.arg = '-distance 75'; % Parameter for non-uniformity correction. 200 is a suggested value for 1.5T images, 75 for 3T images. If you find that this stage did not work well, this parameter is usually critical to improve the results.
-
 % Temporal filtering (niak_brick_time_filter)
 opt.time_filter.hp = 0.01; % Cut-off frequency for high-pass filtering, or removal of low frequencies (in Hz). A cut-off of -Inf will result in no high-pass filtering.
 opt.time_filter.lp = Inf;  % Cut-off frequency for low-pass filtering, or removal of high frequencies (in Hz). A cut-off of Inf will result in no low-pass filtering.
