@@ -37,7 +37,7 @@ addpath(genpath('/usr/local/niak/niak-boss-0.12.13')) %magma
 path_root =  '/peuplier/database8/HCP/HCP_result_task/motor/';
 %% Set the template
 niak_gb_vars
-files_in.network = [ gb_niak_path_template 'roi_aal_3mm.mnc.gz' ];
+files_in.network = [ gb_niak_path_template 'basc_cambridge_sc100.mnc.gz' ];
 
 %% Grabbing the results from the NIAK fMRI preprocessing pipeline
 opt_g.min_nb_vol = 100;     % The minimum number of volumes for an fMRI dataset to be included. This option is useful when scrubbing is used, and the resulting time series may be too short.
@@ -50,7 +50,7 @@ opt_g.type_files = 'roi';
 files_in.fmri = niak_grab_fmri_preprocess([path_root 'fmri_preprocess_MOTOR_niak'],opt_g).fmri; % Replace the folder by the path where the results of the fMRI preprocessing pipeline were stored. 
 
 %% Set the seeds
-files_in.seeds = [ gb_niak_path_template 'list_seeds_cambridge_100.csv'];
+files_in.seeds = [ gb_niak_path_template 'list_seeds_cambridge_100_full.csv'];
 
 %% Options 
 opt.folder_out = [ path_root 'connectome_MOTOR_niak']; % Where to store the results
@@ -77,3 +77,6 @@ opt.connectome.thresh.param = 0.2; % the parameter of the thresholding. The actu
 opt.flag_test = false; % Put this flag to true to just generate the pipeline without running it. Otherwise the pipeline will start. 
 %opt.psom.max_queued = 10; % Uncomment and change this parameter to set the number of parallel threads used to run the pipeline
 [pipeline,opt] = niak_pipeline_connectome(files_in,opt);
+
+%%extra
+system(['cp ' mfilename('fullpath') '.m ' opt.folder_out '/.']); % make a copie of this script to output folder
