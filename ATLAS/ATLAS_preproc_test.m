@@ -47,23 +47,33 @@ list_subject = dir(path_raw);
 list_subject = {list_subject.name};
 list_subject = list_subject(~ismember(list_subject,{'.','..'}));
 
-%actual ind path: '/gs/project/gsf-624-aa/ATLAS/raw_mnc/atlas_001_20150909_090839_3e1_mri.mnc'
-
 for num_s = 1:length(list_subject)
     subject = list_subject{num_s};
     files_in.(subject).anat = [];
     files_in.(subject).fmri.session1 = [];
     
-    %warning: The file /gs/project/gsf-624-aa/ATLAS/raw_mnc/atlas_015_REP_20150909_104517_4_mri.mncatlas_0*'_3e1_mri.mnc does not exist, I suppressed that subject atlas_015_REP_20150909_104517_4_mri.mnc
+    %essai2015-11-07_13h:warning: The file /gs/project/gsf-624-aa/ATLAS/raw_mnc/atlas_015_REP_20150909_104517_4_mri.mncatlas_0*'_3e1_mri.mnc does not exist, I suppressed that subject atlas_015_REP_20150909_104517_4_mri.mnc
     %files_in.(subject).anat = [path_raw filesep subject 'atlas_0*''_3e1_mri.mnc'];
     %files_in.(subject).fmri.sess1.REST = [path_raw filesep subject 'atlas_0*' '_rest_*.mnc'];
     %files_in.(subject).fmri.sess1.REP = [path_raw filesep subject 'atlas_0*' '_REP_*.mnc'];
     %files_in.(subject).fmri.sess1.NAMING = [path_raw filesep subject 'atlas_0*' '_NAMING_*.mnc'];
     %files_in.(subject).fmri.sess1.PPTT = [path_raw filesep subject 'atlas_0*' '_PPTT_*.mnc'];
        
-    %'/gs/project/gsf-624-aa/ATLAS/raw_mnc/atlas_001_20150909_090839_3e1_mri.mnc_rest_*.mnc' does not exist
-    %/gs/project/gsf-624-aa/ATLAS/raw_mnc/ATLAS_001_rest_*.mnc 
-    files_in.(subject).anat = [path_raw filesep subject filesep '_3e1_mri.mnc'];
+   
+    %essai2015-11-07_17h:
+    %actual ind path: '/gs/project/gsf-624-aa/ATLAS/raw_mnc/atlas_001_20150909_090839_3e1_mri.mnc'
+    %atlas_001_rest_20150909_090839_19_mri.mnc
+    %error[path_raw filesep subject filesep '_rest_*.mnc']
+    %atlas_002_20150908_085351_3e1_mri.mnc
+    %error[path_raw filesep subject filesep '_3e1_mri.mnc']
+    %atlas_010_NAMING_20150909_141437_5_mri.mnc
+    %ok[path_raw filesep subject filesep '_NAMING_*.mnc']
+    %atlas_010_PPTT_20150909_141437_4_mri.mnc
+    %ok[path_raw filesep subject filesep '_PPTT_*.mnc']
+    %atlas_010_REP_20150909_141437_6_mri.mnc
+    %ok[path_raw filesep subject filesep '_REP_*.mnc'];
+
+    files_in.(subject).anat = [path_raw filesep subject filesep '*_3e1_mri.mnc'];
     files_in.(subject).fmri.sess1.REST = [path_raw filesep subject filesep '_rest_*.mnc'];
     files_in.(subject).fmri.sess1.REP = [path_raw filesep subject filesep '_REP_*.mnc'];
     files_in.(subject).fmri.sess1.NAMING = [path_raw filesep subject filesep '_NAMING_*.mnc'];
