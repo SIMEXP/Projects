@@ -55,11 +55,17 @@ for num_s = 1:length(list_subject)
     files_in.(subject).anat = [];
     files_in.(subject).fmri.session1 = [];
     
-    files_in.(subject).anat = [path_raw filesep subject 'atlas_0*''_3e1_mri.mnc'];
-    files_in.(subject).fmri.sess1.REST = [path_raw filesep subject 'atlas_0*' '_rest_*.mnc'];
-    files_in.(subject).fmri.sess1.REP = [path_raw filesep subject 'atlas_0*' '_REP_*.mnc'];
-    files_in.(subject).fmri.sess1.NAMING = [path_raw filesep subject 'atlas_0*' '_NAMING_*.mnc'];
-    files_in.(subject).fmri.sess1.PPTT = [path_raw filesep subject 'atlas_0*' '_PPTT_*.mnc'];
+    %files_in.(subject).anat = [path_raw filesep subject 'atlas_0*''_3e1_mri.mnc'];
+    %files_in.(subject).fmri.sess1.REST = [path_raw filesep subject 'atlas_0*' '_rest_*.mnc'];
+    %files_in.(subject).fmri.sess1.REP = [path_raw filesep subject 'atlas_0*' '_REP_*.mnc'];
+    %files_in.(subject).fmri.sess1.NAMING = [path_raw filesep subject 'atlas_0*' '_NAMING_*.mnc'];
+    %files_in.(subject).fmri.sess1.PPTT = [path_raw filesep subject 'atlas_0*' '_PPTT_*.mnc'];
+       
+    files_in.(subject).anat = [path_raw filesep subject '_3e1_mri.mnc'];
+    files_in.(subject).fmri.sess1.REST = [path_raw filesep subject '_rest_*.mnc'];
+    files_in.(subject).fmri.sess1.REP = [path_raw filesep subject '_REP_*.mnc'];
+    files_in.(subject).fmri.sess1.NAMING = [path_raw filesep subject '_NAMING_*.mnc'];
+    files_in.(subject).fmri.sess1.PPTT = [path_raw filesep subject '_PPTT_*.mnc'];
   
     
     files_c = psom_files2cell(files_in.(subject).fmri.sess1);
