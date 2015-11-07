@@ -47,25 +47,27 @@ list_subject = dir(path_raw);
 list_subject = {list_subject.name};
 list_subject = list_subject(~ismember(list_subject,{'.','..'}));
 
-%actual path: /gs/project/gsf-624-aa/ATLAS/raw_mnc/atlas_001_20150909_090839_3e1_mri.mnc
-%warning: The file /gs/project/gsf-624-aa/ATLAS/raw_mnc/atlas_015_REP_20150909_104517_4_mri.mncatlas_0*'_3e1_mri.mnc does not exist, I suppressed that subject atlas_015_REP_20150909_104517_4_mri.mnc
+%actual ind path: '/gs/project/gsf-624-aa/ATLAS/raw_mnc/atlas_001_20150909_090839_3e1_mri.mnc'
 
 for num_s = 1:length(list_subject)
     subject = list_subject{num_s};
     files_in.(subject).anat = [];
     files_in.(subject).fmri.session1 = [];
     
+    %warning: The file /gs/project/gsf-624-aa/ATLAS/raw_mnc/atlas_015_REP_20150909_104517_4_mri.mncatlas_0*'_3e1_mri.mnc does not exist, I suppressed that subject atlas_015_REP_20150909_104517_4_mri.mnc
     %files_in.(subject).anat = [path_raw filesep subject 'atlas_0*''_3e1_mri.mnc'];
     %files_in.(subject).fmri.sess1.REST = [path_raw filesep subject 'atlas_0*' '_rest_*.mnc'];
     %files_in.(subject).fmri.sess1.REP = [path_raw filesep subject 'atlas_0*' '_REP_*.mnc'];
     %files_in.(subject).fmri.sess1.NAMING = [path_raw filesep subject 'atlas_0*' '_NAMING_*.mnc'];
     %files_in.(subject).fmri.sess1.PPTT = [path_raw filesep subject 'atlas_0*' '_PPTT_*.mnc'];
        
-    files_in.(subject).anat = [path_raw filesep subject '_3e1_mri.mnc'];
-    files_in.(subject).fmri.sess1.REST = [path_raw filesep subject '_rest_*.mnc'];
-    files_in.(subject).fmri.sess1.REP = [path_raw filesep subject '_REP_*.mnc'];
-    files_in.(subject).fmri.sess1.NAMING = [path_raw filesep subject '_NAMING_*.mnc'];
-    files_in.(subject).fmri.sess1.PPTT = [path_raw filesep subject '_PPTT_*.mnc'];
+    %'/gs/project/gsf-624-aa/ATLAS/raw_mnc/atlas_001_20150909_090839_3e1_mri.mnc_rest_*.mnc' does not exist
+    %/gs/project/gsf-624-aa/ATLAS/raw_mnc/ATLAS_001_rest_*.mnc 
+    files_in.(subject).anat = [path_raw filesep subject filesep '_3e1_mri.mnc'];
+    files_in.(subject).fmri.sess1.REST = [path_raw filesep subject filesep '_rest_*.mnc'];
+    files_in.(subject).fmri.sess1.REP = [path_raw filesep subject filesep '_REP_*.mnc'];
+    files_in.(subject).fmri.sess1.NAMING = [path_raw filesep subject filesep '_NAMING_*.mnc'];
+    files_in.(subject).fmri.sess1.PPTT = [path_raw filesep subject filesep '_PPTT_*.mnc'];
   
     
     files_c = psom_files2cell(files_in.(subject).fmri.sess1);
