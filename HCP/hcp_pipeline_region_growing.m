@@ -52,6 +52,8 @@ opt.thre_size = 1000; % The critical size for regions, in mm3. A threshold of 10
 %%%%%%%%%%%%
 %% Run the pipeline
 %%%%%%%%%%%%
+opt.psom.nb_resub = 20;
+opt.psom.qsub_options = '-q sw -l nodes=1:ppn=4,pmem=3700m,walltime=36:00:00';
 opt.flag_test = false; % Put this flag to true to just generate the pipeline without running it. Otherwise the region growing will start. 
 %opt.psom.max_queued = 10; % Uncomment and change this parameter to set the number of parallel threads used to run the pipeline
 [pipeline,opt] = niak_pipeline_region_growing(files_in,opt);
