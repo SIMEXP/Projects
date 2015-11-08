@@ -55,9 +55,15 @@ exp   = 'all';
 %path_out = '/gs/project/gsf-624-aa/abadhwar/NKI_release1_preprocessed_13_4b/';
 %root_path = '/gs/project/gsf-624-aa/nki_multimodal_release2/';
 %path_out = '/gs/project/gsf-624-aa/abadhwar/NKI_release2_preprocessed_13_4b/';
+%root_path = '/gs/project/gsf-624-aa/nki_multimodal_release3/';
+%path_out = '/gs/project/gsf-624-aa/abadhwar/NKI_release3_preprocessed_13_4b/';
+%root_path = '/gs/project/gsf-624-aa/nki_multimodal_release4/';
+%path_out = '/gs/project/gsf-624-aa/abadhwar/NKI_release4_preprocessed_13_4b/';
+%root_path = '/gs/project/gsf-624-aa/nki_multimodal_release1/';
+%path_out = '/gs/project/gsf-624-aa/abadhwar/NKI_146865_preprocessed_13_4b/';
 
-root_path = '/gs/project/gsf-624-aa/nki_multimodal_release3/';
-path_out = '/gs/project/gsf-624-aa/abadhwar/NKI_release3_preprocessed_13_4b/';
+root_path = '/gs/project/gsf-624-aa/nki_multimodal_release5/';
+path_out = '/gs/project/gsf-624-aa/abadhwar/NKI_release5_preprocessed_13_4b/';
 
 
 %% Grab the raw data
@@ -78,7 +84,7 @@ list_subject = list_subject(~ismember(list_subject,{'.','..'}));
 
 %% Run preprocessing on all subjects in NKI_release X
 
-%list_subject = list_subject([35:181]);
+%list_subject = list_subject([80]);
 for num_s = 1:length(list_subject)
     subject = list_subject{num_s};
     id = ['s' subject];
@@ -179,6 +185,7 @@ opt.corsica.flag_skip                = 1;     % Skip CORSICA (0: don't skip, 1 :
 % Spatial smoothing (niak_brick_smooth_vol)
 opt.smooth_vol.fwhm      = 6;  % Full-width at maximum (FWHM) of the Gaussian blurring kernel, in mm.
 opt.smooth_vol.flag_skip = 0;  % Skip spatial smoothing (0: don't skip, 1 : skip)
+%opt.target_space = 'stereolin'; 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Tune the parameters for specific subjects %%
@@ -205,11 +212,13 @@ opt.psom.qsub_options = '-q sw -l nodes=1:ppn=2,pmem=3700m,walltime=36:00:00';
 %used for NKI_release2
 %opt.psom.max_queued = 14;
 %used for NKI_release3
-opt.psom.max_queued = 46;
+%opt.psom.max_queued = 46;
 %used for NKI_release4
 %opt.psom.max_queued = 88;
 %used for NKI_release5
-%opt.psom.max_queued = 89; 
+opt.psom.max_queued = 89;
+%test
+%opt.psom.max_queued = 1;
 opt.time_between_checks = 60;
 opt.psom.nb_resub = Inf;
 [pipeline,opt] = niak_pipeline_fmri_preprocess(files_in,opt);
