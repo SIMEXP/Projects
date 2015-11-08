@@ -90,6 +90,63 @@ for num_s = 1:length(list_subject)
     end
 end
 
+
+path_raw = [root_path 'raw_mnc/'];
+
+% returns the folder listings of path_raw or '/gs/project/gsf-624-aa/nki_multimodal_releaseX/raw_mnc/' to list_subject
+list_subject = dir(path_raw);
+
+% returns the folder names to the variable list_subject
+list_subject = {list_subject.name};
+
+% ismember or array elements that are members of set array
+list_subject = list_subject(~ismember(list_subject,{'.','..'}));
+
+
+
+%% Run preprocessing on all subjects in NKI_release X
+
+%list_subject = list_subject([35:181]);
+for num_s = 1:length(list_subject)
+    subject = list_subject{num_s};
+    id = ['s' subject];
+    files_in.(id).anat = [path_raw subject filesep 'anat' filesep 'mprage.mnc.gz'];
+    files_in.(id).fmri.sess1.breathHold1400 = [path_raw subject filesep 'TfMRI_breathHold_1400' filesep 'func.mnc.gz'];
+    files_in.(id).fmri.sess1.checBoard1400 = [path_raw subject filesep 'TfMRI_visualCheckerboard_1400' filesep 'func.mnc.gz'];
+    files_in.(id).fmri.sess1.checBoard645 = [path_raw subject filesep 'TfMRI_visualCheckerboard_645' filesep 'func.mnc.gz'];    
+    
+    files_in.(id).fmri.sess1.rest645 = [path_raw subject filesep 'session_1', filesep,'RfMRI_mx_645' filesep 'rest.mnc.gz'];
+    files_in.(id).fmri.sess1.rest1400 = [path_raw subject filesep 'session_1', filesep,'RfMRI_mx_1400' filesep 'rest.mnc.gz'];
+    files_in.(id).fmri.sess1.rest2500 = [path_raw subject filesep 'session_1', filesep,'RfMRI_std_2500' filesep 'rest.mnc.gz'];
+    
+    list_run = fieldnames(files_in.(id).fmri.sess1);
+    flag_ok = true(length(list_run),1);
+    for num_f = 1:length(list_run)
+        run = list_run{num_f};
+        if ~psom_exist(files_in.(id).fmri.sess1.(run))
+            flag_ok(num_f) = false;
+        end        
+    end
+    if ~any(flag_ok)||~psom_exist(files_in.(id).anat)
+        if ~any(flag_ok)
+            warning('No functional data for subject %s, I suppressed it',subject);
+        else
+            warning ('The file %s does not exist, I suppressed that subject %s',files_in.(id).anat,subject);
+        end
+        files_in = rmfield(files_in,id);
+    elseif any(~flag_ok)
+        files_in.(id).fmri.sess1 = rmfield(files_in.(id).fmri.sess1,list_run(~flag_ok));
+        warning ('I suppressed the following runs for subject %s because the files were missing:',id);
+        list_not_ok = find(~flag_ok);
+        for ind_not_ok = list_not_ok(:)'
+            fprintf(' %s',list_run{ind_not_ok});
+        end
+        fprintf('\n')
+    end
+end
+
+
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %  warning: The file /sb/project/gsf-624-aa/database/HCP/HCP_task_unproc_mnc/116120/unprocessed/3T/tfMRI_MOTOR_RL/116120_3T_tfMRI_MOTOR_RL.mnc.gz does not exist, I suppressed subject 116120
 %  warning: The file /sb/project/gsf-624-aa/database/HCP/HCP_task_unproc_mnc/126931/unprocessed/3T/tfMRI_MOTOR_RL/126931_3T_tfMRI_MOTOR_RL.mnc.gz does not exist, I suppressed subject 126931
