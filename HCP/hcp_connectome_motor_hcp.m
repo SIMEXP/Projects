@@ -39,6 +39,14 @@ path_root =  '/home/yassinebha/database/HCP/';
 niak_gb_vars
 files_in.network = [ gb_niak_path_template 'basc_cambridge_sc100.mnc.gz' ];
 
+% Resample the 3mm cambridge template to 2mm
+files_in_resamp.source =   files_in.network;
+files_in_resamp.target = [ path_root 'fmri_preprocess_MOTOR_hcp/anat/template_aal.mnc.gz' ];
+files_out_resamp       =  [ path_root 'fmri_preprocess_MOTOR_hcp/anat/basc_cambridge_sc100_2mm.mnc.gz' ];
+opt_resamp.interpolation  = 'nearest_neighbour';
+niak_brick_resample_vol (files_in_resamp,files_out_resamp,opt_resamp);
+files_in.network = files_out_resamp;
+
 %% Grabbing the results from the NIAK fMRI preprocessing pipeline
 opt_g.min_nb_vol = 1;     % The minimum number of volumes for an fMRI dataset to be included. This option is useful when scrubbing is used, and the resulting time series may be too short.
 opt_g.min_xcorr_func = 0.5; % The minimum xcorr score for an fMRI dataset to be included. This metric is a tool for quality control which assess the quality of non-linear coregistration of functional images in stereotaxic space. Manual inspection of the values during QC is necessary to properly set this threshold.
