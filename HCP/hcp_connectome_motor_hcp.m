@@ -33,8 +33,8 @@
 % THE SOFTWARE.
 
 clear all
-addpath(genpath('/usr/local/niak/niak-boss-0.12.13')) %magma 
-path_root =  '/peuplier/database8/HCP/HCP_result_task/motor/';
+%addpath(genpath('/usr/local/niak/niak-boss-0.12.13')) %magma 
+path_root =  '/home/yassinebha/database/HCP/';
 %% Set the template
 niak_gb_vars
 files_in.network = [ gb_niak_path_template 'basc_cambridge_sc100.mnc.gz' ];
