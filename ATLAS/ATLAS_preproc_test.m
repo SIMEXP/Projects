@@ -62,10 +62,13 @@ for num_s = 1:length(list_subject)
    
     %essai2015-11-07_17h:
     %actual ind path: '/gs/project/gsf-624-aa/ATLAS/raw_mnc/atlas_001_20150909_090839_3e1_mri.mnc'
+    
     %atlas_001_rest_20150909_090839_19_mri.mnc
     %error[path_raw filesep subject filesep '_rest_*.mnc']
+   
     %atlas_002_20150908_085351_3e1_mri.mnc
     %error[path_raw filesep subject filesep '_3e1_mri.mnc']
+    
     %atlas_010_NAMING_20150909_141437_5_mri.mnc
     %ok[path_raw filesep subject filesep '_NAMING_*.mnc']
     %atlas_010_PPTT_20150909_141437_4_mri.mnc
@@ -73,8 +76,8 @@ for num_s = 1:length(list_subject)
     %atlas_010_REP_20150909_141437_6_mri.mnc
     %ok[path_raw filesep subject filesep '_REP_*.mnc'];
 
-    files_in.(subject).anat = [path_raw filesep subject filesep '*_3e1_mri.mnc'];
-    files_in.(subject).fmri.sess1.REST = [path_raw filesep subject filesep '_rest_*.mnc'];
+    files_in.(subject).anat = [path_raw filesep subject filesep '_3e1_*.mnc'];
+    files_in.(subject).fmri.sess1.REST = [path_raw filesep subject filesep '_rest*.mnc'];
     files_in.(subject).fmri.sess1.REP = [path_raw filesep subject filesep '_REP_*.mnc'];
     files_in.(subject).fmri.sess1.NAMING = [path_raw filesep subject filesep '_NAMING_*.mnc'];
     files_in.(subject).fmri.sess1.PPTT = [path_raw filesep subject filesep '_PPTT_*.mnc'];
