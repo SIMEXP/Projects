@@ -37,7 +37,7 @@ exp   = 'niak';
 [status,cmdout] = system ('uname -n');
 server          = strtrim(cmdout);
 if strfind(server,'lg-1r') % This is guillimin
-    root_path = '/gs/project/gsf-624-aa/HCP/HCP_raw_data/';
+    root_path = '/gs/project/gsf-624-aa/HCP/';
     path_raw  = [ root_path '/HCP_raw_data/'];
     fprintf ('server: %s (Guillimin) \n ',server)
     my_user_name = getenv('USER');
@@ -100,26 +100,27 @@ list_subject = list_subject(~ismember(list_subject,{'.','..'}));
 for num_s = 1:length(list_subject)
     subject = list_subject{num_s};
     id = ['HCP' subject];
-    files_in.(id).anat = [ path_raw subject '/unprocessed/3T/T1w_MPR1/' subject '_3T_T1w_MPR1.mnc.gz'];     % Structural scan
-    files_in.(id).fmri.sess1.rest1RL = [ path_raw subject '/unprocessed/3T/rfMRI_REST1_RL/' subject '_3T_tfMRI_REST1_RL.mnc.gz']; 
-    files_in.(id).fmri.sess1.rest1LR = [ path_raw subject '/unprocessed/3T/rfMRI_REST1_LR/' subject '_3T_tfMRI_REST1_LR.mnc.gz']; 
-    files_in.(id).fmri.sess1.wmRL = [ path_raw subject '/unprocessed/3T/rfMRI_WM_RL/' subject '_3T_tfMRI_WM_RL.mnc.gz']; 
-    files_in.(id).fmri.sess1.wmLR = [ path_raw subject '/unprocessed/3T/rfMRI_WM_LR/' subject '_3T_tfMRI_WM_LR.mnc.gz']; 
-    files_in.(id).fmri.sess1.gambRL = [ path_raw subject '/unprocessed/3T/rfMRI_GAMBLING_RL/' subject '_3T_tfMRI_GAMBLING_RL.mnc.gz']; 
-    files_in.(id).fmri.sess1.gambLR = [ path_raw subject '/unprocessed/3T/rfMRI_GAMBLING_LR/' subject '_3T_tfMRI_GAMBLING_LR.mnc.gz'];     
-    files_in.(id).fmri.sess1.motRL = [ path_raw subject '/unprocessed/3T/rfMRI_MOTOR_RL/' subject '_3T_tfMRI_MOTOR_RL.mnc.gz']; 
-    files_in.(id).fmri.sess1.motLR = [ path_raw subject '/unprocessed/3T/rfMRI_MOTOR_LR/' subject '_3T_tfMRI_MOTOR_LR.mnc.gz']; 
+    files_in_tmp.(id).anat = [ path_raw subject '/unprocessed/3T/T1w_MPR1/' subject '_3T_T1w_MPR1.mnc.gz'];     % Structural scan
+    system(['nii2mnc ' files_in_tmp.(id).anat ' '  files_in_tmp.(id).anat  
+    files_in_tmp.(id).fmri.sess1.rest1RL = [ path_raw subject '/unprocessed/3T/rfMRI_REST1_RL/' subject '_3T_tfMRI_REST1_RL.mnc.gz']; 
+    files_in_tmp.(id).fmri.sess1.rest1LR = [ path_raw subject '/unprocessed/3T/rfMRI_REST1_LR/' subject '_3T_tfMRI_REST1_LR.mnc.gz']; 
+    files_in_tmp.(id).fmri.sess1.wmRL = [ path_raw subject '/unprocessed/3T/rfMRI_WM_RL/' subject '_3T_tfMRI_WM_RL.mnc.gz']; 
+    files_in_tmp.(id).fmri.sess1.wmLR = [ path_raw subject '/unprocessed/3T/rfMRI_WM_LR/' subject '_3T_tfMRI_WM_LR.mnc.gz']; 
+    files_in_tmp.(id).fmri.sess1.gambRL = [ path_raw subject '/unprocessed/3T/rfMRI_GAMBLING_RL/' subject '_3T_tfMRI_GAMBLING_RL.mnc.gz']; 
+    files_in_tmp.(id).fmri.sess1.gambLR = [ path_raw subject '/unprocessed/3T/rfMRI_GAMBLING_LR/' subject '_3T_tfMRI_GAMBLING_LR.mnc.gz'];     
+    files_in_tmp.(id).fmri.sess1.motRL = [ path_raw subject '/unprocessed/3T/rfMRI_MOTOR_RL/' subject '_3T_tfMRI_MOTOR_RL.mnc.gz']; 
+    files_in_tmp.(id).fmri.sess1.motLR = [ path_raw subject '/unprocessed/3T/rfMRI_MOTOR_LR/' subject '_3T_tfMRI_MOTOR_LR.mnc.gz']; 
 
-    files_in.(id).fmri.sess2.rest2LR = [ path_raw subject '/unprocessed/3T/rfMRI_REST2_LR/' subject '_3T_tfMRI_REST2_LR.mnc.gz']; 
-    files_in.(id).fmri.sess2.rest2RL = [ path_raw subject '/unprocessed/3T/rfMRI_REST2_RL/' subject '_3T_tfMRI_REST2_RL.mnc.gz']; 
-    files_in.(id).fmri.sess2.langRL = [ path_raw subject '/unprocessed/3T/rfMRI_LANGUAGE_RL/' subject '_3T_tfMRI_LANGUAGE_RL.mnc.gz'];   
-    files_in.(id).fmri.sess2.langLR = [ path_raw subject '/unprocessed/3T/rfMRI_LANGUAGE_LR/' subject '_3T_tfMRI_LANGUAGE_LR.mnc.gz']; 
-    files_in.(id).fmri.sess2.socRL = [ path_raw subject '/unprocessed/3T/rfMRI_SOCIAL_RL/' subject '_3T_tfMRI_SOCIAL_RL.mnc.gz'];  
-    files_in.(id).fmri.sess2.socLR = [ path_raw subject '/unprocessed/3T/rfMRI_SOCIAL_LR/' subject '_3T_tfMRI_SOCIAL_LR.mnc.gz'];    
-    files_in.(id).fmri.sess2.relRL = [ path_raw subject '/unprocessed/3T/rfMRI_RELATIONAL_RL/' subject '_3T_tfMRI_RELATIONAL_RL.mnc.gz'];   
-    files_in.(id).fmri.sess2.relLR = [ path_raw subject '/unprocessed/3T/rfMRI_RELATIONAL_LR/' subject '_3T_tfMRI_RELATIONAL_LR.mnc.gz']; 
-    files_in.(id).fmri.sess2.emRL = [ path_raw subject '/unprocessed/3T/rfMRI_EMOTION_RL/' subject '_3T_tfMRI_EMOTION_RL.mnc.gz'];      
-    files_in.(id).fmri.sess2.emLR = [ path_raw subject '/unprocessed/3T/rfMRI_EMOTION_LR/' subject '_3T_tfMRI_EMOTION_LR.mnc.gz']; 
+    files_in_tmp.(id).fmri.sess2.rest2LR = [ path_raw subject '/unprocessed/3T/rfMRI_REST2_LR/' subject '_3T_tfMRI_REST2_LR.mnc.gz']; 
+    files_in_tmp.(id).fmri.sess2.rest2RL = [ path_raw subject '/unprocessed/3T/rfMRI_REST2_RL/' subject '_3T_tfMRI_REST2_RL.mnc.gz']; 
+    files_in_tmp.(id).fmri.sess2.langRL = [ path_raw subject '/unprocessed/3T/rfMRI_LANGUAGE_RL/' subject '_3T_tfMRI_LANGUAGE_RL.mnc.gz'];   
+    files_in_tmp.(id).fmri.sess2.langLR = [ path_raw subject '/unprocessed/3T/rfMRI_LANGUAGE_LR/' subject '_3T_tfMRI_LANGUAGE_LR.mnc.gz']; 
+    files_in_tmp.(id).fmri.sess2.socRL = [ path_raw subject '/unprocessed/3T/rfMRI_SOCIAL_RL/' subject '_3T_tfMRI_SOCIAL_RL.mnc.gz'];  
+    files_in_tmp.(id).fmri.sess2.socLR = [ path_raw subject '/unprocessed/3T/rfMRI_SOCIAL_LR/' subject '_3T_tfMRI_SOCIAL_LR.mnc.gz'];    
+    files_in_tmp.(id).fmri.sess2.relRL = [ path_raw subject '/unprocessed/3T/rfMRI_RELATIONAL_RL/' subject '_3T_tfMRI_RELATIONAL_RL.mnc.gz'];   
+    files_in_tmp.(id).fmri.sess2.relLR = [ path_raw subject '/unprocessed/3T/rfMRI_RELATIONAL_LR/' subject '_3T_tfMRI_RELATIONAL_LR.mnc.gz']; 
+    files_in_tmp.(id).fmri.sess2.emRL = [ path_raw subject '/unprocessed/3T/rfMRI_EMOTION_RL/' subject '_3T_tfMRI_EMOTION_RL.mnc.gz'];      
+    files_in_tmp.(id).fmri.sess2.emLR = [ path_raw subject '/unprocessed/3T/rfMRI_EMOTION_LR/' subject '_3T_tfMRI_EMOTION_LR.mnc.gz']; 
    
     list_run = fieldnames(files_in.(id).fmri.sess1);
     flag_ok = true(length(list_run),1);
