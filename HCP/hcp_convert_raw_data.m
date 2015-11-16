@@ -75,10 +75,10 @@ for num_s = 1:nb_subject
     # loop over runs
     for num_r = 1:length(list_run)
           run = list_run{num_r};
-          # loop oveer tasks
+          # loop over tasks
           for num_t = 1:length(list_task)
               task = list_task{num_t};
-              fprintf('    Task  %s_%s\n', task , run);
+              fprintf('    Task %s_%s\n', task , run);
               path_write_func = [path_mnc subject filesep task filesep];
               niak_mkdir(path_write_func);
               path_write_tmp_func = [path_write_func filesep 'tmp_' run '/'];
@@ -108,19 +108,24 @@ for num_s = 1:nb_subject
                 instr_cp_func = char(instr_cp0_func,instr_cp0bis_func,instr_cp1_func,instr_cp2_func);
                 pipeline.(name_job).instr_conv_anat = instr_cp_anat;
                 pipeline.(name_job).instr_conv_func = instr_cp_func;
-                pipeline.(name_job).command    = 'system(instr_conv_anat); system(instr_conv_func)';        
+                pipeline.(name_job).command = 'system(instr_conv_anat); system(instr_conv_func)';        
                 pipeline = psom_add_clean(pipeline,['clean_' name_job],path_tmp);
               else # else run only functional conversion
                 target_file_func = [path_write_func 'func_' subject '_' task '_' lower(run) '.mnc'];
-                souce_file_func = [ path_read_func subject '/unprocessed/3T/rfMRI_' upper(task) '_' upper(run) '/' subject '_3T_tfMRI_' REST1 '_' RL '.mnc']; 
+                if ismember(task,{'REST1','REST2'})
+                  prefix_fold = 'rfMRI_';
+                else
+                  prefix_fold = 'tfMRI_';
+                end
+                source_file_func = [ path_read_func prefix_fold upper(task) '_' upper(run) '/' subject '_3T_tfMRI_' upper(task) '_' upper(run) '.nii']; 
                 tmp_file_func = [path_write_func niak_file_tmp('.nii')];
-                instr_cp0_func = ['cp ' source_file_func ' ' tmp_file_func ];
+                instr_cp0_func = ['cp ' source_file_func gb_niak_zip_ext ' ' tmp_file_func gb_niak_zip_ext ];
                 instr_cp0bis_func = [gb_niak_unzip ' ' tmp_file_func ];
                 instr_cp1_func = ['nii2mnc ',tmp_file_func,' ',target_file_func];
                 instr_cp2_func = ['rm ' tmp_file_func];
                 instr_cp_func = char(instr_cp0_func,instr_cp0bis_func,instr_cp1_func,instr_cp2_func);
                 pipeline.(name_job).instr_conv_func = instr_cp_func;
-                pipeline.(name_job).command    = 'system(instr_conv_func)';        
+                pipeline.(name_job).command = 'system(instr_conv_func)';        
                 pipeline = psom_add_clean(pipeline,['clean_' name_job],path_tmp);
               end
           end
