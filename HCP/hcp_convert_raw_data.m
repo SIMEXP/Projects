@@ -89,8 +89,8 @@ for num_s = 1:nb_subject
                 end
                 source_file_anat = [ path_read_anat subject '_3T_T1w_MPR1.nii'];
                 source_file_func = [ path_read_func prefix_fold upper(task) '_' upper(run) '/' subject '_3T_tfMRI_' upper(task) '_' upper(run) '.nii']; 
-                tmp_file_anat = [path_tmp niak_file_tmp('.nii')];
-                tmp_file_func = [path_tmp niak_file_tmp('.nii')];
+                tmp_file_anat = [path_mnc subject  niak_file_tmp('.nii')];
+                tmp_file_func = [path_mnc subject niak_file_tmp('.nii')];
                 instr_cp_anat = ['cp ' source_file_anat gb_niak_zip_ext ' ' tmp_file_anat gb_niak_zip_ext ];
                 instr_cp_func = ['cp ' source_file_func gb_niak_zip_ext ' ' tmp_file_func gb_niak_zip_ext ];
                 instr_unzip_anat = [gb_niak_unzip ' ' tmp_file_anat gb_niak_zip_ext];
@@ -116,7 +116,7 @@ for num_s = 1:nb_subject
                   prefix_fold = 'tfMRI_';
                 end
                 source_file_func = [ path_read_func prefix_fold upper(task) '_' upper(run) '/' subject '_3T_tfMRI_' upper(task) '_' upper(run) '.nii']; 
-                tmp_file_func = [path_tmp niak_file_tmp('.nii')];
+                tmp_file_func = [path_mnc subject niak_file_tmp('.nii')];
                 instr_cp_func = ['cp ' source_file_func gb_niak_zip_ext ' ' tmp_file_func gb_niak_zip_ext ];
                 instr_unzip_func = [gb_niak_unzip ' ' tmp_file_func gb_niak_zip_ext];
                 instr_nii2mnc_func = ['nii2mnc ',tmp_file_func,' ',target_file_func];
