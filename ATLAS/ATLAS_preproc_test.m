@@ -87,6 +87,7 @@ for num_s = 1:length(list_subject)
         warning ('The file %s does not exist, I suppressed that subject %s','ANATOMIC',subject);
         files_in = rmfield(files_in,subject);
     end
+end
     
     %essai2015-11-07_13h:warning: The file /gs/project/gsf-624-aa/ATLAS/raw_mnc/atlas_015_REP_20150909_104517_4_mri.mncatlas_0*'_3e1_mri.mnc does not exist, I suppressed that subject atlas_015_REP_20150909_104517_4_mri.mnc
     %files_in.(subject).anat = [path_raw filesep subject 'atlas_0*''_3e1_mri.mnc'];
