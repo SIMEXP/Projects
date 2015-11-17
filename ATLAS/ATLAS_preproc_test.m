@@ -49,8 +49,44 @@ list_subject = list_subject(~ismember(list_subject,{'.','..'}));
 
 for num_s = 1:length(list_subject)
     subject = list_subject{num_s};
+    tmp_path_subj = [path_raw subject filesep];
     files_in.(subject).anat = [];
     files_in.(subject).fmri.sess1 = [];
+     %   files_in.(subject).anat = [path_raw filesep subject filesep '*_3e1_*.mnc'];
+ %   files_in.(subject).fmri.sess1.REST = [path_raw filesep subject filesep '*_rest_*.mnc'];
+ %   files_in.(subject).fmri.sess1.REP = [path_raw filesep subject filesep '*_REP_*.mnc'];
+ %   files_in.(subject).fmri.sess1.NAMING = [path_raw filesep subject filesep '*_NAMING_*.mnc'];
+ %   files_in.(subject).fmri.sess1.PPTT = [path_raw filesep subject filesep '*_PPTT_*.mnc'];
+    try 
+        files_in.(subject).fmri.session1.REST = [tmp_path_subj dir([tmp_path_subj subject '*_rest_*.mnc'])(1).name];
+    catch exception
+        warning ('The file %s does not exist, I suppressed that file from the pipeline %s','REST',subject);
+    end
+
+    try
+        files_in.(subject).fmri.session1.REP = [tmp_path_subj dir([tmp_path_subj subject filesep '*_REP_*.mnc'])(1).name];
+    catch exception
+        warning ('The file %s does not exist, I suppressed that file from the pipeline %s','REP',subject);
+    end
+
+    try
+        files_in.(subject).fmri.session1.NAMING = [tmp_path_subj dir([tmp_path_subj subject filesep '*_NAMING_*.mnc'])(1).name];    
+    catch exception
+        warning ('The file %s does not exist, I suppressed that file from the pipeline %s','NAMING',subject);
+    end
+
+    try
+        files_in.(subject).fmri.session1.PPTT = [tmp_path_subj dir([tmp_path_subj subject filesep '*_PPTT_*.mnc'])(1).name]; 
+    catch exception
+	warning ('The file %s does not exist, I suppressed that file from the pipeline %s','PPTT',subject);
+    end
+
+    try
+        files_in.(subject).anat = [tmp_path_subj dir([tmp_path_subj subject filesep '*_3e1_*.mnc')(1).name];
+    catch exception
+        warning ('The file %s does not exist, I suppressed that subject %s','ANATOMIC',subject);
+        files_in = rmfield(files_in,subject);
+    end
     
     %essai2015-11-07_13h:warning: The file /gs/project/gsf-624-aa/ATLAS/raw_mnc/atlas_015_REP_20150909_104517_4_mri.mncatlas_0*'_3e1_mri.mnc does not exist, I suppressed that subject atlas_015_REP_20150909_104517_4_mri.mnc
     %files_in.(subject).anat = [path_raw filesep subject 'atlas_0*''_3e1_mri.mnc'];
@@ -79,33 +115,33 @@ for num_s = 1:length(list_subject)
     %actual ind path: '/gs/project/gsf-624-aa/ATLAS/raw_mnc/ATLAS_001/atlas_001_rest_20150909_090839_19_mri.mnc'
 
 
-    files_in.(subject).anat = [path_raw filesep subject filesep '*_3e1_*.mnc'];
-    files_in.(subject).fmri.sess1.REST = [path_raw filesep subject filesep '*_rest_*.mnc'];
-    files_in.(subject).fmri.sess1.REP = [path_raw filesep subject filesep '*_REP_*.mnc'];
-    files_in.(subject).fmri.sess1.NAMING = [path_raw filesep subject filesep '*_NAMING_*.mnc'];
-    files_in.(subject).fmri.sess1.PPTT = [path_raw filesep subject filesep '*_PPTT_*.mnc'];
+ %   files_in.(subject).anat = [path_raw filesep subject filesep '*_3e1_*.mnc'];
+ %   files_in.(subject).fmri.sess1.REST = [path_raw filesep subject filesep '*_rest_*.mnc'];
+ %   files_in.(subject).fmri.sess1.REP = [path_raw filesep subject filesep '*_REP_*.mnc'];
+ %   files_in.(subject).fmri.sess1.NAMING = [path_raw filesep subject filesep '*_NAMING_*.mnc'];
+ %   files_in.(subject).fmri.sess1.PPTT = [path_raw filesep subject filesep '*_PPTT_*.mnc'];
   
     
-    files_c = psom_files2cell(files_in.(subject).fmri.sess1);
-    for num_f = 1:length(files_c)
-        if ~psom_exist(files_c{num_f})
-            warning ('The file %s does not exist, I suppressed that file from the pipeline %s',files_c{num_f},subject);
-            files_in.(subject).fmri.sess1 = rmfield(files_in.(subject).fmri.sess1,fieldnames(files_in.(subject).fmri.sess1)(num_f));
-            break
-        end
-    end
+ %   files_c = psom_files2cell(files_in.(subject).fmri.sess1);
+ %   for num_f = 1:length(files_c)
+ %       if ~psom_exist(files_c{num_f})
+ %           warning ('The file %s does not exist, I suppressed that file from the pipeline %s',files_c{num_f},subject);
+ %           files_in.(subject).fmri.sess1 = rmfield(files_in.(subject).fmri.sess1,fieldnames(files_in.(subject).fmri.sess1)(num_f));
+ %           break
+ %       end
+ %   end
             
     
-    files_c = psom_files2cell(files_in.(subject).anat);
-    for num_f = 1:length(files_c)
-        if ~psom_exist(files_c{num_f})
-            warning ('The file %s does not exist, I suppressed that subject %s',files_c{num_f},subject);
-            files_in = rmfield(files_in,subject);
-            break
-        end
-    end
+ %   files_c = psom_files2cell(files_in.(subject).anat);
+ %   for num_f = 1:length(files_c)
+ %       if ~psom_exist(files_c{num_f})
+ %           warning ('The file %s does not exist, I suppressed that subject %s',files_c{num_f},subject);
+ %           files_in = rmfield(files_in,subject);
+ %           break
+ %       end
+ %   end
 
- end
+ %end
 
 % exclude PIC NAMING (only) for P00004507 and P00004563
 % exclude PIC NAMING (only) for P00004507 and P00004563
