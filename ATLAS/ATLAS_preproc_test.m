@@ -82,7 +82,7 @@ for num_s = 1:length(list_subject)
     end
 
     try
-        files_in.(subject).anat = [tmp_path_subj dir([tmp_path_subj subject filesep '*_3e1_*.mnc')(1).name];
+        files_in.(subject).anat = [tmp_path_subj dir([tmp_path_subj subject filesep '*_3e1_*.mnc'])(1).name];
     catch exception
         warning ('The file %s does not exist, I suppressed that subject %s','ANATOMIC',subject);
         files_in = rmfield(files_in,subject);
