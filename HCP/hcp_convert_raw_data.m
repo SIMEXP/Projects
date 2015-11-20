@@ -58,6 +58,7 @@ list_subject = {list_subject(3:end).name};
 nb_subject = length(list_subject);
 pipeline = struct();
 
+nb_subject = 3; %for debugging only
 % loop over subject
 for num_s = 1:nb_subject
     subject = list_subject{num_s};
@@ -68,7 +69,8 @@ for num_s = 1:nb_subject
     path_read_anat2 = [path_sub 'unprocessed/3T/T1w_MPR2/'];
     path_write_anat1 = [path_mnc subject filesep 'MPR_1' filesep];
     path_write_anat2 = [path_mnc subject filesep 'MPR_2' filesep];
-    niak_mkdir(path_write_anat);
+    niak_mkdir(path_write_anat1);
+    niak_mkdir(path_write_anat2);
     path_tmp = [path_mnc subject '/tmp'];
     niak_mkdir(path_tmp);
     % loop over runs
