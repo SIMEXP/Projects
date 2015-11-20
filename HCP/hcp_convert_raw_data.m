@@ -83,7 +83,7 @@ for num_s = 1:nb_subject
               name_job = sprintf('HCP_%s_%s_%s',subject,task,run);
               if num_t == 1 && num_r == 1 % if first iteration, run conversion for anat and functional image
                 target_file_anat1 = [path_write_anat1 'anat_' subject '_MPR1.mnc'];
-                target_file_anat2 = [path_write_anat1 'anat_' subject '_MPR2.mnc'];
+                target_file_anat2 = [path_write_anat2 'anat_' subject '_MPR2.mnc'];
                 target_file_func = [path_write_func 'func_' subject '_' task '_' lower(run) '.mnc'];
                 if ismember(task,{'REST1','REST2'})
                   prefix_fold = 'rfMRI_';
