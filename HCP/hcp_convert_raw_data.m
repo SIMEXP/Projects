@@ -122,7 +122,7 @@ for num_s = 1:nb_subject
                 pipeline.(name_job).opt.instr_conv_anat1 = instr_final_anat1;
                 pipeline.(name_job).opt.instr_conv_anat2 = instr_final_anat2;
                 pipeline.(name_job).opt.instr_conv_func = instr_final_func;
-                pipeline.(name_job).command = 'system(opt.instr_conv_anat1);system(opt.instr_conv_anat1); system(opt.instr_conv_func)';        
+                pipeline.(name_job).command = 'system(opt.instr_conv_anat1);system(opt.instr_conv_anat2); system(opt.instr_conv_func)';        
                 %pipeline = psom_add_clean(pipeline,['clean_' name_job],path_tmp);
               else % else run only functional conversion
                 target_file_func = [path_write_func 'func_' subject '_' task '_' lower(run) '.mnc'];
