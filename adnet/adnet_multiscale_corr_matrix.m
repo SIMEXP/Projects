@@ -10,8 +10,17 @@ path_data =  '/home/atam/scratch/adnet/results/glm30b_scanner_20151113_nii/';
 
 path_scale = {'sci5_scg4_scf4','sci5_scg7_scf6','sci15_scg12_scf12','sci20_scg22_scf22','sci35_scg35_scf33','sci80_scg64_scf65','sci130_scg117_scf111','sci190_scg209_scf208'};
 
-data_seed = {'acc'}; %-2 31 20
-data_cluster = [4 6 6 14 28 17 83 176];
+% data_seed = {'dpfc'}; %0 44 37
+% data_cluster = [4 6 6 6 9 19 109 65];
+
+% data_seed = {'striatum'}; %14 17 2
+% data_cluster = [4 5 1 1 2 4 5 37];
+
+% data_seed = {'acc'}; %-2 31 20
+% data_cluster = [4 6 6 14 28 17 83 176];
+
+data_seed = {'middletemporallobe'};
+data_cluster = [4 5 5 18 12 49 85 207];
 
 [hdr,net] = niak_read_vol(strcat(path_data,'sci35_scg35_scf33/networks_',path_scale{5},'.nii.gz'));
 
@@ -41,7 +50,7 @@ tseries_sc208 = niak_vol2tseries(vol_sc208(:,:,:,data_cluster(8)),net>0);
 
 final_matrix = corrcoef([tseries_sc4;tseries_sc6;tseries_sc12;tseries_sc22;tseries_sc33;tseries_sc65;tseries_sc111;tseries_sc208]');
 
-namemat = strcat(path_data,'/multiscale_corr_effects_acc.mat'); 
+namemat = strcat(path_data,'/multiscale_corr_effects_mtl.mat'); 
 save(namemat,'final_matrix')
 
 colormap jet
@@ -49,5 +58,5 @@ imagesc(final_matrix,[0 1]);
 colorbar;
 axis square
 
-namefig = strcat(path_data,'/multiscale_corr_effects_acc.pdf');
+namefig = strcat(path_data,'/multiscale_corr_effects_mtl.pdf');
 print(namefig,'-dpdf','-r600') 
