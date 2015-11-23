@@ -27,18 +27,12 @@
 % THE SOFTWARE.
 
 clear all
-%%%%%%%%%%%%%%%%%%%%%
-%% Parameters
-%%%%%%%%%%%%%%%%%%%%%
-task  = 'MOTOR';
-exp   = 'niak';
-
 %% Setting input/output files 
 [status,cmdout] = system ('uname -n');
 server          = strtrim(cmdout);
 if strfind(server,'lg-1r') % This is guillimin
     root_path = '/gs/project/gsf-624-aa/HCP/';
-    path_raw  = [ root_path '/HCP_raw_data/'];
+    path_raw  = [ root_path '/HCP_raw_mnc/'];
     fprintf ('server: %s (Guillimin) \n ',server)
     my_user_name = getenv('USER');
 elseif strfind(server,'ip05') % this is mammouth
@@ -69,83 +63,63 @@ end
 %% WARNING: Do not use underscores '_' in the IDs of subject, sessions or runs. This may cause bugs in subsequent pipelines.
 
 %% Grab the raw data
+list_task_sess1 = {'rest1' , 'wm','gambling','motor'};
+list_task_sess2 = {'rest2' , 'language','social','relational','emotion'};
+
 list_subject = dir(path_raw);
 list_subject = {list_subject.name};
-list_subject = list_subject(~ismember(list_subject,{'.','..'}));
-list_task_sess1 = {'rest1' , 'wm','gambling','motor'}
-list_task_sess2 = {'rest2' , 'language','social','relational','emotion'}
-for task_n = 1:length(list_subject)
-    subject = list_subject{num_s};
-    id = ['HCP' subject];
-    files_in.(id).anat = [ path_raw subject '/unprocessed/3T/T1w_MPR1/' subject '_3T_T1w_MPR1.mnc.gz'];     % Structural scan
-    files_in.(id).fmri.session1.([lower(task)(1:2) 'rl']) = [  path_raw subject '/unprocessed/3T/tfMRI_' upper(task) '_RL/' subject '_3T_tfMRI_' upper(task) '_RL.mnc.gz']; % fMRI run 1
-    files_in.(id).fmri.session1.([lower(task)(1:2) 'lr']) = [  path_raw subject '/unprocessed/3T/tfMRI_' upper(task) '_LR/' subject '_3T_tfMRI_' upper(task) '_LR.mnc.gz']; % fMRI run 2
-    %check if all the necessary files exist
-    files_c = psom_files2cell(files_in.(id));
-    for num_f = 1:length(files_c)
-        if ~psom_exist(files_c{num_f})
-            warning ('The file %s does not exist, I suppressed subject %s',files_c{num_f},subject);
-            files_in = rmfield(files_in,id);
-            break
-        end        
-    end
-end
-
-
-
-% returns the folder listings of path_raw or '/gs/project/gsf-624-aa/nki_multimodal_releaseX/raw_mnc/' to list_subject
-list_subject = dir(path_raw);
-list_subject = {list_subject.name};
-list_subject = list_subject(~ismember(list_subject,{'.','..'}));
+list_subject = list_subject(~ismember(list_subject,{'.','..','logs_conversion'}));
 for num_s = 1:length(list_subject)
     subject = list_subject{num_s};
     id = ['HCP' subject];
-    files_in_tmp.(id).anat = [ path_raw subject '/unprocessed/3T/T1w_MPR1/' subject '_3T_T1w_MPR1.mnc.gz'];     % Structural scan
-    system(['nii2mnc ' files_in_tmp.(id).anat ' '  files_in_tmp.(id).anat  
-    files_in_tmp.(id).fmri.sess1.rest1RL = [ path_raw subject '/unprocessed/3T/rfMRI_REST1_RL/' subject '_3T_tfMRI_REST1_RL.mnc.gz']; 
-    files_in_tmp.(id).fmri.sess1.rest1LR = [ path_raw subject '/unprocessed/3T/rfMRI_REST1_LR/' subject '_3T_tfMRI_REST1_LR.mnc.gz']; 
-    files_in_tmp.(id).fmri.sess1.wmRL = [ path_raw subject '/unprocessed/3T/rfMRI_WM_RL/' subject '_3T_tfMRI_WM_RL.mnc.gz']; 
-    files_in_tmp.(id).fmri.sess1.wmLR = [ path_raw subject '/unprocessed/3T/rfMRI_WM_LR/' subject '_3T_tfMRI_WM_LR.mnc.gz']; 
-    files_in_tmp.(id).fmri.sess1.gambRL = [ path_raw subject '/unprocessed/3T/rfMRI_GAMBLING_RL/' subject '_3T_tfMRI_GAMBLING_RL.mnc.gz']; 
-    files_in_tmp.(id).fmri.sess1.gambLR = [ path_raw subject '/unprocessed/3T/rfMRI_GAMBLING_LR/' subject '_3T_tfMRI_GAMBLING_LR.mnc.gz'];     
-    files_in_tmp.(id).fmri.sess1.motRL = [ path_raw subject '/unprocessed/3T/rfMRI_MOTOR_RL/' subject '_3T_tfMRI_MOTOR_RL.mnc.gz']; 
-    files_in_tmp.(id).fmri.sess1.motLR = [ path_raw subject '/unprocessed/3T/rfMRI_MOTOR_LR/' subject '_3T_tfMRI_MOTOR_LR.mnc.gz']; 
+    files_in.(id).anat = [ path_raw subject '/MPR_1/anat_' subject '_MPR1.mnc.gz']; % Structural scan
+    files_in.(id).fmri.sess1.rest1RL = [ path_raw subject '/REST1/func_' subject '_REST1_rl.mnc.gz']; 
+    files_in.(id).fmri.sess1.rest1LR = [ path_raw subject '/REST1/func_' subject '_REST1_lr.mnc.gz']; 
+    files_in.(id).fmri.sess1.wmRL = [ path_raw subject '/WM/func_' subject '_WM_rl.mnc.gz']; 
+    files_in.(id).fmri.sess1.wmLR = [ path_raw subject '/WM/func_' subject '_WM_lr.mnc.gz']; 
+    files_in.(id).fmri.sess1.gambRL = [ path_raw subject '/GAMBLING/func_' subject '_GAMBLING_rl.mnc.gz']; 
+    files_in.(id).fmri.sess1.gambLR = [ path_raw subject '/GAMBLING/func_' subject '_GAMBLING_lr.mnc.gz'];
+    files_in.(id).fmri.sess1.motRL = [ path_raw subject '/MOTOR/func_' subject '_MOTOR_rl.mnc.gz']; 
+    files_in.(id).fmri.sess1.motLR = [ path_raw subject '/MOTOR/func_' subject '_MOTOR_rl.mnc.gz']; 
 
-    files_in_tmp.(id).fmri.sess2.rest2LR = [ path_raw subject '/unprocessed/3T/rfMRI_REST2_LR/' subject '_3T_tfMRI_REST2_LR.mnc.gz']; 
-    files_in_tmp.(id).fmri.sess2.rest2RL = [ path_raw subject '/unprocessed/3T/rfMRI_REST2_RL/' subject '_3T_tfMRI_REST2_RL.mnc.gz']; 
-    files_in_tmp.(id).fmri.sess2.langRL = [ path_raw subject '/unprocessed/3T/rfMRI_LANGUAGE_RL/' subject '_3T_tfMRI_LANGUAGE_RL.mnc.gz'];   
-    files_in_tmp.(id).fmri.sess2.langLR = [ path_raw subject '/unprocessed/3T/rfMRI_LANGUAGE_LR/' subject '_3T_tfMRI_LANGUAGE_LR.mnc.gz']; 
-    files_in_tmp.(id).fmri.sess2.socRL = [ path_raw subject '/unprocessed/3T/rfMRI_SOCIAL_RL/' subject '_3T_tfMRI_SOCIAL_RL.mnc.gz'];  
-    files_in_tmp.(id).fmri.sess2.socLR = [ path_raw subject '/unprocessed/3T/rfMRI_SOCIAL_LR/' subject '_3T_tfMRI_SOCIAL_LR.mnc.gz'];    
-    files_in_tmp.(id).fmri.sess2.relRL = [ path_raw subject '/unprocessed/3T/rfMRI_RELATIONAL_RL/' subject '_3T_tfMRI_RELATIONAL_RL.mnc.gz'];   
-    files_in_tmp.(id).fmri.sess2.relLR = [ path_raw subject '/unprocessed/3T/rfMRI_RELATIONAL_LR/' subject '_3T_tfMRI_RELATIONAL_LR.mnc.gz']; 
-    files_in_tmp.(id).fmri.sess2.emRL = [ path_raw subject '/unprocessed/3T/rfMRI_EMOTION_RL/' subject '_3T_tfMRI_EMOTION_RL.mnc.gz'];      
-    files_in_tmp.(id).fmri.sess2.emLR = [ path_raw subject '/unprocessed/3T/rfMRI_EMOTION_LR/' subject '_3T_tfMRI_EMOTION_LR.mnc.gz']; 
+    files_in.(id).fmri.sess2.rest2LR = [ path_raw subject '/REST2/func_' subject '_REST2_lr.mnc.gz']; 
+    files_in.(id).fmri.sess2.rest2RL = [ path_raw subject '/REST2/func_' subject '_REST2_rl.mnc.gz'];
+    files_in.(id).fmri.sess2.langRL = [ path_raw subject '/LANGUAGE/func_' subject '_LANGUAGE_rl.mnc.gz'];   
+    files_in.(id).fmri.sess2.langLR = [ path_raw subject '/LANGUAGE/func_' subject '_LANGUAGE_lr.mnc.gz'];
+    files_in.(id).fmri.sess2.socRL = [ path_raw subject '/SOCIAL/func_' subject '_SOCIAL_rl.mnc.gz'];  
+    files_in.(id).fmri.sess2.socLR = [ path_raw subject '/SOCIAL/func_' subject '_SOCIAL_lr.mnc.gz'];
+    files_in.(id).fmri.sess2.relRL = [ path_raw subject '/RELATIONAL/func_' subject '_RELATIONAL_rl.mnc.gz'];   
+    files_in.(id).fmri.sess2.relLR = [ path_raw subject '/RELATIONAL/func_' subject '_RELATIONAL_lr.mnc.gz'];
+    files_in.(id).fmri.sess2.emRL = [ path_raw subject '/EMOTION/func_' subject '_EMOTION_rl.mnc.gz'];      
+    files_in.(id).fmri.sess2.emLR = [ path_raw subject '/EMOTION/func_' subject '_EMOTION_lr.mnc.gz'];
    
-    list_run = fieldnames(files_in.(id).fmri.sess1);
-    flag_ok = true(length(list_run),1);
-    for num_f = 1:length(list_run)
-        run = list_run{num_f};
-        if ~psom_exist(files_in.(id).fmri.sess1.(run))
-            flag_ok(num_f) = false;
-        end        
-    end
-    if ~any(flag_ok)||~psom_exist(files_in.(id).anat)
-        if ~any(flag_ok)
-            warning('No functional data for subject %s, I suppressed it',subject);
-        else
-            warning ('The file %s does not exist, I suppressed that subject %s',files_in.(id).anat,subject);
+    for num_sess = 1:2 % Sessions
+        session = ['sess' num2str(num_sess)]; 
+        list_run = fieldnames(files_in.(id).fmri.(session));
+        flag_ok = true(length(list_run),1);
+        for num_f = 1:length(list_run) % Runs
+            run = list_run{num_f};
+            if ~psom_exist(files_in.(id).fmri.(session).(run))
+                flag_ok(num_f) = false;
+            end        
         end
-        files_in = rmfield(files_in,id);
-    elseif any(~flag_ok)
-        files_in.(id).fmri.sess1 = rmfield(files_in.(id).fmri.sess1,list_run(~flag_ok));
-        warning ('I suppressed the following runs for subject %s because the files were missing:',id);
-        list_not_ok = find(~flag_ok);
-        for ind_not_ok = list_not_ok(:)'
-            fprintf(' %s',list_run{ind_not_ok});
+        if ~any(flag_ok)||~psom_exist(files_in.(id).anat)
+            if ~any(flag_ok)
+                warning('No functional data for subject %s, I suppressed it',subject);
+            else
+                warning ('The file %s does not exist, I suppressed that subject %s',files_in.(id).anat,subject);
+            end
+            files_in = rmfield(files_in,id);
+        elseif any(~flag_ok)
+            files_in.(id).fmri.(session) = rmfield(files_in.(id).fmri.(session),list_run(~flag_ok));
+            warning ('I suppressed the following runs for subject %s because the files were missing:',id);
+            list_not_ok = find(~flag_ok);
+            for ind_not_ok = list_not_ok(:)'
+                fprintf(' %s',list_run{ind_not_ok});
+            end
+            fprintf('\n')
         end
-        fprintf('\n')
-    end
+    end    
 end
 
 
