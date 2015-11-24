@@ -63,8 +63,7 @@ end
 %% WARNING: Do not use underscores '_' in the IDs of subject, sessions or runs. This may cause bugs in subsequent pipelines.
 
 %% Grab the raw data
-list_task_sess1 = {'rest1' , 'wm','gambling','motor'};
-list_task_sess2 = {'rest2' , 'language','social','relational','emotion'};
+
 
 list_subject = dir(path_raw);
 list_subject = {list_subject.name};
@@ -93,32 +92,45 @@ for num_s = 1:length(list_subject)
     files_in.(id).fmri.sess2.emRL = [ path_raw subject '/EMOTION/func_' subject '_EMOTION_rl.mnc.gz'];      
     files_in.(id).fmri.sess2.emLR = [ path_raw subject '/EMOTION/func_' subject '_EMOTION_lr.mnc.gz'];
    
+    %list_task_sess1 = {'rest1' , 'wm','gambling','motor'};
+    %list_task_sess2 = {'rest2' , 'language','social','relational','emotion'};
     for num_sess = 1:2 % Sessions
-        session = ['sess' num2str(num_sess)]; 
-        list_run = fieldnames(files_in.(id).fmri.(session));
-        flag_ok = true(length(list_run),1);
-        for num_f = 1:length(list_run) % Runs
-            run = list_run{num_f};
-            if ~psom_exist(files_in.(id).fmri.(session).(run))
-                flag_ok(num_f) = false;
-            end        
-        end
-        if ~any(flag_ok)||~psom_exist(files_in.(id).anat)
-            if ~any(flag_ok)
-                warning('No functional data for subject %s, I suppressed it',subject);
-            else
-                warning ('The file %s does not exist, I suppressed that subject %s',files_in.(id).anat,subject);
-            end
-            files_in = rmfield(files_in,id);
-        elseif any(~flag_ok)
-            files_in.(id).fmri.(session) = rmfield(files_in.(id).fmri.(session),list_run(~flag_ok));
-            warning ('I suppressed the following runs for subject %s because the files were missing:',id);
-            list_not_ok = find(~flag_ok);
-            for ind_not_ok = list_not_ok(:)'
-                fprintf(' %s',list_run{ind_not_ok});
-            end
-            fprintf('\n')
-        end
+          session = ['sess' num2str(num_sess)];
+          list_run = fieldnames(files_in.(id).fmri.(session));
+          eval( [ 'flag_ok_' session ' = true(length( list_run ),1);']);
+          for num_f = 1:length(list_run) % Runs
+                run = list_run{num_f};
+                if ~psom_exist(files_in.(id).fmri.(session).(run))
+                     flag_ok(num_f) = false;
+                     eval( [ 'flag_ok_' session '(num_f ) = false;' ]);
+                end        
+          end
+    end
+    flag_ok = [flag_ok_sess1; flag_ok_sess2];
+    if ~any(flag_ok)||~psom_exist(files_in.(id).anat)
+       if ~any(flag_ok)
+           warning('No functional data for subject %s, I suppressed it',subject);
+       else
+           warning ('The anat file %s does not exist, I suppressed that subject %s',files_in.(id).anat,subject);
+       end
+          files_in = rmfield(files_in,id);
+    elseif any(~flag_ok)
+          for num_sess = 1:2
+                session = ['sess' num2str(num_sess)];
+                flag_ok_tmp = eval( [ 'flag_ok_' session ';']);
+                if any(~flag_ok_tmp)
+                    return
+                else    
+                    list_run = fieldnames(files_in.(id).fmri.(session));
+                    files_in.(id).fmri.(session) = rmfield(files_in.(id).fmri.(session),list_run(~flag_ok_tmp));
+                    warning ('I suppressed the following runs for subject %s because the files were missing:',id);
+                    list_not_ok = find(~flag_ok);
+                    for ind_not_ok = list_not_ok(:)'
+                        fprintf(' %s',list_run{ind_not_ok});
+                    end
+                    fprintf('\n')
+                end    
+          end
     end    
 end
 
