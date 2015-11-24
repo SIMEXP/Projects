@@ -91,70 +91,9 @@ for num_s = 1:length(list_subject)
     files_in.(id).fmri.sess2.relLR = [ path_raw subject '/RELATIONAL/func_' subject '_RELATIONAL_lr.mnc.gz'];
     files_in.(id).fmri.sess2.emRL = [ path_raw subject '/EMOTION/func_' subject '_EMOTION_rl.mnc.gz'];      
     files_in.(id).fmri.sess2.emLR = [ path_raw subject '/EMOTION/func_' subject '_EMOTION_lr.mnc.gz'];
-   
-    
-    list_session = fieldnames(files_in.(id).fmri);
-    flag_ok_stack = [];
-    for num_sess = 1:length(list_session) % Sessions
-        session = list_session{num_sess};
-        list_run = fieldnames(files_in.(id).fmri.(session));
-        eval( [ 'flag_ok_' session ' = true(length( list_run ),1);']);
-        for num_f = 1:length(list_run) % Runs
-            run = list_run{num_f};
-            if ~psom_exist(files_in.(id).fmri.(session).(run))
-               eval( [ 'flag_ok_' session '(num_f ) = false;' ]);
-            end        
-        end
-        flag_ok_stack = [flag_ok_stack ; eval( [ 'flag_ok_' session ])];
-    end
-    flag_ok = flag_ok_stack;
-    if ~any(flag_ok)||~psom_exist(files_in.(id).anat)
-       if ~any(flag_ok)
-          warning('No functional data for subject %s, I suppressed it',subject);
-       else
-          warning ('The anat file %s does not exist, I suppressed that subject %s',files_in.(id).anat,subject);
-       end
-       files_in = rmfield(files_in,id);
-    elseif any(~flag_ok)
-       for num_sess = 1:length(list_session) 
-           session = list_session{num_sess};
-           flag_ok_tmp = eval( [ 'flag_ok_' session ';']);
-           list_run = fieldnames(files_in.(id).fmri.(session));
-           if ~any(~flag_ok_tmp)
-              continue
-           else    
-              list_run = fieldnames(files_in.(id).fmri.(session));
-              files_in.(id).fmri.(session) = rmfield(files_in.(id).fmri.(session),list_run(~flag_ok_tmp));
-              warning ('I suppressed the following runs for subject %s because the files were missing:',id);
-              list_not_ok = find(~flag_ok_tmp);
-              for ind_not_ok = list_not_ok(:)'
-                  fprintf(' %s',list_run{ind_not_ok});
-              end
-              fprintf('\n')
-           end    
-       end
-    end    
 end
+files_in = niak_purge_files_in(files_in);
 
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%  warning: The file /sb/project/gsf-624-aa/database/HCP/HCP_task_unproc_mnc/116120/unprocessed/3T/tfMRI_MOTOR_RL/116120_3T_tfMRI_MOTOR_RL.mnc.gz does not exist, I suppressed subject 116120
-%  warning: The file /sb/project/gsf-624-aa/database/HCP/HCP_task_unproc_mnc/126931/unprocessed/3T/tfMRI_MOTOR_RL/126931_3T_tfMRI_MOTOR_RL.mnc.gz does not exist, I suppressed subject 126931
-%  warning: The file /sb/project/gsf-624-aa/database/HCP/HCP_task_unproc_mnc/128329/unprocessed/3T/tfMRI_MOTOR_LR/128329_3T_tfMRI_MOTOR_LR.mnc.gz does not exist, I suppressed subject 128329
-%  warning: The file /sb/project/gsf-624-aa/database/HCP/HCP_task_unproc_mnc/129432/unprocessed/3T/tfMRI_MOTOR_RL/129432_3T_tfMRI_MOTOR_RL.mnc.gz does not exist, I suppressed subject 129432
-%  warning: The file /sb/project/gsf-624-aa/database/HCP/HCP_task_unproc_mnc/129533/unprocessed/3T/tfMRI_MOTOR_RL/129533_3T_tfMRI_MOTOR_RL.mnc.gz does not exist, I suppressed subject 129533
-%  warning: The file /sb/project/gsf-624-aa/database/HCP/HCP_task_unproc_mnc/131621/unprocessed/3T/tfMRI_MOTOR_RL/131621_3T_tfMRI_MOTOR_RL.mnc.gz does not exist, I suppressed subject 131621
-%  warning: The file /sb/project/gsf-624-aa/database/HCP/HCP_task_unproc_mnc/140420/unprocessed/3T/tfMRI_MOTOR_RL/140420_3T_tfMRI_MOTOR_RL.mnc.gz does not exist, I suppressed subject 140420
-%  warning: The file /sb/project/gsf-624-aa/database/HCP/HCP_task_unproc_mnc/143527/unprocessed/3T/tfMRI_MOTOR_RL/143527_3T_tfMRI_MOTOR_RL.mnc.gz does not exist, I suppressed subject 143527
-%  warning: The file /sb/project/gsf-624-aa/database/HCP/HCP_task_unproc_mnc/197449/unprocessed/3T/tfMRI_MOTOR_RL/197449_3T_tfMRI_MOTOR_RL.mnc.gz does not exist, I suppressed subject 197449                                                                                                        
-%  warning: The file /sb/project/gsf-624-aa/database/HCP/HCP_task_unproc_mnc/197651/unprocessed/3T/tfMRI_MOTOR_RL/197651_3T_tfMRI_MOTOR_RL.mnc.gz does not exist, I suppressed subject 197651                                                                                                        
-%  warning: The file /sb/project/gsf-624-aa/database/HCP/HCP_task_unproc_mnc/207628/unprocessed/3T/tfMRI_MOTOR_RL/207628_3T_tfMRI_MOTOR_RL.mnc.gz does not exist, I suppressed subject 207628                                                                                                        
-%  warning: The file /sb/project/gsf-624-aa/database/HCP/HCP_task_unproc_mnc/208428/unprocessed/3T/tfMRI_MOTOR_RL/208428_3T_tfMRI_MOTOR_RL.mnc.gz does not exist, I suppressed subject 208428
-%  warning: The file /sb/project/gsf-624-aa/database/HCP/HCP_task_unproc_mnc/650746/unprocessed/3T/tfMRI_MOTOR_RL/650746_3T_tfMRI_MOTOR_RL.mnc.gz does not exist, I suppressed subject 650746
-%  warning: The file /sb/project/gsf-624-aa/database/HCP/HCP_task_unproc_mnc/745555/unprocessed/3T/tfMRI_MOTOR_RL/745555_3T_tfMRI_MOTOR_RL.mnc.gz does not exist, I suppressed subject 745555
-%  warning: The file /sb/project/gsf-624-aa/database/HCP/HCP_task_unproc_mnc/782157/unprocessed/3T/tfMRI_MOTOR_RL/782157_3T_tfMRI_MOTOR_RL.mnc.gz does not exist, I suppressed subject 782157
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%
 %% Pipeline options  %%
 %%%%%%%%%%%%%%%%%%%%%%%
@@ -162,7 +101,6 @@ end
 %% General
 opt.folder_out  = [root_path 'fmri_preprocess_all_task_rest'];    % Where to store the results
 opt.size_output = 'quality_control';                             % The amount of outputs that are generated by the pipeline. 'all' will keep intermediate outputs, 'quality_control' will only keep the quality control outputs.
-
 
 %% Slice timing correction (niak_brick_slice_timing)
 opt.slice_timing.type_acquisition = 'interleaved ascending'; % Slice timing order (available options : 'sequential ascending', 'sequential descending', 'interleaved ascending', 'interleaved descending')
@@ -208,8 +146,8 @@ opt.smooth_vol.fwhm      = 6;  % Full-width at maximum (FWHM) of the Gaussian bl
 opt.smooth_vol.flag_skip = 0;  % Skip spatial smoothing (0: don't skip, 1 : skip)
 
 % how to specify a different parameter for two subjects (here subject1 and subject2)
-  opt.tune(1).subject = 'HCP165840';
-  opt.tune(1).param.t1_preprocess.nu_correct.arg ='-distance 50' ; % Anything that usually goes in opt can go in param. What's specified in opt applies by default, but is overridden by tune.param
+% opt.tune(1).subject = 'HCP165840';
+% opt.tune(1).param.t1_preprocess.nu_correct.arg ='-distance 50' ; % Anything that usually goes in opt can go in param. What's specified in opt applies by default, but is overridden by tune.param
 %  
 %  opt.tune(2).subject = 'subject2';
 %  opt.tune(2).param.slice_timing.flag_center = false; % Anything that usually goes in opt can go in param. What's specified in opt applies by default, but is overridden by tune.param
