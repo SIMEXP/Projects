@@ -7,31 +7,40 @@ addpath(genpath('/gs/project/gsf-624-aa/quarantaine/niak-boss-0.12.18'))
 
 
 path_data = '/home/atam/scratch/adnet/results';
-path_net = '/home/atam/scratch/adnet/results/glm30b_nii/sci35_scg35_scf33';
+path_net = '/home/atam/scratch/adnet/results/glm30b_scanner_20151113_nii/sci35_scg35_scf33';
 path_scale = 'sci35_scg35_scf33';
-path_site = {'glm30b_adni2_nii','glm30b_criugmmci_nii','glm30b_adpd_nii','glm30b_mnimci_nii'};
+path_site = {'glm30b_achieva_20151116_nii','glm30b_gemini_20151116_nii','glm30b_ingenia_20151116_nii','glm30b_intera_20151116_nii','glm30b_criugmmci_nii','glm30b_adpd_nii','glm30b_mnimci_nii'};
 data_cluster = 12;
 
-path_result = '/home/atam/scratch/adnet/results/glm30b_nii/sci35_scg35_scf33/multisite_maps';
+path_result = '/home/atam/scratch/adnet/results/glm30b_scanner_20151113_nii/multisite_maps';
 
 
 [hdr,net] = niak_read_vol(strcat(path_net,'/','networks_',path_scale,'.nii.gz'));
 
-[hdr,vol_adni] = niak_read_vol(strcat(path_data,'/',path_site{1},'/',path_scale,'/ctrlvsmci/effect_ctrlvsmci_sci35_scg35_scf33.nii.gz'));
-tseries_adni = niak_vol2tseries(vol_adni(:,:,:,data_cluster),net>0);
+[hdr,vol_achieva] = niak_read_vol(strcat(path_data,'/',path_site{1},'/',path_scale,'/ctrlvsmci/effect_ctrlvsmci_sci35_scg35_scf33.nii.gz'));
+tseries_achieva = niak_vol2tseries(vol_achieva(:,:,:,data_cluster),net>0);
 
-[hdr,vol_criugmmci] = niak_read_vol(strcat(path_data,'/',path_site{2},'/',path_scale,'/ctrlvsmci/effect_ctrlvsmci_sci35_scg35_scf33.nii.gz'));
+[hdr,vol_gemini] = niak_read_vol(strcat(path_data,'/',path_site{2},'/',path_scale,'/ctrlvsmci/effect_ctrlvsmci_sci35_scg35_scf33.nii.gz'));
+tseries_gemini = niak_vol2tseries(vol_gemini(:,:,:,data_cluster),net>0);
+
+[hdr,vol_ingenia] = niak_read_vol(strcat(path_data,'/',path_site{3},'/',path_scale,'/ctrlvsmci/effect_ctrlvsmci_sci35_scg35_scf33.nii.gz'));
+tseries_ingenia = niak_vol2tseries(vol_ingenia(:,:,:,data_cluster),net>0);
+
+[hdr,vol_intera] = niak_read_vol(strcat(path_data,'/',path_site{4},'/',path_scale,'/ctrlvsmci/effect_ctrlvsmci_sci35_scg35_scf33.nii.gz'));
+tseries_intera = niak_vol2tseries(vol_intera(:,:,:,data_cluster),net>0);
+
+[hdr,vol_criugmmci] = niak_read_vol(strcat(path_data,'/',path_site{5},'/',path_scale,'/ctrlvsmci/effect_ctrlvsmci_sci35_scg35_scf33.nii.gz'));
 tseries_criugmmci = niak_vol2tseries(vol_criugmmci(:,:,:,data_cluster),net>0);
 
-[hdr,vol_adpd] = niak_read_vol(strcat(path_data,'/',path_site{3},'/',path_scale,'/ctrlvsmci/effect_ctrlvsmci_sci35_scg35_scf33.nii.gz'));
+[hdr,vol_adpd] = niak_read_vol(strcat(path_data,'/',path_site{6},'/',path_scale,'/ctrlvsmci/effect_ctrlvsmci_sci35_scg35_scf33.nii.gz'));
 tseries_adpd = niak_vol2tseries(vol_adpd(:,:,:,data_cluster),net>0);
 
-[hdr,vol_mnimci] = niak_read_vol(strcat(path_data,'/',path_site{4},'/',path_scale,'/ctrlvsmci/effect_ctrlvsmci_sci35_scg35_scf33.nii.gz'));
+[hdr,vol_mnimci] = niak_read_vol(strcat(path_data,'/',path_site{7},'/',path_scale,'/ctrlvsmci/effect_ctrlvsmci_sci35_scg35_scf33.nii.gz'));
 tseries_mnimci = niak_vol2tseries(vol_mnimci(:,:,:,data_cluster),net>0);
 
-final_matrix = corrcoef([tseries_adni;tseries_criugmmci;tseries_adpd;tseries_mnimci]');
+final_matrix = corrcoef([tseries_achieva;tseries_gemini;tseries_ingenia;tseries_intera;tseries_criugmmci;tseries_adpd;tseries_mnimci]');
 
-namemat = strcat(path_result,'/multisite_corr_effects_0.3_mtl.mat'); 
+namemat = strcat(path_result,'/multisite_corr_effects_mtl.mat'); 
 save(namemat,'final_matrix')
 
 colormap jet
@@ -39,7 +48,7 @@ imagesc(final_matrix,[0 1]);
 colorbar;
 axis square
 
-namefig = strcat(path_result,'/multisite_corr_effects_0.3_mtl.pdf');
+namefig = strcat(path_result,'/multisite_corr_effects_mtl.pdf');
 print(namefig,'-dpdf','-r600') 
 
 
