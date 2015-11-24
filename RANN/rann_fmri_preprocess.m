@@ -115,6 +115,7 @@ end
 files_in.P00004507.fmri.session1 = rmfield(files_in.P00004507.fmri.session1,'pictname');
 files_in.P00004563.fmri.session1 = rmfield(files_in.P00004563.fmri.session1,'pictname');
 
+files_in= niak_purge_files_in(files_in);
 
 %% WARNING: Do not use underscores '_' in the IDs of subject, sessions or runs. This may cause bugs in subsequent pipelines.
 
