@@ -157,7 +157,7 @@ end
 % fMRI run 1
 %files_in.P00004801.fmri.session1.syn = '/home/perrine/Documents/RANNtest1_mnc/P00004801/S0001/Syn_r1/Syn_r1_P00004801_S0001.mnc';
 
-
+files_in= niak_purge_files_in(files_in)
 
 %%%%%%%%%%%%%%%%%%%%%%%
 %% Pipeline options  %%
