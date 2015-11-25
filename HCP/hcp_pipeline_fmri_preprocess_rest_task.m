@@ -68,6 +68,7 @@ end
 list_subject = dir(path_raw);
 list_subject = {list_subject.name};
 list_subject = list_subject(~ismember(list_subject,{'.','..','logs_conversion'}));
+list_subject = list_subject(1:10); %preprocess by batches
 for num_s = 1:length(list_subject)
     subject = list_subject{num_s};
     id = ['HCP' subject];
