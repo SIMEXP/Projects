@@ -58,15 +58,19 @@ list_subject = {list_subject(3:end).name};
 nb_subject = length(list_subject);
 pipeline = struct();
 
+nb_subject = 3; %for debugging only
 % loop over subject
 for num_s = 1:nb_subject
     subject = list_subject{num_s};
     fprintf('Subject %s\n',subject);
     path_sub = [path_nii subject filesep];
     path_read_func = [path_sub 'unprocessed/3T/'];
-    path_read_anat = [path_sub 'unprocessed/3T/T1w_MPR1/'];
-    path_write_anat = [path_mnc subject filesep 'MPR_1' filesep];
-    niak_mkdir(path_write_anat);
+    path_read_anat1 = [path_sub 'unprocessed/3T/T1w_MPR1/'];
+    path_read_anat2 = [path_sub 'unprocessed/3T/T1w_MPR2/'];
+    path_write_anat1 = [path_mnc subject filesep 'MPR_1' filesep];
+    path_write_anat2 = [path_mnc subject filesep 'MPR_2' filesep];
+    niak_mkdir(path_write_anat1);
+    niak_mkdir(path_write_anat2);
     path_tmp = [path_mnc subject '/tmp'];
     niak_mkdir(path_tmp);
     % loop over runs
@@ -80,35 +84,46 @@ for num_s = 1:nb_subject
               niak_mkdir(path_write_func);
               name_job = sprintf('HCP_%s_%s_%s',subject,task,run);
               if num_t == 1 && num_r == 1 % if first iteration, run conversion for anat and functional image
-                target_file_anat = [path_write_anat 'anat_' subject '_' task '.mnc'];
+                target_file_anat1 = [path_write_anat1 'anat_' subject '_MPR1.mnc'];
+                target_file_anat2 = [path_write_anat2 'anat_' subject '_MPR2.mnc'];
                 target_file_func = [path_write_func 'func_' subject '_' task '_' lower(run) '.mnc'];
                 if ismember(task,{'REST1','REST2'})
                   prefix_fold = 'rfMRI_';
                 else
                   prefix_fold = 'tfMRI_';
                 end
-                source_file_anat = [ path_read_anat subject '_3T_T1w_MPR1.nii'];
+                source_file_anat1 = [ path_read_anat1 subject '_3T_T1w_MPR1.nii'];
+                source_file_anat2 = [ path_read_anat2 subject '_3T_T1w_MPR2.nii'];
                 source_file_func = [ path_read_func prefix_fold upper(task) '_' upper(run) '/' subject '_3T_' prefix_fold upper(task) '_' upper(run) '.nii']; 
-                tmp_file_anat = [path_mnc subject  niak_file_tmp('.nii')];
+                tmp_file_anat1 = [path_mnc subject  niak_file_tmp('.nii')];
+                tmp_file_anat2 = [path_mnc subject  niak_file_tmp('.nii')];
                 tmp_file_func = [path_mnc subject niak_file_tmp('.nii')];
-                instr_cp_anat = ['cp ' source_file_anat gb_niak_zip_ext ' ' tmp_file_anat gb_niak_zip_ext ];
+                instr_cp_anat1 = ['cp ' source_file_anat1 gb_niak_zip_ext ' ' tmp_file_anat1 gb_niak_zip_ext ];
+                instr_cp_anat2 = ['cp ' source_file_anat2 gb_niak_zip_ext ' ' tmp_file_anat2 gb_niak_zip_ext ];
                 instr_cp_func = ['cp ' source_file_func gb_niak_zip_ext ' ' tmp_file_func gb_niak_zip_ext ];
-                instr_unzip_anat = [gb_niak_unzip ' ' tmp_file_anat gb_niak_zip_ext];
+                instr_unzip_anat1 = [gb_niak_unzip ' ' tmp_file_anat1 gb_niak_zip_ext];
+                instr_unzip_anat2 = [gb_niak_unzip ' ' tmp_file_anat2 gb_niak_zip_ext];
                 instr_unzip_func = [gb_niak_unzip ' ' tmp_file_func gb_niak_zip_ext];
-                instr_nii2mnc_anat = ['nii2mnc ',tmp_file_anat,' ',target_file_anat];
-                instr_nii2mnc_func = ['nii2mnc ',tmp_file_func,' ',target_file_func];
-                instr_rm_tmp_anat = ['rm ' tmp_file_anat];
+                instr_nii2mnc_anat1 = ['nii2mnc ' tmp_file_anat1 ' ' target_file_anat1];
+                instr_nii2mnc_anat2 = ['nii2mnc ' tmp_file_anat2 ' ' target_file_anat2];
+                instr_nii2mnc_func = ['nii2mnc ' tmp_file_func ' ' target_file_func];
+                instr_rm_tmp_anat1 = ['rm ' tmp_file_anat1];
+                instr_rm_tmp_anat2 = ['rm ' tmp_file_anat2];
                 instr_rm_tmp_func = ['rm ' tmp_file_func];
-                instr_zip_anat = ['gzip ' target_file_anat];
+                instr_zip_anat1 = ['gzip ' target_file_anat1];
+                instr_zip_anat2 = ['gzip ' target_file_anat2];
                 instr_zip_func = ['gzip ' target_file_func];
-                instr_rm_extra_anat = ['rm ' target_file_anat];
+                instr_rm_extra_anat1 = ['rm ' target_file_anat1];
+                instr_rm_extra_anat2 = ['rm ' target_file_anat2];
                 instr_rm_extra_func = ['rm ' target_file_func];
-                instr_final_anat = [instr_cp_anat ';' instr_unzip_anat ';' instr_nii2mnc_anat ';' instr_rm_tmp_anat ';' instr_zip_anat ';' instr_rm_extra_anat];
+                instr_final_anat1 = [instr_cp_anat1 ';' instr_unzip_anat1 ';' instr_nii2mnc_anat1 ';' instr_rm_tmp_anat1 ';' instr_zip_anat1 ';' instr_rm_extra_anat1];
+                instr_final_anat2 = [instr_cp_anat2 ';' instr_unzip_anat2 ';' instr_nii2mnc_anat2 ';' instr_rm_tmp_anat2 ';' instr_zip_anat2 ';' instr_rm_extra_anat2];
                 instr_final_func = [instr_cp_func ';' instr_unzip_func ';' instr_nii2mnc_func ';' instr_rm_tmp_func ';' instr_zip_func ';' instr_rm_extra_func];
-                pipeline.(name_job).opt.instr_conv_anat = instr_final_anat;
+                pipeline.(name_job).opt.instr_conv_anat1 = instr_final_anat1;
+                pipeline.(name_job).opt.instr_conv_anat2 = instr_final_anat2;
                 pipeline.(name_job).opt.instr_conv_func = instr_final_func;
-                pipeline.(name_job).command = 'system(opt.instr_conv_anat); system(opt.instr_conv_func)';        
-                pipeline = psom_add_clean(pipeline,['clean_' name_job],path_tmp);
+                pipeline.(name_job).command = 'system(opt.instr_conv_anat1);system(opt.instr_conv_anat2); system(opt.instr_conv_func)';        
+                %pipeline = psom_add_clean(pipeline,['clean_' name_job],path_tmp);
               else % else run only functional conversion
                 target_file_func = [path_write_func 'func_' subject '_' task '_' lower(run) '.mnc'];
                 if ismember(task,{'REST1','REST2'})
@@ -120,7 +135,7 @@ for num_s = 1:nb_subject
                 tmp_file_func = [path_mnc subject niak_file_tmp('.nii')];
                 instr_cp_func = ['cp ' source_file_func gb_niak_zip_ext ' ' tmp_file_func gb_niak_zip_ext ];
                 instr_unzip_func = [gb_niak_unzip ' ' tmp_file_func gb_niak_zip_ext];
-                instr_nii2mnc_func = ['nii2mnc ',tmp_file_func,' ',target_file_func];
+                instr_nii2mnc_func = ['nii2mnc ' tmp_file_func ' ' target_file_func];
                 instr_rm_tmp_func = ['rm ' tmp_file_func];
                 instr_zip_func = ['gzip ' target_file_func];
                 instr_rm_extra_func = ['rm ' target_file_func];
