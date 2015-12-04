@@ -33,7 +33,7 @@
 % THE SOFTWARE.
 
 clear all
-%addpath(genpath('/usr/local/niak/niak-boss-0.12.13')) %magma 
+addpath(genpath('~/github_repos/niak/commands/read_write/'));%tweak for niak_grab_fmri_preprocess 
 path_root =  '/home/yassinebha/database/HCP/';
 %% Set the template
 niak_gb_vars

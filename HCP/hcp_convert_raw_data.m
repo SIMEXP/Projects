@@ -58,7 +58,7 @@ list_subject = {list_subject(3:end).name};
 nb_subject = length(list_subject);
 pipeline = struct();
 
-nb_subject = 3; %for debugging only
+%nb_subject = 3; %for debugging only
 % loop over subject
 for num_s = 1:nb_subject
     subject = list_subject{num_s};
