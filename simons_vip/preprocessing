@@ -1,5 +1,5 @@
 % Template to write a script for the NIAK fMRI preprocessing pipeline
-% ADAPTED TO THE RANN DATASET (Perrine Ferre) 2015 05 05_TEST
+% ADAPTED TO THE Simons VIP dataset (Clara Moreau / Yassine Benhajali) 2015 11 27
 %
 % To run a demo of the preprocessing, please see
 % NIAK_DEMO_FMRI_PREPROCESS.
@@ -37,34 +37,36 @@
 clear all
 
 addpath(genpath('/gs/project/gsf-624-aa/quarantaine/niak-boss-0.13.4b'))
-addpath(genpath('/home/perrine/git/Projects'))
-root_path = '/gs/project/gsf-624-aa/ATLAS/';
-path_out = '/gs/scratch/perrine/ATLAS/preproc_nov2015/';
+addpath(genpath('/home/cmoreau/git/Projects'))
+root_path = '/home/cmoreau/scratch/simons_vip/';
+path_out = '/home/cmoreau/scratch/simons_vip/preproc/';
 
 %% Grab the raw data
-path_raw = [root_path 'raw_mnc/'];
+path_raw = [root_path 'out_mnc2/'];
 list_subject = dir(path_raw);
 list_subject = {list_subject.name};
-list_subject = list_subject(~ismember(list_subject,{'.','..'}));
+list_subject = list_subject(~ismember(list_subject,{'.','..','octave-core'}));
 
 for num_s = 1:length(list_subject)
     subject = list_subject{num_s};
-    id = ['ATL', subject(7:end)];
+    subject_tmp =subject;
+    subject_tmp(findstr(subject_tmp, '.'))='';
+    id = ['SIM', subject_tmp];
+    anat_file =  dir([path_raw subject '/anat_*/co*']).name;
+    files_in.(id).anat = [path_raw subject filesep anat_file];
     
-    anat_file = dir([path_raw subject filesep lower(subject) '_*_3e1_mri.mnc' ]);
-    files_in.(id).anat = [path_raw subject filesep anat_file.name ];
+    func_file_rest1 = dir([path_raw subject '/rest_1/' '*.mnc']);
+    files_in.(id).fmri.sess1.rest1 = [path_raw subject filesep func_file_rest1.name];
+
+    func_file_rest2 = dir([path_raw subject '/rest_2/' '*.mnc']);
+    files_in.(id).fmri.sess1.rest2 = [path_raw subject filesep func_file_rest2.name];
+
+    func_file_restx = dir([path_raw subject '/rest_x/' '*.mnc']);
+    files_in.(id).fmri.sess1.restx = [path_raw subject filesep func_file_restx.name];
+
+    func_file_resty = dir([path_raw subject '/rest_y/' '*.mnc']);
+    files_in.(id).fmri.sess1.resty = [path_raw subject filesep func_file_resty.name];
     
-    func_file_rest = dir([path_raw subject filesep lower(subject) '*_rest_*.mnc']);
-    files_in.(id).fmri.sess1.REST = [path_raw subject filesep func_file_rest.name];
-    
-    func_file_rep = dir([path_raw subject filesep lower(subject) '*_REP_*.mnc']);
-    files_in.(id).fmri.sess1.REP = [path_raw subject filesep func_file_rep.name];
-    
-    func_file_naming = dir([path_raw subject filesep lower(subject) '*_NAMING_*.mnc']);
-    files_in.(id).fmri.sess1.NAMING = [path_raw subject filesep func_file_naming.name];
-    
-    func_file_pptt = dir([path_raw subject filesep lower(subject) '*_PPTT_*.mnc']);
-    files_in.(id).fmri.sess1.PPTT = [path_raw subject filesep func_file_pptt.name];
 end
 
 files_in = niak_purge_files_in(files_in);

@@ -39,7 +39,7 @@ clear all
 addpath(genpath('/gs/project/gsf-624-aa/quarantaine/niak-boss-0.13.4b'))
 addpath(genpath('/home/perrine/git/Projects'))
 root_path = '/gs/project/gsf-624-aa/ATLAS/';
-path_out = '/gs/scratch/perrine/ATLAS/preproc_nov2015/';
+path_out = '/gs/scratch/perrine/ATLAS/preproc_nov2015_scrub/';
 
 %% Grab the raw data
 path_raw = [root_path 'raw_mnc/'];
@@ -91,7 +91,7 @@ opt.slice_timing.suppress_vol     = 0;                       % Number of dummy s
 opt.slice_timing.flag_nu_correct  = 1;                       % Apply a correction for non-uniformities on the EPI volumes (1: on, 0: of). This is particularly important for 32-channels coil.
 opt.slice_timing.arg_nu_correct   = '-distance 200';         % The distance between control points for non-uniformity correction (in mm, lower values can capture faster varying slow spatial drifts).
 opt.slice_timing.flag_center      = 0;                       % Set the origin of the volume at the center of mass of a brain mask. This is useful only if the voxel-to-world transformation from the DICOM header has somehow been damaged. This needs to be assessed on the raw images.
-opt.slice_timing.flag_skip        = 0;                       % Skip the slice timing (0: don't skip, 1 : skip). Note that only the slice timing corretion portion is skipped, not all other effects such as FLAG_CENTER or FLAG_NU_CORRECT
+opt.slice_timing.flag_skip        = 1;                       % Skip the slice timing (0: don't skip, 1 : skip). Note that only the slice timing corretion portion is skipped, not all other effects such as FLAG_CENTER or FLAG_NU_CORRECT
  
 % Motion estimation (niak_pipeline_motion)
 opt.motion.session_ref  = 'sess1'; % The session that is used as a reference. In general, use the session including the acqusition of the T1 scan.
@@ -114,7 +114,7 @@ opt.regress_confounds.flag_wm = true;            % Turn on/off the regression of
 opt.regress_confounds.flag_vent = true;          % Turn on/off the regression of the average of the ventricles (true: apply / false : don't apply)
 opt.regress_confounds.flag_motion_params = true; % Turn on/off the regression of the motion parameters (true: apply / false : don't apply)
 opt.regress_confounds.flag_gsc = false;          % Turn on/off the regression of the PCA-based estimation of the global signal (true: apply / false : don't apply)
-opt.regress_confounds.flag_scrubbing = false;     % Turn on/off the scrubbing of time frames with excessive motion (true: apply / false : don't apply)
+opt.regress_confounds.flag_scrubbing = true;     % Turn on/off the scrubbing of time frames with excessive motion (true: apply / false : don't apply)
 opt.regress_confounds.thre_fd = 0.5;             % The threshold on frame displacement that is used to determine frames with excessive motion in the scrubbing procedure
 
 % Correction of physiological noise (niak_pipeline_corsica)
