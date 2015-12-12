@@ -1,8 +1,7 @@
 function files_in = niak_prune_files_in (files_in)
-% Remove non existing files and subject from the files_in structure:
-% *If subject is missing ant files he will be dicarded 
-% *If subject is missing all functional files he will be discarded
-% *Any run or ssession misssing will be removed from the sctructues  
+% Remove non existing sessions and runs from files_in structure:
+% *If subject missing all functional files he will be dicarded from files_in
+% *If subject missing anatomical file he will be discarded from files_in
 %
 % SYNTAX:
 % FILES_IN = NIAK_PRUNE_FILES_IN(FILES_IN)
