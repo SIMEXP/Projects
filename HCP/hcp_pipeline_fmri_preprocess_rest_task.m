@@ -162,7 +162,7 @@ opt.tune(3).param.motion.session_ref  = 'sess2';
 %% Run the fmri_preprocess pipeline  %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 opt.flag_test = false;
-opt.psom.qsub_options = '-q -A gsf-624-aa sw -l nodes=1:ppn=2,pmem=3700m,walltime=36:00:00';
+opt.psom.qsub_options = '-q sw -A gsf-624-aa -l nodes=1:ppn=2,pmem=3700m,walltime=36:00:00';
 %opt.psom.max_queued = 7;
 [pipeline,opt] = niak_pipeline_fmri_preprocess(files_in,opt);
 
