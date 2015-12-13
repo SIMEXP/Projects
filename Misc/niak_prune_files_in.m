@@ -1,11 +1,10 @@
-function files_in = niak_purge_files_in (files_in)
-% Remove non existing files and subject from the files_in structure:
-% *If subject is missing ant files he will be dicarded 
-% *If subject is missing all functional files he will be discarded
-% *Any run or ssession misssing will be removed from the sctructues  
+function files_in = niak_prune_files_in (files_in)
+% Remove non existing sessions and runs from files_in structure:
+% *If subject missing all functional files he will be dicarded from files_in
+% *If subject missing anatomical file he will be discarded from files_in
 %
 % SYNTAX:
-% FILES_IN = NIAK_PURGE_FILES_IN(FILES_IN)
+% FILES_IN = NIAK_PRUNE_FILES_IN(FILES_IN)
 %
 % _________________________________________________________________________
 % INPUTS:
@@ -57,34 +56,43 @@ if any(~field_fmri_ok)||any(~field_anat_ok)
 end
 
 %Loop over subjects sessions runs and remove non existent files_in
+list_id= fieldnames(files_in);
 for num_id=1:length(list_id)
+    % Build a mask stack
     id = list_id{num_id};
     list_session = fieldnames(files_in.(id).fmri);
+    flag_ok = struct();
     flag_ok_stack = [];
     for num_sess = 1:length(list_session) % Sessions
         session = list_session{num_sess};
         list_run = fieldnames(files_in.(id).fmri.(session));
-        eval( [ 'flag_ok_' session ' = true(length( list_run ),1);']);
+        %eval( [ 'flag_ok_' session ' = true(length( list_run ),1);']);
+        flag_ok.(session) = true(length(list_run),1);
+        
         for num_f = 1:length(list_run) % Runs
             run = list_run{num_f};
             if ~psom_exist(files_in.(id).fmri.(session).(run))
-               eval( [ 'flag_ok_' session '(num_f ) = false;' ]);
+               %eval( [ 'flag_ok_' session '(num_f ) = false;' ]);
+               flag_ok.(session)(num_f)= false;
             end        
         end
-        flag_ok_stack = [flag_ok_stack ; eval( [ 'flag_ok_' session ])];
+        flag_ok_stack = [flag_ok_stack ; flag_ok.(session)] ;%eval( [ 'flag_ok_' session ])];
     end
-    flag_ok = flag_ok_stack;
-    if ~any(flag_ok)||~psom_exist(files_in.(id).anat)
-       if ~any(flag_ok)
+    
+    %Pruning _files_in
+    %%Remove empty subject 
+    if ~any(flag_ok_stack)||~psom_exist(files_in.(id).anat)
+       if ~any(flag_ok_stack)
           warning('No functional data for subject %s, I suppressed it',id);
        else
           warning ('The anat file %s does not exist, I suppressed that subject %s',files_in.(id).anat,id);
        end
        files_in = rmfield(files_in,id);
-    elseif any(~flag_ok)
+    %%Remove empty runs   
+    elseif any(~flag_ok_stack)
        for num_sess = 1:length(list_session) 
            session = list_session{num_sess};
-           flag_ok_tmp = eval( [ 'flag_ok_' session ';']);
+           flag_ok_tmp = flag_ok.(session); %eval( [ 'flag_ok_' session ';']);
            list_run = fieldnames(files_in.(id).fmri.(session));
            if ~any(~flag_ok_tmp)
               continue
@@ -92,6 +100,12 @@ for num_id=1:length(list_id)
               list_run = fieldnames(files_in.(id).fmri.(session));
               files_in.(id).fmri.(session) = rmfield(files_in.(id).fmri.(session),list_run(~flag_ok_tmp));
               warning ('I suppressed the following runs for subject %s because the files were missing:',id);
+              %Remove empty session
+              if isempty(fieldnames(files_in.(id).fmri.(session)))
+                 files_in.(id).fmri = rmfield(files_in.(id).fmri,session);
+                 fprintf('The hole %s is empty: ',session);
+              end
+              %verbose removed runs
               list_not_ok = find(~flag_ok_tmp);
               for ind_not_ok = list_not_ok(:)'
                   fprintf(' %s',list_run{ind_not_ok});
@@ -100,5 +114,5 @@ for num_id=1:length(list_id)
            end    
        end
     end
-end    
+end
 endfunction
