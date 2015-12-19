@@ -29,7 +29,7 @@
 clear all
 % load lib
 % addpath adds folder to search path; genpath generates path string
-addpath(genpath('/gs/project/gsf-624-aa/quarantaine/niak-boss-0.13.4b/'))
+addpath(genpath('/gs/project/gsf-624-aa/quarantaine/niak-issue100/'))
 
 
 %%%%%%%%%%%%%%%%%%%%%
@@ -59,12 +59,14 @@ exp   = 'all';
 %path_out = '/gs/project/gsf-624-aa/abadhwar/NKI_release3_preprocessed_13_4b/';
 %root_path = '/gs/project/gsf-624-aa/nki_multimodal_release4/';
 %path_out = '/gs/project/gsf-624-aa/abadhwar/NKI_release4_preprocessed_13_4b/';
-root_path = '/gs/project/gsf-624-aa/nki_multimodal_release1/';
-path_out = '/gs/project/gsf-624-aa/abadhwar/NKI_146865_preprocessed_13_4b/';
+%root_path = '/gs/project/gsf-624-aa/nki_multimodal_release1/';
+%path_out = '/gs/project/gsf-624-aa/abadhwar/NKI_146865_preprocessed_13_4b/';
 %root_path = '/gs/project/gsf-624-aa/nki_multimodal_release5/';
 %path_out = '/gs/project/gsf-624-aa/abadhwar/NKI_release5_preprocessed_13_4b/';
 %root_path = '/gs/project/gsf-624-aa/nki_multimodal_release1/';
 %path_out = '/gs/project/gsf-624-aa/abadhwar/NKI_146865_preprocessed_13_4b_rsonly/';
+root_path = '/gs/project/gsf-624-aa/nki_multimodal_release1/';
+path_out = '/gs/project/gsf-624-aa/abadhwar/NKI_release1_niakissue100/';
 
 
 %% Grab the raw data
@@ -85,7 +87,7 @@ list_subject = list_subject(~ismember(list_subject,{'.','..'}));
 
 %% Run preprocessing on all subjects in NKI_release X
 
-list_subject = list_subject([80]);
+list_subject = list_subject([2 5:9 15:21 41:43 65 94 141:143]);
 for num_s = 1:length(list_subject)
     subject = list_subject{num_s};
     id = ['s' subject];
@@ -186,7 +188,7 @@ opt.corsica.flag_skip                = 1;     % Skip CORSICA (0: don't skip, 1 :
 % Spatial smoothing (niak_brick_smooth_vol)
 opt.smooth_vol.fwhm      = 6;  % Full-width at maximum (FWHM) of the Gaussian blurring kernel, in mm.
 opt.smooth_vol.flag_skip = 0;  % Skip spatial smoothing (0: don't skip, 1 : skip)
-opt.target_space = 'stereolin'; 
+%opt.target_space = 'stereolin'; 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Tune the parameters for specific subjects %%
@@ -200,9 +202,9 @@ opt.target_space = 'stereolin';
 %opt.tune(3).subject = 's0103714';
 %opt.tune(3).param.slice_timing.arg_nu_correct = '-distance 100';
 %opt.tune(3).param.slice_timing.flag_center = false;
-opt.tune(1).subject = 's0146865';
-opt.tune(1).param.slice_timing.arg_nu_correct = '-distance 100';
-opt.tune(1).param.slice_timing.flag_center = false;
+%opt.tune(1).subject = 's0146865';
+%opt.tune(1).param.slice_timing.arg_nu_correct = '-distance 100';
+%opt.tune(1).param.slice_timing.flag_center = false;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Run the fmri_preprocess pipeline  %%
@@ -222,7 +224,7 @@ opt.psom.qsub_options = '-q sw -l nodes=1:ppn=2,pmem=3700m,walltime=36:00:00';
 %used for NKI_release5
 %opt.psom.max_queued = 89;
 %test
-opt.psom.max_queued = 3;
+opt.psom.max_queued = 21;
 opt.time_between_checks = 60;
 opt.psom.nb_resub = Inf;
 [pipeline,opt] = niak_pipeline_fmri_preprocess(files_in,opt);
