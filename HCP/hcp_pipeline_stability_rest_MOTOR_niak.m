@@ -32,8 +32,9 @@
 % OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 % THE SOFTWARE.
 
-cleara all 
-
+clear all 
+addpath(genpath('/gs/project/gsf-624-aa/quarantaine/niak-boss-0.13.4b'))  
+addpath(genpath('/home/yassinebha/github_repos/Projects')) 
 %%%%%%%%%%%%%%%%%%%%%
 %% Grabbing the results from the NIAK fMRI preprocessing pipeline
 %%%%%%%%%%%%%%%%%%%%%
@@ -42,6 +43,7 @@ opt_g.min_xcorr_func = 0.5; % The minimum xcorr score for an fMRI dataset to be 
 opt_g.min_xcorr_anat = 0.5; % The minimum xcorr score for an fMRI dataset to be included. This metric is a tool for quality control which assess the quality of non-linear coregistration of the anatomical image in stereotaxic space. Manual inspection of the values during QC is necessary to properly set this threshold.
 %opt_g.exclude_subject = {'subject1','subject2'}; % If for whatever reason some subjects have to be excluded that were not caught by the quality control metrics, it is possible to manually specify their IDs here.
 opt_g.type_files = 'rest'; % Specify to the grabber to prepare the files for the STABILITY_REST pipeline
+opt_g.filter.run = 'molr';
 files_in = niak_grab_fmri_preprocess('/gs/project/gsf-624-aa/HCP/fmri_preprocess_MOTOR_niak',opt_g); % Replace the folder by the path where the results of the fMRI preprocessing pipeline were stored. 
 
 %%%%%%%%%%%%%%%%%%%%%
@@ -78,7 +80,7 @@ files_in = niak_grab_fmri_preprocess('/gs/project/gsf-624-aa/HCP/fmri_preprocess
 %% Options %%
 %%%%%%%%%%%%%
 
-opt.folder_out = '/gs/project/gsf-624-aa/HCP/basc_MOTOR_niak/'; % Where to store the results
+opt.folder_out = '/gs/project/gsf-624-aa/HCP/basc_MOTOR_lr_niak/'; % Where to store the results
 opt.region_growing.thre_size = 1000; %  the size of the regions, when they stop growing. A threshold of 1000 mm3 will give about 1000 regions on the grey matter. 
 opt.grid_scales = [10:10:100 120:20:200 240:40:500]'; % Search for stable clusters in the range 10 to 500 
 % use mstep sacle if exist or leave it empty
@@ -102,6 +104,6 @@ opt.flag_group = true;  % Generate maps/time series at the group level
 %% Run the pipeline %%
 %%%%%%%%%%%%%%%%%%%%%%
 opt.flag_test = false; % Put this flag to true to just generate the pipeline without running it. Otherwise the region growing will start. 
-opt.psom.qsub_options = '-q sw -l nodes=1:ppn=4,pmem=3700m,walltime=36:00:00';
+opt.psom.qsub_options = '-q sw -l nodes=1:ppn=2,pmem=3700m,walltime=36:00:00';
 %opt.psom.max_queued = 10; % Uncomment and change this parameter to set the number of parallel threads used to run the pipeline
 pipeline = niak_pipeline_stability_rest(files_in,opt); 

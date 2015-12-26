@@ -1,7 +1,6 @@
 #!octave
-path_database = '/gs/scratch/pbellec/psom2/';
-path_mnc      = [path_database 'cambridge_raw/'];
-path_preprocess = [path_database 'cambridge_preproc_gui_100/'];
+path_mnc      = ['/gs/project/gsf-624-aa/cambridge_raw/'];
+path_preprocess = ['/gs/scratch/pbellec/cambridge_preproc/'];
 
 opt.granularity = 'max';
 opt.folder_out = path_preprocess;
