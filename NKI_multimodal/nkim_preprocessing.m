@@ -67,9 +67,10 @@ exp   = 'all';
 %path_out = '/gs/project/gsf-624-aa/abadhwar/NKI_146865_preprocessed_13_4b_rsonly/';
 %root_path = '/gs/project/gsf-624-aa/nki_multimodal_release1/';
 %path_out = '/gs/project/gsf-624-aa/abadhwar/NKI_release1_niakissue100/';
+%root_path = '/gs/project/gsf-624-aa/nki_multimodal_release1/';
+%path_out = '/gs/project/gsf-624-aa/abadhwar/NKI_release1_niakissue100b/';
 root_path = '/gs/project/gsf-624-aa/nki_multimodal_release1/';
-path_out = '/gs/project/gsf-624-aa/abadhwar/NKI_release1_niakissue100b/';
-
+path_out = '/gs/project/gsf-624-aa/abadhwar/NKI_release1_preprocessed_with_niakissue100/';
 
 %% Grab the raw data
 % note that '/gs/project/gsf-624-aa/nki_multimodal_releaseX/' contains the directory 'raw_mnc'
@@ -89,7 +90,7 @@ list_subject = list_subject(~ismember(list_subject,{'.','..'}));
 
 %% Run preprocessing on all subjects in NKI_release X
 
-list_subject = list_subject([80]);
+%list_subject = list_subject([80]);
 for num_s = 1:length(list_subject)
     subject = list_subject{num_s};
     id = ['s' subject];
@@ -216,7 +217,7 @@ opt.psom.qsub_options = '-q sw -l nodes=1:ppn=2,pmem=3700m,walltime=36:00:00';
 %opt.granularity = 'subject';
 
 %used for NKI_release1
-%opt.psom.max_queued = 181;
+opt.psom.max_queued = 181;
 %used for NKI_release2
 %opt.psom.max_queued = 14;
 %used for NKI_release3
@@ -226,7 +227,7 @@ opt.psom.qsub_options = '-q sw -l nodes=1:ppn=2,pmem=3700m,walltime=36:00:00';
 %used for NKI_release5
 %opt.psom.max_queued = 89;
 %test
-opt.psom.max_queued = 10;
+%opt.psom.max_queued = 10;
 opt.time_between_checks = 60;
 opt.psom.nb_resub = Inf;
 [pipeline,opt] = niak_pipeline_fmri_preprocess(files_in,opt);
