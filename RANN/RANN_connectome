@@ -37,7 +37,7 @@
 clear 
 path_data = '/home/perrine/scratch/RANN/preprocess_data_oct_2015_2/';
 path_niak = '/home/perrine/quarantaine/niak-boss-0.13.4/';
-path_out  = '/home/perrine/scratch/RANN/RANN_connectome/;
+path_out  = '/home/perrine/scratch/RANN/RANN_connectome/';
 
 
 %% Set the template
