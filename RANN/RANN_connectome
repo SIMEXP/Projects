@@ -35,11 +35,14 @@
 % THE SOFTWARE.
 
 clear 
+path_data = '/home/perrine/scratch/RANN/preprocess_data_oct_2015_2/;
+path_niak = '/home/perrine/quarantaine/niak-boss-0.13.4/';
+path_out  = '/home/perrine/scratch/RANN/RANN_connectome/;
 
-%
+
 %% Set the template
-files_in.network = '/home/pbellec/svn/niak/template/roi_aal_3mm.mnc.gz';
-%
+files_in.network = [path_niak 'template/basc_cambridge_sc100.mnc.gz'];
+
 
 %% Grabbing the results from the NIAK fMRI preprocessing pipeline
 opt_g.min_nb_vol = 100;     % The minimum number of volumes for an fMRI dataset to be included. This option is useful when scrubbing is used, and the resulting time series may be too short.
@@ -47,22 +50,20 @@ opt_g.min_xcorr_func = 0.5; % The minimum xcorr score for an fMRI dataset to be 
 opt_g.min_xcorr_anat = 0.5; % The minimum xcorr score for an fMRI dataset to be included. This metric is a tool for quality control which assess the quality of non-linear coregistration of the anatomical image in stereotaxic space. Manual inspection of the values during QC is necessary to properly set this threshold.
 %opt_g.exclude_subject = {'subject1','subject2'}; % If for whatever reason some subjects have to be excluded that were not caught by the quality control metrics, it is possible to manually specify their IDs here.
 opt_g.type_files = 'glm_connectome'; % Specify to the grabber to prepare the files for the glm_connectome pipeline
-opt_g.filter.session = {'session1'}; % Just grab session 1
-
-%????????????
+%opt_g.filter.session = {'session1'}; % Just grab session 1
+%opt_g.filter.run = {'REST'}; % Just grab the "rest" run
 %%%%%%%% test with rest but in a second step run it all together or each session separately?
-opt_g.filter.run = {'REST'}; % Just grab the "rest" run
 
 % Replace the folder by the path where the results of the fMRI preprocessing pipeline were stored. 
 files_in.fmri = niak_grab_fmri_preprocess('/home/pferr/RANN/preprocess_data_oct_2015_2/fmri',opt_g).fmri; 
+% Replace the folder by the path where the results of the fMRI preprocessing pipeline were stored. 
+files_in.fmri = niak_grab_fmri_preprocess(path_data,opt_g).fmri; 
 
-%?????????????????????????
 %% Set the seeds
-files_in.seeds = '/home/toto/database/list_seeds.csv';
-%??????????????????????????????
+files_in.seeds = [path_niak 'template/list_seeds_cambridge_100_full.csv'];
 
 %% Options 
-opt.folder_out = ['/home/pferr/RANN/glm_connectome']; % Where to store the results
+opt.folder_out = path_out; % Where to store the results
 opt.connectome.type = 'Z'; % The type of connectome. See "help niak_brick_connectome" for more info. 
 % 'S': covariance; 
 %'R': correlation; 
