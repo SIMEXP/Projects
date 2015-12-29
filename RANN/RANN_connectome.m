@@ -55,8 +55,6 @@ opt_g.type_files = 'glm_connectome'; % Specify to the grabber to prepare the fil
 %%%%%%%% test with rest but in a second step run it all together or each session separately?
 
 % Replace the folder by the path where the results of the fMRI preprocessing pipeline were stored. 
-files_in.fmri = niak_grab_fmri_preprocess('/home/pferr/RANN/preprocess_data_oct_2015_2/fmri',opt_g).fmri; 
-% Replace the folder by the path where the results of the fMRI preprocessing pipeline were stored. 
 files_in.fmri = niak_grab_fmri_preprocess(path_data,opt_g).fmri; 
 
 %% Set the seeds
