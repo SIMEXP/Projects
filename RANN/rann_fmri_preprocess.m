@@ -38,18 +38,18 @@ clear all
 
 %old-path-removed(unsatisfyingregistratio/slack-general-28092015):
 %addpath(genpath('/sb/project/gsf-624-aa/quarantaine/niak-boss-0.13.0'))
-addpath(genpath('/gs/project/gsf-624-aa/quarantaine/niak-boss-0.13.4b'))
+addpath(genpath('/gs/project/gsf-624-aa/quarantaine/niak-issue100/'))
 
 root_path = '/gs/project/gsf-624-aa/RANN/';
-path_out = '/gs/scratch/perrine/RANN/preprocess_data_oct_2015_2/';
+path_out = '/gs/scratch/perrine/RANN/preprocess_data_jan_2016_test_issue100/';
 
 %% Grab the raw data
 path_raw = [root_path 'raw_mnc/'];
 list_subject = dir(path_raw);
 list_subject = {list_subject.name};
 list_subject = list_subject(~ismember(list_subject,{'.','..'}));
-%only 40 subjects whose QC has been completed-to compare most recent NIAK13.0.2 release
-%list_subject = list_subject([1 5 14 15 17 18 21 22 25 26 28 34 35 36 37 38 39 41 45 46 50 51 55 57 58 59 62 63 65 74 76 104 116 145 150 158 161 165 2031206 282]);
+%only 10 subjects whose QC has been completed-to compare most recent NIAK relase (issue100)
+list_subject = list_subject([1:20]);
 
 for num_s = 1:length(list_subject)
     subject = list_subject{num_s};
@@ -112,10 +112,10 @@ for num_s = 1:length(list_subject)
 end
 
 % exclude PIC NAMING (only) for P00004507 and P00004563
-files_in.P00004507.fmri.session1 = rmfield(files_in.P00004507.fmri.session1,'pictname');
-files_in.P00004563.fmri.session1 = rmfield(files_in.P00004563.fmri.session1,'pictname');
+%files_in.P00004507.fmri.session1 = rmfield(files_in.P00004507.fmri.session1,'pictname');
+%files_in.P00004563.fmri.session1 = rmfield(files_in.P00004563.fmri.session1,'pictname');
 
-files_in= niak_purge_files_in(files_in);
+%files_in= niak_purge_files_in(files_in);
 
 %% WARNING: Do not use underscores '_' in the IDs of subject, sessions or runs. This may cause bugs in subsequent pipelines.
 
@@ -148,7 +148,7 @@ opt.slice_timing.suppress_vol     = 0;                       % Number of dummy s
 opt.slice_timing.flag_nu_correct  = 1;                       % Apply a correction for non-uniformities on the EPI volumes (1: on, 0: of). This is particularly important for 32-channels coil.
 opt.slice_timing.arg_nu_correct   = '-distance 200';         % The distance between control points for non-uniformity correction (in mm, lower values can capture faster varying slow spatial drifts).
 opt.slice_timing.flag_center      = 0;                       % Set the origin of the volume at the center of mass of a brain mask. This is useful only if the voxel-to-world transformation from the DICOM header has somehow been damaged. This needs to be assessed on the raw images.
-opt.slice_timing.flag_skip        = 0;                       % Skip the slice timing (0: don't skip, 1 : skip). Note that only the slice timing corretion portion is skipped, not all other effects such as FLAG_CENTER or FLAG_NU_CORRECT
+opt.slice_timing.flag_skip        = 1;                       % Skip the slice timing (0: don't skip, 1 : skip). Note that only the slice timing corretion portion is skipped, not all other effects such as FLAG_CENTER or FLAG_NU_CORRECT
  
 % Motion estimation (niak_pipeline_motion)
 opt.motion.session_ref  = 'session1'; % The session that is used as a reference. In general, use the session including the acqusition of the T1 scan.
@@ -216,7 +216,7 @@ opt.smooth_vol.flag_skip = 0;  % Skip spatial smoothing (0: don't skip, 1 : skip
 
 % opt.psom.mode                  = 'batch'; % Process jobs in the background
 % opt.psom.mode_pipeline_manager = 'batch'; % Run the pipeline manager in the background : if I unlog, keep working
-opt.psom.max_queued              =  304;       % Number of jobs that can run in parallel. In batch mode, this is usually the number of cores.
+opt.psom.max_queued              =  20;       % Number of jobs that can run in parallel. In batch mode, this is usually the number of cores.
 opt.time_between_checks = 60;
 %verbose opt
 opt.psom.nb_resub = Inf; 
