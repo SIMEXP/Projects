@@ -242,7 +242,7 @@ opt.psom.qsub_options = '-A gsf-624-aa -q sw -l nodes=1:ppn=2,pmem=3700m,walltim
 %test
 %opt.psom.max_queued = 10;
 %fiftyplus
-opt.psom.max_queued = 169;
+opt.psom.max_queued = 90;
 opt.time_between_checks = 60;
 opt.psom.nb_resub = Inf;
 [pipeline,opt] = niak_pipeline_fmri_preprocess(files_in,opt);
