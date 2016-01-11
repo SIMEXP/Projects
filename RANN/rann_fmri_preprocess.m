@@ -221,5 +221,5 @@ opt.time_between_checks = 60;
 %verbose opt
 opt.psom.nb_resub = Inf; 
 %so that workers stop beeing killed by walltime after 3h
-opt.psom.qsub_options = '-q sw -l walltime=48:00:00';
+opt.psom.qsub_options = '-A gsf-624-aa -q sw -l walltime=48:00:00';
 [pipeline,opt] = niak_pipeline_fmri_preprocess(files_in,opt);
