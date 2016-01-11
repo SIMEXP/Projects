@@ -55,7 +55,7 @@ opt_g.type_files = 'glm_connectome'; % Specify to the grabber to prepare the fil
 %%%%%%%% test with rest but in a second step run it all together or each session separately?
 
 % Replace the folder by the path where the results of the fMRI preprocessing pipeline were stored. 
-files_in.fmri = niak_grab_fmri_preprocess(path_data,opt_g).fmri; 
+files_in.fmri = niak_grab_fmri_preprocess ('path_data.fmri'); 
 
 %% Set the seeds
 files_in.seeds = [path_niak 'template/list_seeds_cambridge_100_full.csv'];
@@ -84,5 +84,4 @@ opt.connectome.thresh.param = 0.2; % the parameter of the thresholding. The actu
 %% Run the pipeline %%
 %%%%%%%%%%%%%%%%%%%%%%
 opt.flag_test = true; % Put this flag to true to just generate the pipeline without running it. Otherwise the pipeline will start. 
-opt.psom.max_queued = 300; % Uncomment and change this parameter to set the number of parallel threads used to run the pipeline, usualy one per subject
-[pipeline,opt] = niak_pipeline_connectome(files_in,opt); 
+opt.psom.max_queued = 300; % Uncomment and change this parameter to set the number of parallel threads used to run the pipeline, usualy one per subject [pipeline,opt] = niak_pipeline_connectome(files_in,opt); 
