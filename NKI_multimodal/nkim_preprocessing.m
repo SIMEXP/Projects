@@ -77,8 +77,10 @@ exp   = 'all';
 %path_out = '/gs/project/gsf-624-aa/abadhwar/NKI_release3_preprocessed_with_niakissue100/';
 %root_path = '/gs/project/gsf-624-aa/nki_multimodal_release4/';
 %path_out = '/gs/project/gsf-624-aa/abadhwar/NKI_release4_preprocessed_with_niakissue100/';
-root_path = '/gs/project/gsf-624-aa/nki_multimodal_release5/';
-path_out = '/gs/project/gsf-624-aa/abadhwar/NKI_release5_preprocessed_with_niakissue100/';
+%root_path = '/gs/project/gsf-624-aa/nki_multimodal_release5/';
+%path_out = '/gs/project/gsf-624-aa/abadhwar/NKI_release5_preprocessed_with_niakissue100/';
+root_path = '/gs/project/gsf-624-aa/nki_multimodal_fiftyplus/';
+path_out = '/gs/project/gsf-624-aa/abadhwar/NKI_fiftyplus_preprocessed_with_niakissue100/';
 
 
 
@@ -223,7 +225,8 @@ opt.smooth_vol.flag_skip = 0;  % Skip spatial smoothing (0: don't skip, 1 : skip
 %% Run the fmri_preprocess pipeline  %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 opt.psom.mode_pipeline_manager = 'background';
-opt.psom.qsub_options = '-q sw -l nodes=1:ppn=2,pmem=3700m,walltime=36:00:00';
+opt.psom.qsub_options = '-A gsf-624-aa -q sw -l nodes=1:ppn=2,pmem=3700m,walltime=36:00:00';
+
 %opt.granularity = 'subject';
 
 %used for NKI_release1
@@ -235,9 +238,11 @@ opt.psom.qsub_options = '-q sw -l nodes=1:ppn=2,pmem=3700m,walltime=36:00:00';
 %used for NKI_release4
 %opt.psom.max_queued = 88;
 %used for NKI_release5
-opt.psom.max_queued = 89;
+%opt.psom.max_queued = 89;
 %test
 %opt.psom.max_queued = 10;
+%fiftyplus
+opt.psom.max_queued = 169;
 opt.time_between_checks = 60;
 opt.psom.nb_resub = Inf;
 [pipeline,opt] = niak_pipeline_fmri_preprocess(files_in,opt);
