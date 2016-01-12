@@ -48,8 +48,8 @@ path_raw = [root_path 'raw_mnc/'];
 list_subject = dir(path_raw);
 list_subject = {list_subject.name};
 list_subject = list_subject(~ismember(list_subject,{'.','..'}));
-%only 10 subjects whose QC has been completed-to compare most recent NIAK relase (issue100)
-list_subject = list_subject([1:20]);
+%only 1 subjects whose QC has been completed-to compare most recent NIAK relase (issue100)
+list_subject = list_subject([P00004245]);
 
 for num_s = 1:length(list_subject)
     subject = list_subject{num_s};
