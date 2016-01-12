@@ -35,7 +35,7 @@
 % THE SOFTWARE.
 
 clear 
-path_data = '/home/perrine/scratch/RANN/preprocess_data_oct_2015_2/';
+path_data = '/home/perrine/scratch/RANN/preprocess_data_oct_2015_2';
 path_niak = '/home/perrine/quarantaine/niak-boss-0.13.4/';
 path_out  = '/home/perrine/scratch/RANN/RANN_connectome/';
 
@@ -55,7 +55,7 @@ opt_g.type_files = 'glm_connectome'; % Specify to the grabber to prepare the fil
 %%%%%%%% test with rest but in a second step run it all together or each session separately?
 
 % Replace the folder by the path where the results of the fMRI preprocessing pipeline were stored. 
-files_in.fmri = niak_grab_fmri_preprocess ('/home/perrine/scratch/RANN/preprocess_data_oct_2015_2',opt_g).fmri;
+files_in.fmri = niak_grab_fmri_preprocess ('/home/perrine/scratch/RANN/preprocess_data_oct_2015_2/fmri',opt_g);
 
 %% Set the seeds
 files_in.seeds = [path_niak 'template/list_seeds_cambridge_100_full.csv'];
