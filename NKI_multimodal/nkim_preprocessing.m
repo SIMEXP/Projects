@@ -79,8 +79,10 @@ exp   = 'all';
 %path_out = '/gs/project/gsf-624-aa/abadhwar/NKI_release4_preprocessed_with_niakissue100/';
 %root_path = '/gs/project/gsf-624-aa/nki_multimodal_release5/';
 %path_out = '/gs/project/gsf-624-aa/abadhwar/NKI_release5_preprocessed_with_niakissue100/';
+%root_path = '/gs/project/gsf-624-aa/nki_multimodal_fiftyplus/';
+%path_out = '/gs/project/gsf-624-aa/abadhwar/NKI_fiftyplus_preprocessed_with_niakissue100/';
 root_path = '/gs/project/gsf-624-aa/nki_multimodal_fiftyplus/';
-path_out = '/gs/project/gsf-624-aa/abadhwar/NKI_fiftyplus_preprocessed_with_niakissue100/';
+path_out = '/gs/project/gsf-624-aa/abadhwar/NKI_fiftyplus_preprocessed2_with_niakissue100/';
 
 
 
@@ -242,7 +244,7 @@ opt.psom.qsub_options = '-A gsf-624-aa -q sw -l nodes=1:ppn=2,pmem=3700m,walltim
 %test
 %opt.psom.max_queued = 10;
 %fiftyplus
-opt.psom.max_queued = 90;
+opt.psom.max_queued = 169;
 opt.time_between_checks = 60;
 opt.psom.nb_resub = Inf;
 [pipeline,opt] = niak_pipeline_fmri_preprocess(files_in,opt);
