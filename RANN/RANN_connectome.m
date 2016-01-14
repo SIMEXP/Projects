@@ -25,8 +25,7 @@
 %
 % The above copyright notice and this permission notice shall be included in
 % all copies or substantial portions of the Software.
-%
-% THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+%% THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 % IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 % FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
 % AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
@@ -55,7 +54,7 @@ opt_g.type_files = 'glm_connectome'; % Specify to the grabber to prepare the fil
 %%%%%%%% test with rest but in a second step run it all together or each session separately?
 
 % Replace the folder by the path where the results of the fMRI preprocessing pipeline were stored. 
-files_in.fmri = niak_grab_fmri_preprocess ('/home/perrine/scratch/RANN/preprocess_data_oct_2015_2/fmri',opt_g);
+files_in.fmri = niak_grab_fmri_preprocess ('/home/perrine/scratch/RANN/preprocess_data_oct_2015_2',opt_g);
 
 %% Set the seeds
 files_in.seeds = [path_niak 'template/list_seeds_cambridge_100_full.csv'];
@@ -83,5 +82,6 @@ opt.connectome.thresh.param = 0.2; % the parameter of the thresholding. The actu
 %%%%%%%%%%%%%%%%%%%%%%
 %% Run the pipeline %%
 %%%%%%%%%%%%%%%%%%%%%%
-opt.flag_test = true; % Put this flag to true to just generate the pipeline without running it. Otherwise the pipeline will start. 
-opt.psom.max_queued = 300; % Uncomment and change this parameter to set the number of parallel threads used to run the pipeline, usualy one per subject [pipeline,opt] = niak_pipeline_connectome(files_in,opt); 
+opt.flag_test = false; % Put this flag to true to just generate the pipeline without running it. Otherwise the pipeline will start. 
+opt.psom.max_queued = 300; % Uncomment and change this parameter to set the number of parallel threads used to run the pipeline, usualy one per subject 
+[pipeline,opt] = niak_pipeline_connectome(files_in,opt); 
