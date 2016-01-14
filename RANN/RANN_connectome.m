@@ -83,5 +83,6 @@ opt.connectome.thresh.param = 0.2; % the parameter of the thresholding. The actu
 %% Run the pipeline %%
 %%%%%%%%%%%%%%%%%%%%%%
 opt.flag_test = false; % Put this flag to true to just generate the pipeline without running it. Otherwise the pipeline will start. 
+
 opt.psom.max_queued = 300; % Uncomment and change this parameter to set the number of parallel threads used to run the pipeline, usualy one per subject 
-[pipeline,opt] = niak_pipeline_connectome(files_in,opt); 
+[pipeline,opt] = niak_pipeline_connectome(files_in,opt);
