@@ -5,7 +5,7 @@ addpath(genpath('/gs/project/gsf-624-aa/quarantaine/niak-boss-0.13.4/'))
 
 model = '/home/porban/database2/preventad/models/model_adni_20160121.csv';
 path_data_1 = '/home/porban/database2/preventad/results/adni_scores_s007_20160121/rmap_part/';
-path_mask = '/home/porban/database2/preventad/mask/mask.mnc.gz';
+path_mask = '/home/porban/database2/preventad/mask/';
 path_results = '/home/porban/database2/preventad/results/subtypes/adni_148subs_7networks_5subtypes_rmaps_BH05_categorical_confounds/';
 
 num_scale = 7;
