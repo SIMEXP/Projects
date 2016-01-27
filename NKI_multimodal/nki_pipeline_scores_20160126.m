@@ -1,7 +1,3 @@
-
-
-#!/software/CentOS-6/applications/octave/3.8.1/bin/octave
-
 clear all
 
 addpath(genpath('/gs/project/gsf-624-aa/quarantaine/niak-boss-0.13.4/'))
