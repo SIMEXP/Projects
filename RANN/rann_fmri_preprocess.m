@@ -183,26 +183,12 @@ opt.corsica.flag_skip                = 1;     % Skip CORSICA (0: don't skip, 1 :
 opt.smooth_vol.fwhm      = 6;  % Full-width at maximum (FWHM) of the Gaussian blurring kernel, in mm.
 opt.smooth_vol.flag_skip = 0;  % Skip spatial smoothing (0: don't skip, 1 : skip)
 
-% how to specify a different parameter for two subjects (here subject1 and subject2)
-
-%opt.tune(1).subject = 'P00004216';
-%opt.tune(1).param.anat2func.init = 'center';
-%opt.tune(2).subject = 'P00004225';
-%opt.tune(2).param.anat2func.init = 'center';
-%opt.tune(3).subject = 'P00004549';
-%opt.tune(3).param.anat2func.init = 'center';
-%opt.tune(4).subject = 'P00004577';
-%opt.tune(4).param.anat2func.init = 'center';
-%opt.tune(5).subject = 'P00004719';
-%opt.tune(5).param.anat2func.init = 'center';
-%opt.tune(6).subject = 'P00004744';
-%opt.tune(6).param.anat2func.init = 'center';
-%opt.tune(7).subject = 'P00004812';
-%opt.tune(7).param.anat2func.init = 'center';
-%opt.tune(8).subject = 'P00004507';
-%opt.tune(8).param.anat2func.init = 'center';
-%opt.tune(9).subject = 'P00004563';
-%opt.tune(9).param.anat2func.init = 'center';
+% specify a different parameter for two subjects (failed coregistration in preproc because of -maybe- different FOV: CENTER option)
+%note: The 'center' option usually does more harm than good. Use it only if you have very big misrealignement between the two images (say, > 2 cm).
+opt.tune(1).subject = 'P00004210';
+opt.tune(1).param.slice_timing.flag_center = 1;
+opt.tune(2).subject = 'P00004553';
+opt.tune(2).param.slice_timing.flag_center = 1;
 
 % Anything that usually goes in opt can go in param. What's specified in opt applies by default, but is overridden by tune.param
 %opt.tune(1).param.slice_timing.flag_center = true; % Anything that usually goes in opt can go in param. What's specified in opt applies by default, but is overridden by tune.param
