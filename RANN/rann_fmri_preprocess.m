@@ -41,7 +41,7 @@ clear all
 addpath(genpath('/gs/project/gsf-624-aa/quarantaine/niak-issue100/'))
 
 root_path = '/gs/project/gsf-624-aa/RANN/';
-path_out = '/gs/scratch/perrine/RANN/preprocess_data_jan_2016_test_issue100_2/';
+path_out = '/gs/scratch/perrine/RANN/preprocess_data_jan_2016_test_issue100_3/';
 
 %% Grab the raw data
 path_raw = [root_path 'raw_mnc/'];
@@ -115,7 +115,7 @@ end
 files_in.P00004507.fmri.session1 = rmfield(files_in.P00004507.fmri.session1,'pictname');
 files_in.P00004563.fmri.session1 = rmfield(files_in.P00004563.fmri.session1,'pictname');
 
-files_in= niak_purge_files_in(files_in);
+%files_in= niak_purge_files_in(files_in);
 
 %% WARNING: Do not use underscores '_' in the IDs of subject, sessions or runs. This may cause bugs in subsequent pipelines.
 
