@@ -8,10 +8,10 @@ addpath(genpath('/gs/project/gsf-624-aa/quarantaine/niak-boss-0.13.4/'))
 
 addpath(genpath('/gs/project/gsf-624-aa/quarantaine/niak_dev_git/extensions/surfstab/'))
 
-%changed to suit nki_multimodal_fiftyplus
+%changed to suit nki_multimodal_fiftyplus starting with scale 7
 in_path = '/gs/project/gsf-624-aa/abadhwar/NKI_fiftyplus_preprocessed2_with_niakissue100/fmri_preprocess_all_scrubb05/fmri/';
-part_path = '/gs/project/gsf-624-aa/database2/preventad/templates/template_cambridge_basc_multiscale_sym_scale012.mnc.gz';
-out_path = '/gs/project/gsf-624-aa/abadhwar/NKI_fiftyplus_scores_s012_20160127/'; % s12 s20 s36
+part_path = '/gs/project/gsf-624-aa/database2/preventad/templates/template_cambridge_basc_multiscale_sym_scale007.mnc.gz';
+out_path = '/gs/project/gsf-624-aa/abadhwar/NKI_fiftyplus_scores_s007_20160126/'; % s12 s20 s36
 
 %changed to reflect nki_multimodal_fiftyplus
 file_template = 'fmri_s[0-9]*_sess1_rest[0-9]*.mnc.gz';
