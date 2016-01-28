@@ -36,7 +36,7 @@ end
 
 
 
-file_write = [data 'preventad_civet.csv'];
+file_write = [model 'preventad_civet_20160128.csv'];
 opt.labels_x = sid;
 niak_write_csv(file_write,ct,opt)
     
