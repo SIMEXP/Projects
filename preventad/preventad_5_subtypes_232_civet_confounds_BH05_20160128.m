@@ -63,13 +63,12 @@ path = [path_results 'civet_weights.csv'];
 opt.precision = 3;
 niak_write_csv(path,weights1,opt);
 
-if save_figs_weights ==1
-    % Visualize weights
-    figure
-    niak_visu_matrix(weights1(order,:))
-    namefig = strcat(path_res_net,'weights.pdf');
-    print(namefig,'-dpdf','-r300')
-end
+% Visualize weights
+figure
+niak_visu_matrix(weights1(order,:))
+namefig = strcat(path_res_net,'weights.pdf');
+print(namefig,'-dpdf','-r300')
+
 
 
    
