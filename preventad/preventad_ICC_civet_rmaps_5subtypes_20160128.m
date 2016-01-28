@@ -2,7 +2,7 @@ clear all
 
 nb_clus = 5; % nb clusters in clustering
 name_clus = {'subt1','subt2','subt3','subt4','subt5'};
-civet = '/Users/pyeror/Work/transfert/PreventAD/models/preventad_civet_raw_nomean_20160128.csv'; 
+civet = '/Users/pyeror/Work/transfert/PreventAD/models/preventad_civet_raw_nomean_20160128.csv';
 %model = '/Users/pyeror/Work/transfert/PreventAD/models/model_preventad_20160121.csv';
 stack = '/Users/pyeror/Work/transfert/PreventAD/results/scores/preventad_7/rmap_stack_run1/';
 path_results = '/Users/pyeror/Work/transfert/PreventAD/results/subtype/preventad_232_ICC_civet_rmaps_5subtypes_20160128/';
@@ -156,56 +156,29 @@ close all
 %% rmaps subtypes (networks)
 
 
+%% ICC
 
-for n_net = 1:length(net)
-    % Load dat
-    file_stack1 = [path_data_1,'stack_net',num2str(num_net(n_net)),'.nii.gz'];
-    [hdr,stab1] = niak_read_vol(file_stack1);
-    
-    [hdr,mask] = niak_read_vol([path_data_1 'mask.nii.gz']);
-    
-    tseriesnet = niak_vol2tseries(stab1,mask);
-    nb_region_net = size(tseriesnet,2);
-    
-    if n_net ==1
-        tseriesall = tseriesnet;
-        
-    elseif n_net>1
-        nb_region = size(tseriesall,2);
-        nb_region_s = nb_region+1;
-        nb_region_e = nb_region_net*n_net;
-        tseriesall(:,nb_region_s:nb_region_e) = tseriesnet;
+load([path_results 'rmaps_weights.mat']);
+weights_func = weights;
+load([path_results 'civet_weights.mat']);
+weights_stru = weights;
+
+for cc_f = 1:nb_clus
+    for cc_s = 1:nb_clus
+    repro_weights(cc_f,cc_s) = IPN_icc([weights_func(:,cc_f) weights_stru(:,cc_s)],2,'single');
     end
 end
-    
-    
-    
 
-    % Build loads
-    for cc = 1:max(part)
-        avg_clust1(cc,:) = mean(tseries_ga1(part==cc,:),1);
-        weights1(:,cc) = corr(tseries_ga1',avg_clust1(cc,:)');
-        weights2(:,cc) = corr(tseries_ga2',avg_clust1(cc,:)');
-    end
-    
-    % Reproc of stab maps
-    for ss = 1:size(tseries1,1)
-        repro_stab(ss,n_net) = corr(tseries_ga1(ss,:)',tseries_ga2(ss,:)');
-    end
-    
-    % Reproc of weights
-    % tmp = corr([weights1,weights2]);
-    for cc = 1:nb_clus
-        repro_weights(cc,n_net) = IPN_icc([weights1(:,cc) weights2(:,cc)],2,'single');
-    end
-    
-    
-    
-    
-    
-    
-    
-end
+file_write = [path_results 'ICC_rmap_civet.csv'];
+opt.labels_x = {'subt1_f','subt2_f','subt3_f','subt4_f','subt5_f'};
+opt.labels_y = {'subt1_s','subt2_s','subt3_s','subt4_s','subt5_s'};
+niak_write_csv(file_write,repro_weights,opt)
+
+
+
+
+
+
 
 
 
