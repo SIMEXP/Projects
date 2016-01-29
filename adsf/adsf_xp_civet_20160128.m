@@ -3,16 +3,12 @@
 clear all
 
 path_data = '/Users/AngelaTam/Desktop/adsf/';
-file_data = [path_data 'adsf_model_preventad_bl_dr2_civet_raw_20160128.csv'];
+file_data = [path_data 'preventad_civet_raw_nomean_20160128.csv'];
 [tab,lx,ly] = niak_read_csv(file_data);
 
-% Extract model
-model = tab(:,1:21);
-labels_model = ly(1:21);
-
 % Extract civet measures
-ct = tab(:,22:end);
-labels_ct = ly(22:end);
+ct = tab(:,1:end);
+labels_ct = ly(1:end);
 
 %% Run a measure-level clustering
 nb_ct = 5;
