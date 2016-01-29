@@ -17,16 +17,16 @@ psom_mkdir(path_results)
 %%%%      networks     %%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-for n = 1:length(num_net)
+for n_net = 1:length(num_net)
     
     %% civet subtypes (networks)
     
     % Create main ouptut directory
-    path_res_net = [path_results net{n}];
+    path_res_net = [path_results net{n_net}];
     psom_mkdir(path_res_net)
     
     % Read model files
-    [tab_c,sub_id,~,~] = niak_read_csv([civet net{n} '.csv']);
+    [tab_c,sub_id,~,~] = niak_read_csv([civet net{n_net} '.csv']);
     
     tseries1 = tab_c;
     gd_mean1 = mean(tseries1);
@@ -37,23 +37,23 @@ for n = 1:length(num_net)
     hier = niak_hierarchical_clustering(R);
     part = niak_threshold_hierarchy(hier,struct('thresh',nb_clus));
     order = niak_hier2order(hier);
-    save([path_res_net 'civet_order.mat'],'order');
-    save([path_res_net 'civet_part.mat'],'part');
+    save([path_res_net '/civet_order.mat'],'order');
+    save([path_res_net '/civet_part.mat'],'part');
     
     % Visualize dendrograms & matrices
     figure
     niak_visu_dendrogram(hier);
-    namefig = strcat(path_res_net,'civet_dendrogram.pdf');
+    namefig = strcat(path_res_net,'/civet_dendrogram.pdf');
     print(namefig,'-dpdf','-r300')
     figure
     opt_vr.limits = [-0.3 0.3];
     niak_visu_matrix(R(order,order),opt_vr);
-    namefig = strcat(path_res_net,'civet_matrix.pdf');
+    namefig = strcat(path_res_net,'/civet_matrix.pdf');
     print(namefig,'-dpdf','-r300')
     figure
     opt_p.flag_labels = true;
     niak_visu_part(part(order),opt_p);
-    namefig = strcat(path_res_net,'civet_clusters.pdf');
+    namefig = strcat(path_res_net,'/civet_clusters.pdf');
     print(namefig,'-dpdf','-r300')
     close all
     
@@ -63,22 +63,22 @@ for n = 1:length(num_net)
         weights(:,cc) = corr(tseries_ga1',avg_clust1(cc,:)');
     end
     
-    save([path_res_net 'civet_weights.mat'],'weights');
+    save([path_res_net '/civet_weights.mat'],'weights');
     
     opt.labels_y = name_clus;
     opt.labels_x = sub_id;
-    path = [path_res_net 'civet_weights.csv'];
+    path = [path_res_net '/civet_weights.csv'];
     opt.precision = 3;
     niak_write_csv(path,weights,opt);
     
     % Visualize weights
     figure
     niak_visu_matrix(weights(order,:))
-    namefig = strcat(path_res_net,'civet_weights_order.pdf');
+    namefig = strcat(path_res_net,'/civet_weights_order.pdf');
     print(namefig,'-dpdf','-r300')
     figure
     niak_visu_matrix(weights)
-    namefig = strcat(path_res_net,'civet_weights.pdf');
+    namefig = strcat(path_res_net,'/civet_weights.pdf');
     print(namefig,'-dpdf','-r300')
     close all
     
@@ -98,57 +98,57 @@ for n = 1:length(num_net)
     hier = niak_hierarchical_clustering(R);
     part = niak_threshold_hierarchy(hier,struct('thresh',nb_clus));
     order = niak_hier2order(hier);
-    save([path_res_net 'rmaps_order.mat'],'order');
-    save([path_res_net 'rmaps_part.mat'],'part');
+    save([path_res_net '/rmaps_order.mat'],'order');
+    save([path_res_net '/rmaps_part.mat'],'part');
     
     % Visualize dendrograms & matrices
     figure
     niak_visu_dendrogram(hier);
-    namefig = strcat(path_res_net,'rmaps_dendrogram.pdf');
+    namefig = strcat(path_res_net,'/rmaps_dendrogram.pdf');
     print(namefig,'-dpdf','-r300')
     figure
     opt_vr.limits = [-0.3 0.3];
     niak_visu_matrix(R(order,order),opt_vr);
-    namefig = strcat(path_res_net,'rmaps_matrix.pdf');
+    namefig = strcat(path_res_net,'/rmaps_matrix.pdf');
     print(namefig,'-dpdf','-r300')
     figure
     opt_p.flag_labels = true;
     niak_visu_part(part(order),opt_p);
-    namefig = strcat(path_res_net,'rmaps_clusters.pdf');
+    namefig = strcat(path_res_net,'/rmaps_clusters.pdf');
     print(namefig,'-dpdf','-r300')
     close all
     
     % Weights
     for cc = 1:max(part)
-        avg_clust1(cc,:) = mean(tseries_ga1(part==cc,:),1);
-        weights(:,cc) = corr(tseries_ga1',avg_clust1(cc,:)');
+        avg_clust(cc,:) = mean(tseries_ga1(part==cc,:),1);
+        weights(:,cc) = corr(tseries_ga1',avg_clust(cc,:)');
     end
     
-    save([path_results 'rmaps_weights.mat'],'weights');
+    save([path_res_net '/rmaps_weights.mat'],'weights');
     
     opt.labels_y = name_clus;
     opt.labels_x = sub_id;
-    path = [path_res_net 'rmaps_weights.csv'];
+    path = [path_res_net '/rmaps_weights.csv'];
     opt.precision = 3;
     niak_write_csv(path,weights,opt);
     
     % Visualize weights
     figure
     niak_visu_matrix(weights(order,:))
-    namefig = strcat(path_res_net,'rmaps_weights_order.pdf');
+    namefig = strcat(path_res_net,'/rmaps_weights_order.pdf');
     print(namefig,'-dpdf','-r300')
     figure
     niak_visu_matrix(weights)
-    namefig = strcat(path_res_net,'rmaps_weights.pdf');
+    namefig = strcat(path_res_net,'/rmaps_weights.pdf');
     print(namefig,'-dpdf','-r300')
     close all
     
     
     %% ICC
     
-    load([path_res_net 'rmaps_weights.mat']);
+    load([path_res_net '/rmaps_weights.mat']);
     weights_func = weights;
-    load([path_res_net 'civet_weights.mat']);
+    load([path_res_net '/civet_weights.mat']);
     weights_stru = weights;
     
     for cc_f = 1:nb_clus
@@ -157,10 +157,17 @@ for n = 1:length(num_net)
         end
     end
     
-    file_write = [path_res_net net{n} '_ICC_rmap_civet.csv'];
+    file_write = [path_res_net '/' net{n_net} '_ICC_rmap_civet.csv'];
     opt.labels_x = {'subt1_f','subt2_f','subt3_f','subt4_f','subt5_f'};
     opt.labels_y = {'subt1_s','subt2_s','subt3_s','subt4_s','subt5_s'};
     niak_write_csv(file_write,repro_weights,opt)
+    
+    % Visualize ICC
+    figure
+    opt_vr.limits = [-0.5 0.5];
+    niak_visu_matrix(repro_weights,opt_vr);
+    namefig = strcat(path_res_net,'/',net{n_net},'_ICC_matrix.pdf');
+    print(namefig,'-dpdf','-r300')
     
 end
 
@@ -285,8 +292,8 @@ close all
 
 % Weights
 for cc = 1:max(part)
-    avg_clust1(cc,:) = mean(tseries_ga1(part==cc,:),1);
-    weights(:,cc) = corr(tseries_ga1',avg_clust1(cc,:)');
+    avg_clust(cc,:) = mean(tseries_ga1(part==cc,:),1);
+    weights(:,cc) = corr(tseries_ga1',avg_clust(cc,:)');
 end
 
 save([path_results 'rmaps_weights.mat'],'weights');
