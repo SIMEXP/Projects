@@ -17,7 +17,10 @@ psom_mkdir(path_results)
 %%%%      networks     %%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-for n_net = 1:length(num_net)
+for n_net = 2:length(num_net)
+    
+    avg_clust = [];
+    avg_clust1 = [];
     
     %% civet subtypes (networks)
     
