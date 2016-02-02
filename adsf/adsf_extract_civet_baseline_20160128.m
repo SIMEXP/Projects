@@ -2,12 +2,12 @@ clear
 
 data = '/Users/pyeror/Work/transfert/PreventAD/thickness_dat_20150831/';
 
-model = '/Users/pyeror/Work/transfert/PreventAD/models/model_preventad_20160121.csv';
+model = '/Users/pyeror/Work/transfert/PreventAD/models/';
 
 hemi = {'left','right'};
 
 
-[tab,sid,ly,lx] = niak_read_csv(model);
+[tab,sid,ly,lx] = niak_read_csv([model 'model_preventad_20160121.csv']);
 
 for s = 1:length(sid)
     name = sid(s);
