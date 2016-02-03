@@ -4,7 +4,7 @@ addpath(genpath('/gs/project/gsf-624-aa/quarantaine/niak-boss-0.13.4/'))
 
 
 path_raw       = '/gs/project/gsf-624-aa/database2/ccna/ccna_20160201_mnc/';
-path_preprocess     = '/gs/project/gsf-624-aa/database2/ccna_multisite_TR_preprocess_20160201/';
+path_preprocess     = '/gs/project/gsf-624-aa/database2/ccna/ccna_multisite_TR_preprocess_20160201/';
 
 
 sites  = {'CHUS','CINQ','UNF','MNI'};
