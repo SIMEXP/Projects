@@ -23,6 +23,27 @@ for pp = 1:1000
     system(['mv ' path_root 'perm_test' num2str(pp) '/se_out.out ' path_root 'se_out' num2str(pp) '.out']);
 end
 
+pheno_raw = pheno(2:end,32);
+pheno_perm = {};
+header_stack = {};
+for hh = 1:10
+      rand('state',hh);
+      order = randperm(length(pheno_raw));
+      pheno_perm_tmp = pheno_raw (order',:);
+      pheno_perm = [ pheno_perm pheno_perm_tmp];
+      header_name = ['trait_' num2str(hh)];
+      header_stack = [header_stack  header_name];
+end
+
+pheno_final = [header_stack ; pheno_perm];
+pheno_final = [ pheno(:,1)  pheno_final ];
+
+
+      
+      niak_write_csv_cell([path_root 'phenotypes.csv'],pheno_tmp);  
+
+
+
     %loop over permuted ID
           %select random non significant pheno from (sub2_net3)
           %build pheno_tmp(i)
