@@ -60,4 +60,4 @@ for ss = 1:nb_subtype
     %weights(~mask,ss) = corr(vol',subtype(ss,:)');
     weights(:,ss) = corr(vol',subtype(ss,:)');
 end
-plot(weights (order_subtype ,1))
+plot(weights (order_subtype ,2))
