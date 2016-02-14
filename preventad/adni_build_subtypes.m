@@ -3,7 +3,6 @@ function sub = adni_build_subtypes(data,nb_subtype)
 % Syntax: SUB = ADNI_BUILD_SUBTYPES(DATA,NB_SUBTYPE)
 %
 % DATA (nb of subjects x nb of voxels) each row is a connectivity map for one subject.
-% MASK (1 x nb of vertices) a binary vector defining a subset of vertices.
 % NB_SUBTYPE (integer) the number of subtypes.
 % SUB (structure) with a bunch of stuff. Fields should be self-explanatory. 
 %
