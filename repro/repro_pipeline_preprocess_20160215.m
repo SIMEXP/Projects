@@ -7,52 +7,81 @@ path_raw       = '/gs/project/gsf-624-aa/database2/repro/data_mnc/';
 path_preprocess     = '/gs/project/gsf-624-aa/database2/repro/fmri_preproc_20160215/';
 
 
-subjects_list = dir(path_raw);
-subjects_list = subjects_list(3:end);
+subjects_list = {'0025427',...
+'0025428',...
+'0025429',...
+'0025430',...
+'0025431',...
+'0025432',...
+'0025433',...
+'0025434',...
+'0025435',...
+'0025436',...
+'0025437',...
+'0025438',...
+'0025439',...
+'0025440',...
+'0025441',...
+'0025442',...
+'0025443',...
+'0025444',...
+'0025445',...
+'0025446',...
+'0025447',...
+'0025448',...
+'0025449',...
+'0025450',...
+'0025451',...
+'0025452',...
+'0025453',...
+'0025454',...
+'0025455',...
+'0025456'};
 
-for num_s = 1:size(subjects_list,1)
+
+for num_s = 1:length(subjects_list)
     
     %% Subject file names
-    subject = subjects_list(num_s).name
+    subject = subjects_list{num_s}
     
     %anat
-    fmrirun = dir([path_raw filesep subject filesep 'session_1/anat_1' filesep '*.mnc.gz']);
-    anat = [path_path_rawgroup filesep subject filesep 'session_1/anat_1' filesep fmrirun.name];
+    fmrirun = dir([path_raw filesep subject filesep 'session_1/anat_1' filesep '*.mnc']);
+    anat = [path_raw filesep subject filesep 'session_1/anat_1' filesep fmrirun.name];
     
     %func
-    fmrirun = dir([path_raw filesep subject filesep 'session_1/rest_1' filesep '*.mnc.gz']);
+    fmrirun = dir([path_raw filesep subject filesep 'session_1/rest_1' filesep '*.mnc']);
     fmri.session1.run1 = [path_raw filesep subject filesep 'session_1/rest_1' filesep fmrirun.name];
     
-    fmrirun = dir([path_raw filesep subject filesep 'session_2/rest_1' filesep '*.mnc.gz']);
+    fmrirun = dir([path_raw filesep subject filesep 'session_2/rest_1' filesep '*.mnc']);
     fmri.session2.run1 = [path_raw filesep subject filesep 'session_2/rest_1' filesep fmrirun.name];
     
-    fmrirun = dir([path_raw filesep subject filesep 'session_3/rest_1' filesep '*.mnc.gz']);
+    fmrirun = dir([path_raw filesep subject filesep 'session_3/rest_1' filesep '*.mnc']);
     fmri.session3.run1 = [path_raw filesep subject filesep 'session_3/rest_1' filesep fmrirun.name];
     
-    fmrirun = dir([path_raw filesep subject filesep 'session_4/rest_1' filesep '*.mnc.gz']);
+    fmrirun = dir([path_raw filesep subject filesep 'session_4/rest_1' filesep '*.mnc']);
     fmri.session4.run1 = [path_raw filesep subject filesep 'session_4/rest_1' filesep fmrirun.name];
     
-    fmrirun = dir([path_raw filesep subject filesep 'session_5/rest_1' filesep '*.mnc.gz']);
+    fmrirun = dir([path_raw filesep subject filesep 'session_5/rest_1' filesep '*.mnc']);
     fmri.session5.run1 = [path_raw filesep subject filesep 'session_5/rest_1' filesep fmrirun.name];
     
-    fmrirun = dir([path_raw filesep subject filesep 'session_6/rest_1' filesep '*.mnc.gz']);
+    fmrirun = dir([path_raw filesep subject filesep 'session_6/rest_1' filesep '*.mnc']);
     fmri.session6.run1 = [path_raw filesep subject filesep 'session_6/rest_1' filesep fmrirun.name];
     
-    fmrirun = dir([path_raw filesep subject filesep 'session_7/rest_1' filesep '*.mnc.gz']);
+    fmrirun = dir([path_raw filesep subject filesep 'session_7/rest_1' filesep '*.mnc']);
     fmri.session7.run1 = [path_raw filesep subject filesep 'session_7/rest_1' filesep fmrirun.name];
     
-    fmrirun = dir([path_raw filesep subject filesep 'session_8/rest_1' filesep '*.mnc.gz']);
+    fmrirun = dir([path_raw filesep subject filesep 'session_8/rest_1' filesep '*.mnc']);
     fmri.session8.run1 = [path_raw filesep subject filesep 'session_8/rest_1' filesep fmrirun.name];
     
-    fmrirun = dir([path_raw filesep subject filesep 'session_9/rest_1' filesep '*.mnc.gz']);
+    fmrirun = dir([path_raw filesep subject filesep 'session_9/rest_1' filesep '*.mnc']);
     fmri.session9.run1 = [path_raw filesep subject filesep 'session_9/rest_1' filesep fmrirun.name];
     
-    fmrirun = dir([path_raw filesep subject filesep 'session_10/rest_1' filesep '*.mnc.gz']);
+    fmrirun = dir([path_raw filesep subject filesep 'session_10/rest_1' filesep '*.mnc']);
     fmri.session10.run1 = [path_raw filesep subject filesep 'session_10/rest_1' filesep fmrirun.name];
     
     
-    files_in.(subject).fmri = fmri;
-    files_in.(subject).anat = anat;
+    files_in.(['s' subject]).fmri = fmri;
+    files_in.(['s' subject]).anat = anat;
     
 end
 
@@ -98,7 +127,7 @@ opt.bricks.smooth_vol.fwhm = 6; % Apply an isotropic 6 mm gaussin smoothing.
 
 %% Region growing
 opt.region_growing.flag_skip = 1; % Turn on/off the region growing
-%opt.template_fmri = '/home/cdansereau/svn/niak/trunk/template/roi_aal.mnc.gz';
+%opt.template_fmri = '/home/cdansereau/svn/niak/trunk/template/roi_aal.mnc';
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Generation of the pipeline %%
