@@ -4,7 +4,7 @@ addpath(genpath('/gs/project/gsf-624-aa/quarantaine/niak-issue100/'))
 
 
 path_raw       = '/gs/project/gsf-624-aa/database2/repro/data_mnc/';
-path_preprocess     = '/gs/project/gsf-624-aa/database2/fmri_preproc_20160215/';
+path_preprocess     = '/gs/project/gsf-624-aa/database2/repro/fmri_preproc_20160215/';
 
 
 subjects_list = dir(path_raw);
