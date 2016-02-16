@@ -33,6 +33,21 @@ list_subject = list_subject(~mask_missing);
 data = data(~mask_missing,:,:);
 tab = tab(~mask_missing,:);
 
+%% Regress confounds
+model.x = [ones(size(sub(nn).weights,1),1) tab(:,4) tab(:,7) tab(:,1) tab(:,2)];
+    %model.x = [ones(size(sub(nn).weights,1),1) tab(:,4)];
+    mask_nan = max(isnan(model.x),[],2);
+    model.x = model.x(~mask_nan,:); 
+    model.y = sub(nn).weights(~mask_nan,:);
+    model.c = [0 0 1 0 0];
+    if nn==1
+        sum(model.x(:,2))
+        sum(~model.x(:,2))
+    end
+    opt_glm.test = 'ttest';
+    glm = niak_glm(model,opt_glm);
+    glm.pce
+    
 %% Subype 
 for nn = 1:size(data,3)
     nb_subtype = 7;
