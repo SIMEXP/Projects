@@ -34,18 +34,27 @@
 % THE SOFTWARE.
 
 clear 
-path_data = '/home/perrine/scratch/RANN/preprocess_data_jan_2016_test_issue100_3/';
-path_niak = '/home/perrine/quarantaine/niak-issue100/';
-path_out  = '/home/perrine/scratch/RANN/RANN_BASC/';
+path_data = '/home/perrine/scratch/RANN/RANN_preproc_issue100_final_16.01.30/';
+%%%%%%%%%%%%%% ????????????????? %%%%%%%%%%%%%%
+%use new library??
+path_niak = ('/gs/project/gsf-624-aa/quarantaine/niak-issue100/');
+%path_niak= '/home/perrine/quarantaine/niak-boss-0.13.4/';
+path_out  = '/home/perrine/scratch/RANN/RANN_BASC-2/';
 addpath(genpath(path_niak))
 %%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%
 opt_g.min_nb_vol = 100;     % The minimum number of volumes for an fMRI dataset to be included. This option is useful when scrubbing is used, and the resulting time series may be too short.
 opt_g.min_xcorr_func = 0.5; % The minimum xcorr score for an fMRI dataset to be included. This metric is a tool for quality control which assess the quality of non-linear coregistration of functional images in stereotaxic space. Manual inspection of the values during QC is necessary to properly set this threshold.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%????????????????????????????%%%%%%%%%%%%%%%%%%%
+%should we increase the threshold? but many excluded already! %%%
 opt_g.min_xcorr_anat = 0.5; % The minimum xcorr score for an fMRI dataset to be included. This metric is a tool for quality control which assess the quality of non-linear coregistration of the anatomical image in stereotaxic space. Manual inspection of the values during QC is necessary to properly set this threshold.
-opt_g.exclude_subject = {'subject1','subject2'}; % If for whatever reason some subjects have to be excluded that were not caught by the quality control metrics, it is possible to manually specify their IDs here.
+
+%opt_g.exclude_subject = {'subject1','subject2'}; % If for whatever reason some subjects have to be excluded that were not caught by the quality control metrics, it is possible to manually specify their IDs here.
+
 opt_g.type_files = 'rest'; % Specify to the grabber to prepare the files for the STABILITY_REST pipeline
+
 files_in = niak_grab_fmri_preprocess(path_data ,opt_g); % Replace the folder by the path where the results of the fMRI preprocessing pipeline were stored. 
 
 %%%%%%%%%%%%%%%%%%%%%
@@ -89,8 +98,8 @@ opt.scales_maps = repmat(opt.grid_scales,[1 3]); % The scales that will be used 
 opt.stability_tseries.nb_samps = 100; % Number of bootstrap samples at the individual level. 100: the CI on indidividual stability is +/-0.1
 opt.stability_group.nb_samps = 500; % Number of bootstrap samples at the group level. 500: the CI on group stability is +/-0.05
 
-opt.flag_ind = false;   % Generate maps/time series at the individual level
-opt.flag_mixed = false; % Generate maps/time series at the mixed level (group-level networks mixed with individual stability matrices).
+opt.flag_ind = true;   % Generate maps/time series at the individual level
+opt.flag_mixed = true; % Generate maps/time series at the mixed level (group-level networks mixed with individual stability matrices).
 opt.flag_group = true;  % Generate maps/time series at the group level
 
 %%%%%%%%%%%%%%%%%%%%%%
@@ -98,4 +107,10 @@ opt.flag_group = true;  % Generate maps/time series at the group level
 %%%%%%%%%%%%%%%%%%%%%%
 opt.flag_test = false; % Put this flag to true to just generate the pipeline without running it. Otherwise the region growing will start. 
 opt.psom.max_queued = 300; % Uncomment and change this parameter to set the number of parallel threads used to run the pipeline
+opt.psom.max_queued              =  304;       % Number of jobs that can run in parallel. In batch mode, this is usually the number of cores.
+opt.time_between_checks = 60;
+%verbose opt
+opt.psom.nb_resub = 3;
+%so that workers stop beeing killed by walltime after 3h
+opt.psom.qsub_options = '-A gsf-624-aa -q sw -l walltime=7:00:00';
 pipeline = niak_pipeline_stability_rest(files_in,opt);
