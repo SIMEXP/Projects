@@ -10,7 +10,7 @@ clear
 %% Read model
 nb_subtype = 5;
 path_data = [pwd filesep];
-sc = '007'; % '007' '012'
+sc = '012'; % '007' '012'
 file_model = [path_data 'admci_model_multi_site_scanner_fd_snr_20151117.csv'];
 file_parcel = [path_data 'template_cambridge_basc_multiscale_sym_scale' sc '.mnc.gz'];
 [hdr_t,parcel] = niak_read_vol(file_parcel);
@@ -74,7 +74,7 @@ site5 = ind_site == 5;
 site1 = ind_site == 1;
 mask_ok = site1|site5;
 %mask_ok = ~site4;
-for nn = 1:7
+for nn = 1:12
 %for nn = [2 5 6 7]
     switch type_test
         case 'all_m_ctl'
