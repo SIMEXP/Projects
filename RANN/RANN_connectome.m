@@ -1,5 +1,6 @@
 % Template for the CONNECTOME pipeline
-%
+%% modified by Perrine Ferré, 20151226
+
 % To run this pipeline, the fMRI datasets first need to be preprocessed 
 % using the NIAK fMRI preprocessing pipeline, and a set of functional 
 % parcelations have to be generated using the BASC pipeline. 
@@ -11,7 +12,6 @@
 %   & Department of Computer Science and Operations Research
 %   University of Montreal, Québec, Canada, 2013
 % Maintainer : pierre.bellec@criugm.qc.ca
-% modified by Perrine Ferré, 20151226
 
 % See licensing information in the code.
 % Keywords : medical imaging, fMRI, preprocessing, pipeline
@@ -34,10 +34,10 @@
 % THE SOFTWARE.
 
 clear 
-path_data = '/home/perrine/scratch/RANN/preprocess_data_oct_2015_2';
-path_niak = '/home/perrine/quarantaine/niak-boss-0.13.4/';
+path_data = '/home/perrine/scratch/RANN/RANN_preproc_issue100_final_16.01.30/';
+path_niak = '/gs/project/gsf-624-aa/quarantaine/niak-issue100/';
 path_out  = '/home/perrine/scratch/RANN/RANN_connectome/';
-
+addpath(genpath(path_niak))
 
 %% Set the template
 files_in.network = [path_niak 'template/basc_cambridge_sc100.mnc.gz'];
