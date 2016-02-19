@@ -1,9 +1,9 @@
 
 clear all
-addpath(genpath('/gs/project/gsf-624-aa/quarantaine/niak-issue100/'))
+addpath(genpath('/gs/project/gsf-624-aa/quarantaine/niak-boss-0.13.4/'))
 
 path_fmri = '/gs/project/gsf-624-aa/data/hnu1/preproc_20160215/fmri/';
-path_folder_out = '/gs/project/gsf-624-aa/database2/repro/results/repro_scores_20160215_s007_session1/';
+path_folder_out = '/gs/project/gsf-624-aa/database2/repro/results/repro_scores_20160215_s007_session10/';
 
 files_in.part = '/gs/project/gsf-624-aa/database2/repro/templates/template_cambridge_basc_multiscale_sym_scale007.mnc.gz';
 files_in.mask = '/gs/project/gsf-624-aa/database2/repro/templates/mask.mnc.gz';
@@ -15,7 +15,7 @@ model = '/gs/project/gsf-624-aa/data/hnu1/model/hnu1_model_20160215.csv';
 
 
 for n = 1:length(sub_id)
-    files_in.data.(sub_id{n}).session1.run1 = [path_fmri 'fmri_' sub_id{n} '_session1_run1.mnc'];
+    files_in.data.(sub_id{n}).session10.run1 = [path_fmri 'fmri_' sub_id{n} '_session10_run1.mnc'];
 end  
 
 opt.folder_out = path_folder_out;
