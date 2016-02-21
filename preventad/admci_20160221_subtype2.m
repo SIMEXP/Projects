@@ -83,10 +83,7 @@ for n_net = 1:length(num_net)
     save([path_res_net 'part.mat'],'part');
     
     % Contingency table
-    
-    
-    
-    
+    % (...)
     
     % Figs
     if fig_clust ==1
@@ -99,7 +96,7 @@ for n_net = 1:length(num_net)
         
         % Visualize the matrices
         figure
-        opt_vr.limits = [0.2 0.5];
+        opt_vr.limits = [-0.5 0.5];
         niak_visu_matrix(R(order,order),opt_vr);
         namefig = strcat(path_res_net,'matrix.pdf');
         print(namefig,'-dpdf','-r300')
@@ -168,7 +165,7 @@ for n_net = 1:length(num_net)
     if fig_weights ==1
         % Visualize weights
         figure
-        opt_vr.limits = [-0.2 0.8];
+        opt_vr.limits = [-0.5 0.5];
         niak_visu_matrix(weights(order,:),opt_vr)
         namefig = strcat(path_res_net,'weights.pdf');
         print(namefig,'-dpdf','-r300')
