@@ -1,7 +1,7 @@
-function sub = adni_build_subtypes(data,nb_subtype,mask,flag_demean)
+function sub = niak_build_subtypes(data,nb_subtype,mask,flag_demean)
 % Extract subtypes from functional maps
 %
-% Syntax: SUB = ADNI_BUILD_SUBTYPES(DATA,NB_SUBTYPE,MASK)
+% Syntax: SUB = NIAK_BUILD_SUBTYPES(DATA,NB_SUBTYPE,MASK)
 %
 % DATA (array nb of subjects x nb of voxels) each row is a connectivity map for one subject.
 % NB_SUBTYPE (integer) the number of subtypes.
