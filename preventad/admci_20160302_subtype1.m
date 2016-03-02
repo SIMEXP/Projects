@@ -1,6 +1,7 @@
 %% regress sex age fd sites before subtypes, based on betas in matched HC in all 7 sites
 %% test associations with admci with metal
 %% 3 clusters
+%% note in order to look at associations with sites, the standard (non-multisite) glm is run
 
 clear all
 
@@ -76,7 +77,7 @@ for n_net = 1:length(num_net)
     
     sss = 0;
     for ss = 1:length(sub_id)
-        if raw_tab(ss,num_matchedHC) == 1 && raw_tab(ss,num_nki) == 0
+        if raw_tab(ss,num_matchedHC) == 1 % && raw_tab(ss,num_nki) == 0 % do not include NKI
             sss=sss+1;
             conf_tab(sss,:) = raw_tab(ss,:);
             conf_data(sss,:) = raw_data(ss,:);
@@ -84,7 +85,7 @@ for n_net = 1:length(num_net)
     end
     
     % Extract betas and regress confounds 
-    conf_x = [conf_tab(:,num_sex) conf_tab(:,num_age) conf_tab(:,num_fd) conf_tab(:,num_mnimci) conf_tab(:,num_criugmad) conf_tab(:,num_criugmmci) conf_tab(:,num_adni5) conf_tab(:,num_adni9)  conf_tab(:,num_pad)]; % ones(length(sub_id),1) conf_tab(:,num_nki)
+    conf_x = [conf_tab(:,num_sex) conf_tab(:,num_age) conf_tab(:,num_fd) conf_tab(:,num_mnimci) conf_tab(:,num_criugmad) conf_tab(:,num_criugmmci) conf_tab(:,num_adni5) conf_tab(:,num_adni9)  conf_tab(:,num_pad) conf_tab(:,num_nki)]; 
     conf_y = conf_data;
     beta = (conf_x'*conf_x)\conf_x'*conf_y;
     
@@ -265,7 +266,7 @@ for n_net = 1:length(num_net)
         opt_glm.flag_beta = true;
         %opt_glm.multisite = tab(:,num_multisite);
         res_covar = niak_glm(model_covar,opt_glm);
-%         res_covar = niak_glm_multisite(model_covar,opt_glm);
+        %res_covar = niak_glm_multisite(model_covar,opt_glm);
         pce(n_var,:,n_net) = res_covar.pce;
         
         if fig_plots == 1
