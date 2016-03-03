@@ -68,12 +68,11 @@ sub.order = niak_hier2order(sub.hier);
 % Build subgroups by thresholding the hierarchy
 sub.part = niak_threshold_hierarchy(sub.hier,struct('thresh',nb_subtype));
 
-%% Compute subtypes and associated weights
+%% Build subtype maps
 sub.map = zeros(nb_subtype,nb_voxels);
-sub.weights = zeros(nb_subject,nb_subtype);
 for ss = 1:nb_subtype
     sub.map(ss,:) = mean(data(sub.part==ss,:),1);
-    for ssub = 1:nb_subject
-        sub.weights(ssub,ss) = corr(sub.map(ss,mask),data(ssub,mask));
-    end
 end
+
+%% Compute subtype weights
+sub.weights = corr(data(:,mask)',sub.map(:,mask)');
