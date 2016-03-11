@@ -1,5 +1,11 @@
-clear
+%%%%%%%%%%%%%%%%%%%%%%
 
+%% script for testing the association between variables of interest with subtypes of cortical thickness networks
+
+%%%%%%%%%%%%%%%%%%%%%%
+
+
+clear
 
 path_data = '/Users/AngelaTam/Desktop/adsf/adsf_basc_ct_20160204/';
 ct_data = [path_data 'preventad_civet_vertex_bl_20160202.mat'];
