@@ -17,8 +17,8 @@ nb_subt = 5; % number of subtypes
 
 col = [0 0 0; 0 0 0; 0 0 0];
 
-model = '/Users/AngelaTam/Desktop/adsf/model/preventad_model_vol_bl_dr2_20160313.csv'; % model containing variables of interest and no interest
-[tab,list_subject,ly] = niak_read_csv(model);
+model = '/Users/AngelaTam/Desktop/adsf/model/preventad_model_vol_bl_dr2_20160313_nan_qc.csv'; % model containing variables of interest and no interest (note: removed failed qc and missing gm values from this model)
+[tab,list_sub,ly] = niak_read_csv(model);
 
 % Extract volume measures from model
 vol = tab(:,23:end);
@@ -32,13 +32,13 @@ load(msteps_part)
 
 %% regress out confounding variables (age, fd, gender)
 
-model.x = [ones(length(list_subject),1) tab(:,1) tab(:,2) tab(:,20)];
+model.x = [ones(length(list_sub),1) tab(:,1) tab(:,2) tab(:,18)];
 mask_nnan = ~max(isnan(model.x),[],2);
 model.x = model.x(mask_nnan,:); 
 data = ct(mask_nnan,:,:);  % putting a mask to get rid of NaNs over the loaded variable ct (from ct_data)
 tab = tab(mask_nnan,:); % mask to get rid of NaNs within tab
 vol_sf = vol(mask_nnan,:); % mask to get rid of NaNs within vol_sf
-list_subject = list_subject(mask_nnan);
+list_sub = list_sub(mask_nnan);
 
 for nn = 1:size(data,3)
     model.y = data(:,:,nn);
@@ -85,7 +85,7 @@ model = struct();
 for nn = 1:nb_net
     for cc = 1:length(list_contrast)
         contrast = list_contrast{cc};
-        model(nn).(contrast).x = [ones(size(sub(nn).weights,1),1) tab(:,1) tab(:,2) tab(:,20) vol_sf(:,5) vol_sf(:,6) vol_sf(:,7) vol_sf(:,8) vol_sf(:,23) vol_sf(:,24) vol_sf(:,25) vol_sf(:,26) vol_sf(:,39) vol_sf(:,40)];
+        model(nn).(contrast).x = [ones(size(sub(nn).weights,1),1) tab(:,1) tab(:,2) tab(:,18) vol_sf(:,5) vol_sf(:,6) vol_sf(:,7) vol_sf(:,8) vol_sf(:,23) vol_sf(:,24) vol_sf(:,25) vol_sf(:,26) vol_sf(:,39) vol_sf(:,40)];
         mask_nan = max(isnan(model(nn).(contrast).x),[],2);
         model(nn).(contrast).x = model(nn).(contrast).x(~mask_nan,:);
         model(nn).(contrast).y = sub(nn).weights(~mask_nan,:);
