@@ -37,11 +37,12 @@
 clear all
 
 %old-path-removed(unsatisfyingregistratio/slack-general-28092015):
+addpath(genpath('/gs/project/gsf-624-aa/quarantaine/niak-boss-0.13.4b'))
 %addpath(genpath('/sb/project/gsf-624-aa/quarantaine/niak-boss-0.13.0'))
-addpath(genpath('/gs/project/gsf-624-aa/quarantaine/niak-issue100/'))
+%addpath(genpath('/gs/project/gsf-624-aa/quarantaine/niak-issue100/'))
 
 root_path = '/gs/project/gsf-624-aa/RANN/';
-path_out = '/gs/scratch/perrine/RANN/preprocess_data_jan_2016_test_issue100_3/';
+path_out = '/gs/scratch/perrine/RANN/FINAL_preprocess_test_issue100_16.03.03/';
 
 %% Grab the raw data
 path_raw = [root_path 'raw_mnc/'];
@@ -171,7 +172,7 @@ opt.regress_confounds.flag_wm = true;            % Turn on/off the regression of
 opt.regress_confounds.flag_vent = true;          % Turn on/off the regression of the average of the ventricles (true: apply / false : don't apply)
 opt.regress_confounds.flag_motion_params = true; % Turn on/off the regression of the motion parameters (true: apply / false : don't apply)
 opt.regress_confounds.flag_gsc = false;          % Turn on/off the regression of the PCA-based estimation of the global signal (true: apply / false : don't apply)
-opt.regress_confounds.flag_scrubbing = false;     % Turn on/off the scrubbing of time frames with excessive motion (true: apply / false : don't apply)
+opt.regress_confounds.flag_scrubbing = true;     % Turn on/off the scrubbing of time frames with excessive motion (true: apply / false : don't apply)
 opt.regress_confounds.thre_fd = 0.5;             % The threshold on frame displacement that is used to determine frames with excessive motion in the scrubbing procedure
 
 % Correction of physiological noise (niak_pipeline_corsica)
@@ -207,5 +208,5 @@ opt.time_between_checks = 60;
 %verbose opt
 opt.psom.nb_resub = Inf; 
 %so that workers stop beeing killed by walltime after 3h
-opt.psom.qsub_options = '-A gsf-624-aa -q sw -l walltime=48:00:00';
+opt.psom.qsub_options = '-A gsf-624-aa -q sw -l nodes=1:ppn=2,pmem=3700m,walltime=36:00:00';
 [pipeline,opt] = niak_pipeline_fmri_preprocess(files_in,opt);
