@@ -56,6 +56,23 @@ data = data(~mask_missing,:,:);
 tab = tab(~mask_missing,:);
 ind_site = ind_site(~mask_missing);
 
+%% Regress confounds
+model.x = [ones(length(list_subject),1) tab(:,1) tab(:,2) tab(:,6)];
+mask_nnan = ~max(isnan(model.x),[],2);
+model.x = model.x(mask_nnan,:); 
+data = data(mask_nnan,:,:);
+tab = tab(mask_nnan,:);
+list_subject = list_subject(mask_nnan);
+
+for nn = 1:size(data,3)
+    model.y = data(:,:,nn);
+    model.c = [1 0 0 0];
+    opt_glm.test = 'ttest';
+    opt_glm.flag_residuals = true;
+    glm = niak_glm(model,opt_glm);
+    data(:,:,nn) = glm.e;
+end
+
 %% Subype 
 for nn = 1:size(data,3)
     sub(nn) = adni_build_subtypes(data(:,:,nn),nb_subtype);
@@ -74,6 +91,7 @@ site5 = ind_site == 5;
 site1 = ind_site == 1;
 mask_ok = site1|site5;
 %mask_ok = ~site4;
+opt_glm = struct;
 for nn = 1:7
 %for nn = [2 5 6 7]
     switch type_test
