@@ -2,7 +2,7 @@ clear all
 
 data = '/Users/AngelaTam/Desktop/adsf/structure_data/cortical_thickness/thickness_files_bl_vertex_20150831/';
 
-model = '/Users/AngelaTam/Desktop/adsf/model/model_preventad_20160121.csv';
+model = '/Users/AngelaTam/Desktop/adsf/model/preventad_model_vol_bl_dr2_20160316_qc.csv'; % csv with failed QCs removed
 
 hemi = {'left','right'};
 
@@ -35,7 +35,7 @@ for ss = 1:length(list_subject)
 end
 
 
-file_write = [data 'preventad_civet_vertex_bl_20160202.mat'];
+file_write = [data 'preventad_civet_vertex_bl_20160316.mat'];
 save(file_write,'ct','list_subject');
     
 
