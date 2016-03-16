@@ -56,6 +56,10 @@ end
 %data = niak_normalize_tseries(data')'; 
 if flag_demean 
     data = niak_normalize_tseries(data,struct('type','mean'));
+    m_data = mean(data(:,mask),2);
+    s_data = std(data(:,mask),[],2);
+    data = data-repmat(m_data,[1 size(data,2)]);
+    data = data./repmat(s_data,[1 size(data,2)]);
 end
 
 % Perfom a cluster analysis to identify subgroups
@@ -72,6 +76,10 @@ sub.part = niak_threshold_hierarchy(sub.hier,struct('thresh',nb_subtype));
 sub.map = zeros(nb_subtype,nb_voxels);
 for ss = 1:nb_subtype
     sub.map(ss,:) = mean(data(sub.part==ss,:),1);
+    m_sub = mean(sub.map(ss,mask),2);
+    s_sub = std(sub.map(ss,mask),[],2);
+    sub.map(ss,:) = (sub.map(ss,:)-m_sub)/s_sub;
+    sub.ttest(ss,:) = niak_ttest(data(sub.part==ss,:),data(sub.part~=ss,:),true);
 end
 
 %% Compute subtype weights
