@@ -12,7 +12,7 @@ ct_data = [path_data 'preventad_civet_vertex_bl_20160316.mat'];
 msteps_part = [path_data 'msteps_part.mat'];
 path_out = '/Users/AngelaTam/Desktop/adsf/adsf_assoc_ct_cog_20160316/';
 
-nb_net = 11; % number of networks
+nb_net = 9; % number of networks
 nb_subt = 5; % number of subtypes
 
 col = [0 0 0; 0 0 0; 0 0 0];
@@ -91,16 +91,15 @@ for nn = 1:nb_net
     for gg = 1:nb_subt
         for cc = 1:length(list_contrast)
             contrast = list_contrast{cc};
-            figure % 4+cc in the following lines because the first four variables in the model are the intercept + confounds
-            plot(model(nn).(contrast).x(:,4+cc),model(nn).(contrast).y(:,gg),'o','markersize',7,'markeredgecolor', (col(3,:)), 'markerfacecolor', (col(3,:)+[2 2 2])/3,'linewidth', 0.3);
+            figure 
+            plot(model(nn).(contrast).x(:,5),model(nn).(contrast).y(:,gg),'o','markersize',7,'markeredgecolor', (col(3,:)), 'markerfacecolor', (col(3,:)+[2 2 2])/3,'linewidth', 0.3);
             hold on
-            beta = niak_lse(model(nn).(contrast).y(:,gg),[ones(size(model(nn).(contrast).y(:,gg))) model(nn).(contrast).x(:,4+cc)]);
-            plot(model(nn).(contrast).x(:,4+cc),[ones(size(model(nn).(contrast).y(:,gg))) model(nn).(contrast).x(:,4+cc)]*beta,'linewidth',0.3,'color', (col(3,:)));
+            beta = niak_lse(model(nn).(contrast).y(:,gg),[ones(size(model(nn).(contrast).y(:,gg))) model(nn).(contrast).x(:,5)]);
+            plot(model(nn).(contrast).x(:,5),[ones(size(model(nn).(contrast).y(:,gg))) model(nn).(contrast).x(:,5)]*beta,'linewidth',0.3,'color', (col(3,:)));
             namefig = [path_out 'net' num2str(nn) '_subt' num2str(gg) '_' contrast '.pdf'];
             print(namefig,'-dpdf','-r300')
             close all
         end
     end
 end
-
 
