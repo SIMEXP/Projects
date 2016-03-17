@@ -17,7 +17,7 @@ nb_subt = 5; % number of subtypes
 
 col = [0 0 0; 0 0 0; 0 0 0];
 
-model = '/Users/AngelaTam/Desktop/adsf/model/preventad_model_vol_bl_dr2_20160316.csv'; % model containing variables of interest and no interest 
+model = '/Users/AngelaTam/Desktop/adsf/model/preventad_model_vol_bl_dr2_20160316_qc.csv'; % model containing variables of interest and no interest 
 [tab,list_sub,ly] = niak_read_csv(model);
 
 % load cortical thickness data
@@ -32,7 +32,6 @@ mask_nnan = ~max(isnan(model.x),[],2);
 model.x = model.x(mask_nnan,:); 
 data = ct(mask_nnan,:,:);  % putting a mask to get rid of NaNs over the loaded variable ct (from ct_data)
 tab = tab(mask_nnan,:); % mask to get rid of NaNs within tab
-vol_sf = vol(mask_nnan,:); % mask to get rid of NaNs within vol_sf
 list_sub = list_sub(mask_nnan);
 
 for nn = 1:size(data,3)
@@ -46,7 +45,7 @@ end
     
 
 %% subtyping the residual glm (left after regressing confounds)
-file_sub = [path_out 'ct_subtypes_20160313.mat'];
+file_sub = [path_out 'ct_subtypes_20160316.mat'];
 
 for nn = 1:nb_net
     sub(nn) = niak_build_subtypes(data,nb_subt,part(:,2)==(nn));
@@ -102,4 +101,3 @@ for nn = 1:nb_net
         end
     end
 end
-
