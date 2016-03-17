@@ -30,33 +30,40 @@ load(ct_data)
 % load basc parcellation
 load(msteps_part)
 
-%% regress out confounding variables (age, fd, gender)
+%%
 
-model.x = [ones(length(list_sub),1) tab(:,1) tab(:,2) tab(:,18)];
-mask_nnan = ~max(isnan(model.x),[],2);
-model.x = model.x(mask_nnan,:); 
-data = ct(mask_nnan,:,:);  % putting a mask to get rid of NaNs over the loaded variable ct (from ct_data)
-tab = tab(mask_nnan,:); % mask to get rid of NaNs within tab
-vol_sf = vol(mask_nnan,:); % mask to get rid of NaNs within vol_sf
-list_sub = list_sub(mask_nnan);
+% load subtypes from previous subtyping xp
+ct_subtype = '/Users/AngelaTam/Desktop/adsf/adsf_assoc_ct_vol_20160316/ct_subtypes_20160316.mat';
+load(ct_subtype)
 
-for nn = 1:size(data,3)
-    model.y = data(:,:,nn);
-    model.c = [1 0 0 0];
-    opt_glm.test = 'ttest';
-    opt_glm.flag_residuals = true;
-    glm = niak_glm(model,opt_glm);
-    data(:,:,nn) = glm.e;
-end
-    
 
-%% subtyping the residual glm (left after regressing confounds)
-file_sub = [path_out 'ct_subtypes_20160316.mat'];
-
-for nn = 1:nb_net
-    sub(nn) = niak_build_subtypes(data,nb_subt,part(:,2)==(nn));
-end
-save(file_sub,'sub')
+% %% regress out confounding variables (age, fd, gender)
+% 
+% model.x = [ones(length(list_sub),1) tab(:,1) tab(:,2) tab(:,18)];
+% mask_nnan = ~max(isnan(model.x),[],2);
+% model.x = model.x(mask_nnan,:); 
+% data = ct(mask_nnan,:,:);  % putting a mask to get rid of NaNs over the loaded variable ct (from ct_data)
+% tab = tab(mask_nnan,:); % mask to get rid of NaNs within tab
+% vol_sf = vol(mask_nnan,:); % mask to get rid of NaNs within vol_sf
+% list_sub = list_sub(mask_nnan);
+% 
+% for nn = 1:size(data,3)
+%     model.y = data(:,:,nn);
+%     model.c = [1 0 0 0];
+%     opt_glm.test = 'ttest';
+%     opt_glm.flag_residuals = true;
+%     glm = niak_glm(model,opt_glm);
+%     data(:,:,nn) = glm.e;
+% end
+%     
+% 
+% %% subtyping the residual glm (left after regressing confounds)
+% file_sub = [path_out 'ct_subtypes_20160316.mat'];
+% 
+% for nn = 1:nb_net
+%     sub(nn) = niak_build_subtypes(data,nb_subt,part(:,2)==(nn));
+% end
+% save(file_sub,'sub')
 
 %% glm to test for associations between subtypes and variables of interest 
 
