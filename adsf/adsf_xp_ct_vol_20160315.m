@@ -17,7 +17,7 @@ nb_subt = 5; % number of subtypes
 
 col = [0 0 0; 0 0 0; 0 0 0];
 
-model = '/Users/AngelaTam/Desktop/adsf/model/preventad_model_vol_bl_dr2_20160316_qc_2.csv'; % model containing variables of interest and no interest (note: removed failed qc [rs-fmri, civet, and/or t1] from this model)
+model = '/Users/AngelaTam/Desktop/adsf/model/preventad_model_vol_bl_dr2_20160316_qc_2.csv'; % model containing variables of interest and no interest (note: removed failed qc [rs-fmri, civet], failed T1s are filled with Nans for this model)
 [tab,list_sub,ly] = niak_read_csv(model);
 
 % Extract volume measures from model
@@ -33,7 +33,7 @@ load(msteps_part)
 %%
 
 % load subtypes from previous subtyping xp
-ct_subtype = '/Users/AngelaTam/Desktop/adsf/adsf_assoc_ct_vol_20160316/ct_subtypes_20160316.mat';
+ct_subtype = '/Users/AngelaTam/Desktop/adsf/adsf_ct_subtypes_20160316/ct_subtypes_20160316.mat';
 load(ct_subtype)
 
 
@@ -69,7 +69,7 @@ load(ct_subtype)
 
 % generate the models, do the GLMs, and save them
 
-file_res = [path_out 'adsf_glm_20160316.mat'];
+file_res = [path_out 'adsf_glm_vol_20160316.mat'];
 list_contrast = {'pari_r_gm','occi_r_gm','pari_l_gm','occi_l_gm','fron_l_gm','fron_r_gm','temp_l_gm','temp_r_gm','hipp_r_gm','hipp_l_gm'};
 list_covariate = [5 6 7 8 23 24 25 26 39 40];
 glm = struct();
