@@ -7,23 +7,23 @@
 
 clear
 
-path_data = '/Users/AngelaTam/Desktop/adsf/adsf_basc_ct_20160204/';
-ct_data = [path_data 'preventad_civet_vertex_bl_20160202.mat'];
+path_data = '/Users/AngelaTam/Desktop/adsf/adsf_basc_ct_20160316/';
+ct_data = [path_data 'preventad_civet_vertex_bl_20160316.mat'];
 msteps_part = [path_data 'msteps_part.mat'];
-path_out = '/Users/AngelaTam/Desktop/adsf/adsf_assoc_ct_vol_20160313/';
+path_out = '/Users/AngelaTam/Desktop/adsf/adsf_assoc_ct_vol_20160316/';
 
-nb_net = 11; % number of networks
+nb_net = 9; % number of networks
 nb_subt = 5; % number of subtypes
 
 col = [0 0 0; 0 0 0; 0 0 0];
 
-model = '/Users/AngelaTam/Desktop/adsf/model/preventad_model_vol_bl_dr2_20160313_nan_qc.csv'; % model containing variables of interest and no interest (note: removed failed qc and missing gm values from this model)
+model = '/Users/AngelaTam/Desktop/adsf/model/preventad_model_vol_bl_dr2_20160316_qc_2.csv'; % model containing variables of interest and no interest (note: removed failed qc [rs-fmri, civet, and/or t1] from this model)
 [tab,list_sub,ly] = niak_read_csv(model);
 
 % Extract volume measures from model
-vol = tab(:,23:end);
+vol = tab(:,24:end);
 vol_sf = vol(:,2:end) .* repmat(vol(:,1),[1 size(vol,2)-1]); % multiply all individual raw volumes by the scale factor
-labels_vol_sf = ly(24:end); % labels for volume measures
+labels_vol_sf = ly(25:end); % labels for volume measures
 
 % load cortical thickness data
 load(ct_data)
@@ -51,7 +51,7 @@ end
     
 
 %% subtyping the residual glm (left after regressing confounds)
-file_sub = [path_out 'ct_subtypes_20160313.mat'];
+file_sub = [path_out 'ct_subtypes_20160316.mat'];
 
 for nn = 1:nb_net
     sub(nn) = niak_build_subtypes(data,nb_subt,part(:,2)==(nn));
@@ -62,7 +62,7 @@ save(file_sub,'sub')
 
 % generate the models, do the GLMs, and save them
 
-file_res = [path_out 'adsf_glm_20160313.mat'];
+file_res = [path_out 'adsf_glm_20160316.mat'];
 list_contrast = {'pari_r_gm','occi_r_gm','pari_l_gm','occi_l_gm','fron_l_gm','fron_r_gm','temp_l_gm','temp_r_gm','hipp_r_gm','hipp_l_gm'};
 list_covariate = [5 6 7 8 23 24 25 26 39 40];
 glm = struct();
