@@ -33,8 +33,8 @@
 % THE SOFTWARE.
 
 clear all 
-addpath(genpath('/gs/project/gsf-624-aa/quarantaine/niak-boss-0.13.4b'))  
-addpath(genpath('/home/yassinebha/github_repos/Projects')) 
+%addpath(genpath('/gs/project/gsf-624-aa/quarantaine/niak-boss-0.13.4b'))  
+%addpath(genpath('/home/yassinebha/github_repos/Projects')) 
 %%%%%%%%%%%%%%%%%%%%%
 %% Grabbing the results from the NIAK fMRI preprocessing pipeline
 %%%%%%%%%%%%%%%%%%%%%
@@ -105,6 +105,6 @@ opt.flag_group = true;  % Generate maps/time series at the group level
 %% Run the pipeline %%
 %%%%%%%%%%%%%%%%%%%%%%
 opt.flag_test = false; % Put this flag to true to just generate the pipeline without running it. Otherwise the region growing will start. 
-opt.psom.qsub_options = '-q sw -l nodes=1:ppn=3,pmem=3700m,walltime=36:00:00';
+opt.psom.qsub_options = '-q sw -A gsf-624-aa -l nodes=1:ppn=6,pmem=3700m,walltime=36:00:00';
 %opt.psom.max_queued = 2; % Uncomment and change this parameter to set the number of parallel threads used to run the pipeline
 pipeline = niak_pipeline_stability_rest(files_in,opt); 
