@@ -23,7 +23,7 @@ niak_gb_vars
 server          = strtrim(cmdout);
 if strfind(server,'lg-1r') % This is guillimin
     root_path = '/gs/project/gsf-624-aa/HCP/';
-    path_raw  = [ root_path '/HCP_raw_data/'];
+    path_raw  = [ root_path '/HCP_raw_data_900R/'];
     fprintf ('server: %s (Guillimin) \n ',server)
     my_user_name = getenv('USER');
 elseif strfind(server,'ip05') % this is mammouth
@@ -51,7 +51,7 @@ end
 list_task = {'EMOTION', 'GAMBLING','LANGUAGE','MOTOR','RELATIONAL','SOCIAL','WM','REST1','REST2'};
 list_run = {'LR' , 'RL'};
 path_nii = path_raw ;
-path_mnc = [ root_path  'HCP_raw_mnc/' ];
+path_mnc = [ root_path  'HCP_raw_mnc_900R/' ];
 opt_pipe.path_logs = [path_mnc 'logs_conversion'];
 list_subject = dir(path_nii);
 list_subject = {list_subject(3:end).name};
