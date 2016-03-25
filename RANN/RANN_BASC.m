@@ -33,23 +33,25 @@
 % OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 % THE SOFTWARE.
 
-clear 
-path_data = '/home/perrine/scratch/RANN/RANN_preproc_issue100_final_16.01.30/';
-%%%%%%%%%%%%%% ????????????????? %%%%%%%%%%%%%%
-%use new library??
+clear
+path_niak = ('/gs/project/gsf-624-aa/quarantaine/niak-issue100/');
+addpath(genpath(path_niak))
+
+%%%%%%%%%%%%%
+path_data = '/home/perrine/scratch/RANN/FINAL_preprocess_test_issue100_16.03.03/';
+%use new library
 path_niak = ('/gs/project/gsf-624-aa/quarantaine/niak-issue100/');
 %path_niak= '/home/perrine/quarantaine/niak-boss-0.13.4/';
-path_out  = '/home/perrine/scratch/RANN/RANN_BASC-2/';
-addpath(genpath(path_niak))
+path_out  = '/home/perrine/scratch/RANN/RANN_BASC-4_rest/';
 %%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%
-opt_g.min_nb_vol = 100;     % The minimum number of volumes for an fMRI dataset to be included. This option is useful when scrubbing is used, and the resulting time series may be too short.
-opt_g.min_xcorr_func = 0.5; % The minimum xcorr score for an fMRI dataset to be included. This metric is a tool for quality control which assess the quality of non-linear coregistration of functional images in stereotaxic space. Manual inspection of the values during QC is necessary to properly set this threshold.
+opt_g.min_nb_vol = 50;     % The minimum number of volumes for an fMRI dataset to be included. This option is useful when scrubbing is used, and the resulting time series may be too short.
+opt_g.min_xcorr_func = 0; % The minimum xcorr score for an fMRI dataset to be included. This metric is a tool for quality control which assess the quality of non-linear coregistration of functional images in stereotaxic space. Manual inspection of the values during QC is necessary to properly set this threshold.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%????????????????????????????%%%%%%%%%%%%%%%%%%%
 %should we increase the threshold? but many excluded already! %%%
-opt_g.min_xcorr_anat = 0.5; % The minimum xcorr score for an fMRI dataset to be included. This metric is a tool for quality control which assess the quality of non-linear coregistration of the anatomical image in stereotaxic space. Manual inspection of the values during QC is necessary to properly set this threshold.
+opt_g.min_xcorr_anat = 0; % The minimum xcorr score for an fMRI dataset to be included. This metric is a tool for quality control which assess the quality of non-linear coregistration of the anatomical image in stereotaxic space. Manual inspection of the values during QC is necessary to properly set this threshold.
 
 %opt_g.exclude_subject = {'subject1','subject2'}; % If for whatever reason some subjects have to be excluded that were not caught by the quality control metrics, it is possible to manually specify their IDs here.
 
@@ -88,14 +90,13 @@ files_in = niak_grab_fmri_preprocess(path_data ,opt_g); % Replace the folder by 
 %%%%%%%%%%%%%
 %% Options %%
 %%%%%%%%%%%%%
-
 opt.folder_out = path_out; % Where to store the results
 opt.region_growing.thre_size = 1000; %  the size of the regions, when they stop growing. A threshold of 1000 mm3 will give about 1000 regions on the grey matter. 
 opt.grid_scales = [10:10:100 120:20:200 240:40:500]'; % Search for stable clusters in the range 10 to 500 
 opt.scales_maps = repmat(opt.grid_scales,[1 3]); % The scales that will be used to generate the maps of brain clusters and stability. 
                                                  % In this example the same number of clusters are used at the individual (first column), 
                                                  % group (second column) and consensus (third and last colum) levels.
-opt.stability_tseries.nb_samps = 100; % Number of bootstrap samples at the individual level. 100: the CI on indidividual stability is +/-0.1
+opt.stability_tseries.nb_samps = 100; %Number of bootstrap samples at the individual level. 100: the CI on indidividual stability is +/-0.1
 opt.stability_group.nb_samps = 500; % Number of bootstrap samples at the group level. 500: the CI on group stability is +/-0.05
 
 opt.flag_ind = true;   % Generate maps/time series at the individual level
@@ -107,10 +108,10 @@ opt.flag_group = true;  % Generate maps/time series at the group level
 %%%%%%%%%%%%%%%%%%%%%%
 opt.flag_test = false; % Put this flag to true to just generate the pipeline without running it. Otherwise the region growing will start. 
 opt.psom.max_queued = 300; % Uncomment and change this parameter to set the number of parallel threads used to run the pipeline
-opt.psom.max_queued              =  304;       % Number of jobs that can run in parallel. In batch mode, this is usually the number of cores.
+%opt.psom.max_queued              =  304;       % Number of jobs that can run in parallel. In batch mode, this is usually the number of cores.
 opt.time_between_checks = 60;
 %verbose opt
 opt.psom.nb_resub = 3;
-%so that workers stop beeing killed by walltime after 3h
-opt.psom.qsub_options = '-A gsf-624-aa -q sw -l walltime=7:00:00';
+%so that workers stop beeing killed by walltime after 36h
+opt.psom.qsub_options = '-A gsf-624-aa -q sw -l nodes=1:ppn=3,pmem=3700m,walltime=36:00:00';
 pipeline = niak_pipeline_stability_rest(files_in,opt);

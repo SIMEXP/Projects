@@ -372,7 +372,9 @@ TabResult$LL_ACE <- as.numeric(TabResult$LL_ACE)
 TabResult$LL_ACE_p <- as.numeric(TabResult$LL_ACE_p)
 TabResult$shapiroPvalue_Tw1 <- as.numeric(TabResult$shapiroPvalue_Tw1)
 TabResult$shapiroPvalue_Tw2 <- as.numeric(TabResult$shapiroPvalue_Tw2)
-
+#claculate fdr
+p <- TabResult$a2_p
+a2_fdr <- p.adjust(p,method = "BH")
 # Write a hdf5 copy of the results table 
 #source("http://bioconductor.org/biocLite.R")
 #biocLite("rhdf5")
