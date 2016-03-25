@@ -1,14 +1,17 @@
-function img = niak_vol2img(hdr,vol,coord,method)
+function [img,slices] = niak_vol2img(hdr,vol,coord,opt)
 % Generate an image file with a brain sagital, coronal and axial slices. 
 %
-% [] = NIAK_VOL2IMG( VOL , HDR , COORD , INTERP )
+% [IMG,SLICES] = NIAK_VOL2IMG( VOL , HDR , COORD , INTERP )
 %
 % HDR.SOURCE (structure) the header of the volume
 % HDR.TARGET (structure) the header of a volume defining the sampling space
 % VOL        (3D array) brain volume, in stereotaxic space.
 % COORD      (vector 1x3) defines which slices to display (X,Y,Z).
-% METHOD     (string, default 'spline') the spatial interpolation 
+% OPT.METHOD     (string, default 'linear') the spatial interpolation 
 %            method. See METHOD in INTERP2.
+% OPT.TYPE_FLIP (string, default 'rot90') how to flip slices to represent them. 
+% IMG (array) all three slices assembled into a single image, in target space. 
+% SLICES (cell of array) each entry is one slice (x, y, then z). 
 % 
 % Copyright (c) Pierre Bellec 
 % Centre de recherche de l'Institut universitaire de gériatrie de Montréal, 2012.
@@ -36,19 +39,24 @@ function img = niak_vol2img(hdr,vol,coord,method)
  
 %% Default options
 if nargin < 3
-    error('Please specify VOl, HDR, and COORD') 
+    error('Please specify VOL, HDR, and COORD') 
 end
 if nargin < 4
-    method = 'spline';
+    opt = struct;
+    method = 'linear';
 end
 
+opt = psom_struct_defaults(opt, ...
+    { 'method' , 'type_flip' }, ...
+    {'linear'     , 'rot90'      });
+    
 %% get coordinates in voxel space
 coord_w = coord(1:3);
 coord_w = coord_w(:)';
 coord_vs = round(niak_coord_world2vox(coord_w,hdr.source.info.mat));
 coord_vt = round(niak_coord_world2vox(coord_w,hdr.target.info.mat));
 
-%% sized of the target space 
+%% size of the source and target space 
 dim_s = hdr.source.info.dimensions(1:3);
 dim_t = hdr.target.info.dimensions(1:3);
 
@@ -60,7 +68,7 @@ yy_ws = reshape(slice_ws(:,2),size(yy_vs));
 zz_ws = reshape(slice_ws(:,3),size(zz_vs));
 
 %% resample the three slices 
-img = cell(3,1);
+slices = cell(3,1);
 for dd = 1:3 % loop over dimensions x, y, z
     % generate the source image 
     % and the coordinates of pixels in source and target 
@@ -80,5 +88,16 @@ for dd = 1:3 % loop over dimensions x, y, z
     zz_wt = reshape(slice_wt(:,3),size(zz_vt));
 
     %% resample
-    img{dd} = squeeze(interpn(xx_ws,yy_ws,zz_ws,vol,xx_wt,yy_wt,zz_wt));
+    slices{dd} = niak_flip_vol(squeeze(interpn(xx_ws,yy_ws,zz_ws,vol,xx_wt,yy_wt,zz_wt,opt.method)),opt.type_flip);
 end
+
+%% The montage image
+size_h = max([size(slices{1},1),size(slices{2},1),size(slices{3},1)]);
+size_w = size(slices{1},2)+size(slices{2},2)+size(slices{3},2);
+img = zeros(size_h,size_w);
+npad = floor((size_h-size(slices{1},1))/2);
+img((npad+1):(npad+size(slices{1},1)),1:size(slices{1},2)) = slices{1};
+npad = floor((size_h-size(slices{2},1))/2);
+img((npad+1):(npad+size(slices{2},1)),(1+size(slices{1},2)):(size(slices{1},2)+size(slices{2},2))) = slices{2};
+npad = floor((size_h-size(slices{3},1))/2);
+img((npad+1):(npad+size(slices{3},1)),(1+size(slices{1},2)+size(slices{2},2)):(size(slices{1},2)+size(slices{2},2)+size(slices{3},2))) = slices{3};
