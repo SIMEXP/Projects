@@ -14,7 +14,9 @@ file_template = 'fmri_s[0-9]*_sess1_rest[0-9]*.mnc.gz';
 files_include = {'sess1'};
 
 %changed to reflect nki_multimodal_fiftyplus
-files_reject = {'s0101463', 's0130716', 's0144495', 's0175151'};
+% s0101463 (missing rest645), s0130716 (missing rest2500), s0144495 (missing rest2500), s0175151 (missing rest1400)
+% s0163059 (QC fail), 
+files_reject = {'s0101463', 's0130716', 's0144495', 's0163059', 's0175151'};
 
 
 % Search for the files we need and build the structure
