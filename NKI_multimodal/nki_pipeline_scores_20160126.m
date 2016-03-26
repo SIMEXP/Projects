@@ -1,6 +1,8 @@
 clear all
 
-addpath(genpath('/gs/project/gsf-624-aa/quarantaine/niak-boss-0.13.4/'))
+% addpath(genpath('/gs/project/gsf-624-aa/quarantaine/niak-boss-0.13.4/'))
+
+addpath(genpath('/gs/project/gsf-624-aa/quarantaine/niak-issue100/'))
 
 addpath(genpath('/gs/project/gsf-624-aa/quarantaine/niak_dev_git/extensions/surfstab/'))
 
