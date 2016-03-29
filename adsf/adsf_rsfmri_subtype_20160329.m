@@ -127,20 +127,22 @@ for n_net = 1:length(num_net)
         hdr.file_name = [path_res_net 'std_clusters.nii.gz'];
         niak_write_vol(hdr,vol_avg_subt);
         
-        % The demeaned/z-ified per subtype
-        gd_mean = mean(subt_data);
-        subt_data_ga = subt_data - repmat(gd_mean,[size(data,1),1]);
-        avg_clust = zeros(max(part),size(subt_data,2));
-        for cc = 1:max(part)
-            avg_clust(cc,:) = mean(subt_data_ga(part==cc,:),1);
-        end
-        avg_clust = niak_normalize_tseries(avg_clust','median_mad')';
-        vol_avg = niak_tseries2vol(avg_clust,mask);
-        hdr.file_name = [path_res_net 'mean_clusters_demeaned.nii.gz'];
-        niak_write_vol(hdr,vol_avg);
+%         % The demeaned/z-ified per subtype
+%         gd_mean = mean(data);
+%         subt_data_ga = data - repmat(gd_mean,[size(data,1),1]);
+%         avg_clust = zeros(max(sub(n_net).part),size(data,2));
+%         for cc = 1:max(sub(n_net).part)
+%             avg_clust(cc,:) = mean(subt_data_ga(sub(n_net).part==cc,:),1);
+%         end
+%         avg_clust = niak_normalize_tseries(avg_clust','median_mad')';
+%         vol_avg = niak_tseries2vol(avg_clust,mask);
+%         hdr.file_name = [path_res_net 'mean_clusters_demeaned.nii.gz'];
+%         niak_write_vol(hdr,vol_avg);
         
-        % demeaned subtype
-        vol_demean = niak_tseries2vol(
+        % demeaned/z-fied subtype
+        vol_demean = niak_tseries2vol(sub(n_net).map,mask);
+        hdr.file_name = [path_res_net 'mean_clusters_demeaned_' num2str(num_net(n_net)) '.nii.gz'];
+        niak_write_vol(hdr,vol_demean);
         
         % Mean and std grand average
         hdr.file_name = [path_res_net 'grand_mean_clusters.nii.gz'];
