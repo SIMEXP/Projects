@@ -87,7 +87,7 @@ files_in = niak_grab_fmri_preprocess(path_data ,opt_g); % Replace the folder by 
 %% [tab,labx,laby] = niak_read_csv('/data/infos.csv');
 %% The subject IDs should load in LABX, the covariate IDs load in LABY, and the value of the variables into a numerical array TAB. 
 %%%%%%%%%%%%%%%%%%%%%
-files_in.infos = [path_data 'GLM_synant.csv']; % A file of comma-separeted values describing additional information on the subjects, this can be omitted
+files_in.infos = ['/home/perrine/scratch/RANN/GLM_synant.csv']; % A file of comma-separeted values describing additional information on the subjects, this can be omitted
 %%%%%%%%%%%%%
 %% Options %%
 %%%%%%%%%%%%%
