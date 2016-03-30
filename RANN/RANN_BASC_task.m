@@ -42,11 +42,12 @@ path_data = '/home/perrine/scratch/RANN/FINAL_preprocess_test_issue100_16.03.03/
 %use new library
 path_niak = ('/gs/project/gsf-624-aa/quarantaine/niak-issue100/');
 %path_niak= '/home/perrine/quarantaine/niak-boss-0.13.4/';
-path_out  = '/home/perrine/scratch/RANN/BASC-4_task_synant/';
+path_out  = '/home/perrine/scratch/RANN/BASC-4_task_synant_MSTEPS/';
+
 %%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%
-opt_g.min_nb_vol = 50;     % The minimum number of volumes for an fMRI dataset to be included. This option is useful when scrubbing is used, and the resulting time series may be too short.
+opt_g.min_nb_vol = 60;     % The minimum number of volumes for an fMRI dataset to be included. This option is useful when scrubbing is used, and the resulting time series may be too short.
 opt_g.min_xcorr_func = 0; % The minimum xcorr score for an fMRI dataset to be included. This metric is a tool for quality control which assess the quality of non-linear coregistration of functional images in stereotaxic space. Manual inspection of the values during QC is necessary to properly set this threshold.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%????????????????????????????%%%%%%%%%%%%%%%%%%%
@@ -86,18 +87,24 @@ files_in = niak_grab_fmri_preprocess(path_data ,opt_g); % Replace the folder by 
 %% [tab,labx,laby] = niak_read_csv('/data/infos.csv');
 %% The subject IDs should load in LABX, the covariate IDs load in LABY, and the value of the variables into a numerical array TAB. 
 %%%%%%%%%%%%%%%%%%%%%
-
-% files_in.infos = '/data/infos.csv'; % A file of comma-separeted values describing additional information on the subjects, this can be omitted
-
+files_in.infos = [path_data 'GLM_synant.csv']; % A file of comma-separeted values describing additional information on the subjects, this can be omitted
 %%%%%%%%%%%%%
 %% Options %%
 %%%%%%%%%%%%%
 opt.folder_out = path_out; % Where to store the results
 opt.region_growing.thre_size = 1000; %  the size of the regions, when they stop growing. A threshold of 1000 mm3 will give about 1000 regions on the grey matter. 
 opt.grid_scales = [10:10:100 120:20:200 240:40:500]'; % Search for stable clusters in the range 10 to 500 
-opt.scales_maps = repmat(opt.grid_scales,[1 3]); % The scales that will be used to generate the maps of brain clusters and stability. 
+%opt.scales_maps = repmat(opt.grid_scales,[1 3]); % The scales that will be used to generate the maps of brain clusters and stability. 
                                                  % In this example the same number of clusters are used at the individual (first column), 
                                                  % group (second column) and consensus (third and last colum) levels.
+opt.scales_maps = [10 7 7;...
+ 20 16 18;...
+ 40 32 32;...
+ 70 70 71;...
+ 120 132 139;...
+ 200 220 220;...
+ 320 320 316;...
+ 440 484 422];
 opt.stability_tseries.nb_samps = 100; %Number of bootstrap samples at the individual level. 100: the CI on indidividual stability is +/-0.1
 opt.stability_group.nb_samps = 500; % Number of bootstrap samples at the group level. 500: the CI on group stability is +/-0.05
 
