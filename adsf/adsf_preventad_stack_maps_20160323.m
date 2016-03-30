@@ -3,12 +3,21 @@
 %% set paths
 
 path_in = '/Users/AngelaTam/Desktop/adsf/scores/rmap_part_20160121_nii/';
-path_out = '/Users/AngelaTam/Desktop/adsf/scores/rmap_stack_20160121_nii/';
-path_model = '/Users/AngelaTam/Desktop/adsf/model/preventad_model_vol_bl_dr2_20160316_qc.csv';
+path_out = '/Users/AngelaTam/Desktop/adsf/scores/rmap_stack_20160330_nii/';
+path_model = '/Users/AngelaTam/Desktop/adsf/model/all_model_20160303.csv';
 scale = 7;
 
 %% Read model
-[~,id,~,~] = niak_read_csv(path_model);
+%% Read model
+[tab,id,~,~] = niak_read_csv(path_model);
+
+% redefine model (exclude unnecessary stuff)
+exclude_adnimtl = tab(:,13) == 1; % exclude adnimtl subjects
+tab(exclude_adnimtl,:) = [];
+id(exclude_adnimtl,:) = [];
+
+exclude_nki = tab(:,12) == 1; % exclude nki subjects
+id(exclude_nki,:) = [];
 
 %% Create output directory
 psom_mkdir(path_out)
