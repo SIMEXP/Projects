@@ -13,8 +13,7 @@ path_results = '/Users/AngelaTam/Desktop/adsf/adsf_rsfmri_subtypes_20160330/';
 psom_mkdir(path_results)
 
 %% set subtyping variables
-nb_net = 7; % number of networks to subtype
-num_net = [1 2 3 4 5 6 7]; % numbers of the networks (from parcellation)
+num_net = [1 2 3 4 5 6 7]; % numbers of the networks (from parcellation) to subtype
 nb_subt = 3; % number of subtypes (subject clusters)
 
 %% read model
@@ -61,7 +60,7 @@ end
 
 file_sub = [path_results 'rsfmri_subtypes_20160330.mat'];
 
-for nn = 1:nb_net
+for nn = 1:length(num_net)
     sub(nn) = niak_build_subtypes(data,nb_subt);
 end
 save(file_sub,'sub')
