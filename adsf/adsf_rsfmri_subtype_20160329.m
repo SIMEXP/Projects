@@ -24,12 +24,10 @@ model = '/Users/AngelaTam/Desktop/adsf/model/preventad_model_vol_bl_dr2_20160316
 %% Load and extract betas from select data (intercept only)
 
 for n_net = 1:length(num_net)
-   
     file_stack = [path_data,'stack_net_' num2str(num_net(n_net)) '.nii.gz'];
     [hdr,stack] = niak_read_vol(file_stack);
     [hdr,mask] = niak_read_vol(path_mask);
     raw_data = niak_vol2tseries(stack,mask);
-    
 end
 
 %% regress out confounding variables (age, fd, gender) prior to subtyping
@@ -59,21 +57,6 @@ for nn = 1:nb_net
 end
 save(file_sub,'sub')
 
-%% Write csv for weights
-
-% for cc = 1:max(part)
-%     avg_clust(cc,:) = mean(subt_data(part==cc,:),1);
-%     weights(:,cc) = corr(data',avg_clust(cc,:)');
-% end
-% 
-% opt.labels_y = name_clus;
-% opt.labels_x = sample_id;
-% opt.precision = 3;
-% if n_run ==1
-%     path = [path_res_net 'weights_1.csv'];
-% else path = [path_res_net 'weights_2.csv'];
-% end
-% niak_write_csv(path,weights,opt);
 
 %% Write volumes
 
@@ -118,6 +101,24 @@ for n_net = 1:length(num_net)
     niak_write_vol(hdr,std(stack,0,4));
 end
 
+
+%% Write csv for weights
+
+name_clus = {'subt1','subt2','subt3'};
+
+for n_net = 1:length(num_net)
+    for cc = 1:max(sub(n_net).part)
+        avg_clust(cc,:) = mean(data(sub(n_net).part==cc,:),1);
+        weights(:,cc) = corr(data',avg_clust(cc,:)');
+    end
+    
+    opt.labels_y = name_clus;
+    opt.labels_x = list_sub;
+    opt.precision = 3;
+    path_res_net = [path_results 'net_' num2str(num_net(n_net)) '/'];
+    path = [path_res_net 'net' num2str(num_net(n_net)) '_weights.csv'];
+    niak_write_csv(path,weights,opt);
+end
 
 %%
 % %% glm to test for associations between subtypes and variables of interest 
