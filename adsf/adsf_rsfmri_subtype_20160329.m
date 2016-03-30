@@ -13,32 +13,18 @@ path_results = '/Users/AngelaTam/Desktop/adsf/adsf_rsfmri_subtypes_20160329/';
 
 % set subtyping variables
 nb_net = 7; % number of networks to subtype
-num_net = [1 2 3 4 5 6 7]; % numbers of the networks
-name_net = {'cer','lim','mot','vis','dmn','cen','san'}; % name of networks
+num_net = [1 2 3 4 5 6 7]; % numbers of the networks (from parcellation)
 nb_subt = 3; % number of subtypes (subject clusters)
-name_clus = {'subt1','subt2','subt3'};
-num_select = 19; % = fsfmri_qc = 1 for all subjects
-num_sample = 19;
-num_sex = 1;
-num_age = 2;
-num_fd = 18;
 
-col = [0 0 0; 0 0 0; 0 0 0];
-
+% read model
 model = '/Users/AngelaTam/Desktop/adsf/model/preventad_model_vol_bl_dr2_20160316_qc.csv'; % model containing variables of interest and no interest 
 [tab,list_sub,ly] = niak_read_csv(model);
 
 
-%% Clustering
-
-% struct_test = zeros(length(num_var),nb_subt,length(num_net));
-% pce = struct_test;
-% test_fdr_single = struct_test;
-
+%% Load and extract betas from select data (intercept only)
 
 for n_net = 1:length(num_net)
-    
-    % Load and extract betas from select data (intercept only)
+   
     file_stack = [path_data,'stack_net_' num2str(num_net(n_net)) '.nii.gz'];
     [hdr,stack] = niak_read_vol(file_stack);
     [hdr,mask] = niak_read_vol(path_mask);
@@ -46,8 +32,7 @@ for n_net = 1:length(num_net)
     
 end
 
-
-%% regress out confounding variables (age, fd, gender)
+%% regress out confounding variables (age, fd, gender) prior to subtyping
 
 model.x = [ones(length(list_sub),1) tab(:,1) tab(:,2) tab(:,18)];
 mask_nnan = ~max(isnan(model.x),[],2);
@@ -63,10 +48,10 @@ for nn = 1:size(data,3)
     opt_glm.flag_residuals = true;
     glm = niak_glm(model,opt_glm);
     data(:,:,nn) = glm.e;
-end
-    
+end    
 
 %% subtyping the residual glm (left after regressing confounds)
+
 file_sub = [path_results 'rsfmri_subtypes_20160329_TEST.mat'];
 
 for nn = 1:nb_net
@@ -74,12 +59,27 @@ for nn = 1:nb_net
 end
 save(file_sub,'sub')
 
+%% Write csv for weights
+
+% for cc = 1:max(part)
+%     avg_clust(cc,:) = mean(subt_data(part==cc,:),1);
+%     weights(:,cc) = corr(data',avg_clust(cc,:)');
+% end
+% 
+% opt.labels_y = name_clus;
+% opt.labels_x = sample_id;
+% opt.precision = 3;
+% if n_run ==1
+%     path = [path_res_net 'weights_1.csv'];
+% else path = [path_res_net 'weights_2.csv'];
+% end
+% niak_write_csv(path,weights,opt);
 
 %% Write volumes
 
 for n_net = 1:length(num_net)
     
-    % Create ouptut directories
+    % Create ouptut directories for each network
     path_res_net = [path_results 'net_' num2str(num_net(n_net)) '/'];
     psom_mkdir(path_res_net)
     
@@ -94,7 +94,7 @@ for n_net = 1:length(num_net)
     
     % The std per subtype
     std_clust_subt = zeros(max(sub(n_net).part),size(data,2));
-    for cc = 1:max(part)
+    for cc = 1:max(sub(n_net).part)
         std_clust_subt(cc,:) = std(data(sub(n_net).part==cc,:),1);
     end
     vol_std_subt = niak_tseries2vol(std_clust_subt,mask);
@@ -103,12 +103,12 @@ for n_net = 1:length(num_net)
     
     % demeaned/z-fied subtype
     vol_demean = niak_tseries2vol(sub(n_net).map,mask);
-    hdr.file_name = [path_res_net 'mean_clusters_demeaned_net' num2str(num_net(n_net)) '.nii.gz'];
+    hdr.file_name = [path_res_net 'demean_clusters_net' num2str(num_net(n_net)) '.nii.gz'];
     niak_write_vol(hdr,vol_demean);
     
     % t-test between subtype and mean
     vol_ttest = niak_tseries2vol(sub(n_net).ttest,mask);
-    hdr.file_name = [path_res_net 'mean_clusters_ttest_net' num2str(num_net(n_net)) '.nii.gz'];
+    hdr.file_name = [path_res_net 'ttest_clusters_net' num2str(num_net(n_net)) '.nii.gz'];
     niak_write_vol(hdr,vol_ttest);
     
     % Mean and std grand average
@@ -117,6 +117,7 @@ for n_net = 1:length(num_net)
     hdr.file_name = [path_res_net 'grand_std_clusters_net' num2str(num_net(n_net)) '.nii.gz'];
     niak_write_vol(hdr,std(stack,0,4));
 end
+
 
 %%
 % %% glm to test for associations between subtypes and variables of interest 
