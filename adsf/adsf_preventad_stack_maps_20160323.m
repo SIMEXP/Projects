@@ -1,5 +1,7 @@
 %% script to build stack maps with prevent-ad data release 2.0
 
+clear all
+
 %% set paths
 
 path_in = '/Users/AngelaTam/Desktop/adsf/scores/rmap_part_20160121_nii/';
@@ -7,7 +9,6 @@ path_out = '/Users/AngelaTam/Desktop/adsf/scores/rmap_stack_20160330_nii/';
 path_model = '/Users/AngelaTam/Desktop/adsf/model/all_model_20160303.csv';
 scale = 7;
 
-%% Read model
 %% Read model
 [tab,id,~,~] = niak_read_csv(path_model);
 
