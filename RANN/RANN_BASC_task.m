@@ -42,12 +42,12 @@ path_data = '/home/perrine/scratch/RANN/FINAL_preprocess_test_issue100_16.03.03/
 %use new library
 path_niak = ('/gs/project/gsf-624-aa/quarantaine/niak-issue100/');
 %path_niak= '/home/perrine/quarantaine/niak-boss-0.13.4/';
-path_out  = '/home/perrine/scratch/RANN/BASC-4_task_synant_MSTEPS/';
+path_out  = '/home/perrine/scratch/RANN/BASC-4_task_synant/';
 
 %%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%
-opt_g.min_nb_vol = 60;     % The minimum number of volumes for an fMRI dataset to be included. This option is useful when scrubbing is used, and the resulting time series may be too short.
+opt_g.min_nb_vol = 50;     % The minimum number of volumes for an fMRI dataset to be included. This option is useful when scrubbing is used, and the resulting time series may be too short.
 opt_g.min_xcorr_func = 0; % The minimum xcorr score for an fMRI dataset to be included. This metric is a tool for quality control which assess the quality of non-linear coregistration of functional images in stereotaxic space. Manual inspection of the values during QC is necessary to properly set this threshold.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%????????????????????????????%%%%%%%%%%%%%%%%%%%
