@@ -19,14 +19,14 @@ files_in.part = '/gs/project/gsf-624-aa/database2/preventad/templates/template_c
 
 % opt: files_out
 opt_scores = struct;
-opt_scores.files_out.stability_maps = false;
+opt_scores.files_out.stability_maps = true;
 opt_scores.files_out.partition_cores = false;
 opt_scores.files_out.stability_intra = false;
 opt_scores.files_out.stability_inter = false;
 opt_scores.files_out.stability_contrast = false;
 opt_scores.files_out.partition_thresh = false;
 opt_scores.files_out.rmap_part = true;
-opt_scores.files_out.rmap_cores = false;
+opt_scores.files_out.rmap_cores = true;
 opt_scores.files_out.dual_regression = false;
 
 % note this option is missing from the documentation and have asked for this to be fixed
