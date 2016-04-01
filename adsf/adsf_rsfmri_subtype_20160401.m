@@ -2,14 +2,15 @@
 
 %% script for building resting-state network subtypes
 %% prevent-ad dataset, data release 2.0
+%% concatenated rest 1 and rest 2; 231 subjects
 
 %%%%%%%%%%%%%%%%%%%%%%
 
 clear
 
-path_data = '/Users/AngelaTam/Desktop/adsf/scores/rmap_stack_20160330_nii/';  % grab the stack maps first
+path_data = '/Users/AngelaTam/Desktop/adsf/scores/rmap_stack_20160401/';  % grab the stack maps first
 path_mask = '/Users/AngelaTam/Desktop/adsf/scores/mask.nii.gz'; % mask covering grey matter only
-path_results = '/Users/AngelaTam/Desktop/adsf/adsf_rsfmri_subtypes_20160330/';
+path_results = '/Users/AngelaTam/Desktop/adsf/adsf_rsfmri_subtypes_20160401/';
 psom_mkdir(path_results)
 
 %% set subtyping variables
@@ -58,7 +59,7 @@ end
 
 %% subtyping the residual glm (left after regressing confounds)
 
-file_sub = [path_results 'rsfmri_subtypes_20160330.mat'];
+file_sub = [path_results 'rsfmri_subtypes_20160401.mat'];
 
 for nn = 1:length(num_net)
     sub(nn) = niak_build_subtypes(data,nb_subt);
