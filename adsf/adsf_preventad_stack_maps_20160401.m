@@ -1,5 +1,5 @@
 %% script to build stack maps with prevent-ad data release 2.0
-% 231 subjects with resting-state
+% 231 subjects with resting-state (concatenated rest 1 and rest 2)
 
 clear all
 
