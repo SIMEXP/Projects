@@ -10,7 +10,7 @@ path_data = path_data = '/home/perrine/scratch/RANN/';
 %%%%%%%%%%%%
 %% Grabbing the results from BASC
 %%%%%%%%%%%%
-files_in = niak_grab_stability_rest([path_data 'BASC-4_task_synant3]); 
+files_in = niak_grab_stability_rest([path_data 'BASC-4_task_synant3']); 
 
 %%%%%%%%%%%%%%%%%%%%%
 %% Grabbing the results from the NIAK fMRI preprocessing pipeline
@@ -33,12 +33,12 @@ files_in.fmri = niak_grab_fmri_preprocess([path_data 'FINAL_preprocess_test_issu
 %%%%%%%%%%%%
 
 %% Group
-files_in.model.group = [path_data ' BEHAV_all_filters_ant_syn.csv'];
+files_in.model.group = [path_data 'BEHAV_all_filters_ant_syn.csv'];
 
 %%%%%%%%%%%%
 %% Options 
 %%%%%%%%%%%%
-opt.folder_out = [path_data 'glm_connectome']; % Where to store the results
+opt.folder_out = [path_data 'RANN_GLMconnectome/GLM_ant']; % Where to store the results
 opt.fdr = 0.1; % The maximal false-discovery rate that is tolerated both for individual (single-seed) maps and whole-connectome discoveries, at each particular scale (multiple comparisons across scales are addressed via permutation testing)
 opt.fwe = 0.05; % The overall family-wise error, i.e. the probablity to have the observed number of discoveries, agregated across all scales, under the global null hypothesis of no association.
 opt.nb_samps = 1000; % The number of samples in the permutation test. This number has to be multiplied by OPT.NB_BATCH below to get the effective number of samples
@@ -58,12 +58,14 @@ opt.flag_rand = false; % if the flag is false, the pipeline is deterministic. Ot
 
 %% ANTONYMS ONLY
 opt.test.onevstwo.group.contrast.ageGroup3 = 1; % define contrast of interest
-opt.test.ageGroup3.group.contrast.education = 0; % regress out confounding variable
-opt.test.ageGroup3.group.contrast.genderMF = 0; % regress out confounding variable
-opt.test.avg_one.group.select(1).label = 'filter_in_ant'; % select only synonyms
-opt.test.avg_one.group.select(1).values = 1;
-opt.test.ageGroup3.group.select(2).label = 'ageGroup3'; 
-opt.test.ageGroup3.group.select(2).values = [1 2];
+opt.test.onevstwo.group.contrast.education = 0; % regress out confounding variable
+opt.test.onevstwo.group.contrast.genderMF = 0; % regress out confounding variable
+opt.test.onevstwo.group.select(1).label = 'filter_in_ant'; % select only synonyms
+opt.test.onevstwo.group.select(1).values = 1;
+opt.test.onevstwo.group.select(2).label = 'ageGroup3'; 
+opt.test.onevstwo.group.select(2).values = [1 2];
+opt.test.onevstwo.group.select(2).operation = 'and';
+
 
 %% Group averages
 
@@ -76,16 +78,19 @@ opt.test.avg_one.group.select(1).label = 'filter_in_ant'; % select only synonyms
 opt.test.avg_one.group.select(1).values = 1;
 opt.test.avg_one.group.select(2).label = 'ageGroup3';
 opt.test.avg_one.group.select(2).values = 1;
+opt.test.avg_one.group.select(2).operation = 'and';
+
 
 
 %%% age group 2 (>50 )average connectivity
-opt.test.avg_one.group.contrast.intercept = 1; % define contrast of interest
-opt.test.avg_one.group.contrast.education = 0; % regress out confounding variable
-opt.test.avg_one.group.contrast.genderMF = 0; % regress out confounding variable
-opt.test.avg_one.group.select(1).label = 'filter_in_ant'; % select only synonyms
-opt.test.avg_one.group.select(1).values = 1;
-opt.test.avg_one.group.select(2).label = 'ageGroup3';
-opt.test.avg_one.group.select(2).values = 2;
+opt.test.avg_two.group.contrast.intercept = 1; % define contrast of interest
+opt.test.avg_two.group.contrast.education = 0; % regress out confounding variable
+opt.test.avg_two.group.contrast.genderMF = 0; % regress out confounding variable
+opt.test.avg_two.group.select(1).label = 'filter_in_ant'; % select only synonyms
+opt.test.avg_two.group.select(1).values = 1;
+opt.test.avg_two.group.select(2).label = 'ageGroup3';
+opt.test.avg_two.group.select(2).values = 2;
+opt.test.avg_two.group.select(2).operation = 'and';
 
 
 %%%%%%%%%%%%
