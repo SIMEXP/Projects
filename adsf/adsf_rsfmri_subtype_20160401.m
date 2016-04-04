@@ -36,7 +36,7 @@ for n_net = 1:length(num_net)
     file_stack = [path_data,'stack_net_' num2str(num_net(n_net)) '.nii.gz'];
     [hdr,stack] = niak_read_vol(file_stack);
     [hdr,mask] = niak_read_vol(path_mask);
-    raw_data = niak_vol2tseries(stack,mask);
+    raw_data(n_net).net = niak_vol2tseries(stack,mask);
 end
 
 %% regress out confounding variables (age, fd, gender) prior to subtyping
@@ -44,25 +44,26 @@ end
 model.x = [ones(length(list_sub),1) tab(:,1) tab(:,2) tab(:,3)]; % column numbers from tab/ly (model csv)
 mask_nnan = ~max(isnan(model.x),[],2);
 model.x = model.x(mask_nnan,:); 
-data = raw_data(mask_nnan,:,:);  % putting a mask to get rid of NaNs over the newly created variable raw_data
 tab = tab(mask_nnan,:); % mask to get rid of NaNs within tab
 list_sub = list_sub(mask_nnan);
 
-for nn = 1:size(data,3)
-    model.y = data(:,:,nn);
-    model.c = [1 0 0 0];
-    opt_glm.test = 'ttest';
-    opt_glm.flag_residuals = true;
-    glm = niak_glm(model,opt_glm);
-    data(:,:,nn) = glm.e;
-end    
+for n_net = 1:length(num_net)
+    data(n_net).net = raw_data(n_net).net(mask_nnan,:,:);  % putting a mask to get rid of NaNs over the newly created variable raw_data
+    for nn = 1:size(data,3)
+        model.y = data(n_net).net(:,:,nn);
+        %model.c = [1 0 0 0];
+        subt_betas = (model.x'*model.x)\model.x'*data(n_net).net;
+        data(n_net).net = model.y-model.x*subt_betas;
+    end
+end
+
 
 %% subtyping the residual glm (left after regressing confounds)
 
 file_sub = [path_results 'rsfmri_subtypes_20160401.mat'];
 
 for nn = 1:length(num_net)
-    sub(nn) = niak_build_subtypes(data,nb_subt);
+    sub(nn) = niak_build_subtypes(data(n_net).net,nb_subt);
 end
 save(file_sub,'sub')
 
