@@ -56,11 +56,11 @@ opt.flag_rand = false; % if the flag is false, the pipeline is deterministic. Ot
 
 %%% note: first test for AGE only - then test for education group (transform dicho) and perf (tranform dicho)
 
-%% SYNONYMS ONLY
+%% ANTONYMS ONLY
 opt.test.onevstwo.group.contrast.ageGroup3 = 1; % define contrast of interest
 opt.test.ageGroup3.group.contrast.education = 0; % regress out confounding variable
 opt.test.ageGroup3.group.contrast.genderMF = 0; % regress out confounding variable
-opt.test.avg_one.group.select(1).label = 'filter_in_syn'; % select only synonyms
+opt.test.avg_one.group.select(1).label = 'filter_in_ant'; % select only synonyms
 opt.test.avg_one.group.select(1).values = 1;
 opt.test.ageGroup3.group.select(2).label = 'ageGroup3'; 
 opt.test.ageGroup3.group.select(2).values = [1 2];
@@ -72,7 +72,7 @@ opt.test.ageGroup3.group.select(2).values = [1 2];
 opt.test.avg_one.group.contrast.intercept = 1; % define contrast of interest
 opt.test.avg_one.group.contrast.education = 0; % regress out confounding variable
 opt.test.avg_one.group.contrast.genderMF = 0; % regress out confounding variable
-opt.test.avg_one.group.select(1).label = 'filter_in_syn'; % select only synonyms
+opt.test.avg_one.group.select(1).label = 'filter_in_ant'; % select only synonyms
 opt.test.avg_one.group.select(1).values = 1;
 opt.test.avg_one.group.select(2).label = 'ageGroup3';
 opt.test.avg_one.group.select(2).values = 1;
@@ -82,7 +82,7 @@ opt.test.avg_one.group.select(2).values = 1;
 opt.test.avg_one.group.contrast.intercept = 1; % define contrast of interest
 opt.test.avg_one.group.contrast.education = 0; % regress out confounding variable
 opt.test.avg_one.group.contrast.genderMF = 0; % regress out confounding variable
-opt.test.avg_one.group.select(1).label = 'filter_in_syn'; % select only synonyms
+opt.test.avg_one.group.select(1).label = 'filter_in_ant'; % select only synonyms
 opt.test.avg_one.group.select(1).values = 1;
 opt.test.avg_one.group.select(2).label = 'ageGroup3';
 opt.test.avg_one.group.select(2).values = 2;
