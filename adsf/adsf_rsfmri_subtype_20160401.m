@@ -112,7 +112,7 @@ for n_net = 1:length(num_net)
 end
 
 
-%% Write csv for weights
+%% Write csv for weights - PO STYLE
 
 name_clus = {'subt1','subt2','subt3'};
 
@@ -128,6 +128,22 @@ for n_net = 1:length(num_net)
     path_res_net = [path_results 'net_' num2str(num_net(n_net)) '/'];
     path = [path_res_net 'net' num2str(num_net(n_net)) '_weights.csv'];
     niak_write_csv(path,weights,opt);
+end
+
+%% Write csv from sub.weights
+
+name_clus = {'subt1','subt2','subt3'};
+
+for n_net = 1:length(num_net)
+    for cc = 1:max(sub(n_net).part)
+        sub_weights(:,cc) = sub(n_net).weights(:,cc);
+    end
+    opt.labels_y = name_clus;
+    opt.labels_x = list_sub;
+    opt.precision = 3;
+    path_res_net = [path_results 'net_' num2str(num_net(n_net)) '/'];
+    path = [path_res_net 'net' num2str(num_net(n_net)) '_sub_weights.csv'];
+    niak_write_csv(path,sub_weights,opt);
 end
 
 %%
