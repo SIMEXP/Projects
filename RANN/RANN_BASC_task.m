@@ -39,7 +39,7 @@ addpath(genpath(path_niak))
 
 %%%%%%%%%%%%%
 path_data = '/home/perrine/scratch/RANN/FINAL_preprocess_test_issue100_16.03.03/';
-path_out  = '/home/perrine/scratch/RANN/BASC-4_task_synant_testminvol60/';
+path_out  = '/home/perrine/scratch/RANN/MSTEPS_task_synant4/';
 
 %%%%%%%%%%%%%%%%%%%%%
 
