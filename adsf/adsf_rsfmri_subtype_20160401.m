@@ -77,18 +77,18 @@ for n_net = 1:length(num_net)
     psom_mkdir(path_res_net)
     
     % The average per cluster
-    avg_clust_subt = zeros(max(sub(n_net).part),size(data,2));
+    avg_clust_subt = zeros(max(sub(n_net).part),size(data(n_net).net,2));
     for cc = 1:max(sub(n_net).part)
-        avg_clust_subt(cc,:) = mean(data(sub(n_net).part==cc,:),1);
+        avg_clust_subt(cc,:) = mean(data(n_net).net(sub(n_net).part==cc,:),1);
     end
     vol_avg_subt = niak_tseries2vol(avg_clust_subt,mask);
     hdr.file_name = [path_res_net 'mean_clusters_net' num2str(num_net(n_net)) '.nii.gz'];
     niak_write_vol(hdr,vol_avg_subt);
     
     % The std per subtype
-    std_clust_subt = zeros(max(sub(n_net).part),size(data,2));
+    std_clust_subt = zeros(max(sub(n_net).part),size(data(n_net).net,2));
     for cc = 1:max(sub(n_net).part)
-        std_clust_subt(cc,:) = std(data(sub(n_net).part==cc,:),1);
+        std_clust_subt(cc,:) = std(data(n_net).net(sub(n_net).part==cc,:),1);
     end
     vol_std_subt = niak_tseries2vol(std_clust_subt,mask);
     hdr.file_name = [path_res_net 'std_clusters_net' num2str(num_net(n_net)) '.nii.gz'];
@@ -118,8 +118,8 @@ name_clus = {'subt1','subt2','subt3'};
 
 for n_net = 1:length(num_net)
     for cc = 1:max(sub(n_net).part)
-        avg_clust(cc,:) = mean(data(sub(n_net).part==cc,:),1);
-        weights(:,cc) = corr(data',avg_clust(cc,:)');
+        avg_clust(cc,:) = mean(data(n_net).net(sub(n_net).part==cc,:),1);
+        weights(:,cc) = corr(data(n_net).net',avg_clust(cc,:)');
     end
     
     opt.labels_y = name_clus;
