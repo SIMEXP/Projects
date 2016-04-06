@@ -10,7 +10,7 @@ path_data = path_data = '/home/perrine/scratch/RANN/';
 %%%%%%%%%%%%
 %% Grabbing the results from BASC
 %%%%%%%%%%%%
-files_in = niak_grab_stability_rest([path_data 'BASC-4_task_synant3']); 
+files_in = niak_grab_stability_rest([path_data 'MSTEPS_task_synant4']); 
 
 %%%%%%%%%%%%%%%%%%%%%
 %% Grabbing the results from the NIAK fMRI preprocessing pipeline
