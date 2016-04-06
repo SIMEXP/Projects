@@ -50,17 +50,18 @@ opt.flag_rand = false; % if the flag is false, the pipeline is deterministic. Ot
 %% Tests
 %%%%%%%%%%%%
 
-%% Group differences
+%% Group differences: age31vs32
 
-%%% age group 1 <50 vs age group 2 >50 (= age group #3)
+%%% Using age group 3: 
+%%age group 1 <50 vs age group 2 >50 (= age group #3)
 
 %%% note: first test for AGE only - then test for education group (transform dicho) and perf (tranform dicho)
 
 %% ANTONYMS ONLY
-opt.test.onevstwo.group.contrast.ageGroup3 = 1; % define contrast of interest
+opt.test.onevstwo.group.contrast.age31vs32 = 1; % define contrast of interest
 opt.test.onevstwo.group.contrast.education = 0; % regress out confounding variable
 opt.test.onevstwo.group.contrast.genderMF = 0; % regress out confounding variable
-opt.test.onevstwo.group.select(1).label = 'filter_in_ant'; % select only synonyms
+opt.test.onevstwo.group.select(1).label = 'filter_in_ant'; % select only antonym tasks (filtered on FD and perf criteria)
 opt.test.onevstwo.group.select(1).values = 1;
 opt.test.onevstwo.group.select(2).label = 'ageGroup3'; 
 opt.test.onevstwo.group.select(2).values = [1 2];
