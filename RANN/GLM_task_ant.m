@@ -58,15 +58,15 @@ opt.flag_rand = false; % if the flag is false, the pipeline is deterministic. Ot
 %%% note: first test for AGE only - then test for education group (transform dicho) and perf (tranform dicho)
 
 %% ANTONYMS ONLY
-opt.test.onevstwo.group.contrast.age31vs32 = 1; % define contrast of interest
-opt.test.onevstwo.group.contrast.education = 0; % regress out confounding variable
-opt.test.onevstwo.group.contrast.genderMF = 0; % regress out confounding variable
-opt.test.onevstwo.group.contrast.FD_ant = 0; % regress out confounding variable
-opt.test.onevstwo.group.select(1).label = 'filter_in_ant'; % select only antonym tasks (filtered on FD and perf criteria)
-opt.test.onevstwo.group.select(1).values = 1;
-opt.test.onevstwo.group.select(2).label = 'ageGroup3'; 
-opt.test.onevstwo.group.select(2).values = [1 2];
-opt.test.onevstwo.group.select(2).operation = 'and';
+opt.test.ageYvsO.group.contrast.ageYvsO = 1; % define contrast of interest
+opt.test.ageYvsO.group.contrast.education = 0; % regress out confounding variable
+opt.test.ageYvsO.group.contrast.genderMF = 0; % regress out confounding variable
+opt.test.ageYvsO.group.contrast.FD_ant = 0; % regress out confounding variable
+opt.test.ageYvsO.group.select(1).label = 'filter_in_ant'; % select only antonym tasks (filtered on FD and perf criteria)
+opt.test.ageYvsO.group.select(1).values = 1;
+opt.test.ageYvsO.group.select(2).label = 'ageGroup3'; 
+opt.test.ageYvsO.group.select(2).values = [1 2];
+opt.test.ageYvsO.group.select(2).operation = 'and';
 
 
 %% Group averages
