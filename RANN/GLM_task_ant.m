@@ -38,7 +38,7 @@ files_in.model.group = [path_data 'BEHAV_all_filters_ant_syn.csv'];
 %%%%%%%%%%%%
 %% Options 
 %%%%%%%%%%%%
-opt.folder_out = [path_data 'RANN_GLMconnectome/GLM_ant7']; % Where to store the resultsb
+opt.folder_out = [path_data 'RANN_GLMconnectome/GLM_ant_edu']; % Where to store the resultsb
 opt.fdr = 0.1; % The maximal false-discovery rate that is tolerated both for individual (single-seed) maps and whole-connectome discoveries, at each particular scale (multiple comparisons across scales are addressed via permutation testing)
 opt.fwe = 0.05; % The overall family-wise error, i.e. the probablity to have the observed number of discoveries, agregated across all scales, under the global null hypothesis of no association.
 opt.nb_samps = 1000; % The number of samples in the permutation test. This number has to be multiplied by OPT.NB_BATCH below to get the effective number of samples
@@ -50,23 +50,25 @@ opt.flag_rand = false; % if the flag is false, the pipeline is deterministic. Ot
 %% Tests
 %%%%%%%%%%%%
 
-%% Group differences: age31vs32
+%% 1-Group differences: age31vs32
+%% 2-Group differences: education High vs Low
 
-%%% Using age group 3: 
+%%% 1- Using age group 3: 
 %%age group 1 <50 vs age group 2 >50 (= age group #3)
 
-%%% note: first test for AGE only - then test for education group (transform dicho) and perf (tranform dicho)
+%%% 2- test for education group :
+%%%edu group 1 <16 edu group 2>=16
+
+% (then test for perf (tranform dicho))
 
 %% ANTONYMS ONLY
-opt.test.ageYvsO.group.contrast.groupY = 1;
-opt.test.ageYvsO.group.contrast.groupO = -1;
-%opt.test.ageYvsO.group.contrast.ageYvsO = 1; % define contrast of interest
-opt.test.ageYvsO.group.contrast.education = 0; % regress out confounding variable
-opt.test.ageYvsO.group.contrast.genderMF = 0; % regress out confounding variable
-opt.test.ageYvsO.group.contrast.FD_ant = 0; % regress out confounding variable
-opt.test.ageYvsO.group.select(1).label = 'filter_in_ant'; % select only antonym tasks (filtered on FD and perf criteria)
-opt.test.ageYvsO.group.select(1).values = 1;
-%opt.test.ageYvsO.group.select(2).label = 'ageGroup3'; 
+opt.test.eduHvsL.group.contrast.eduHvsL = 1; % define contrast of interest
+%opt.test.eduHvsL.group.contrast.education = 0; % regress out confounding variable
+opt.test.eduHvsL.group.contrast.genderMF = 0; % regress out confounding variable
+opt.test.eduHvsL.group.contrast.FD_ant = 0; % regress out confounding variable
+opt.test.eduHvsL.group.select(1).label = 'filter_in_ant'; % select only antonym tasks (filtered on FD and perf criteria)
+opt.test.eduHvsL.group.select(1).values = 1;
+%opt.test.eduHvsL.group.select(2).label = 'eduGroup'; 
 %opt.test.ageYvsO.group.select(2).values = [1 2];
 %opt.test.ageYvsO.group.select(2).operation = 'and';
 
@@ -76,12 +78,13 @@ opt.test.ageYvsO.group.select(1).values = 1;
 %%% age group 1 (<50) average connectivity
 
 opt.test.avg_one.group.contrast.intercept = 1; % define contrast of interest
-opt.test.avg_one.group.contrast.education = 0; % regress out confounding variable
+%opt.test.avg_one.group.contrast.education = 0; % regress out confounding variable
 opt.test.avg_one.group.contrast.genderMF = 0; % regress out confounding variable
 opt.test.avg_one.group.contrast.FD_ant = 0; % regress out confounding variable
-opt.test.avg_one.group.select(1).label = 'filter_in_ant'; % select only synonyms
+opt.test.avg_one.group.select(1).label = 'filter_in_ant'; % select only antonyms
 opt.test.avg_one.group.select(1).values = 1;
-opt.test.avg_one.group.select(2).label = 'ageGroup3';
+%opt.test.avg_one.group.select(2).label = 'ageGroup3';
+opt.test.avg_one.group.select(2).label = 'edu_group';
 opt.test.avg_one.group.select(2).values = 1;
 opt.test.avg_one.group.select(2).operation = 'and';
 
@@ -89,12 +92,13 @@ opt.test.avg_one.group.select(2).operation = 'and';
 
 %%% age group 2 (>50 )average connectivity
 opt.test.avg_two.group.contrast.intercept = 1; % define contrast of interest
-opt.test.avg_two.group.contrast.education = 0; % regress out confounding variable
+%opt.test.avg_two.group.contrast.education = 0; % regress out confounding variable
 opt.test.avg_two.group.contrast.genderMF = 0; % regress out confounding variable
 opt.test.avg_two.group.contrast.FD_ant = 0; % regress out confounding variable
 opt.test.avg_two.group.select(1).label = 'filter_in_ant'; % select only synonyms
 opt.test.avg_two.group.select(1).values = 1;
-opt.test.avg_two.group.select(2).label = 'ageGroup3';
+%opt.test.avg_two.group.select(2).label = 'ageGroup3';
+opt.test.avg_two.group.select(2).label = 'edu_group';
 opt.test.avg_two.group.select(2).values = 2;
 opt.test.avg_two.group.select(2).operation = 'and';
 
