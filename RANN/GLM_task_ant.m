@@ -98,7 +98,7 @@ opt.test.eduHvsL.group.select(2).operation = 'and';
 %%% age group 1 (<50) average connectivity
 
 opt.test.avg_one.group.contrast.intercept = 1; % define contrast of interest
-opt.test.avg_one.group.contrast.education = 0; % regress out confounding variable
+%opt.test.avg_one.group.contrast.education = 0; % regress out confounding variable
 opt.test.avg_one.group.contrast.genderMF = 0; % regress out confounding variable
 opt.test.avg_one.group.contrast.FD_ant = 0; % regress out confounding variable
 opt.test.avg_one.group.select(1).label = 'filter_in_ant'; % select only antonyms
@@ -112,7 +112,7 @@ opt.test.avg_one.group.select(2).operation = 'and';
 
 %%% age group 2 (>50 )average connectivity
 opt.test.avg_two.group.contrast.intercept = 1; % define contrast of interest
-opt.test.avg_two.group.contrast.education = 0; % regress out confounding variable
+%opt.test.avg_two.group.contrast.education = 0; % regress out confounding variable
 opt.test.avg_two.group.contrast.genderMF = 0; % regress out confounding variable
 opt.test.avg_two.group.contrast.FD_ant = 0; % regress out confounding variable
 opt.test.avg_two.group.select(1).label = 'filter_in_ant'; % select only synonyms
