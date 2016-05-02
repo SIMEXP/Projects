@@ -23,9 +23,9 @@ opt_g.type_files = 'glm_connectome'; % Specify to the grabber to prepare the fil
 % opt_g.filter.session = {'session1'}; % Just grab session 1
 
 %% select one task or another:
-opt_g.filter.run = {'ant'}
-%opt_g.filter.run = {'syn'}
-
+%opt_g.filter.run = {'ant'}
+opt_g.filter.run = {'syn'}
+opt_g.exclude_subject = {'P00004840'};%for some reason this participant generates fails in syn (voir GLM_cont_syn1)
 files_in.fmri = niak_grab_fmri_preprocess([path_data 'FINAL_preprocess_test_issue100_16.03.03'],opt_g).fmri; % Replace the folder by the path where the results of the fMRI preprocessing pipeline were stored. 
 
 
@@ -39,7 +39,7 @@ files_in.model.group = [path_data 'BEHAV_all_filters_ant_syn.csv'];
 %%%%%%%%%%%%
 %% Options 
 %%%%%%%%%%%%
-opt.folder_out = [path_data 'RANN_GLMconnectome/GLM_ant11']; % Where to store the resultsb
+opt.folder_out = [path_data 'RANN_GLMconnectome/GLM_cont_syn']; % Where to store the resultsb
 opt.fdr = 0.1; % The maximal false-discovery rate that is tolerated both for individual (single-seed) maps and whole-connectome discoveries, at each particular scale (multiple comparisons across scales are addressed via permutation testing)
 opt.fwe = 0.05; % The overall family-wise error, i.e. the probablity to have the observed number of discoveries, agregated across all scales, under the global null hypothesis of no association.
 opt.nb_samps = 1000; % The number of samples in the permutation test. This number has to be multiplied by OPT.NB_BATCH below to get the effective number of samples
@@ -54,32 +54,32 @@ opt.flag_rand = false; % if the flag is false, the pipeline is deterministic. Ot
 %% 1-Group differences: age
 %% 2-Group differences: education 
 %% 3- Group differences: performance
-%% 4- interactions
+%% 4- interactions ?????
 
-%%% AGE
+%%% AGE SYN
 opt.test.age.group.contrast.age = 1; % define contrast of interest (age continuous only)
 opt.test.age.group.contrast.education = 0; % regress out confounding variable
 opt.test.age.group.contrast.genderMF = 0; % regress out confounding variable
-opt.test.age.group.contrast.FD_ant = 0; % regress out confounding variable
-opt.test.age.group.select(1).label = 'filter_in_ant'; % select only antonym tasks (filtered on FD and perf criteria)
+opt.test.age.group.contrast.FD_syn = 0; % regress out confounding variable
+opt.test.age.group.select(1).label = 'filter_in_syn'; % select only antonym tasks (filtered on FD and perf criteria)
 opt.test.age.group.select(1).values = 1;
 
-%%% EDUCATION
-%opt.test.edu.group.contrast.edu = 1; % define contrast of interest
+%%% EDUCATION SYN
+opt.test.edu.group.contrast.education = 1; % define contrast of interest
 %%%opt.test.edu.group.contrast.age = 0; % regress out confounding variable
-%opt.test.edu.group.contrast.genderMF = 0; % regress out confounding variable
-%opt.test.edu.group.contrast.FD_ant = 0; % regress out confounding variable
-%opt.test.edu.group.select(1).label = 'filter_in_ant'; % select only antonym tasks (filtered on FD and perf criteria)
-%opt.test.edu.group.select(1).values = 1;
+opt.test.edu.group.contrast.genderMF = 0; % regress out confounding variable
+opt.test.edu.group.contrast.FD_syn = 0; % regress out confounding variable
+opt.test.edu.group.select(1).label = 'filter_in_syn'; % select only antonym tasks (filtered on FD and perf criteria)
+opt.test.edu.group.select(1).values = 1;
 
-%%% PERFORMANCE
-%opt.test.perf.group.contrast.perf = 1; % define contrast of interest
-opt.test.perf.group.contrast.edu = 0; % regress out confounding variable
+%%% PERFORMANCE SYN
+opt.test.perf.group.contrast.SYN_NumCor100 = 1; % define contrast of interest
+opt.test.perf.group.contrast.education = 0; % regress out confounding variable
 %%%opt.test.perf.group.contrast.age = 0; % regress out confounding variable
-%opt.test.perf.group.contrast.genderMF = 0; % regress out confounding variable
-%opt.test.perf.group.contrast.FD_ant = 0; % regress out confounding variable
-%opt.test.perf.group.select(1).label = 'filter_in_ant'; % select only antonym tasks (filtered on FD and perf criteria)
-%opt.test.perf.group.select(1).values = 1;
+opt.test.perf.group.contrast.genderMF = 0; % regress out confounding variable
+opt.test.perf.group.contrast.FD_syn = 0; % regress out confounding variable
+opt.test.perf.group.select(1).label = 'filter_in_syn'; % select only antonym tasks (filtered on FD and perf criteria)
+opt.test.perf.group.select(1).values = 1;
 
 
 %%%%%%%%%%%%
