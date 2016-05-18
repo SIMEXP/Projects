@@ -14,6 +14,7 @@
 % OPT.FLAG_VERBOSE (boolean, default true) if true, verbose on progress.
 % OPT.FLAG_TEST (boolean, default false) if the flag is true, the pipeline will
 %   be generated but no processing will occur.
+% before: gzip subject*/*.mnc 
 
 addpath(genpath('/Users/Clara/GitHub/qc_fmri_preprocess'))
 path_preprocess = '/Users/Clara/Desktop/Chuv/Mni_Crigum/GSP/fmri_preprocess/anat';
