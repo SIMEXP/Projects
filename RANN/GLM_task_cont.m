@@ -25,9 +25,10 @@ opt_g.type_files = 'glm_connectome'; % Specify to the grabber to prepare the fil
 
 %% select one task or another:
 %opt_g.filter.run = {'ant'}
-opt_g.filter.run = {'ant'}
-%opt_g.exclude_subject = {'P00004840'};%for some reason this participant generates fails in syn (voir GLM_cont_syn1)
-opt_g.exclude_subject = {'P00004547','P00004663','P00004694','P00004636','P00004743','P00004654','P00004819','P00004873','P00004239','P00004574','P00004656','P00004816','P00004742','P00004877','P00004731','P00004306','P00004721','P00004895','P00004646','P00004246','P00002012','P00004841','P00004729','P00004803','P00004667','P00004714','P00004595','P00004343','P00004894','P00004526','P00004609','P00004690','P00004792','P00004861','P00004628','P00004523','P00004617','P00004794','P00004209','P00004356'}
+opt_g.filter.run = {'syn'}
+opt_g.exclude_subject = {'P00004840'};%for some reason this participant generates fails in syn (voir GLM_cont_syn1)
+opt_g.exclude_subject = {'P00002012','P00004209','P00004267','P00004310','P00004501','P00004551','P00004554','P00004567','P00004571','P00004572','P00004587','P00004617','P00004636','P00004648','P00004654','P00004656','P00004663','P00004666','P00004686','P00004687','P00004694','P00004719','P00004742','P00004743','P00004782','P00004787','P00004794','P00004797','P00004805','P00004828','P00004839','P00004874','P00004885'}
+%opt_g.exclude_subject = {'P00004547','P00004663','P00004694','P00004636','P00004743','P00004654','P00004819','P00004873','P00004239','P00004574','P00004656','P00004816','P00004742','P00004877','P00004731','P00004306','P00004721','P00004895','P00004646','P00004246','P00002012','P00004841','P00004729','P00004803','P00004667','P00004714','P00004595','P00004343','P00004894','P00004526','P00004609','P00004690','P00004792','P00004861','P00004628','P00004523','P00004617','P00004794','P00004209','P00004356'}
 %% participants excluded to obtain an FD match between age groups <50yo> and same N of participants in each age group
 
 files_in.fmri = niak_grab_fmri_preprocess([path_data 'FINAL_preprocess_test_issue100_16.03.03'],opt_g).fmri; % Replace the folder by the path where the results of the fMRI preprocessing pipeline were stored. 
@@ -43,7 +44,7 @@ files_in.model.group = [path_data 'BEHAV_all_filters_ant_syn.csv'];
 %%%%%%%%%%%%
 %% Options 
 %%%%%%%%%%%%
-opt.folder_out = [path_data 'RANN_GLMconnectome/GLM_cont_ant5']; % Where to store the resultsb
+opt.folder_out = [path_data 'RANN_GLMconnectome/GLM_cont_syn6']; % Where to store the resultsb
 opt.fdr = 0.1; % The maximal false-discovery rate that is tolerated both for individual (single-seed) maps and whole-connectome discoveries, at each particular scale (multiple comparisons across scales are addressed via permutation testing)
 opt.fwe = 0.05; % The overall family-wise error, i.e. the probablity to have the observed number of discoveries, agregated across all scales, under the global null hypothesis of no association.
 opt.nb_samps = 1000; % The number of samples in the permutation test. This number has to be multiplied by OPT.NB_BATCH below to get the effective number of samples
@@ -64,25 +65,25 @@ opt.flag_rand = false; % if the flag is false, the pipeline is deterministic. Ot
 opt.test.age.group.contrast.age = 1; % define contrast of interest (age continuous only)
 opt.test.age.group.contrast.education = 0; % regress out confounding variable
 opt.test.age.group.contrast.genderMF = 0; % regress out confounding variable
-opt.test.age.group.contrast.FD_ant = 0; % regress out confounding variable
-opt.test.age.group.select(1).label = 'filter_in_ant'; % select only antonym tasks (filtered on FD and perf criteria)
+opt.test.age.group.contrast.FD_syn = 0; % regress out confounding variable
+opt.test.age.group.select(1).label = 'filter_in_syn'; % select only antonym tasks (filtered on FD and perf criteria)
 opt.test.age.group.select(1).values = 1;
 
 %%% EDUCATION ANT
 opt.test.edu.group.contrast.education = 1; % define contrast of interest
 opt.test.edu.group.contrast.age = 0; % regress out confounding variable
 opt.test.edu.group.contrast.genderMF = 0; % regress out confounding variable
-opt.test.edu.group.contrast.FD_ant = 0; % regress out confounding variable
-opt.test.edu.group.select(1).label = 'filter_in_ant'; % select only antonym tasks (filtered on FD and perf criteria)
+opt.test.edu.group.contrast.FD_syn = 0; % regress out confounding variable
+opt.test.edu.group.select(1).label = 'filter_in_syn'; % select only antonym tasks (filtered on FD and perf criteria)
 opt.test.edu.group.select(1).values = 1;
 
 %%% PERFORMANCE ANT
-opt.test.perf.group.contrast.ANT_NumCor100 = 1; % define contrast of interest
+opt.test.perf.group.contrast.SYN_NumCor100 = 1; % define contrast of interest
 opt.test.perf.group.contrast.education = 0; % regress out confounding variable
 opt.test.perf.group.contrast.age = 0; % regress out confounding variable
 opt.test.perf.group.contrast.genderMF = 0; % regress out confounding variable
-opt.test.perf.group.contrast.FD_ant = 0; % regress out confounding variable
-opt.test.perf.group.select(1).label = 'filter_in_ant'; % select only antonym tasks (filtered on FD and perf criteria)
+opt.test.perf.group.contrast.FD_syn = 0; % regress out confounding variable
+opt.test.perf.group.select(1).label = 'filter_in_syn'; % select only antonym tasks (filtered on FD and perf criteria)
 opt.test.perf.group.select(1).values = 1;
 
 
