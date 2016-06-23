@@ -20,6 +20,7 @@ clear all
 
 files_in.transformation = '/home/atam/git/niak/template/mni-models_icbm152-nl-2009-1.0/sym2asym.xfm';
 opt.folder_out = '/home/atam/scratch/data_in_brief/template_mcinet_basc_asym_rois_mnc/';
+opt.interpolation = 'nearest_neighbour';
 
 path_data = '/home/atam/scratch/data_in_brief/template_mcinet_basc_sym_rois_mnc/';
 
@@ -32,3 +33,4 @@ for nn = 1:length(n_rois)
     files_out = out_name;
     niak_brick_resample_vol(files_in,files_out,opt);
 end
+
