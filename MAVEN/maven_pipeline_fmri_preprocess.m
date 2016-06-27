@@ -51,7 +51,7 @@ else
         my_user_name = getenv('USER');
         
         case 'noisetier' % this is noisetier
-        root_path = '/media/database1/MAVEN/';
+        root_path = '/media/yassinebha/database24/MAVEN_06_2016/';
         fprintf ('server: %s\n',server)
         my_user_name = getenv('USER');
     end
@@ -61,7 +61,7 @@ end
 path_raw = [root_path 'raw_mnc/'];
 list_subject = dir(path_raw);
 list_subject = {list_subject.name};
-list_subject = list_subject(~ismember(list_subject,{'.','..','octave-wokspace','octave-core','qc_report.csv','D2026_20140809_134404541'}));
+list_subject = list_subject(~ismember(list_subject,{'.','..','octave-wokspace','octave-core','qc_report.csv','D2026','log_conversion'}));
 for num_s = 1:length(list_subject)
     subject = list_subject{num_s};
     id = subject(1:strfind(subject,'_')(1)-1);
