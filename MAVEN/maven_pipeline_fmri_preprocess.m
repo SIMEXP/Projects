@@ -31,7 +31,6 @@ clear all
 %% Parameters
 %%%%%%%%%%%%%%%%%%%%%
 task  = 'inscape_rest';
-exp   = 'all';
 %% Setting input/output files 
 [status,cmdout] = system ('uname -n');
 server          = strtrim(cmdout);
@@ -61,72 +60,23 @@ end
 path_raw = [root_path 'raw_mnc/'];
 list_subject = dir(path_raw);
 list_subject = {list_subject.name};
-list_subject = list_subject(~ismember(list_subject,{'.','..','octave-wokspace','octave-core','qc_report.csv','D2026','log_conversion'}));
+list_subject = list_subject(~ismember(list_subject,{'.','..','octave-wokspace','octave-core','qc_report.csv','D2026','logs_conversion'}));
 for num_s = 1:length(list_subject)
-    subject = list_subject{num_s};
-    id = subject(1:strfind(subject,'_')(1)-1);
-    fprintf('Subject %s\n',id);
-    path_anat = [path_raw subject filesep 'anat/'];
-    anat_file = dir([path_anat "MPRAGEt1mprages*"]);
-    switch anat_tmp = anat_file(ismember({anat_file.name},{'MPRAGEt1mprages009a1001.mnc.gz','MPRAGEt1mprages015a1001.mnc.gz',...
-    'MPRAGEt1mprages011a1001.mnc.gz'})).name;  
-          case 'MPRAGEt1mprages009a1001.mnc.gz'
-          files_in.(id).anat=[path_anat 'MPRAGEt1mprages009a1001.mnc.gz'];
-          case 'MPRAGEt1mprages015a1001.mnc.gz'
-          files_in.(id).anat=[path_anat 'MPRAGEt1mprages015a1001.mnc.gz'];
-          case 'MPRAGEt1mprages011a1001.mnc.gz'
-          files_in.(id).anat=[path_anat 'MPRAGEt1mprages011a1001.mnc.gz'];
-          otherwise
-          warning('subject %s has no anat found', subject)
-          files_in.(id).anat=[path_anat ''];
-    end
+    subject_ID = list_subject{num_s};
+    fprintf('Subject %s\n',subject_ID);
+    path_anat = [path_raw subject_ID filesep 'anat/'];
+    path_func = [path_raw subject_ID filesep 'func/'];
     
-    % subject runs
-    subject_run = dir([path_raw subject filesep 'func/']);
-    subject_run = {subject_run(3:end).name};   
-    %loop over runs
-    for num_run = 1:length(subject_run) 
-        run_name = subject_run{num_run};
-        path_func = [path_raw subject filesep 'func/'];
-        func_file = dir([path_func run_name filesep  "RSN*"]);
-        func_tmp = func_file(ismember({func_file.name},{'RSN1ep2d64s004a001.mnc.gz','RSN1ep2d64s010a001.mnc.gz',...
-        'RSN1ep2d64s006a001.mnc.gz','RSN2ep2d64s005a001.mnc.gz','RSN2ep2d64s007a001.mnc.gz','RSN2ep2d64s011a001.mnc.gz',...
-        'RSN3ep2d64s006a001.mnc.gz','RSN3ep2d64s008a001.mnc.gz','RSN3ep2d64s012a001.mnc.gz'})).name;
-        
-        switch func_tmp   
-              case 'RSN1ep2d64s004a001.mnc.gz'
-              files_in.(id).fmri.session1.rest1 = [path_raw subject filesep 'func/run1/RSN1ep2d64s004a001.mnc.gz'];
-              case 'RSN1ep2d64s010a001.mnc.gz'
-              files_in.(id).fmri.session1.rest1 = [path_raw subject filesep 'func/run1/RSN1ep2d64s010a001.mnc.gz'];
-              case 'RSN1ep2d64s006a001.mnc.gz'
-              files_in.(id).fmri.session1.rest1 = [path_raw subject filesep 'func/run1/RSN1ep2d64s006a001.mnc.gz'];
-              case 'RSN2ep2d64s005a001.mnc.gz'
-              files_in.(id).fmri.session1.inscape = [path_raw subject filesep 'func/run2/RSN2ep2d64s005a001.mnc.gz'];
-              case 'RSN2ep2d64s007a001.mnc.gz'
-              files_in.(id).fmri.session1.inscape = [path_raw subject filesep 'func/run2/RSN2ep2d64s007a001.mnc.gz'];
-              case 'RSN2ep2d64s011a001.mnc.gz'
-              files_in.(id).fmri.session1.inscape = [path_raw subject filesep 'func/run2/RSN2ep2d64s011a001.mnc.gz'];
-              case 'RSN3ep2d64s006a001.mnc.gz'
-              files_in.(id).fmri.session1.rest2 = [path_raw subject filesep 'func/run3/RSN3ep2d64s006a001.mnc.gz'];
-              case 'RSN3ep2d64s008a001.mnc.gz'
-              files_in.(id).fmri.session1.rest2 = [path_raw subject filesep 'func/run3/RSN3ep2d64s008a001.mnc.gz'];
-              case 'RSN3ep2d64s012a001.mnc.gz'
-              files_in.(id).fmri.session1.rest2 = [path_raw subject filesep 'func/run3/RSN3ep2d64s012a001.mnc.gz'];
-              otherwise
-              warning('subject %s has no functional found', subject)
-              files_in.(id).fmri.session1.rest1 = [path_raw subject filesep ''];
-        end
-    end
+    files_in.(subject_ID).anat = [ path_anat subject_ID '_T1w.mnc'];
+  
+    files_in.(subject_ID).fmri.session1.rest1 = [path_func subject_ID '_task-rest1_run-01_bold.mnc'];
+              
+    files_in.(subject_ID).fmri.session1.inscape = [path_func subject_ID '_task-rest2inscape_run-02_bold.mnc'];
+              
+    files_in.(subject_ID).fmri.session1.rest2 = [path_func subject_ID '_task-rest3_run-03_bold.mnc'];
+              
 end
 
-files_c = psom_files2cell(files_in.(id));
-for num_f = 1:length(files_c)
-    if ~psom_exist(files_c{num_f})
-        warning ('The file %s does not exist, I suppressed subject %s',files_c{num_f},subject);
-        files_in = rmfield(files_in,id);
-        break
-    end        
-end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -134,10 +84,8 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %% General
-opt.folder_out  = [root_path 'fmri_preprocess_' upper(task) '_' exp];    % Where to store the results
+opt.folder_out  = [ root_path 'fmri_preprocess_' upper(task) ];    % Where to store the results
 opt.size_output = 'quality_control';                             % The amount of outputs that are generated by the pipeline. 'all' will keep intermediate outputs, 'quality_control' will only keep the quality control outputs.
-
-
 %% Slice timing correction (niak_brick_slice_timing)
 opt.slice_timing.type_acquisition = 'interleaved descending'; % Slice timing order (available options : 'sequential ascending', 'sequential descending', 'interleaved ascending', 'interleaved descending')
 opt.slice_timing.type_scanner     = 'Siemens';                % Scanner manufacturer. Only the value 'Siemens' will actually have an impact
