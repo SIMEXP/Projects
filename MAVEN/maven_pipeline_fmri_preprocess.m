@@ -60,7 +60,7 @@ end
 path_raw = [root_path 'raw_mnc/'];
 list_subject = dir(path_raw);
 list_subject = {list_subject.name};
-list_subject = list_subject(~ismember(list_subject,{'.','..','octave-wokspace','octave-core','qc_report.csv','D2026','logs_conversion'}));
+list_subject = list_subject(~ismember(list_subject,{'.','..','octave-wokspace','octave-core','qc_report.csv','logs_conversion'}));
 for num_s = 1:length(list_subject)
     subject_ID = list_subject{num_s};
     fprintf('Subject %s\n',subject_ID);
@@ -76,7 +76,7 @@ for num_s = 1:length(list_subject)
     files_in.(subject_ID).fmri.session1.rest2 = [path_func subject_ID '_task-rest3_run-03_bold.mnc'];
               
 end
-
+files_in = niak_prune_files_in(files_in);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -140,6 +140,7 @@ opt.smooth_vol.flag_skip = 0;  % Skip spatial smoothing (0: don't skip, 1 : skip
 %% Run the fmri_preprocess pipeline  %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 opt.flag_test = false;
+opt.psom.max_queued = 8;
 [pipeline,opt] = niak_pipeline_fmri_preprocess(files_in,opt);
 
 %% extra
