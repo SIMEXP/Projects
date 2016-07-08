@@ -24,17 +24,19 @@ clear all
 
 path_data = '/Users/AngelaTam/Desktop/data_in_brief/parcellations/';
 path_clus = [path_data 'template_mcinet_basc_sym_clusters_nii/'];
+path_out = [path_clus 'labels/'];
 
 network = {'cerebellum','dmn','limbic','motor','salience','visual'}; % names of networks in scale 6
-nb_clus = [12 22 33 65 111 208]; % scales
+% nb_clus = [10 17 30 51 77 137 199 322]; % rois
+nb_clus = [4 6 12 22 33 65 111 208]; % scales
 
 for cc = 1:length(network)
-    files_in.cluster = strcat(path_data, 'scale_6_networks_sym/', network{cc}, '.nii.gz');
+    files_in.cluster = strcat(path_data, 'scale_6_networks_sym/', network{cc}, '_res6.nii.gz');
     for nn = 1:length(nb_clus)
         files_in.subcluster = [path_clus 'brain_parcellation_mcinet_basc_sym_' num2str(nb_clus(nn)) 'clusters.nii.gz'];
         files_out = struct;
-        files_out.subcluster = {strcat(network{cc}, '_res', num2str(nb_clus(nn)), '.nii.gz')};
-        opt.perc_overlap = 0.5;
+        files_out.subcluster = {strcat(path_out, network{cc}, '_res', num2str(nb_clus(nn)), '.nii.gz')};
+        opt.perc_overlap = 0.2;
         niak_brick_subclusters(files_in,files_out,opt);
     end
 end
