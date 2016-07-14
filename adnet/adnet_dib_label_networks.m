@@ -22,28 +22,43 @@ end
 
 %% make the labels
 
-% need to load "matching" .mat file from niak_brick_subclusters
+clear all
+path_data = '/Users/AngelaTam/Desktop/data_in_brief/vol_parcellations/template_mcinet_basc_sym_clusters_nii/';
+scale = [22 33 65 111 208];
 
-% create the cell array
-labels = cell(length(matching{1})+1,2);
-
-% make the headers
-labels{1,1} = 'Label';
-labels{1,2} = 'Seed number';
-
-% cell contents
-for nn = 1:length(matching{1})
-    labels{nn+1,1} = strcat('dmn_ant_',num2str(nn)); % generate the label
-    labels{nn+1,2} = matching{1}(nn); % extract the seed number
+for ss = 1:length(scale) % for every scale
+    
+    % load "matching" .mat file from niak_brick_subclusters
+    filename = strcat(path_data, 'sc12_to_sc', num2str(scale(ss)), filesep, 'labels_sc12_to_sc', num2str(scale(ss)), '.mat');
+    load(filename)
+    
+    % create the cell array
+    labels = cell(scale(ss)+1,2);
+    % make the headers
+    labels{1,1} = 'Label';
+    labels{1,2} = 'Seed number';
+    
+    % prep the csv
+    csvname = strcat(path_data, 'labels_res', num2str(scale(ss)), '.csv');
+    fid = fopen(csvname,'w');
+    fprintf(fid, '%s, %s\n', labels{1,:});
+    
+    for pp = 1:scale(ss) % for every cluster in target scale
+        for nn = 1:length(matching) % for each cluster in reference scale 12
+            for bb = 1:length(matching{nn}) % for each subcluster in a cluster in scale 12
+                % cell contents
+                labels{matching{nn}(bb)+1,1} = strcat('cluster',num2str(nn),'_',num2str(bb)); % generate the label
+                labels{matching{nn}(bb)+1,2} = matching{nn}(bb); % extract the seed number
+            end
+        end
+    end
+    
+    for pp = 1:scale(ss)
+        % write cell contents to csv
+        fprintf(fid, '%s, %d\n', labels{pp+1,:});
+    end
+    fclose(fid)
 end
-
-% write the csv
-fid = fopen('labels_dmn_ant_sc208.csv','w'); % 
-fprintf(fid, '%s, %s\n', labels{1,:});
-for cc = 1:length(matching{1})
-    fprintf(fid, '%s, %d\n', labels{cc+1,:});
-end
-fclose(fid)
 
 
 
