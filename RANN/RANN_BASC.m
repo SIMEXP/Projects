@@ -42,7 +42,7 @@ path_data = '/home/perrine/scratch/RANN/FINAL_preprocess_test_issue100_16.03.03/
 %use new library
 path_niak = ('/gs/project/gsf-624-aa/quarantaine/niak-issue100/');
 %path_niak= '/home/perrine/quarantaine/niak-boss-0.13.4/';
-path_out  = '/home/perrine/scratch/RANN/RANN_BASC-4_rest/';
+path_out  = '/home/perrine/scratch/RANN/RANN_MSTEPS_rest/';
 %%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%
