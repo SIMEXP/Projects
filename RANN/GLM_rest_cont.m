@@ -26,7 +26,7 @@ opt_g.type_files = 'glm_connectome'; % Specify to the grabber to prepare the fil
 %% select one task or another:
 opt_g.filter.run = {'rest'}
 % exclude subjects synonyms:
-%opt_g.exclude_subject = {'XXX'} %%% participants excluded to obtain an FD match between age groups <50yo> and same N of participants in each age group
+opt_g.exclude_subject = {'P00004830','P00004688','P00004800','P00004757','P00004607','P00004320','P00004736','P00004780','P00004510','P00004554','P00004877'}; %%% participants excluded to obtain an FD match between age groups <50yo> and same N of participants in each age group
 
 files_in.fmri = niak_grab_fmri_preprocess([path_data 'FINAL_preprocess_test_issue100_16.03.03'],opt_g).fmri; % Replace the folder by the path where the results of the fMRI preprocessing pipeline were stored. 
 
@@ -36,7 +36,7 @@ files_in.fmri = niak_grab_fmri_preprocess([path_data 'FINAL_preprocess_test_issu
 %%%%%%%%%%%%
 
 %% Group
-files_in.model.group = [path_data 'BEHAV_all_filters_rest.csv'];
+files_in.model.group = [path_data 'filtered_IN_all_filters_REST.csv'];
  
 %%%%%%%%%%%%
 %% Options 
@@ -78,18 +78,18 @@ opt.test.edu.group.select(1).label = 'filter_in_rest'; % select only rest  (filt
 opt.test.edu.group.select(1).values = 1;
 
 %%% FD
-%opt.test.FD.group.contrast.FD_rest = 1; % define contrast of interest (FD continuous only)
-%opt.test.FD.group.contrast.education = 0; % regress out confounding variable
-%opt.test.FD.group.contrast.genderMF = 0; % regress out confounding variable
-%opt.test.FD.group.contrast.age = 0; % regress out confounding variable
-%opt.test.FD.group.select(1).label = 'filter_in_rest'; % select only a task (filtered on FD and perf criteria)
-%opt.test.FD.group.select(1).values = 1;
+opt.test.FD.group.contrast.FD_rest = 1; % define contrast of interest (FD continuous only)
+opt.test.FD.group.contrast.education = 0; % regress out confounding variable
+opt.test.FD.group.contrast.genderMF = 0; % regress out confounding variable
+opt.test.FD.group.contrast.age = 0; % regress out confounding variable
+opt.test.FD.group.select(1).label = 'filter_in_rest'; % select only a task (filtered on FD and perf criteria)
+opt.test.FD.group.select(1).values = 1;
 
-%%% SEXE
-%opt.test.sexe.group.contrast.genderMF = 1; % define contrast of interest (FD continuous only)
-%opt.test.sexe.group.contrast.education = 0; % regress out confounding variable
-%opt.test.sexe.group.contrast.age = 0; % regress out confounding variable
-%opt.test.sexe.group.select(1).label = 'filter_in_rest'; % select only a task (filtered on FD and perf criteria)
+SEXE
+opt.test.sexe.group.contrast.genderMF = 1; % define contrast of interest (FD continuous only)
+opt.test.sexe.group.contrast.education = 0; % regress out confounding variable
+opt.test.sexe.group.contrast.age = 0; % regress out confounding variable
+opt.test.sexe.group.select(1).label = 'filter_in_rest'; % select only a task (filtered on FD and perf criteria)
 
 %%% PERFORMANCE TASKS
 %opt.test.perf.group.contrast.ANT_NumCor100 = 1; % define contrast of interest
@@ -104,15 +104,15 @@ opt.test.edu.group.select(1).values = 1;
 %%%%% INTERACTION %%%%%
 
 %%% INTER AGExEDU
-%opt.test.interaction_age_edu.group.interaction.label = 'inter_agexedu'
-%opt.test.interaction_age_edu.group.interaction.factor = {'age','education'}
-%opt.test.interaction_age_edu.group.contrast.age = 0; % define contrast of interest (age continuous only)
-%opt.test.interaction_age_edu.group.contrast.education = 0; % regress out confounding variable
-%opt.test.interaction_age_edu.group.contrast.genderMF = 0; % regress out confounding variable
-%opt.test.interaction_age_edu.group.contrast.FD_rest = 0; % regress out confounding variable
-%opt.test.interaction_age_edu.group.contrast.inter_agexedu = 1;
-%opt.test.interaction_age_edu.group.select(1).label = 'filter_in_rest'; % select only a task (filtered on FD and perf criteria)
-%opt.test.interaction_age_edu.group.select(1).values = 1;
+opt.test.interaction_age_edu.group.interaction.label = 'inter_agexedu'
+opt.test.interaction_age_edu.group.interaction.factor = {'age','education'}
+opt.test.interaction_age_edu.group.contrast.age = 0; % define contrast of interest (age continuous only)
+opt.test.interaction_age_edu.group.contrast.education = 0; % regress out confounding variable
+opt.test.interaction_age_edu.group.contrast.genderMF = 0; % regress out confounding variable
+opt.test.interaction_age_edu.group.contrast.FD_rest = 0; % regress out confounding variable
+opt.test.interaction_age_edu.group.contrast.inter_agexedu = 1;
+opt.test.interaction_age_edu.group.select(1).label = 'filter_in_rest'; % select only a task (filtered on FD and perf criteria)
+opt.test.interaction_age_edu.group.select(1).values = 1;
 
 
 
