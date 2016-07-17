@@ -56,7 +56,7 @@ opt.flag_rand = false; % if the flag is false, the pipeline is deterministic. Ot
 %% 1-Group differences: age
 %% 2-Group differences: education 
 %% 3- Group differences: FD
-%% 4- Group differences: sexe
+%% 4- Group differences: sexe (0=F; 1=M)
 %% 5- Group differences : perf at tasks
 %% 6- interactions
 
@@ -70,7 +70,7 @@ opt.test.age.group.select(1).label = 'filter_in_rest'; % select only rest (filte
 opt.test.age.group.select(1).values = 1;
 
 %%% EDUCATION 
-opt.test.edu.group.contrast.education = 1; % define contrast of interest
+opt.test.edu.group.contrast.education = 1; % define contrast of interest (cont)
 opt.test.edu.group.contrast.age = 0; % regress out confounding variable
 opt.test.edu.group.contrast.genderMF = 0; % regress out confounding variable
 opt.test.edu.group.contrast.FD_rest = 0; % regress out confounding variable
@@ -86,10 +86,11 @@ opt.test.FD.group.select(1).label = 'filter_in_rest'; % select only a task (filt
 opt.test.FD.group.select(1).values = 1;
 
 %% SEXE
-opt.test.sexe.group.contrast.genderMF = 1; % define contrast of interest (FD continuous only)
+opt.test.sexe.group.contrast.genderMF = 1; % define contrast of interest (dicho)
 opt.test.sexe.group.contrast.education = 0; % regress out confounding variable
 opt.test.sexe.group.contrast.age = 0; % regress out confounding variable
 opt.test.sexe.group.select(1).label = 'filter_in_rest'; % select only a task (filtered on FD and perf criteria)
+opt.test.edu.group.select(1).values = 1;
 
 %%% PERFORMANCE TASKS
 %opt.test.perf.group.contrast.ANT_NumCor100 = 1; % define contrast of interest
