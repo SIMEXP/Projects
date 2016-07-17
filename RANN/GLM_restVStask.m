@@ -30,11 +30,11 @@ opt_g.type_files = 'glm_connectome'; % Specify to the grabber to prepare the fil
 
 %% participants excluded to obtain an FD match between age groups <50yo> and same N of participants in each age group
 %% exclude subjects syn:
-%opt_g.exclude_subject = {'P00004840','P00002012', 'P00004654','P00004663','P00004694','P00004742','P00004743','P00004501','P00004551','P00004571','P00004636','P00004648','P00004719','P00004787','P00004797','P00004805','P00004825','P00004828'}
+%opt_g.exclude_subject = {'P00004840_session1_syn','P00002012_session1_syn', 'P00004654_session1_syn','P00004663_session1_syn','P00004694_session1_syn','P00004742_session1_syn','P00004743_session1_syn','P00004501_session1_syn','P00004551_session1_syn','P00004571_session1_syn','P00004636_session1_syn','P00004648_session1_syn','P00004719_session1_syn','P00004787_session1_syn','P00004797_session1_syn','P00004805_session1_syn','P00004825_session1_syn','P00004828_session1_syn'}
 %%exclude subjects antonyms:
-opt_g.exclude_subject = {'P00004663','P00004694','P00004636','P00004743','P00004654','P00004819','P00004873','P00004239','P00004687','P00004639','P00004574','P00004656','P00004816','P00004742','P00004877','P00004731','P00004306','P00004721','P00004246','P00004549','P00004617','P00004794','P00004209'}
+opt_g.exclude_subject = {'P00004663_session1_ant','P00004694_session1_ant','P00004636_session1_ant','P00004743_session1_ant','P00004654_session1_ant','P00004819_session1_ant','P00004873_session1_ant','P00004239_session1_ant','P00004687_session1_ant','P00004639_session1_ant','P00004574_session1_ant','P00004656_session1_ant','P00004816_session1_ant','P00004742_session1_ant','P00004877_session1_ant','P00004731_session1_ant','P00004306_session1_ant','P00004721_session1_ant','P00004246_session1_ant','P00004549_session1_ant','P00004617_session1_ant','P00004794_session1_ant','P00004209_session1_ant'}
 %%exclude subjects rest:
-opt_g.exclude_subject = {'P00004830','P00004688','P00004800','P00004757','P00004607','P00004320','P00004736','P00004780','P00004510','P00004554','P00004877'}; %%% participants excluded to obtain an FD match between age groups <50yo> and same N of participants in each age group
+opt_g.exclude_subject = {'P00004830_session1_rest','P00004688_session1_rest','P00004800_session1_rest','P00004757_session1_rest','P00004607_session1_rest','P00004320_session1_rest','P00004736_session1_rest','P00004780_session1_rest','P00004510_session1_rest','P00004554_session1_rest','P00004877_session1_rest'}; %%% participants excluded to obtain an FD match between age groups <50yo> and same N of participants in each age group
 
 files_in.fmri = niak_grab_fmri_preprocess([path_data 'FINAL_preprocess_test_issue100_16.03.03'],opt_g).fmri; % Replace the folder by the path where the results of the fMRI preprocessing pipeline were stored. 
 
