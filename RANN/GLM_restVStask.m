@@ -30,7 +30,7 @@ opt_g.type_files = 'glm_connectome'; % Specify to the grabber to prepare the fil
 
 %% participants excluded to obtain an FD match between age groups <50yo> and same N of participants in each age group
 %% exclude subjects syn:
-%opt_g.exclude_subject = {'P00004840_session1_syn','P00002012_session1_syn', 'P00004654_session1_syn','P00004663_session1_syn','P00004694_session1_syn','P00004742_session1_syn','P00004743_session1_syn','P00004501_session1_syn','P00004551_session1_syn','P00004571_session1_syn','P00004636_session1_syn','P00004648_session1_syn','P00004719_session1_syn','P00004787_session1_syn','P00004797_session1_syn','P00004805_session1_syn','P00004825_session1_syn','P00004828_session1_syn'}
+opt_g.exclude_subject = {'P00004840_session1_syn','P00002012_session1_syn', 'P00004654_session1_syn','P00004663_session1_syn','P00004694_session1_syn','P00004742_session1_syn','P00004743_session1_syn','P00004501_session1_syn','P00004551_session1_syn','P00004571_session1_syn','P00004636_session1_syn','P00004648_session1_syn','P00004719_session1_syn','P00004787_session1_syn','P00004797_session1_syn','P00004805_session1_syn','P00004825_session1_syn','P00004828_session1_syn'}
 %%exclude subjects antonyms:
 opt_g.exclude_subject = {'P00004663_session1_ant','P00004694_session1_ant','P00004636_session1_ant','P00004743_session1_ant','P00004654_session1_ant','P00004819_session1_ant','P00004873_session1_ant','P00004239_session1_ant','P00004687_session1_ant','P00004639_session1_ant','P00004574_session1_ant','P00004656_session1_ant','P00004816_session1_ant','P00004742_session1_ant','P00004877_session1_ant','P00004731_session1_ant','P00004306_session1_ant','P00004721_session1_ant','P00004246_session1_ant','P00004549_session1_ant','P00004617_session1_ant','P00004794_session1_ant','P00004209_session1_ant'}
 %%exclude subjects rest:
@@ -49,7 +49,7 @@ files_in.model.group = [path_data 'filtered_IN_all_filters_alltasks.csv'];
 %%%%%%%%%%%%
 %% Options 
 %%%%%%%%%%%%
-opt.folder_out = [path_data 'RANN_GLMconnectome/GLM_rest']; % Where to store the resultsb
+opt.folder_out = [path_data 'RANN_GLMconnectome/GLM_restVStask']; % Where to store the resultsb
 opt.fdr = 0.1; % The maximal false-discovery rate that is tolerated both for individual (single-seed) maps and whole-connectome discoveries, at each particular scale (multiple comparisons across scales are addressed via permutation testing)
 opt.fwe = 0.05; % The overall family-wise error, i.e. the probablity to have the observed number of discoveries, agregated across all scales, under the global null hypothesis of no association.
 opt.nb_samps = 1000; % The number of samples in the permutation test. This number has to be multiplied by OPT.NB_BATCH below to get the effective number of samples
