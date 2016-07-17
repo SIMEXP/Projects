@@ -85,7 +85,7 @@ opt.test.FD.group.contrast.age = 0; % regress out confounding variable
 opt.test.FD.group.select(1).label = 'filter_in_rest'; % select only a task (filtered on FD and perf criteria)
 opt.test.FD.group.select(1).values = 1;
 
-SEXE
+%% SEXE
 opt.test.sexe.group.contrast.genderMF = 1; % define contrast of interest (FD continuous only)
 opt.test.sexe.group.contrast.education = 0; % regress out confounding variable
 opt.test.sexe.group.contrast.age = 0; % regress out confounding variable
