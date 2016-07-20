@@ -1,27 +1,45 @@
 clear all
 
 %% add niak path
-addpath(genpath('/sb/project/gsf-624-aa/quarantaine/niak-boss-0.12.18'))
+path_niak = ('/gs/project/gsf-624-aa/quarantaine/niak-issue100/')
+addpath(genpath(path_niak))
 
 %% input
+path_results = '/home/perrine/scratch/RANN/RANN_GLMconnectome/GLM_cont_ant160625.nii'; %% ANTONYMS 
+%path_results = '/home/perrine/scratch/RANN/RANN_GLMconnectome/GLM_cont_syn160625.nii'; %% SYNONYMS
+%path_results = '/home/perrine/scratch/RANN/RANN_GLMconnectome/GLM_rest5.nii'; %% REST 
 
-path_results =  '/home/atam/database/adnet/results/glm30b_20141216_nii/';
-path_scale =    {'sci35_scg35_scf33'};
-path_contrast = {'ctrlvsmci'};
-path_overlap = {'ctrlvsmci'}; % for % disc
+path_scale =    {'sci70_scg70_scf68'};
+path_contrast = {'age'};
+path_overlap = {'age'}; % for % disc
 
-data_contrast = {'ctrlvsmci'};
-data_overlap = {'ctrlvsmci'};  % for % disc
+data_contrast = {'age'};
+data_overlap = {'age'};  % for % disc
 
-data_seed     = {'22vmpfc','9dpfc','31sensmot','12mtl'};
-data_cluster =   [22 9 31 12];
-data_newcluster = [1 2 3 4];
+data_seed     = {'63ifg', '65stg','52mtg','62stgL','64mtgp','22mtgm','45itg','32tpole'};
+data_cluster =   [63 65 52 62 64 22 45 32];
+data_newcluster = [1 2 3 4 5 6 7 8];
 
+%% GLM connectome extraction
 
+for i = 1:length(path_scale)
+    for k = 1:length(data_cluster)
+        
+% map d'un seul cluster (à partir de networks) avec valeur à 1
+[hdr,mask] = niak_read_vol(strcat(path_results,'/',path_scale{i},'/networks/networks_',path_scale{i},'.nii.gz'));
+submask = zeros(size(mask));
+cluster = data_cluster(k);
+submask(mask==cluster) = 1;
+hdr.file_name = strcat(path_results,'/',path_scale{i},'/networks/cluster_',data_seed{k},'_networks_',path_scale{i},'.nii.gz');
+niak_write_vol(hdr,submask);
+
+    end
+end
+  
+  
 %% Thresholded effect maps
  
 % FDR
- 
  
 for i = 1:length(path_scale)
     for j = 1:length(path_contrast)
