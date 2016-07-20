@@ -45,7 +45,20 @@ files_in.fmri = niak_grab_fmri_preprocess([path_data 'FINAL_preprocess_test_issu
 
 %% Group
 files_in.model.group = [path_data 'filtered_IN_all_filters_alltasks.csv'];
- 
+
+
+%% inter_run
+subject_id = fieldnames(files_in.fmri);
+for n = 1:length(subject_id)
+    files_in.model.individual.(subject_id{n}).inter_run = [path_data 'BEHAV_all_filters_ant_syn.csv'];
+end
+
+%%2d trial:
+%for n=1:length(subjects_list);    %%  IDs de sujets dans ton model de groupe
+%files_in.model.individual.(subjects_list{n}).inter_run = [path_data 'BEHAV_all_filters_ant_syn.csv'];
+%end
+
+
 %%%%%%%%%%%%
 %% Options 
 %%%%%%%%%%%%
@@ -74,25 +87,25 @@ opt.test.age_task4vs1.group.contrast.genderMF = 0; % regress out confounding var
 opt.test.age_task4vs1.group.contrast.FD_scrubbed = 0; % regress out confounding variable
 opt.test.age_task4vs1.inter_run.select(1).label = 'task4vs1';
 opt.test.age_task4vs1.inter_run.select(1).values = [1 -1];
-opt.test.age_task4vs1.inter_run.contrast.task1vs2 = 1;
+opt.test.age_task4vs1.inter_run.contrast.task4vs1 = 1;
 
 %% 2- rest (4) vs task syn (2)
-opt.test.age_task4vs1.group.contrast.age = 1 % define contrast of interest (age continuous only)
-opt.test.age_task4vs1.group.contrast.education = 0; % regress out confounding variable
-opt.test.age_task4vs1.group.contrast.genderMF = 0; % regress out confounding variable
-opt.test.age_task4vs1.group.contrast.FD_scrubbed = 0; % regress out confounding variable
-opt.test.age_task4vs1.inter_run.select(1).label = 'task4vs2';
-opt.test.age_task4vs1.inter_run.select(1).values = [1 -1];
-opt.test.age_task4vs1.inter_run.contrast.task1vs2 = 1;
+opt.test.age_task4vs2.group.contrast.age = 1 % define contrast of interest (age continuous only)
+opt.test.age_task4vs2.group.contrast.education = 0; % regress out confounding variable
+opt.test.age_task4vs2.group.contrast.genderMF = 0; % regress out confounding variable
+opt.test.age_task4vs2.group.contrast.FD_scrubbed = 0; % regress out confounding variable
+opt.test.age_task4vs2.inter_run.select(1).label = 'task4vs2';
+opt.test.age_task4vs2.inter_run.select(1).values = [1 -1];
+opt.test.age_task4vs2.inter_run.contrast.task4vs2 = 1;
 
 %% 3- task ant (1) vs syn (2) 
-opt.test.age_task4vs1.group.contrast.age = 1 % define contrast of interest (age continuous only)
-opt.test.age_task4vs1.group.contrast.education = 0; % regress out confounding variable
-opt.test.age_task4vs1.group.contrast.genderMF = 0; % regress out confounding variable
-opt.test.age_task4vs1.group.contrast.FD_scrubbed = 0; % regress out confounding variable
-opt.test.age_task4vs1.inter_run.select(1).label = 'task1vs2';
-opt.test.age_task4vs1.inter_run.select(1).values = [1 -1];
-opt.test.age_task4vs1.inter_run.contrast.task1vs2 = 1;
+opt.test.age_task1vs2.group.contrast.age = 1 % define contrast of interest (age continuous only)
+opt.test.age_task1vs2.group.contrast.education = 0; % regress out confounding variable
+opt.test.age_task1vs2.group.contrast.genderMF = 0; % regress out confounding variable
+opt.test.age_task1vs2.group.contrast.FD_scrubbed = 0; % regress out confounding variable
+opt.test.age_task1vs2.inter_run.select(1).label = 'task1vs2';
+opt.test.age_task1vs2.inter_run.select(1).values = [1 -1];
+opt.test.age_task1vs2.inter_run.contrast.task1vs2 = 1;
 
 %%%%% MAIN EFFECTS OF EDU DEPENDING ON TASK %%%%%
 
@@ -103,25 +116,25 @@ opt.test.edu_task4vs1.group.contrast.genderMF = 0; % regress out confounding var
 opt.test.edu_task4vs1.group.contrast.FD_scrubbed = 0; % regress out confounding variable
 opt.test.edu_task4vs1.inter_run.select(1).label = 'task4vs1';
 opt.test.edu_task4vs1.inter_run.select(1).values = [1 -1];
-opt.test.edu_task4vs1.inter_run.contrast.task1vs2 = 1;
+opt.test.edu_task4vs1.inter_run.contrast.task4vs1 = 1;
 
 %% 2- rest (4) vs task syn (2)
-opt.test.edu_task4vs1.group.contrast.education = 1 % define contrast of interest (age continuous only)
-opt.test.edu_task4vs1.group.contrast.age = 0; % regress out confounding variable
-opt.test.edu_task4vs1.group.contrast.genderMF = 0; % regress out confounding variable
-opt.test.edu_task4vs1.group.contrast.FD_scrubbed = 0; % regress out confounding variable
-opt.test.edu_task4vs1.inter_run.select(1).label = 'task4vs2';
-opt.test.edu_task4vs1.inter_run.select(1).values = [1 -1];
-opt.test.edu_task4vs1.inter_run.contrast.task1vs2 = 1;
+opt.test.edu_task4vs2.group.contrast.education = 1 % define contrast of interest (age continuous only)
+opt.test.edu_task4vs2.group.contrast.age = 0; % regress out confounding variable
+opt.test.edu_task4vs2.group.contrast.genderMF = 0; % regress out confounding variable
+opt.test.edu_task4vs2.group.contrast.FD_scrubbed = 0; % regress out confounding variable
+opt.test.edu_task4vs2.inter_run.select(1).label = 'task4vs2';
+opt.test.edu_task4vs2.inter_run.select(1).values = [1 -1];
+opt.test.edu_task4vs2.inter_run.contrast.task4vs2 = 1;
 
 %% 3- task ant (1) vs syn (2) 
-opt.test.edu_task4vs1.group.contrast.edu = 1 % define contrast of interest (age continuous only)
-opt.test.edu_task4vs1.group.contrast.age = 0; % regress out confounding variable
-opt.test.edu_task4vs1.group.contrast.genderMF = 0; % regress out confounding variable
-opt.test.edu_task4vs1.group.contrast.FD_scrubbed = 0; % regress out confounding variable
-opt.test.edu_task4vs1.inter_run.select(1).label = 'task1vs2';
-opt.test.edu_task4vs1.inter_run.select(1).values = [1 -1];
-opt.test.edu_task4vs1.inter_run.contrast.task1vs2 = 1;
+opt.test.edu_task1vs2.group.contrast.edu = 1 % define contrast of interest (age continuous only)
+opt.test.edu_task1vs2.group.contrast.age = 0; % regress out confounding variable
+opt.test.edu_task1vs2.group.contrast.genderMF = 0; % regress out confounding variable
+opt.test.edu_task1vs2.group.contrast.FD_scrubbed = 0; % regress out confounding variable
+opt.test.edu_task1vs2.inter_run.select(1).label = 'task1vs2';
+opt.test.edu_task1vs2.inter_run.select(1).values = [1 -1];
+opt.test.edu_task1vs2.inter_run.contrast.task1vs2 = 1;
 
 
 %%%%% INTERACTION %%%%%
