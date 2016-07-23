@@ -91,7 +91,7 @@ files_in = niak_grab_fmri_preprocess(path_data ,opt_g); % Replace the folder by 
 %%%%%%%%%%%%%
 opt.folder_out = path_out; % Where to store the results
 opt.region_growing.thre_size = 1000; %  the size of the regions, when they stop growing. A threshold of 1000 mm3 will give about 1000 regions on the grey matter. 
-[10:10:100 120:20:200 240:40:500]'; % Search for stable clusters in the range 10 to 500 
+opt.grid_scales = [10:10:100 120:20:200 240:40:500]'; % Search for stable clusters in the range 10 to 500 
 
 opt.scales_maps = repmat(opt.grid_scales,[1 3]); % The scales that will be used to generate the maps of brain clusters and stability. 
                                                  % In this example the same number of clusters are used at the individual (first column), 
