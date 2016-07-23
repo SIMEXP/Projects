@@ -46,7 +46,7 @@ files_in.model.group = [path_data 'BEHAV_all_filters_ant_syn.csv'];
 %%%%%%%%%%%%
 %% Options 
 %%%%%%%%%%%%
-opt.folder_out = [path_data 'RANN_GLMconnectome/GLM_cont_ant_inter_test_160715']; % Where to store the resultsb
+opt.folder_out = [path_data 'RANN_GLMconnectome/GLM__ant_test_sexe_160715']; % Where to store the resultsb
 opt.fdr = 0.1; % The maximal false-discovery rate that is tolerated both for individual (single-seed) maps and whole-connectome discoveries, at each particular scale (multiple comparisons across scales are addressed via permutation testing)
 opt.fwe = 0.05; % The overall family-wise error, i.e. the probablity to have the observed number of discoveries, agregated across all scales, under the global null hypothesis of no association.
 opt.nb_samps = 1000; % The number of samples in the permutation test. This number has to be multiplied by OPT.NB_BATCH below to get the effective number of samples
@@ -89,16 +89,16 @@ opt.flag_rand = false; % if the flag is false, the pipeline is deterministic. Ot
 %opt.test.interaction_age_ANTperf.group.select(1).values = 1;
 
 %%% INTER PERFxEDU
-opt.test.interaction_ANTperf_edu.group.interaction.label = 'inter_eduxANT'
-opt.test.interaction_ANTperf_edu.group.interaction.factor = {'education','ANT_NumCor100'}
-opt.test.interaction_ANTperf_edu.group.contrast.education = 0; % define contrast of interest age continuous only)
-opt.test.interaction_ANTperf_edu.group.contrast.ANT_NumCor100 = 0; % define contrast of interest SYN continuous only)
+%opt.test.interaction_ANTperf_edu.group.interaction.label = 'inter_eduxANT'
+%opt.test.interaction_ANTperf_edu.group.interaction.factor = {'education','ANT_NumCor100'}
+%opt.test.interaction_ANTperf_edu.group.contrast.education = 0; % define contrast of interest age continuous only)
+%opt.test.interaction_ANTperf_edu.group.contrast.ANT_NumCor100 = 0; % define contrast of interest SYN continuous only)
 %opt.test.interaction_ANTperf_edu.group.contrast.age = 0; % regress out confounding variable
-opt.test.interaction_ANTperf_edu.group.contrast.genderMF = 0; % regress out confounding variable
-opt.test.interaction_ANTperf_edu.group.contrast.FD_ant = 0; % regress out confounding variable
-opt.test.interaction_ANTperf_edu.group.contrast.inter_eduxANT = 1;
-opt.test.interaction_ANTperf_edu.group.select(1).label = 'filter_in_ant'; % select only a task (filtered on FD and perf criteria)
-opt.test.interaction_ANTperf_edu.group.select(1).values = 1;
+%opt.test.interaction_ANTperf_edu.group.contrast.genderMF = 0; % regress out confounding variable
+%opt.test.interaction_ANTperf_edu.group.contrast.FD_ant = 0; % regress out confounding variable
+%opt.test.interaction_ANTperf_edu.group.contrast.inter_eduxANT = 1;
+%opt.test.interaction_ANTperf_edu.group.select(1).label = 'filter_in_ant'; % select only a task (filtered on FD and perf criteria)
+%opt.test.interaction_ANTperf_edu.group.select(1).values = 1;
 
 
 %%%% MAIN EFFECTS %%%%
@@ -112,13 +112,13 @@ opt.test.interaction_ANTperf_edu.group.select(1).values = 1;
 %opt.test.FD.group.select(1).values = 1;
 
 
-%%% SEXE
-%opt.test.sexe.group.contrast.genderMF = 1; % define contrast of interest (FD continuous only)
-%opt.test.sexe.group.contrast.education = 0; % regress out confounding variable
-%opt.test.sexe.group.contrast.ANT_NumCor100 = 0; % regress out confounding variable
-%opt.test.sexe.group.contrast.age = 0; % regress out confounding variable
-%opt.test.sexe.group.select(1).label = 'filter_in_ant'; % select only a task (filtered on FD and perf criteria)
-%opt.test.sexe.group.select(1).values = 1;
+%%% SEXE (0=F, 1=M)
+opt.test.sexe.group.contrast.genderFM = 1; % define contrast of interest (FD continuous only)
+opt.test.sexe.group.contrast.education = 0; % regress out confounding variable
+opt.test.sexe.group.contrast.ANT_NumCor100 = 0; % regress out confounding variable
+opt.test.sexe.group.contrast.age = 0; % regress out confounding variable
+opt.test.sexe.group.select(1).label = 'filter_in_ant'; % select only a task (filtered on FD and perf criteria)
+opt.test.sexe.group.select(1).values = 1;
 
 %%% AGE
 %opt.test.age.group.contrast.age = 1; % define contrast of interest (age continuous only)
