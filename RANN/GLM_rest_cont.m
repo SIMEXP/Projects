@@ -64,7 +64,7 @@ opt.flag_rand = false; % if the flag is false, the pipeline is deterministic. Ot
 %%% AGE
 opt.test.age.group.contrast.age = 1; % define contrast of interest (age continuous only)
 opt.test.age.group.contrast.education = 0; % regress out confounding variable
-opt.test.age.group.contrast.genderMF = 0; % regress out confounding variable
+opt.test.age.group.contrast.gender = 0; % regress out confounding variable
 opt.test.age.group.contrast.FD_rest = 0; % regress out confounding variable
 opt.test.age.group.select(1).label = 'filter_in_rest'; % select only rest (filtered on FD and perf criteria)
 opt.test.age.group.select(1).values = 1;
@@ -72,7 +72,7 @@ opt.test.age.group.select(1).values = 1;
 %%% EDUCATION 
 opt.test.edu.group.contrast.education = 1; % define contrast of interest (cont)
 opt.test.edu.group.contrast.age = 0; % regress out confounding variable
-opt.test.edu.group.contrast.genderMF = 0; % regress out confounding variable
+opt.test.edu.group.contrast.gender = 0; % regress out confounding variable
 opt.test.edu.group.contrast.FD_rest = 0; % regress out confounding variable
 opt.test.edu.group.select(1).label = 'filter_in_rest'; % select only rest  (filtered on FD and perf criteria)
 opt.test.edu.group.select(1).values = 1;
@@ -80,17 +80,17 @@ opt.test.edu.group.select(1).values = 1;
 %%% FD
 opt.test.FD.group.contrast.FD_rest = 1; % define contrast of interest (FD continuous only)
 opt.test.FD.group.contrast.education = 0; % regress out confounding variable
-opt.test.FD.group.contrast.genderMF = 0; % regress out confounding variable
+opt.test.FD.group.contrast.gender= 0; % regress out confounding variable
 opt.test.FD.group.contrast.age = 0; % regress out confounding variable
 opt.test.FD.group.select(1).label = 'filter_in_rest'; % select only a task (filtered on FD and perf criteria)
 opt.test.FD.group.select(1).values = 1;
 
 %% SEXE
-opt.test.sexe.group.contrast.genderMF = 1; % define contrast of interest (dicho)
+opt.test.sexe.group.contrast.gender = 1; % define contrast of interest (dicho)
 opt.test.sexe.group.contrast.education = 0; % regress out confounding variable
 opt.test.sexe.group.contrast.age = 0; % regress out confounding variable
 opt.test.sexe.group.select(1).label = 'filter_in_rest'; % select only a task (filtered on FD and perf criteria)
-opt.test.edu.group.select(1).values = 1;
+opt.test.sexe.group.select(1).values = 1;
 
 %%% PERFORMANCE TASKS
 %opt.test.perf.group.contrast.ANT_NumCor100 = 1; % define contrast of interest
@@ -109,7 +109,7 @@ opt.test.interaction_age_edu.group.interaction.label = 'inter_agexedu'
 opt.test.interaction_age_edu.group.interaction.factor = {'age','education'}
 opt.test.interaction_age_edu.group.contrast.age = 0; % define contrast of interest (age continuous only)
 opt.test.interaction_age_edu.group.contrast.education = 0; % regress out confounding variable
-opt.test.interaction_age_edu.group.contrast.genderMF = 0; % regress out confounding variable
+opt.test.interaction_age_edu.group.contrast.gender = 0; % regress out confounding variable
 opt.test.interaction_age_edu.group.contrast.FD_rest = 0; % regress out confounding variable
 opt.test.interaction_age_edu.group.contrast.inter_agexedu = 1;
 opt.test.interaction_age_edu.group.select(1).label = 'filter_in_rest'; % select only a task (filtered on FD and perf criteria)
