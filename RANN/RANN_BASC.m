@@ -39,10 +39,7 @@ addpath(genpath(path_niak))
 
 %%%%%%%%%%%%%
 path_data = '/home/perrine/scratch/RANN/FINAL_preprocess_test_issue100_16.03.03/';
-%use new library
-path_niak = ('/gs/project/gsf-624-aa/quarantaine/niak-issue100/');
-%path_niak= '/home/perrine/quarantaine/niak-boss-0.13.4/';
-path_out  = '/home/perrine/scratch/RANN/RANN_MSTEPS_rest/';
+path_out  = '/home/perrine/scratch/RANN/RANN_BASC_rest_and_tasks/';
 %%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%
@@ -57,7 +54,7 @@ opt_g.min_xcorr_anat = 0; % The minimum xcorr score for an fMRI dataset to be in
 
 opt_g.type_files = 'rest'; % Specify to the grabber to prepare the files for the STABILITY_REST pipeline
 
-opt_g.filter.run = 'rest';
+opt_g.filter.run = {'ant','syn','rest'};
 
 files_in = niak_grab_fmri_preprocess(path_data ,opt_g); % Replace the folder by the path where the results of the fMRI preprocessing pipeline were stored. 
 
@@ -94,15 +91,8 @@ files_in = niak_grab_fmri_preprocess(path_data ,opt_g); % Replace the folder by 
 %%%%%%%%%%%%%
 opt.folder_out = path_out; % Where to store the results
 opt.region_growing.thre_size = 1000; %  the size of the regions, when they stop growing. A threshold of 1000 mm3 will give about 1000 regions on the grey matter. 
-opt.grid_scales = [10 7 7;...
-20 14 13;...
-30 27 29;...
-40 32 32;...
-60 54 53;...
-70 70 68;...
-100 100 100;...
-280 308 311;...
-440 484 427]; % Search for stable clusters in the range 10 to 500 
+[10:10:100 120:20:200 240:40:500]'; % Search for stable clusters in the range 10 to 500 
+
 opt.scales_maps = repmat(opt.grid_scales,[1 3]); % The scales that will be used to generate the maps of brain clusters and stability. 
                                                  % In this example the same number of clusters are used at the individual (first column), 
                                                  % group (second column) and consensus (third and last colum) levels.
