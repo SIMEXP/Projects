@@ -25,13 +25,14 @@ end
 %% make the labels
 
 clear all
-path_data = '/Users/AngelaTam/Desktop/data_in_brief/vol_parcellations/template_mcinet_basc_asym_rois_nii/';
+path_data = '/Users/AngelaTam/Desktop/data_in_brief/label_subclusters/template_mcinet_basc_asym_rois/';
+path_out = '/Users/AngelaTam/Desktop/data_in_brief/vol_parcellations/template_mcinet_basc_asym_rois_nii/';
 %scale = [22 33 65 111 208]; % scale
 scale = [30 51 77 137 199 322]; % rois
-cluster = {'deep_gray_matter_nuclei','post_default_mode',...
-    'medial_temp_lobe','ventral_temp_lobe','dorsal_temp_lobe',...
-    'ant_default_mode','orbitofrontal','post_attention',...
-    'cerebellum','sensorymotor','visual','frontoparietal'};
+cluster = {'DGMN','pDMN',...
+    'mTL','vTL','dTL',...
+    'aDMN','OFC','pATT',...
+    'CER','SM','VIS','FPN'};
 
 for ss = 1:length(scale) % for every scale
     
@@ -46,7 +47,7 @@ for ss = 1:length(scale) % for every scale
     labels{1,2} = 'Seed number';
     
     % prep the csv
-    csvname = strcat(path_data, 'labels_mcinet_asym_', num2str(scale(ss)), 'rois.csv');
+    csvname = strcat(path_out, 'labels_mcinet_asym_', num2str(scale(ss)), 'rois.csv');
     fid = fopen(csvname,'w');
     fprintf(fid, '%s, %s\n', labels{1,:});
     
@@ -54,7 +55,7 @@ for ss = 1:length(scale) % for every scale
         for nn = 1:length(matching) % for each cluster in reference scale 12
             for bb = 1:length(matching{nn}) % for each subcluster in a cluster in scale 12
                 % cell contents
-                labels{matching{nn}(bb)+1,1} = strcat(num2str(scale(ss)),'_',cluster{nn},'_',num2str(bb)); % generate the label
+                labels{matching{nn}(bb)+1,1} = strcat('R',num2str(scale(ss)),'_',cluster{nn},'_',num2str(bb)); % generate the label
                 labels{matching{nn}(bb)+1,2} = matching{nn}(bb); % extract the seed number
             end
         end
