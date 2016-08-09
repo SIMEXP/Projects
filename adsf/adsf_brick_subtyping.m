@@ -1,4 +1,4 @@
-function [files_in,files_out,opt] = niak_brick_subtyping(files_in,files_out,opt)
+function [files_in,files_out,opt] = adsf_brick_subtyping(files_in,files_out,opt)
 % Build subtypes
 % 
 % SYNTAX:
