@@ -61,7 +61,7 @@ m.x = zeros(length(s_list), n_conf+1);
 for ss = 1:length(s_list)
     m.x(ss,:) = [1 tab(s_list(ss), conf_ids)];
 end
-conf_stack = zeros(n_sub, n_vox, n_net);
+stack = zeros(n_sub, n_vox, n_net);
 
 % Loop through the networks for the regression
 for net_id = 1:n_net
@@ -69,7 +69,7 @@ for net_id = 1:n_net
     m.y = raw_stack(:, :, net_id);
     [res] = niak_glm(m, opt_mod);
     % Store the residuals in the confound stack
-    conf_stack(:, :, net_id) = res.e;
+    stack(:, :, net_id) = res.e;
 end
 
 % Add the model information
@@ -78,4 +78,4 @@ provenance.model.matrix = m.x;
 provenance.model.confounds = confs;
 
 % Save the regressed stack and provenance info
-save(path_out, 'provenance', 'conf_stack')
+save(path_out, 'provenance', 'stack')
