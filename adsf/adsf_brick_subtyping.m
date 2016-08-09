@@ -2,7 +2,7 @@ function [files_in,files_out,opt] = adsf_brick_subtyping(files_in,files_out,opt)
 % Build subtypes
 % 
 % SYNTAX:
-% [FILES_IN,FILES_OUT,OPT] = NIAK_BRICK_SUBTYPING(FILES_IN,FILES_OUT,OPT)
+% [FILES_IN,FILES_OUT,OPT] = ADSF_BRICK_SUBTYPING(FILES_IN,FILES_OUT,OPT)
 % _________________________________________________________________________
 % 
 % INPUTS:
