@@ -16,7 +16,7 @@ function [files_in,files_out,opt] = adsf_brick_subtyping(files_in,files_out,opt)
 %       niak_brick_network_stack
 %
 %   MASK
-%       (3D volume) file name of a binary mask of the voxels that 
+%       (2D array) file name of a binary mask of the voxels that 
 %       are included in the time*space array
 % 
 % FILES_OUT 
@@ -33,21 +33,6 @@ function [files_in,files_out,opt] = adsf_brick_subtyping(files_in,files_out,opt)
 %   SUBTYPE
 %       (string, default 'subtype.mat') path to subject by subtype by voxel
 %       array .mat file
-%
-%   SUBTYPE_MAP
-%       (string, default '<OPT.SUB_MAP_TYPE>_subtype.nii.gz') path to ...
-%
-%   GRAND_MEAN_MAP
-%       (string, default 'grand_mean.nii.gz') path to ...
-%
-%   GRAND_STD_MAP
-%       (string, default 'grand_std.nii.gz') path to ...
-%
-%   TTEST_MAP
-%       (string, default 'ttest_subtype.nii.gz') path to ...
-% 
-%   EFF_MAP
-%       (string, default 'eff_subtype.nii.gz') path to ...
 %
 %   PROVENANCE
 %       (string, default 'provenance.mat') path to ...
@@ -110,10 +95,6 @@ function [files_in,files_out,opt] = adsf_brick_subtyping(files_in,files_out,opt)
 %           (vector) order of objects based on HIER. See also:
 %           NIAK_HIER2ORDER
 %
-%   4D VOLUMES (.nii.gz)
-%       Different maps for subtypes as saved in the variable SUB in
-%       SUBTYPES.MAT
-%
 %   PROVENANCE.MAT
 %       (structure) with the following fields:
 %
@@ -150,12 +131,12 @@ opt = psom_struct_defaults(opt,...
 if ~isempty(opt.folder_out)
     path_out = niak_full_path(opt.folder_out);
     files_out = psom_struct_defaults(files_out,...
-                { 'sim_fig'                          , 'den_fig'                   , 'subtype'                , 'subtype_map'                                , 'grand_mean_map'               , 'grand_std_map'             , 'ttest_map'                      , 'eff_map'                      , 'provenance'      },...
-                { [path_out 'similarity_matrix.pdf'] , [path_out 'dendrogram.pdf'] , [path_out 'subtype.mat'] , [path_out opt.sub_map_type '_subtype' ext_m] , [path_out 'grand_mean' ext_m] , [path_out 'grand_std' ext_m] , [path_out 'ttest_subtype' ext_m] , [path_out 'eff_subtype' ext_m] , ''                });
+                { 'sim_fig'                          , 'den_fig'                   , 'subtype'                , 'provenance'                },...
+                { [path_out 'similarity_matrix.pdf'] , [path_out 'dendrogram.pdf'] , [path_out 'subtype.mat'] , [path_out 'provenance.mat'] });
 else
     files_out = psom_struct_defaults(files_out,...
-                { 'sim_fig'         , 'den_fig'         , 'subtype'         , 'subtype_map'     , 'grand_mean_map'  , 'grand_std_map'   ,'ttest_map'        , 'eff_map'         , 'provenance'      },...
-                { 'gb_niak_omitted' , 'gb_niak_omitted' , 'gb_niak_omitted' , 'gb_niak_omitted' , 'gb_niak_omitted' , 'gb_niak_omitted' , 'gb_niak_omitted' , 'gb_niak_omitted' , 'gb_niak_omitted' });
+                { 'sim_fig'         , 'den_fig'         , 'subtype'         , 'provenance'      },...
+                { 'gb_niak_omitted' , 'gb_niak_omitted' , 'gb_niak_omitted' , 'gb_niak_omitted' });
 end
 
 if opt.flag_prov && isempty(files_out.provenance)
@@ -191,7 +172,7 @@ rm = sim_matrix(subj_order,subj_order);
 %% Saving the clustering and matrix
 if ~strcmp(files_out.sim_fig, 'gb_niak_omitted')
     % Save the similarity matrix as pdf
-    opt_pdf.limits = [-0.4 0.4];
+    opt_pdf.limits = [-0.8 0.8];
     opt_pdf.color_map = 'hot_cold';
     fh1 = figure('Visible', 'off');
     niak_visu_matrix(rm,opt_pdf);
@@ -205,11 +186,12 @@ if ~strcmp(files_out.den_fig, 'gb_niak_omitted')
     print(fh2, files_out.den_fig,'-dpdf','-r300');
 end
 
-% % % %% Read the mask
-% % % [hdr,mask] = niak_read_vol(files_in.mask);
-% % % mask = logical(mask);
-% % % % Get the number of voxels
-% % % n_vox = sum(mask(:));
+%% Read the mask
+mask = load(files_in.mask);
+mask = mask.mask;
+mask = logical(mask);
+% Get the number of vertices
+n_vox = length(mask);
 
 %% Build the clusters by thresholding the hiearchy by the number of subtypes
 part = niak_threshold_hierarchy(hier,struct('thresh',opt.nb_subtype));
@@ -228,50 +210,19 @@ for ss = 1:opt.nb_subtype
     end
 end
 
-% % % % % Bring the subtype map back to volumetric space
-% % % % % Check if to be saved - improvable
-% % % % if ~strcmp(files_out.subtype_map, 'gb_niak_omitted')
-% % % %     vol_map_sub = niak_tseries2vol(sub.map, mask);
-% % % %     hdr.file_name = files_out.subtype_map;
-% % % %     niak_write_vol(hdr, vol_map_sub);
-% % % % end
-
 %% Generating and writing t-test and effect maps of the difference between subtype
 % average and grand average in volumes
 
 for ss = 1:opt.nb_subtype
     [sub.ttest(ss,:), ~, sub.mean_eff(ss,:), ~, ~] = niak_ttest(data(part==ss,:), data(part~=ss,:),true);
 end
-% Check if to be saved - improvable
-if ~strcmp(files_out.ttest_map, 'gb_niak_omitted')
-    vol_ttest_sub = niak_tseries2vol(sub.ttest, mask);
-    hdr.file_name = files_out.ttest_map;
-    niak_write_vol(hdr,vol_ttest_sub);
-end
-% Check if to be saved - improvable
-if ~strcmp(files_out.eff_map, 'gb_niak_omitted')
-    vol_eff_sub = niak_tseries2vol(sub.mean_eff, mask);
-    hdr.file_name = files_out.eff_map;
-    niak_write_vol(hdr,vol_eff_sub);
-end
 
 %% Generate and write grand mean map
-% Check if to be saved - improvable
-if ~strcmp(files_out.grand_mean_map, 'gb_niak_omitted')
-    hdr.file_name = files_out.grand_mean_map;
-    sub.gd_mean = mean(data,1);
-    vol_gd_mean = niak_tseries2vol(sub.gd_mean, mask);
-    niak_write_vol(hdr,vol_gd_mean);
-end
-
+sub.gd_mean = mean(data,1);
+    
 % Generate and write the grand std map
-% Check if to be saved - improvable
-if ~strcmp(files_out.grand_std_map, 'gb_niak_omitted')
-    hdr.file_name = files_out.grand_std_map;
-    sub.gd_std = std(data,1);
-    vol_std_mean = niak_tseries2vol(sub.gd_std, mask);
-    niak_write_vol(hdr,vol_std_mean);
-end
+sub.gd_std = std(data,1);
+
 
 %% Saving subtyping results and statistics
 if ~strcmp(files_out.subtype, 'gb_niak_omitted')
