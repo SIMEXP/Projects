@@ -198,7 +198,7 @@ part = niak_threshold_hierarchy(hier,struct('thresh',opt.nb_subtype));
 
 %% Build subtype maps
 
-% Generating and writing the mean or the median subtype maps in a single volume
+% Generating and writing the mean or the median subtype maps 
 sub.map = zeros(opt.nb_subtype, n_vox);
 for ss = 1:opt.nb_subtype
     if strcmp(opt.sub_map_type, 'mean')
@@ -211,18 +211,21 @@ for ss = 1:opt.nb_subtype
 end
 
 %% Generating and writing t-test and effect maps of the difference between subtype
-% average and grand average in volumes
 
+sub.ttest = zeros(opt.nb_subtype, n_vox);
+sub.mean_eff = zeros(opt.nb_subtype, n_vox);
 for ss = 1:opt.nb_subtype
     [sub.ttest(ss,:), ~, sub.mean_eff(ss,:), ~, ~] = niak_ttest(data(part==ss,:), data(part~=ss,:),true);
 end
+% mask out NaN values with zeros
+sub.ttest(isnan(sub.ttest)) = 0;
+sub.mean_eff(isnan(sub.mean_eff)) = 0;
 
 %% Generate and write grand mean map
 sub.gd_mean = mean(data,1);
     
 % Generate and write the grand std map
 sub.gd_std = std(data,1);
-
 
 %% Saving subtyping results and statistics
 if ~strcmp(files_out.subtype, 'gb_niak_omitted')
