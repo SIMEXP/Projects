@@ -112,6 +112,7 @@ for ss = 1:opt.nb_network % iterate over number of networks
     mask = repmat((part(n_net,:) == ss),size(ct,1),1);
     m_name = strcat('net',num2str(ss));
     tmp_mask.(m_name) = mask;
+    mask = mask(1,:);
     provenance.network = ss;
     if ~strcmp(files_out.mask, 'gb_niak_omitted')
         save(files_out.mask{ss}, 'mask', 'provenance')
