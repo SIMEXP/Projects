@@ -114,7 +114,7 @@ for ss = 1:opt.nb_network % iterate over number of networks
     tmp_mask.(m_name) = mask;
     provenance.network = ss;
     if ~strcmp(files_out.mask, 'gb_niak_omitted')
-        save(files_out.mask{ss}, 'mask')
+        save(files_out.mask{ss}, 'mask', 'provenance')
     end
 end
 
@@ -130,7 +130,7 @@ provenance.subjects = data.subjects;
 % fill array with cortical thickness values per netwok per subject
 for cc = 1:opt.nb_network
     stack(:,:) = ct.*tmp_mask.(mname{cc});
-    provenance.network = ss;
+    provenance.network = cc;
     if ~strcmp(files_out.stack, 'gb_niak_omitted')
         save(files_out.stack{cc}, 'stack', 'provenance')
     end
