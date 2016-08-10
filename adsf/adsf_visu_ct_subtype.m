@@ -111,7 +111,7 @@ end
 for ss = 1:opt.nb_subtype
     % Start with the figure
     fh = figure('Visible', 'off');
-    opt_t.limit = [-6 6];
+    opt_t.limit = [-8 8];
     niak_visu_surf(subt_ttest(ss,:),ssurf,opt_t);
     if ~strcmp(files_out.ttest, 'gb_niak_omitted')
         print(fh, files_out.ttest{ss}, '-r300', '-dpng');
@@ -122,7 +122,7 @@ end
 for ss = 1:opt.nb_subtype
     % Start with the figure
     fh = figure('Visible', 'off');
-    opt_e.limit = [-0.2 2];
+    opt_e.limit = [-0.3 0.3];
     niak_visu_surf(mean_eff(ss,:),ssurf,opt_e);
     if ~strcmp(files_out.mean_eff, 'gb_niak_omitted')
         print(fh, files_out.mean_eff{ss}, '-r300', '-dpng');
