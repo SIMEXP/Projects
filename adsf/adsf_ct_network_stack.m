@@ -69,7 +69,7 @@ if ~isempty(opt.folder_out)
     path_out = niak_full_path(opt.folder_out);
     files_out = psom_struct_defaults(files_out,...
                 { 'stack'                                                          , 'mask' },...
-                { make_paths(path_out, 'ct_network_%d_stack.mat', 1:opt.nb_network),  make_paths(path_out, 'mask_network%d_res%d.mat', 1:opt.nb_network, opt.nb_network)});
+                { make_paths(path_out, 'ct_network_%d_stack.mat', 1:opt.nb_network),  make_paths(path_out, 'mask_network%d.mat', 1:opt.nb_network)});
 else
     files_out = psom_struct_defaults(files_out,...
                 { 'stack'          , 'mask'            },...
@@ -94,9 +94,6 @@ n_vox = size(ct,2); % number of vertices
 part = load(files_in.partition); 
 part = part.part'; 
 
-% save provenance
-provenance.subjects = data.subjects;
-
 %% create masks for each network
 
 % find the correct parcellation within part
@@ -107,10 +104,15 @@ for pp = 1:size(part,1)
     end
 end
 
+% provenance
+provenance.part = part(n_net,:);
+provenance.resolution = 9;
+
 for ss = 1:opt.nb_network % iterate over number of networks
     mask = repmat((part(n_net,:) == ss),size(ct,1),1);
     m_name = strcat('net',num2str(ss));
     tmp_mask.(m_name) = mask;
+    provenance.network = ss;
     if ~strcmp(files_out.mask, 'gb_niak_omitted')
         save(files_out.mask{ss}, 'mask')
     end
@@ -122,9 +124,13 @@ end
 ct_net = zeros(n_sub,n_vox); 
 mname = fieldnames(tmp_mask);
 
+% save subject list in provenance
+provenance.subjects = data.subjects;
+
 % fill array with cortical thickness values per netwok per subject
 for cc = 1:opt.nb_network
     stack(:,:) = ct.*tmp_mask.(mname{cc});
+    provenance.network = ss;
     if ~strcmp(files_out.stack, 'gb_niak_omitted')
         save(files_out.stack{cc}, 'stack', 'provenance')
     end
