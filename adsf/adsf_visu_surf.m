@@ -131,14 +131,25 @@ if strcmp(opt.colormap,'hot_cold')
         per_hot = opt.limit(2)/(opt.limit(2)-opt.limit(1));
     elseif opt.limit(2)<=0
         per_hot = 0;
-    else 
+    else
         per_hot = 1;
     end
-    c = niak_hot_cold(256,per_hot);    
-    colormap(c)   
+    c = niak_hot_cold(256,per_hot);
+    colormap(c)
+elseif strcmp(opt.colormap,'gray_hot_cold')
+%     if (opt.limit(2)>0) && (opt.limit(1)<0)
+%         per_hot = opt.limit(2)/(opt.limit(2)-opt.limit(1));
+%     elseif opt.limit(2)<=0
+%         per_hot = 0;
+%     else
+%         per_hot = 1;
+%     end
+    c = surf_hot_cold(256);
+    colormap(c)
 else
     colormap(opt.colormap);
 end
+
 h=0.39;
 w=0.4;
 
@@ -274,3 +285,5 @@ set(gcf,'PaperPosition',[0.25 2.5 6 4.5]);
 
 return
 end
+
+
