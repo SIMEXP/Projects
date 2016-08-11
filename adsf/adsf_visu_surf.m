@@ -1,4 +1,4 @@
-function [ a, cb ] = niak_visu_surf( data, surf, opt);
+function [ a, cb ] = adsf_visu_surf( data, surf, opt)
 % Basic viewer for surface data.
 % 
 % SYNTAX:
