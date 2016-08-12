@@ -29,10 +29,10 @@ clear all
 
 files_in = '/Users/AngelaTam/Desktop/adsf/ct_subtypes_20160810/net9/subtype.mat';
 files_out = struct;
-opt.folder_out = '/Users/AngelaTam/Desktop/adsf/ct_subtypes_20160810/net9/figures/';
+opt.folder_out = '/Users/AngelaTam/Desktop/adsf/ct_subtypes_20160810/net9/figures_hc/';
 opt.nb_subtype = 5;
 
-adsf_visu_ct_subtype(files_in,files_out,opt);
+adsf_brick_visu_ct_sub(files_in,files_out,opt);
 
 %% weight extraction
 
