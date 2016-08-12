@@ -100,7 +100,7 @@ ssurf = niak_read_surf;
 for ss = 1:opt.nb_subtype
     % Start with the figure
     fh = figure('Visible', 'off');
-    opt_s.colormap = 'hot_cold';
+    opt_s.colormap = 'gray_hot_cold';
     opt_s.limit = [-0.2 0.2];
     adsf_visu_surf(subt(ss,:),ssurf,opt_s);
     if ~strcmp(files_out.map, 'gb_niak_omitted')
@@ -112,7 +112,7 @@ end
 for ss = 1:opt.nb_subtype
     % Start with the figure
     fh = figure('Visible', 'off');
-    opt_t.colormap = 'hot_cold';
+    opt_t.colormap = 'gray_hot_cold';
     opt_t.limit = [-8 8];
     adsf_visu_surf(subt_ttest(ss,:),ssurf,opt_t);
     if ~strcmp(files_out.ttest, 'gb_niak_omitted')
@@ -124,7 +124,7 @@ end
 for ss = 1:opt.nb_subtype
     % Start with the figure
     fh = figure('Visible', 'off');
-    opt_e.colormap = 'hot_cold';
+    opt_e.colormap = 'gray_hot_cold';
     opt_e.limit = [-0.3 0.3];
     adsf_visu_surf(mean_eff(ss,:),ssurf,opt_e);
     if ~strcmp(files_out.mean_eff, 'gb_niak_omitted')
@@ -134,7 +134,7 @@ end
 
 % Make figure for gd_mean
 fh = figure('Visible', 'off');
-opt_g.colormap = 'hot_cold';
+opt_g.colormap = 'gray_hot_cold';
 adsf_visu_surf(gd_mean,ssurf,opt_g);
 if ~strcmp(files_out.gd_mean, 'gb_niak_omitted')
     print(fh, files_out.gd_mean, '-r300', '-dpng');
