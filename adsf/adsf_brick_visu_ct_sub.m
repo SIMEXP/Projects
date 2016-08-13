@@ -1,4 +1,4 @@
-function [files_in,files_out,opt] = adsf_visu_ct_subtype(files_in,files_out,opt)
+function [files_in,files_out,opt] = adsf_brick_visu_ct_sub(files_in,files_out,opt)
 % Function to visualize cortical thickness subtypes
 %
 % SYNTAX:
