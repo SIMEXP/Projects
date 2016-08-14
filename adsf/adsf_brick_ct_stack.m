@@ -116,7 +116,7 @@ end
 
 % provenance
 provenance.part = part(n_net,:);
-provenance.resolution = 9;
+provenance.resolution = opt.nb_network;
 
 for ss = 1:opt.nb_network % iterate over number of networks
     mask = repmat((part(n_net,:) == ss),size(ct,1),1);
