@@ -200,7 +200,7 @@ for net_id = 1:n_networks
     % Create a hidden figure
     fig = figure('Visible', 'off');
     net_weight = weight_mat(:, :, net_id);
-    niak_visu_matrix(net_weight(subj_order,:), struct('limits', [-0.8, 0.8]));
+    niak_visu_matrix(net_weight(subj_order,:), struct('limits', [-0.7, 0.7]));
     ax = gca;
     set(ax, 'XTick', 1:n_sbt, 'YTick', []);
     xlabel('Subtypes');
