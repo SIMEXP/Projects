@@ -132,7 +132,7 @@ if ~isempty(opt.folder_out)
     path_out = niak_full_path(opt.folder_out);
     files_out = psom_struct_defaults(files_out,...
                 { 'sim_fig'                          , 'den_fig'                   , 'subtype'                , 'provenance'                },...
-                { [path_out 'similarity_matrix.pdf'] , [path_out 'dendrogram.pdf'] , [path_out 'subtype.mat'] , [path_out 'provenance.mat'] });
+                { [path_out 'similarity_matrix.png'] , [path_out 'dendrogram.pdf'] , [path_out 'subtype.mat'] , [path_out 'provenance.mat'] });
 else
     files_out = psom_struct_defaults(files_out,...
                 { 'sim_fig'         , 'den_fig'         , 'subtype'         , 'provenance'      },...
@@ -172,11 +172,11 @@ rm = sim_matrix(subj_order,subj_order);
 %% Saving the clustering and matrix
 if ~strcmp(files_out.sim_fig, 'gb_niak_omitted')
     % Save the similarity matrix as pdf
-    opt_pdf.limits = [-0.8 0.8];
+    opt_pdf.limits = [-0.6 0.6];
     opt_pdf.color_map = 'hot_cold';
     fh1 = figure('Visible', 'off');
     niak_visu_matrix(rm,opt_pdf);
-    print(fh1, files_out.sim_fig,'-dpdf','-r300');
+    print(fh1, files_out.sim_fig,'-dpng','-r300');
 end
 
 if ~strcmp(files_out.den_fig, 'gb_niak_omitted')
