@@ -44,11 +44,12 @@ path_stack = '/Users/AngelaTam/Desktop/adsf/ct_stack_age_gender_mean_ctnet_wb/';
 path_sub = '/Users/AngelaTam/Desktop/adsf/ct_subtypes_20160815_4_meanctnetwb/';
 
 for ss = 1:9
-    files_in.data.net = strcat(path_stack, 'ct_network_', num2str(ss), '_stack.mat');
-    files_in.subtype.net = strcat(path_sub, 'net', num2str(ss), '/subtype.mat');
-    files_out = struct;
-    opt.folder_out = strcat(path_sub, 'net', num2str(ss));
-    
-    adsf_brick_subtype_weight(files_in,files_out,opt);
-    clear files_in
+    net_name = strcat('net',num2str(ss));
+    files_in.data.(net_name) = strcat(path_stack, 'ct_network_', num2str(ss), '_stack.mat');
+    files_in.subtype.(net_name) = strcat(path_sub, 'net', num2str(ss), '/subtype.mat');
 end
+
+files_out = struct;
+opt.folder_out = path_sub;
+
+adsf_brick_subtype_weight(files_in,files_out,opt);
