@@ -54,7 +54,7 @@ end
 col = [0 0 0; 0 0 0; 0 0 0];
 
 for nn = 1:length(nb_net)
-    for gg = 1:nb_subt
+    for gg = 1:length(list_covariate)
         for cc = 1:length(list_contrast)
             contrast = list_contrast{cc};
             figure 
@@ -62,7 +62,7 @@ for nn = 1:length(nb_net)
             hold on
             beta = niak_lse(model(nn).(contrast).y(:,gg),[ones(size(model(nn).(contrast).y(:,gg))) model(nn).(contrast).x(:,2)]);
             plot(model(nn).(contrast).x(:,2),[ones(size(model(nn).(contrast).y(:,gg))) model(nn).(contrast).x(:,2)]*beta,'linewidth',0.3,'color', (col(3,:)));
-            namefig = [path_out 'net' num2str(nb_net(nn)) '_subt' num2str(gg) '_' contrast '.pdf'];
+            namefig = [path_out 'net' num2str(nb_net(nn)) 'rbans_' contrast '.pdf'];
             print(namefig,'-dpdf','-r300')
             close all
         end
