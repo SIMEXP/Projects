@@ -59,14 +59,15 @@ col = [0 0 0; 0 0 0; 0 0 0];
 
 for nn = 1:length(nb_net)
     for gg = 1:length(list_covariate)
+        varia = name_covariate{gg};
         for cc = 1:length(list_contrast)
             contrast = list_contrast{cc};
             figure 
-            plot(model(nn).(contrast).x(:,2),model(nn).(contrast).y(:,gg),'o','markersize',7,'markeredgecolor', (col(3,:)), 'markerfacecolor', (col(3,:)+[2 2 2])/3,'linewidth', 0.3);
+            plot(model(nn).(varia).(contrast).x(:,2),model(nn).(varia).(contrast).y(:,1),'o','markersize',7,'markeredgecolor', (col(3,:)), 'markerfacecolor', (col(3,:)+[2 2 2])/3,'linewidth', 0.3);
             hold on
-            beta = niak_lse(model(nn).(contrast).y(:,gg),[ones(size(model(nn).(contrast).y(:,gg))) model(nn).(contrast).x(:,2)]);
-            plot(model(nn).(contrast).x(:,2),[ones(size(model(nn).(contrast).y(:,gg))) model(nn).(contrast).x(:,2)]*beta,'linewidth',0.3,'color', (col(3,:)));
-            namefig = [path_out 'net' num2str(nb_net(nn)) 'rbans_' contrast '.pdf'];
+            beta = niak_lse(model(nn).(varia).(contrast).y(:,1),[ones(size(model(nn).(varia).(contrast).y(:,1))) model(nn).(varia).(contrast).x(:,2)]);
+            plot(model(nn).(varia).(contrast).x(:,2),[ones(size(model(nn).(varia).(contrast).y(:,1))) model(nn).(varia).(contrast).x(:,2)]*beta,'linewidth',0.3,'color', (col(3,:)));
+            namefig = [path_out 'net' num2str(nb_net(nn)) '_rbans_' varia '_' contrast '.pdf'];
             print(namefig,'-dpdf','-r300')
             close all
         end
