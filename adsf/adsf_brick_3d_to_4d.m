@@ -35,7 +35,7 @@ psom_mkdir(path_out)
 
 for ii = 1:length(id)
     sub = id{ii};
-    path_vol = [path_in sub '*.nii.gz'];
+    path_vol = [path_in '*' sub '*.nii.gz'];
     [hdr,vol] = niak_read_vol(path_vol);
     stack(:,:,:,ii) = vol(:,:,:);
 end
