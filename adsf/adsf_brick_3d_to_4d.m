@@ -35,18 +35,18 @@ psom_mkdir(path_out)
 
 for ii = 1:length(id)
     sub = id{ii};
-    path_vol = [path_in '*' sub '*.nii.gz'];
+    path_vol = [path_in '*' sub '*.nii'];
     [hdr,vol] = niak_read_vol(path_vol);
     stack(:,:,:,ii) = vol(:,:,:);
 end
-hdr.file_name = [path_out 'stack_4d.nii.gz'];
+hdr.file_name = [path_out 'stack_4d.nii'];
 niak_write_vol(hdr,stack);
 
 % Mean & std 4D volumes with N networks
 mean_stack(:,:,:,ss) = mean(stack,4);
 std_stack(:,:,:,ss) = std(stack,0,4);
 
-hdr.file_name = [path_out 'stack_mean.nii.gz'];
+hdr.file_name = [path_out 'stack_mean.nii'];
 niak_write_vol(hdr,mean_stack);
-hdr.file_name = [path_out,'stack_std.nii.gz'];
+hdr.file_name = [path_out,'stack_std.nii'];
 niak_write_vol(hdr,std_stack);
