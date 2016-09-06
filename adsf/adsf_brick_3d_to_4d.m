@@ -37,7 +37,7 @@ for ii = 1:length(id)
     sub = id{ii};
     path_vol = [path_in '*' sub '*.nii'];
     [hdr,vol] = niak_read_vol(path_vol);
-    stack(:,:,:,ii) = vol(:,:,:);
+    stack(:,:,:,ii) = vol(:,:,:,:);
 end
 hdr.file_name = [path_out 'stack_4d.nii'];
 niak_write_vol(hdr,stack);
