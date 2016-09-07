@@ -44,6 +44,9 @@ for ii = 1:length(id)
     sub = id{ii};
     path_vol = [path_in '*' sub '*.nii'];
     [hdr,vol] = niak_read_vol(path_vol);
+    if size(vol,4) > 1
+        vol = vol(:,:,:,1);
+    end
     stack(:,:,:,ii) = vol;
 end
 hdr.file_name = [path_out 'stack_4d.nii'];
