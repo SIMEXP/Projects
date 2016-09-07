@@ -25,11 +25,18 @@ function stack = adsf_brick_3d_to_4d(path_in,path_out,path_model)
 % (C) Angela Tam 2016
 
 
-%% Read model
+%% Brick starts here
+% Read model
 [~,id,~,~] = niak_read_csv(path_model);
 
 % Create output directory
 psom_mkdir(path_out)
+
+% set up stack dimensions
+tmp_id = id{1};
+vol_ex = [path_in '*' tmp_id '*.nii'];
+[hdr,mask] = niak_read_vol(vol_ex); % grab first volume for dimensions
+stack = zeros([size(mask) length(id)]);
 
 % Network 4D volumes with M subjects
 
@@ -37,7 +44,7 @@ for ii = 1:length(id)
     sub = id{ii};
     path_vol = [path_in '*' sub '*.nii'];
     [hdr,vol] = niak_read_vol(path_vol);
-    stack(:,:,:,ii) = vol(:,:,:,1);
+    stack(:,:,:,ii) = vol;
 end
 hdr.file_name = [path_out 'stack_4d.nii'];
 niak_write_vol(hdr,stack);
