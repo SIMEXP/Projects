@@ -53,8 +53,8 @@ hdr.file_name = [path_out 'stack_4d.nii'];
 niak_write_vol(hdr,stack);
 
 % Mean & std 4D volumes with N networks
-mean_stack(:,:,:,ss) = mean(stack,4);
-std_stack(:,:,:,ss) = std(stack,0,4);
+mean_stack(:,:,:) = mean(stack,4);
+std_stack(:,:,:) = std(stack,0,4);
 
 hdr.file_name = [path_out 'stack_mean.nii'];
 niak_write_vol(hdr,mean_stack);
