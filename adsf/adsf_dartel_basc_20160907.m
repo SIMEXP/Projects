@@ -8,6 +8,9 @@ files_in.data.adni.baseline.run = '/home/atam/scratch/adni_dartel/stack_mnc/stac
 % set the mask
 files_in.mask = '/home/atam/scratch/adni_dartel/mask/mask_gm_dartel_adni.mnc.gz';
 
+% set the aal areas template
+files_in.areas = '/home/atam/scratch/adni_dartel/mask/roi_aal_1_5mm.mnc.gz'; % resampled roi_aal to 1.5 mm
+
 % options
 opt.folder_out = '/home/atam/scratch/adni_dartel/basc_20160909/';
 
