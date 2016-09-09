@@ -34,7 +34,8 @@ psom_mkdir(path_out)
 
 % set up stack dimensions
 tmp_id = id{1};
-vol_ex = [path_in '*' tmp_id '*.nii'];
+vol_ex = [path_in '*' tmp_id '*'];
+[path_m,name_m,ext_m] = niak_fileparts(vol_ex);
 [hdr,mask] = niak_read_vol(vol_ex); % grab first volume for dimensions
 stack = zeros([size(mask) length(id)]);
 
@@ -42,21 +43,21 @@ stack = zeros([size(mask) length(id)]);
 
 for ii = 1:length(id)
     sub = id{ii};
-    path_vol = [path_in '*' sub '*.nii'];
+    path_vol = [path_in '*' sub '*' ext_m];
     [hdr,vol] = niak_read_vol(path_vol);
     if size(vol,4) > 1
         vol = vol(:,:,:,1);
     end
     stack(:,:,:,ii) = vol;
 end
-hdr.file_name = [path_out 'stack_4d.nii'];
+hdr.file_name = [path_out 'stack_4d' ext_m];
 niak_write_vol(hdr,stack);
 
 % Mean & std 4D volumes with N networks
 mean_stack(:,:,:) = mean(stack,4);
 std_stack(:,:,:) = std(stack,0,4);
 
-hdr.file_name = [path_out 'stack_mean.nii'];
+hdr.file_name = [path_out 'stack_mean' ext_m];
 niak_write_vol(hdr,mean_stack);
-hdr.file_name = [path_out,'stack_std.nii'];
+hdr.file_name = [path_out,'stack_std' ext_m];
 niak_write_vol(hdr,std_stack);
