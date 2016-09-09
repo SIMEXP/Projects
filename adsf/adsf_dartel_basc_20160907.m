@@ -5,6 +5,9 @@ clear all
 % grabbing the stack file
 files_in.data.adni.baseline.run = '/home/atam/scratch/adni_dartel/stack_mnc/stack_4d.mnc.gz';
 
+% set the mask
+files_in.mask = '/home/atam/scratch/adni_dartel/mask/mask_gm_dartel_adni.mnc.gz';
+
 % options
 opt.folder_out = '/home/atam/scratch/adni_dartel/basc_20160909/';
 
