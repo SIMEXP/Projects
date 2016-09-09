@@ -1,4 +1,4 @@
-function stack = adsf_brick_3d_to_4d(path_in,path_out,path_model)
+function stack = adsf_brick_3d_to_4d(path_in,path_out,path_model,ext_v)
 % Create a single 4D map (stack) of multiple 3D maps
 %
 % Syntax: STACK = adsf_brick_3d_to_4d(PATH_IN,PATH_OUT,PATH_MODEL)
@@ -13,6 +13,8 @@ function stack = adsf_brick_3d_to_4d(path_in,path_out,path_model)
 %
 % PATH_MODEL full path + name of .csv model with list of labels_x that
 %   correspond to subject names in functional maps. 
+%
+% EXT_V string, extension of the input volumes
 %
 % OUTPUTS:
 %
@@ -32,10 +34,12 @@ function stack = adsf_brick_3d_to_4d(path_in,path_out,path_model)
 % Create output directory
 psom_mkdir(path_out)
 
+% grab file extension
+ext_m = ext_v;
+
 % set up stack dimensions
 tmp_id = id{1};
-vol_ex = [path_in '*' tmp_id '*'];
-[path_m,name_m,ext_m] = niak_fileparts(vol_ex);
+vol_ex = [path_in '*' tmp_id '*' ext_m];
 [hdr,mask] = niak_read_vol(vol_ex); % grab first volume for dimensions
 stack = zeros([size(mask) length(id)]);
 
