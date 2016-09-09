@@ -54,7 +54,7 @@ for ii = 1:length(id)
     end
     stack(:,:,:,ii) = vol;
 end
-hdr.file_name = [path_out 'stack_4d' ext_m];
+hdr.file_name = strcat(path_out, 'stack_4d', ext_m);
 niak_write_vol(hdr,stack);
 
 % Mean & std 4D volumes with N networks
