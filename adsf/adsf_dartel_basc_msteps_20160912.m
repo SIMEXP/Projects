@@ -3,7 +3,7 @@
 clear all
 
 % grabbing the stack file
-files_in.data.adni.baseline.run = '/home/atam/scratch/adni_dartel/stack_mnc/stack_4d.mnc.gz';
+files_in.data.adni.baseline.run = '/home/atam/scratch/adni_dartel/stack_mnc_20160912/stack_4d.mnc.gz';
 
 % set the mask
 files_in.mask = '/home/atam/scratch/adni_dartel/mask/mask_gm_dartel_adni.mnc.gz';
@@ -12,7 +12,7 @@ files_in.mask = '/home/atam/scratch/adni_dartel/mask/mask_gm_dartel_adni.mnc.gz'
 files_in.areas = '/home/atam/scratch/adni_dartel/mask/roi_aal_1_5mm.mnc.gz'; % resampled roi_aal to 1.5 mm
 
 % options
-opt.folder_out = '/home/atam/scratch/adni_dartel/basc_msteps_20160912/';
+opt.folder_out = '/home/atam/scratch/adni_dartel/basc_msteps_20160912_1/';
 
 opt.region_growing.thre_size = 1000; %  the size of the regions, when they stop growing. A threshold of 1000 mm3 will give about 1000 regions on the grey matter. 
 opt.grid_scales = [5:5:15]'; % Search for stable clusters in the range 5 to 15 
