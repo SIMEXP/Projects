@@ -3,9 +3,9 @@
 clear all
 
 % set the inputs
-path_stack = '/home/angela/Desktop/adsf/adni_dartel/stack_mnc/stack_4d.mnc.gz';
+path_stack = '/home/atam/scratch/dartel_subtypes/preventad_dartel/stack_20160916/stack_4d.mnc.gz';
 path_mask = '/home/angela/Desktop/adsf/adni_dartel/mask/mask_gm_dartel_adni.mnc.gz';
-path_model = '/home/angela/Desktop/adsf/adni_dartel/model/adni_dartel_model_20160913.csv';
+path_model = '/home/atam/scratch/dartel_subtypes/preventad_dartel/model/preventad_model_20160916.csv';
 
 % read the volumes
 [hdr_vol,vol] = niak_read_vol(path_stack);
@@ -23,7 +23,7 @@ labels = cell(size(vol,4),2);
 labels{1,1} = 'subject';
 labels{1,2} = 'mean_gm';
 
-csvname = 'adni_dartel_mean_gm_wholebrain.csv';
+csvname = 'prevent_dartel_mean_gm_wholebrain.csv';
 fid = fopen(csvname,'w');
 fprintf(fid, '%s, %s\n', labels{1,:});
 
