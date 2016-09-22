@@ -11,11 +11,6 @@ hemi = {'left','right'};
 
 [tab,list_subject,ly] = niak_read_csv(model);
 
-
-% filter out the failed QC civet subjects
-mask = find(tab(:,13) == 0);
-list_subject = 
-
 for ss = 1:length(list_subject)
     name = list_subject(ss);
     
