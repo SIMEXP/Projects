@@ -4,7 +4,7 @@ clear all
 
 data = '/gs/project/gsf-624-aa/database2/adnet/civet_20160913/thickness_files_vertex/';
 
-model = '/home/atam/scratch/ct_subtypes/admci/model/admci_model_20160401_civet.csv'; 
+model = '/home/atam/scratch/ct_subtypes/admci/model/admci_model_20160401_civet_passed.csv'; 
 
 hemi = {'left','right'};
 
