@@ -122,7 +122,7 @@ for num_samp = 1:opt.nb_samps
     res_test = niak_glm(glm,opt_glm);
 
     %Training 
-    [best_acc, best_model]=grid_search(res_test.e,patho(selection),-3,1,.05);
+    [best_acc, best_model]=grid_search(res_test.e,patho(selection),-3,0,.05);
 
     %Test
     patho = zeros(size(X,1),1);
@@ -170,7 +170,7 @@ for num_samp = 1:opt.nb_samps
     res_test = niak_glm(glm,opt_glm);
 
     %Training 
-    [best_acc, best_model]=grid_search(res_test.e,patho(selection),-3,1,.05);
+    [best_acc, best_model]=grid_search(res_test.e,patho(selection),-3,0,.05);
 
     %Test
     patho = zeros(size(X,1),1);
@@ -220,7 +220,7 @@ for num_samp = 1:opt.nb_samps
     res_test = niak_glm(glm,opt_glm);
 
     %Training 
-    [best_acc, best_model]=grid_search(res_test.e,patho(selection),-3,1,.05);
+    [best_acc, best_model]=grid_search(res_test.e,patho(selection),-3,0,.05);
     
     %Test
     patho = zeros(size(X,1),1);
@@ -365,7 +365,7 @@ function [best_acc, best_model]=grid_search(data,labels,g_min,g_max,step)
     grid_param = (10^g_min):(10^step):(10^g_max);
     best_acc=0;
     for i=1:length(grid_param)
-        accuracy_L = svmtrain(labels, data, ['-t 0 -v 10 -c ' num2str(grid_param(i))]);
+        accuracy_L = svmtrain(labels, data, ['-q -t 0 -v 10 -c ' num2str(grid_param(i))]);
         %[predict_label_L, accuracy_L, dec_values_L] = svmpredict(test_label, labels, data, model_linear);
         if accuracy_L > best_acc
             best_acc = accuracy_L;

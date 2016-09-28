@@ -2,7 +2,7 @@ clear
 %addpath(genpath('/usr/local/niak/niak-boss-0.12.13'));
 addpath(genpath('/home/cdansereau/git/niak'));
 addpath(genpath('/home/cdansereau/svn/psom'));
-addpath(genpath('/home/cdansereau/svn/projects/multisite/simulation/'));
+addpath(genpath('/home/cdansereau/git/Projects/multisite/simu/simulation'));
 addpath(genpath('/home/cdansereau/libsvm/libsvm-3.21/matlab'))
 %path_data = '/data/cisl/cdansereau/adni2/connectomes_multisite'
 %path_data = '/data/cisl/cdansereau/adni2/connectomes_multisite_02'
@@ -90,5 +90,6 @@ end
 
 opt_pipe.path_logs = [path_data filesep 'logs'];
 
-opt_pipe.max_queued = 20;
+opt_pipe.max_queued = 23;
+opt_pipe.psom.qsub_options = '-q sw -l walltime=36:00:00';
 psom_run_pipeline(main_pipeline,opt_pipe);
