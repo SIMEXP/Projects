@@ -34,23 +34,21 @@ opt_g.exclude_subject = {'P00004840_session1_syn','P00002012_session1_syn', 'P00
 %%exclude subjects antonyms:
 opt_g.exclude_subject = {'P00004663_session1_ant','P00004694_session1_ant','P00004636_session1_ant','P00004743_session1_ant','P00004654_session1_ant','P00004819_session1_ant','P00004873_session1_ant','P00004239_session1_ant','P00004687_session1_ant','P00004639_session1_ant','P00004574_session1_ant','P00004656_session1_ant','P00004816_session1_ant','P00004742_session1_ant','P00004877_session1_ant','P00004731_session1_ant','P00004306_session1_ant','P00004721_session1_ant','P00004246_session1_ant','P00004549_session1_ant','P00004617_session1_ant','P00004794_session1_ant','P00004209_session1_ant'}
 %%exclude subjects rest:
-opt_g.exclude_subject = {'P00004830_session1_rest','P00004688_session1_rest','P00004800_session1_rest','P00004757_session1_rest','P00004607_session1_rest','P00004320_session1_rest','P00004736_session1_rest','P00004780_session1_rest','P00004510_session1_rest','P00004554_session1_rest','P00004877_session1_rest'}; %%% participants excluded to obtain an FD match between age groups <50yo> and same N of participants in each age group
-
-files_in.fmri = niak_grab_fmri_preprocess([path_data 'Models/FINAL_preprocess_test_issue100_16.03.03'],opt_g).fmri; % Replace the folder by the path where the results of the fMRI preprocessing pipeline were stored. 
-
+opt_g.exclude_subject = {'P00004829_session1_rest','P00004551_session1_rest','P00004537_session1_rest', 'P00004694_session1_rest','P00004654_session1_rest', 'P00004501_session1_rest', 'P00004719_session1_rest','P00004663_session1_rest', 'P00004687_session1_rest', 'P00004819_session1_rest','P00004657_session1_rest', 'P00004587_session1_rest', 'P00004742_session1_rest', 'P00004646_session1_rest', 'P00004835_session1_rest', 'P00004545_session1_rest', 'P00004735_session1_rest', 'P00004797_session1_rest', 'P00004809_session1_rest', 'P00004502_session1_rest', 'P00004675_session1_rest', 'P00004691_session1_rest', 'P00004757_session1_rest', 'P00004560_session1_rest', 'P00004689_session1_rest', 'P00004209_session1_rest', 'P00004724_session1_rest', 'P00004840_session1_rest', 'P00004630_session1_rest', 'P00004708_session1_rest', 'P00004356_session1_rest', 'P00004894_session1_rest', 'P00004802_session1_rest', 'P00004304_session1_rest', 'P00004703_session1_rest', 'P00004686_session1_rest', 'P00004577_session1_rest', 'P00004810_session1_rest', 'P00004261_session1_rest'}
+files_in.fmri = niak_grab_fmri_preprocess([path_data 'RANNbackup/FINAL_preprocess_test_issue100_16.03.03'],opt_g).fmri; % Replace the folder by the path where the results of the fMRI preprocessing pipeline were stored. 
 
 %%%%%%%%%%%%
 %% Set the model
 %%%%%%%%%%%%
 
-%% Group
-files_in.model.group = [path_data 'Models/filtered_IN_all_filters_alltasks.csv'];
+%% Group:  model_group 
+files_in.model.group = [path_data 'Models/BEHAV_all_filters_ant_syn.csv'];
 
 
-%% inter_run
+%% inter_run: model_interrun
 subject_id = fieldnames(files_in.fmri);
 for n = 1:length(subject_id)
-    files_in.model.individual.(subject_id{n}).inter_run = [path_data 'Models/BEHAV_all_filters_ant_syn.csv'];
+    files_in.model.individual.(subject_id{n}).inter_run = [path_data 'Models/filtered_IN_all_filters_alltasks.csv'];
 end
 
 %%2d trial:
