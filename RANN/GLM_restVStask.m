@@ -10,9 +10,9 @@ path_data = '/gs/project/gsf-624-aa/RANN/'; %% GUILLIMIN
 %%% path_data = '/home/pferr/RANN/'; %% MAGMA 
 
 %%%%%%%%%%%%
-%% Grabbing the results from BASC
+%% Grabbing the results from BASC: tasks to compare with task state (if we want a more general/stable? template, we could run BASC with task+rest, or (better): cambridge templates!
 %%%%%%%%%%%%
-files_in = niak_grab_stability_rest([path_data 'RANNbackup/RANN_MSTEPS_rest']); 
+files_in = niak_grab_stability_rest([path_data 'RANNbackup/MSTEPS_task_synant4']); 
 
 %%%%%%%%%%%%%%%%%%%%%
 %% Grabbing the results from the NIAK fMRI preprocessing pipeline
