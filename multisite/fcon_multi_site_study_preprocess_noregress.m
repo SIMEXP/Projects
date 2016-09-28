@@ -3,41 +3,33 @@
 % specified dataset (1000 fcon dataset)
 clear all
 
-p=genpath('/home/bellec_group/niak-2013-07-12/');
+p=genpath('/home/bellec_group/niak-boss-0.12.2/');
 addpath(p);
 
 
 pipeline = [];
 opt_pipe = [];
-gsc = {true,false};
-sites = {'Baltimore', 'Berlin', 'Cambridge', 'Newark', 'NewYork_b', 'Oxford', 'Queensland', 'SaintLouis' };
+sites = {'Atlanta', 'Baltimore', 'Berlin', 'Cambridge', 'Newark', 'NewYork_b', 'Oxford', 'Queensland', 'SaintLouis' };
 
-for idx_gsc = 2:2
 for idx_sites = 1:length(sites)
 	path_raw_fmri   = ['/home/danserea/database/multisite/fcon_1000_raw/raw_mnc/' sites{idx_sites} '/'];
         %path_preprocess = '/sb/project/gsf-624-aa/database/aveugle/fmri_preprocess_exp3/';
-        path_preprocess = ['/home/danserea/database/multisite/fcon_1000_preprocess/' sites{idx_sites} '/fmri_preprocess_gsc' int2str(gsc{idx_gsc}) '/'];
+        path_preprocess = ['/home/danserea/database/scrubbing/fcon_1000_preprocess/' sites{idx_sites} '/fmri_preprocess_05scrubb/'];
 	%/data/lepore/mpelland/minc_conv/anat/CB/VD_AlCh
 
 	files_in = fcon_grab_raw(path_raw_fmri);
 
-	 if strcmp('Cambridge',sites{idx_sites})
-                opt.tune(1).subject = '88445';
-                opt.tune(1).param.slice_timing.flag_center = true;
-                opt.tune(2).subject = '78552';
-                opt.tune(2).param.slice_timing.flag_center = true;
-        end
-
+	clear opt;
 	%motion+
 	%opt.regress_confounds.flag_wm = true;
 	%opt.regress_confounds.flag_vent = true;
 	%opt.regress_confounds.flag_motion_params = true;
-	%opt.regress_confounds.flag_scrubbing = false;
-	%opt.regress_confounds.thre_fd = 0.5;
+	opt.regress_confounds.flag_scrubbing = true;
+	opt.regress_confounds.thre_fd = 0.5;
 
 	% multivar
-	opt.regress_confounds.flag_gsc = gsc{idx_gsc};
-	%opt.corsica.flag_skip = true;
+	opt.regress_confounds.flag_gsc = false;
+	opt.corsica.flag_skip = true;
 
 
 	%% Building the optional inputs
@@ -92,14 +84,33 @@ for idx_sites = 1:length(sites)
 	opt.flag_test = true;
 	%opt.psom.max_queued = 15; % Please try to use the two processors of my laptop, thanks !
 
+	if strcmp('Cambridge',sites{idx_sites})
+                opt.tune(1).subject = 'sub88445';
+                opt.tune(1).param.slice_timing = opt.slice_timing;
+                opt.tune(1).param.slice_timing.flag_center = true;
+                opt.tune(2).subject = 'sub78552';
+                opt.tune(2).param.slice_timing = opt.slice_timing;
+                opt.tune(2).param.slice_timing.flag_center = true;
+                opt.tune(3).subject = 'sub90699';
+                opt.tune(3).param.slice_timing = opt.slice_timing;
+                opt.tune(3).param.slice_timing.flag_center = true;
+        end
+        if strcmp('Queensland',sites{idx_sites})
+                opt.tune(1).subject = 'sub56353';
+                opt.tune(1).param.slice_timing = opt.slice_timing;
+                opt.tune(1).param.slice_timing.flag_center = true;
+                opt.tune(2).subject = 'sub86245';
+                opt.tune(2).param.slice_timing = opt.slice_timing;
+                opt.tune(2).param.slice_timing.flag_center = true;
+        end
+
 	[pipeline_tmp,opt_tmp] = niak_pipeline_fmri_preprocess(files_in,opt);
 
-	pipeline = psom_merge_pipeline(pipeline,pipeline_tmp,[sites{idx_sites} '_gsc_' int2str(gsc{idx_gsc})]);
+	pipeline = psom_merge_pipeline(pipeline,pipeline_tmp,[sites{idx_sites}]);
 	end
-end
 
-opt_tmp.psom.restart = {'sub88445','sub78552'};
-opt_tmp.psom.qsub_options = '-q qwork@ms -l walltime=06:00:00';
+%opt_tmp.psom.restart = {'sub88445','sub78552'};
+opt_tmp.psom.qsub_options = '-q qwork@ms -l walltime=10:00:00';
 psom_run_pipeline(pipeline,opt_tmp.psom)
 
 
