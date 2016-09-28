@@ -1,7 +1,7 @@
 clear
 %addpath(genpath('/usr/local/niak/niak-boss-0.12.13'));
-addpath(genpath('/home/cdansereau/git/niak'));
-addpath(genpath('/home/cdansereau/svn/psom'));
+addpath(genpath('/home/cdansereau/database/quarantaine/niak-boss-0.13.4'));
+%addpath(genpath('/home/cdansereau/svn/psom'));
 addpath(genpath('/home/cdansereau/svn/projects/multisite/simulation/'));
 %path_data = '/data/cisl/cdansereau/adni2/connectomes_multisite'
 %path_data = '/data/cisl/cdansereau/adni2/connectomes_multisite_02'

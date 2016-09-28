@@ -37,11 +37,12 @@
 clear all
 
 %old-path-removed(unsatisfyingregistratio/slack-general-28092015):
+addpath(genpath('/gs/project/gsf-624-aa/quarantaine/niak-boss-0.13.4b'))
 %addpath(genpath('/sb/project/gsf-624-aa/quarantaine/niak-boss-0.13.0'))
-addpath(genpath('/gs/project/gsf-624-aa/quarantaine/niak-issue100/'))
+%addpath(genpath('/gs/project/gsf-624-aa/quarantaine/niak-issue100/'))
 
 root_path = '/gs/project/gsf-624-aa/RANN/';
-path_out = '/gs/scratch/perrine/RANN/preprocess_data_jan_2016_test_issue100_2/';
+path_out = '/gs/scratch/perrine/RANN/FINAL_preprocess_test_issue100_16.03.03/';
 
 %% Grab the raw data
 path_raw = [root_path 'raw_mnc/'];
@@ -115,7 +116,7 @@ end
 files_in.P00004507.fmri.session1 = rmfield(files_in.P00004507.fmri.session1,'pictname');
 files_in.P00004563.fmri.session1 = rmfield(files_in.P00004563.fmri.session1,'pictname');
 
-files_in= niak_purge_files_in(files_in);
+%files_in= niak_purge_files_in(files_in);
 
 %% WARNING: Do not use underscores '_' in the IDs of subject, sessions or runs. This may cause bugs in subsequent pipelines.
 
@@ -171,7 +172,7 @@ opt.regress_confounds.flag_wm = true;            % Turn on/off the regression of
 opt.regress_confounds.flag_vent = true;          % Turn on/off the regression of the average of the ventricles (true: apply / false : don't apply)
 opt.regress_confounds.flag_motion_params = true; % Turn on/off the regression of the motion parameters (true: apply / false : don't apply)
 opt.regress_confounds.flag_gsc = false;          % Turn on/off the regression of the PCA-based estimation of the global signal (true: apply / false : don't apply)
-opt.regress_confounds.flag_scrubbing = false;     % Turn on/off the scrubbing of time frames with excessive motion (true: apply / false : don't apply)
+opt.regress_confounds.flag_scrubbing = true;     % Turn on/off the scrubbing of time frames with excessive motion (true: apply / false : don't apply)
 opt.regress_confounds.thre_fd = 0.5;             % The threshold on frame displacement that is used to determine frames with excessive motion in the scrubbing procedure
 
 % Correction of physiological noise (niak_pipeline_corsica)
@@ -183,26 +184,12 @@ opt.corsica.flag_skip                = 1;     % Skip CORSICA (0: don't skip, 1 :
 opt.smooth_vol.fwhm      = 6;  % Full-width at maximum (FWHM) of the Gaussian blurring kernel, in mm.
 opt.smooth_vol.flag_skip = 0;  % Skip spatial smoothing (0: don't skip, 1 : skip)
 
-% how to specify a different parameter for two subjects (here subject1 and subject2)
-
-%opt.tune(1).subject = 'P00004216';
-%opt.tune(1).param.anat2func.init = 'center';
-%opt.tune(2).subject = 'P00004225';
-%opt.tune(2).param.anat2func.init = 'center';
-%opt.tune(3).subject = 'P00004549';
-%opt.tune(3).param.anat2func.init = 'center';
-%opt.tune(4).subject = 'P00004577';
-%opt.tune(4).param.anat2func.init = 'center';
-%opt.tune(5).subject = 'P00004719';
-%opt.tune(5).param.anat2func.init = 'center';
-%opt.tune(6).subject = 'P00004744';
-%opt.tune(6).param.anat2func.init = 'center';
-%opt.tune(7).subject = 'P00004812';
-%opt.tune(7).param.anat2func.init = 'center';
-%opt.tune(8).subject = 'P00004507';
-%opt.tune(8).param.anat2func.init = 'center';
-%opt.tune(9).subject = 'P00004563';
-%opt.tune(9).param.anat2func.init = 'center';
+% specify a different parameter for two subjects (failed coregistration in preproc because of -maybe- different FOV: CENTER option)
+%note: The 'center' option usually does more harm than good. Use it only if you have very big misrealignement between the two images (say, > 2 cm).
+opt.tune(1).subject = 'P00004210';
+opt.tune(1).param.slice_timing.flag_center = 1;
+opt.tune(2).subject = 'P00004553';
+opt.tune(2).param.slice_timing.flag_center = 1;
 
 % Anything that usually goes in opt can go in param. What's specified in opt applies by default, but is overridden by tune.param
 %opt.tune(1).param.slice_timing.flag_center = true; % Anything that usually goes in opt can go in param. What's specified in opt applies by default, but is overridden by tune.param
@@ -221,5 +208,5 @@ opt.time_between_checks = 60;
 %verbose opt
 opt.psom.nb_resub = Inf; 
 %so that workers stop beeing killed by walltime after 3h
-opt.psom.qsub_options = '-A gsf-624-aa -q sw -l walltime=48:00:00';
+opt.psom.qsub_options = '-A gsf-624-aa -q sw -l nodes=1:ppn=2,pmem=3700m,walltime=36:00:00';
 [pipeline,opt] = niak_pipeline_fmri_preprocess(files_in,opt);

@@ -326,6 +326,7 @@ function [samp_site,ctrl_samp,test_samp,test_ctrl] = sub_samp_sites(multisiteidx
 
     test_selection = multisiteidx(~ismember(multisiteidx,[samp_site;ctrl_samp]));
     test_selection = test_selection(randperm(length(test_selection),147-length([samp_site;ctrl_samp])));
+    %test_selection = test_selection(randperm(length(test_selection),27));
     idx_2cut = floor(length(test_selection)*patho_ratio);
     test_samp = test_selection(1:idx_2cut);
     test_ctrl = test_selection(idx_2cut:end);
