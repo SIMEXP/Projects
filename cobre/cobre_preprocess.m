@@ -6,8 +6,8 @@
 clear all
 
 
-path_raw_fmri       = '/home/pbellec/database/data/cobre/data_nii';
-path_preprocess     = '/gs/scratch/pbellec/cobre_fmri_preprocess_nii_20160921/';
+path_raw_fmri       = '/home/pbellec/database/data/cobre/data_mnc';
+path_preprocess     = '/gs/scratch/pbellec/cobre_fmri_preprocess_20160620/';
 
 
 
@@ -25,11 +25,11 @@ groups_list = {'SZ', 'HC'};
             subject = subjects_list(num_s).name
 
             %anat
-            fmrirun = dir([path_group filesep subject filesep 'anat' filesep '*.gz']);
+            fmrirun = dir([path_group filesep subject filesep 'anat' filesep '*.mnc.gz']);
             anat = [path_group filesep subject filesep 'anat' filesep fmrirun.name];
             
             %func
-            fmrirun = dir([path_group filesep subject filesep 'rest' filesep '*.gz']);
+            fmrirun = dir([path_group filesep subject filesep 'rest' filesep '*.mnc.gz']);
             fmri.session1.run1=[path_group filesep subject filesep 'rest' filesep fmrirun.name];
                        
             files_in.([group subject]).fmri = fmri;
@@ -70,7 +70,7 @@ opt.time_filter.lp = Inf; % Do not apply low-pass filter. Low-pass filter induce
 
 %% Resampling in the stereotaxic space (niak_brick_resample_vol)
 %opt.resample_vol.interpolation       = 'tricubic'; % The resampling scheme. The most accurate is 'sinc' but it is awfully slow
-opt.resample_vol.voxel_size          = [6 6 6];    % The voxel size to use in the stereotaxic space
+opt.resample_vol.voxel_size          = [3 3 3];    % The voxel size to use in the stereotaxic space
 
 %% Spatial smoothing (niak_brick_smooth_vol)
 opt.bricks.smooth_vol.fwhm = 6; % Apply an isotropic 6 mm gaussin smoothing.
@@ -78,7 +78,7 @@ opt.bricks.smooth_vol.fwhm = 6; % Apply an isotropic 6 mm gaussin smoothing.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Generation of the pipeline %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-opt.flag_test = 1;
+opt.flag_test = 0;
 %opt.psom.max_queued = 24; % Please try to use the two processors of my laptop, thanks !
 %opt.granularity = 'subject';
 

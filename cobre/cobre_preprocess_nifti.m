@@ -7,7 +7,7 @@ clear all
 
 
 path_raw_fmri       = '/home/pbellec/database/data/cobre/data_nii';
-path_preprocess     = '/gs/scratch/pbellec/cobre_fmri_preprocess_nii_20160921/';
+path_preprocess     = '/gs/scratch/pbellec/cobre_fmri_preprocess_nii_20160920/';
 
 
 
@@ -70,7 +70,7 @@ opt.time_filter.lp = Inf; % Do not apply low-pass filter. Low-pass filter induce
 
 %% Resampling in the stereotaxic space (niak_brick_resample_vol)
 %opt.resample_vol.interpolation       = 'tricubic'; % The resampling scheme. The most accurate is 'sinc' but it is awfully slow
-opt.resample_vol.voxel_size          = [6 6 6];    % The voxel size to use in the stereotaxic space
+opt.resample_vol.voxel_size          = [3 3 3];    % The voxel size to use in the stereotaxic space
 
 %% Spatial smoothing (niak_brick_smooth_vol)
 opt.bricks.smooth_vol.fwhm = 6; % Apply an isotropic 6 mm gaussin smoothing.
