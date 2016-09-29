@@ -1,23 +1,23 @@
-%% script to combine civet vertex based measures of the adnet sample together
+%% script to combine civet vertex based measures of the cambridge sample together
 
 clear all
 
-data = '/gs/project/gsf-624-aa/database2/adnet/civet_20160913/thickness_files_vertex/';
+data = '/home/atam/scratch/ct_subtypes/cambridge/cambridge_civet/thickness_vertex/';
 
-model = '/home/atam/scratch/ct_subtypes/admci/model/admci_model_20160401_civet_passed.csv'; 
+model = '/home/atam/scratch/ct_subtypes/cambridge/model_cambridge.csv'; 
 
 hemi = {'left','right'};
 
 
-[tab,list_subject,ly] = niak_read_csv(model);
+[tab,subjects,ly] = niak_read_csv(model);
 
-for ss = 1:length(list_subject)
-    name = list_subject(ss);
+for ss = 1:length(subjects)
+    name = subjects(ss);
     
     for hh = 1:2
         side = hemi(hh);
         exp_tmp = '_native_rms_rsl_tlink_30mm_';
-        file = strcat('adnet_', name, exp_tmp, side, '.txt');
+        file = strcat('cambridge_', name, exp_tmp, side, '.txt');
         file1=file{1};
         
         if hh == 1
@@ -34,5 +34,5 @@ for ss = 1:length(list_subject)
 end
 
 
-file_write = [data 'admci_civet_vertex_20160916.mat'];
-save(file_write,'ct','list_subject');
+file_write = [data 'cambridge_civet_vertex_20160929.mat'];
+save(file_write,'ct','subjects');
