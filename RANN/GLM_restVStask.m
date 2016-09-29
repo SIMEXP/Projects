@@ -6,18 +6,18 @@
 clear all
 path_niak = ('/gs/project/gsf-624-aa/quarantaine/niak-issue100/')
 addpath(genpath(path_niak))
-path_data = '/home/perrine/scratch/RANN/'; %% GUILLIMIN
+path_data = '/gs/project/gsf-624-aa/RANN/'; %% GUILLIMIN
 %%% path_data = '/home/pferr/RANN/'; %% MAGMA 
 
 %%%%%%%%%%%%
-%% Grabbing the results from BASC
+%% Grabbing the results from BASC: tasks to compare with task state (if we want a more general/stable? template, we could run BASC with task+rest, or (better): cambridge templates!
 %%%%%%%%%%%%
-files_in = niak_grab_stability_rest([path_data 'RANN_MSTEPS_rest']); 
+files_in = niak_grab_stability_rest([path_data 'RANNbackup/MSTEPS_task_synant4']); 
 
 %%%%%%%%%%%%%%%%%%%%%
 %% Grabbing the results from the NIAK fMRI preprocessing pipeline
 %%%%%%%%%%%%%%%%%%%%%
-opt_g.min_nb_vol = 60;     % The minimum number of volumes for an fMRI dataset to be included. This option is useful when scrubbing is used, and the resulting time series may be too short.
+opt_g.min_nb_vol = 60; % The minimum number of volumes for an fMRI dataset to be included. This option is useful when scrubbing is used, and the resulting time series may be too short.
 opt_g.min_xcorr_func = 0; % The minimum xcorr score for an fMRI dataset to be included. This metric is a tool for quality control which assess the quality of non-linear coregistration of functional images in stereotaxic space. Manual inspection of the values during QC is necessary to properly set this threshold.
 opt_g.min_xcorr_anat = 0; % The minimum xcorr score for an fMRI dataset to be included. This metric is a tool for quality control which assess the quality of non-linear coregistration of the anatomical image in stereotaxic space. Manual inspection of the values during QC is necessary to properly set this threshold.
 opt_g.type_files = 'glm_connectome'; % Specify to the grabber to prepare the files for the glm_connectome pipeline
@@ -34,23 +34,21 @@ opt_g.exclude_subject = {'P00004840_session1_syn','P00002012_session1_syn', 'P00
 %%exclude subjects antonyms:
 opt_g.exclude_subject = {'P00004663_session1_ant','P00004694_session1_ant','P00004636_session1_ant','P00004743_session1_ant','P00004654_session1_ant','P00004819_session1_ant','P00004873_session1_ant','P00004239_session1_ant','P00004687_session1_ant','P00004639_session1_ant','P00004574_session1_ant','P00004656_session1_ant','P00004816_session1_ant','P00004742_session1_ant','P00004877_session1_ant','P00004731_session1_ant','P00004306_session1_ant','P00004721_session1_ant','P00004246_session1_ant','P00004549_session1_ant','P00004617_session1_ant','P00004794_session1_ant','P00004209_session1_ant'}
 %%exclude subjects rest:
-opt_g.exclude_subject = {'P00004830_session1_rest','P00004688_session1_rest','P00004800_session1_rest','P00004757_session1_rest','P00004607_session1_rest','P00004320_session1_rest','P00004736_session1_rest','P00004780_session1_rest','P00004510_session1_rest','P00004554_session1_rest','P00004877_session1_rest'}; %%% participants excluded to obtain an FD match between age groups <50yo> and same N of participants in each age group
-
-files_in.fmri = niak_grab_fmri_preprocess([path_data 'FINAL_preprocess_test_issue100_16.03.03'],opt_g).fmri; % Replace the folder by the path where the results of the fMRI preprocessing pipeline were stored. 
-
+opt_g.exclude_subject = {'P00004829_session1_rest','P00004551_session1_rest','P00004537_session1_rest', 'P00004694_session1_rest','P00004654_session1_rest', 'P00004501_session1_rest', 'P00004719_session1_rest','P00004663_session1_rest', 'P00004687_session1_rest', 'P00004819_session1_rest','P00004657_session1_rest', 'P00004587_session1_rest', 'P00004742_session1_rest', 'P00004646_session1_rest', 'P00004835_session1_rest', 'P00004545_session1_rest', 'P00004735_session1_rest', 'P00004797_session1_rest', 'P00004809_session1_rest', 'P00004502_session1_rest', 'P00004675_session1_rest', 'P00004691_session1_rest', 'P00004757_session1_rest', 'P00004560_session1_rest', 'P00004689_session1_rest', 'P00004209_session1_rest', 'P00004724_session1_rest', 'P00004840_session1_rest', 'P00004630_session1_rest', 'P00004708_session1_rest', 'P00004356_session1_rest', 'P00004894_session1_rest', 'P00004802_session1_rest', 'P00004304_session1_rest', 'P00004703_session1_rest', 'P00004686_session1_rest', 'P00004577_session1_rest', 'P00004810_session1_rest', 'P00004261_session1_rest'}
+files_in.fmri = niak_grab_fmri_preprocess([path_data 'RANNbackup/FINAL_preprocess_test_issue100_16.03.03'],opt_g).fmri; % Replace the folder by the path where the results of the fMRI preprocessing pipeline were stored. 
 
 %%%%%%%%%%%%
 %% Set the model
 %%%%%%%%%%%%
 
-%% Group
-files_in.model.group = [path_data 'filtered_IN_all_filters_alltasks.csv'];
+%% Group:  model_group 
+files_in.model.group = [path_data 'Models/BEHAV_all_filters_ant_syn.csv'];
 
 
-%% inter_run
+%% inter_run: model_interrun
 subject_id = fieldnames(files_in.fmri);
 for n = 1:length(subject_id)
-    files_in.model.individual.(subject_id{n}).inter_run = [path_data 'BEHAV_all_filters_ant_syn.csv'];
+    files_in.model.individual.(subject_id{n}).inter_run = [path_data 'Models/filtered_IN_all_filters_alltasks.csv'];
 end
 
 %%2d trial:
@@ -62,7 +60,7 @@ end
 %%%%%%%%%%%%
 %% Options 
 %%%%%%%%%%%%
-opt.folder_out = [path_data 'RANN_GLMconnectome/GLM_restVStask']; % Where to store the resultsb
+opt.folder_out = [path_data 'RANNbackup/RANN_GLMconnectome/GLM_restVStask']; % Where to store the resultsb
 opt.fdr = 0.1; % The maximal false-discovery rate that is tolerated both for individual (single-seed) maps and whole-connectome discoveries, at each particular scale (multiple comparisons across scales are addressed via permutation testing)
 opt.fwe = 0.05; % The overall family-wise error, i.e. the probablity to have the observed number of discoveries, agregated across all scales, under the global null hypothesis of no association.
 opt.nb_samps = 1000; % The number of samples in the permutation test. This number has to be multiplied by OPT.NB_BATCH below to get the effective number of samples
@@ -157,7 +155,7 @@ opt.test.edu_task1vs2.inter_run.contrast.task1vs2 = 1;
 %% Run the pipeline
 %%%%%%%%%%%%
 opt.flag_test = false; % Put this flag to true to just generate the pipeline without running it. Otherwise the region growing will start.
-opt.psom.max_queued =  200;       % Number of jobs that can run in parallel. In batch mode, this is usually the number of cores.
+opt.psom.max_queued =  290;       % Number of jobs that can run in parallel. In batch mode, this is usually the number of cores.
 opt.time_between_checks = 90;
 opt.psom.nb_resub = 3;  %verbose opt
 opt.psom.qsub_options = '-A gsf-624-aa -q sw -l nodes=1:ppn=3,pmem=3700m,walltime=36:00:00'; %so that workers stop beeing killed by walltime after 36h
