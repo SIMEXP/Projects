@@ -4,13 +4,13 @@ clear all
 
 %% set up paths
 path_data = '/gs/project/gsf-624-aa/database2/preventad/dartel_villeneuve_20160817_mnc/';
-path_out = '/home/atam/scratch/dartel_subtypes/preventad_dartel/wb_subtypes_adniext_20160916/';
+path_out = '/home/atam/scratch/dartel_subtypes/preventad_dartel/wb_subtypes_adniext_20160922/';
 
 %% set up files_in structure
 
 files_in.model = '/home/atam/scratch/dartel_subtypes/preventad_dartel/model/preventad_model_20160916.csv';
 files_in.mask = '/home/atam/scratch/dartel_subtypes/adni_dartel/mask/mask_gm_dartel_adni.mnc.gz';
-files_in.subtype.network_1 = '/home/atam/scratch/dartel_subtypes/adni_dartel/dartel_wb_subtypes_20160912/network_1/network_1_subtype.mat';
+files_in.subtype.network_1 = '/home/atam/scratch/dartel_subtypes/adni_dartel/dartel_wb_subtypes_20160914/network_1/network_1_subtype.mat';
 
 %% Configure the inputs for files_in.data
 pheno = niak_read_csv_cell(files_in.model);
