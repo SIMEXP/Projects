@@ -36,9 +36,13 @@ addpath(genpath('/gs/project/gsf-624-aa/quarantaine/niak-boss-0.13.4b/'))
 
 
 root_path = '/gs/project/gsf-624-aa/simons_vip/';
-path_out = '/gs/project/gsf-624-aa/simons_vip/svip_testout_2016_09_27/';
+path_out = '/gs/project/gsf-624-aa/simons_vip/svip_testout_2016_10_06/';
 
-path_raw = [root_path 'Release/'];
+%for i in * ; do echo mv $i ${i/15/s15}; done |sh
+%for i in * ; do echo mv $i ${i/14/s14}; done |sh
+
+
+path_raw = [root_path 'svip_database_all/'];
 list_subject = dir(path_raw);
 list_subject = {list_subject.name};
 list_subject = list_subject(~ismember(list_subject,{'.','..'}));
@@ -47,36 +51,39 @@ list_subject = list_subject(~ismember(list_subject,{'.','..'}));
 for num_s = 1:length(list_subject)
     subject = list_subject{num_s};
 
-    tmp_name_parse = textscan(subject,'%s','delimiter','.');
-    subject_no_dot = [tmp_name_parse{}{}];
+    %tmp_name_parse = textscan(subject,'%s','delimiter','.');
+    %subject_no_dot = [tmp_name_parse{}{}];
 
     tmp_path_subj = [path_raw subject filesep];
-    files_in.(subject_no_dot).anat = [];
-    files_in.(subject_no_dot).fmri.session1 = [];
+    files_in.(subject).anat = [];
+    files_in.(subject).fmri = [];
+    %files_in.(subject.fmri.rest2 = [];
     
     try
-        files_in.(subject_no_dot).fmri.session1.rest1 = [tmp_path_subj dir([tmp_path_subj '*Resting_1*/*.nii.gz'])(1).name];
+        files_in.(subject).fmri.rest1 = [tmp_path_subj dir([tmp_path_subj '*_rest1/*.nii.gz'])(1).name];
     catch exception
     warning ('The file %s does not exist, I suppressed that file from the pipeline %s','rest1',subject);
+    end
 
     try
-        files_in.(subject_no_dot).fmri.session1.rest2 = [tmp_path_subj dir([tmp_path_subj '*Resting_2*/*.nii.gz'])(1).name];
+        files_in.(subject).fmri.rest2 = [tmp_path_subj dir([tmp_path_subj '*_rest2/*.nii.gz'])(1).name];
     catch exception
     warning ('The file %s does not exist, I suppressed that file from the pipeline %s','rest2',subject);
     end
 
     try
-        files_in.(subject_no_dot).anat = [tmp_path_subj dir([tmp_path_subj '*RMS*/*.nii.gz'])(1).name];
+        files_in.(subject).anat = [tmp_path_subj dir([tmp_path_subj '*_anat_RMS/*.nii.gz'])(1).name];
     catch exception
         warning ('The file %s does not exist, I suppressed that subject %s','RMS',subject);
         files_in = rmfield(files_in,subject);
     end
 end
 
+
 %% Pipeline options  %%
 %% General
-opt.folder_out   = '/gs/project/gsf-624-aa/simons_vip/svip_testout_2016_09_27';      
-opt.size_output = 'quality_control';                             
+opt.folder_out   = '/gs/project/gsf-624-aa/simons_vip/svip_testout_2016_10_06';      
+opt.size_output = 'quality_control';                              
 
 %% Pipeline manager 
 
