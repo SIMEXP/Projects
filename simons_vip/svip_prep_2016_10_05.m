@@ -40,6 +40,13 @@ path_out = '/gs/project/gsf-624-aa/simons_vip/svip_testout_2016_10_06/';
 
 %for i in * ; do echo mv $i ${i/15/s15}; done |sh
 %for i in * ; do echo mv $i ${i/14/s14}; done |sh
+%for i in *; do echo mv $i ${i/./_}; done |sh
+
+%anat4 = MEMPRAGE or  tfl_mgh_multiecho_3D_1mm_iso_MGHprotocol (four echo-times)
+%anat_RMS = MEMPRAGE_RMS or tfl_mgh_multiecho_3D_1mm_iso_MGHprotocol_RMS
+%anat1 or anat = MPRAGE
+%rest1 = ep2d_FMRI_resting_1 or fMRI_Resting_1 or fMRI_resting_state or ep2d_FMRI_resting or ep2d_FMRI_resting\ 
+%rest2 = ep2d_FMRI_resting_2 or fMRI_Resting_2
 
 
 path_raw = [root_path 'svip_database_all/'];
