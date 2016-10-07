@@ -31,7 +31,7 @@
 
 clear all
 
-addpath(genpath('/gs/project/gsf-624-aa/quarantaine/niak-boss-0.13.4b/'))
+addpath(genpath('/gs/project/gsf-624-aa/quarantaine/niak-v0.17.0/'))
 
 root_path = '/gs/project/gsf-624-aa/simons_vip/';
 path_out = '/gs/project/gsf-624-aa/simons_vip/test_out/';
@@ -41,28 +41,17 @@ list_subject = dir(path_raw);
 list_subject = {list_subject.name};
 list_subject = list_subject(~ismember(list_subject,{'.','..'}));
 
+files_in = struct;
 for num_s = 1:length(list_subject)
     subject = list_subject{num_s};
+    id = strrep(subject,'_','x');
     tmp_path_subj = [path_raw subject filesep];
-    files_in.(subject).anat = [];
-    files_in.(subject).fmri = [];
-    %files_in.(subject).fmri.session1 = [];
-    %files_in.(subject).fmri.session2 = [];
-    
-    try
-        %files_in.(subject).fmri.rest1 = [tmp_path_subj dir([tmp_path_subj '*_rest1/*.nii.gz'])(1).name];
-        files_in.(subject).fmri = [tmp_path_subj 'rest1/' dir([tmp_path_subj 'rest1/' '*.nii.gz'])(1).name];
-    catch exception
-    warning ('The file %s does not exist, I suppressed that file from the pipeline %s','rest1',subject);
-    end
-
-    try
-        %files_in.(subject).anat = [tmp_path_subj dir([tmp_path_subj '*_anat_RMS/' '*.nii.gz'])(1).name];
-        % "/gs/project/gsf-624-aa/simons_vip/test_name/s15031_x1_FCAP1/9999.199747723808696715246090757776735736274_nifti.nii.gz"
-        files_in.(subject).anat = [tmp_path_subj 'anat_RMS/' dir([tmp_path_subj 'anat_RMS/' '*.nii.gz'])(1).name];
-        catch exception
-        warning ('The file %s does not exist, I suppressed that subject %s','RMS',subject);
-        files_in = rmfield(files_in,subject);
+    files_in.(id).fmri.session1.rest = [tmp_path_subj 'rest1/' dir([tmp_path_subj 'rest1/' '*.nii.gz'])(1).name];
+    files_in.(id).anat = [tmp_path_subj 'anat_RMS/' dir([tmp_path_subj 'anat_RMS/' '*.nii.gz'])(1).name];
+    if ~exist(files_in.(id).fmri.session1.rest,'file')||~exist(files_in.(id).anat,'file')
+        warning('Subject %s is missing either the anatomical or the functional scan, I removed it from the pipeline',subject)
+        files_in.(id).fmri.session1.rest
+        files_in.(id).anat
     end
 end
 
@@ -104,11 +93,6 @@ opt.regress_confounds.flag_motion_params = true; % Turn on/off the regression of
 opt.regress_confounds.flag_gsc = false;          % Turn on/off the regression of the PCA-based estimation of the global signal (true: apply / false : don't apply)
 opt.regress_confounds.flag_scrubbing = true;     % Turn on/off the scrubbing of time frames with excessive motion (true: apply / false : don't apply)
 opt.regress_confounds.thre_fd = 0.5;             % The threshold on frame displacement that is used to determine frames with excessive motion in the scrubbing procedure
-
-% Correction of physiological noise (niak_pipeline_corsica)
-opt.corsica.sica.nb_comp             = 60;    % Number of components estimated during the ICA. 20 is a minimal number, 60 was used in the validation of CORSICA.
-opt.corsica.threshold                = 0.15;  % This threshold has been calibrated on a validation database as providing good sensitivity with excellent specificity.
-opt.corsica.flag_skip                = 1;     % Skip CORSICA (0: don't skip, 1 : skip). Even if it is skipped, ICA results will be generated for quality-control purposes. The method is not currently considered to be stable enough for production unless it is manually supervised.
 
 % Spatial smoothing (niak_brick_smooth_vol)
 opt.smooth_vol.fwhm      = 6;  % Full-width at maximum (FWHM) of the Gaussian blurring kernel, in mm.
