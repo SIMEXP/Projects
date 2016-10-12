@@ -1,6 +1,6 @@
 function [files_in,files_out,opt] = adsf_brick_ct_stack(files_in,files_out,opt)
-%% making subject x vertex array (stack) based on networks
-
+% making subject x vertex array (stack) based on networks
+%
 % SYNTAX:
 % [FILES_IN,FILES_OUT,OPT] = ADSF_CT_NETWORK_STACK(FILES_IN,FILES_OUT,OPT)
 % _________________________________________________________________________
