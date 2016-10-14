@@ -34,9 +34,9 @@ clear all
 addpath(genpath('/gs/project/gsf-624-aa/quarantaine/niak-v0.17.0/'))
 
 root_path = '/gs/project/gsf-624-aa/simons_vip/';
-path_out = '/gs/project/gsf-624-aa/simons_vip/test_out/';
+path_out = '/gs/project/gsf-624-aa/simons_vip/svip_prep_test_out/';
 
-path_raw = [root_path 'test_name/'];
+path_raw = [root_path 'svip_database_all/'];
 list_subject = dir(path_raw);
 list_subject = {list_subject.name};
 list_subject = list_subject(~ismember(list_subject,{'.','..'}));
@@ -57,7 +57,7 @@ end
 
 %% Pipeline options  %%
 %% General
-opt.folder_out   = '/gs/project/gsf-624-aa/simons_vip/test_out';      
+opt.folder_out   = '/gs/project/gsf-624-aa/simons_vip/svip_prep_test_out';      
 opt.size_output = 'quality_control';                             
 
 %% Pipeline manager 
