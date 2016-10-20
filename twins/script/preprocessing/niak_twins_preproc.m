@@ -3,44 +3,39 @@
  clear 
 clc 
 
-path_raw_fmri   = '/home/benhajal/database/twins/raw_mnc_EXP2_test1/';
-path_preprocess = '/home/benhajal/database/twins/fmri_preprocess_EXP2_test2/';
+path_raw_fmri   = '/mnt/parallel_scratch_ms2_wipe_on_august_2017/pbellec/benhajal/twins/raw_mnc_EXP2/';
+path_preprocess = '/mnt/parallel_scratch_ms2_wipe_on_august_2017/pbellec/benhajal/twins/fmri_preprocess_EXP2_niak-0.17/';
 
 %% Grab the raw data set
 
-subjects_list = dir([path_raw_fmri]);
-subjects_list = subjects_list(3:end);
-subjects_list = char(subjects_list.name);
-
+subjects_list = dir(path_raw_fmri);
+subjects_list = {subjects_list.name};
+subjects_list = subjects_list(~ismember(subjects_list,{'.','..'}));
 %%  Subject names
-    for subject_n = 1:size(subjects_list,1)
-        subject = subjects_list( subject_n,1:end);
-        subject(strfind(subject," "))="";
-        fprintf('Subject %s\n',subject)
+    for nn = 1:length(subjects_list)
+        subject = subjects_list{nn};
+        subject_id = subject;
+        subject_id(strfind(subject_id,"_"))="";
+        subject_id(strfind(subject_id," "))="";
+        fprintf('Subject %s\n',subject_id)
         
-        subject_sessions = dir([path_raw_fmri,subject]);
-        subject_sessions = subject_sessions(3:end);
-        subject_sessions = char(subject_sessions.name);
+        subject_sessions = dir([path_raw_fmri filesep subject]);
+        subject_sessions = {subject_sessions.name};
+        subject_sessions = subject_sessions(~ismember(subject_sessions,{'.','..'}));
         
 %%      Subject sessions names
-        for num_sess = 1:size(subject_sessions,1)
-            session = subject_sessions(num_sess,:);
+        for ss = 1:length(subject_sessions)
+            session = subject_sessions{ss};
             fprintf('    session %s\n',session)
-            subject = subjects_list( subject_n,1:end);
-            subject(strfind(subject," "))="";
 %%          Adding the subject to the list of files
             path_fmri = [path_raw_fmri subject filesep session filesep];
-            fmri_file = dir([path_fmri "func_*"]);
             path_anat = [path_raw_fmri subject filesep session filesep];
-            anat_file = dir([path_anat "anat_*"]);
-            
-            subject(strfind(subject,"_"))="";
-            subject(strfind(subject," "))="";
-            files_in.(subject).fmri.(["session" num2str(num_sess)]){1}=[path_fmri fmri_file.name];   
-            files_in.(subject).anat=[path_anat anat_file.name];
+            files_in.(subject_id).fmri.(["sess" num2str(ss)]).run1 = [path_fmri dir([path_fmri "func_*"]).name];
+            files_in.(subject_id).anat=[path_anat dir([path_anat "anat_*"]).name];
 
         end
     end
+
 %% Building the optional inputs
 opt.folder_out = path_preprocess;
 opt.size_output = 'quality_control';
@@ -72,7 +67,7 @@ opt.resample_vol.voxel_size          = [3 3 3];    % The voxel size to use in th
 opt.regress_confounds.flag_wm = true;
 opt.regress_confounds.flag_vent = true;
 opt.regress_confounds.flag_motion_params = true;
-opt.regress_confounds.flag_scrubbing = false;
+opt.regress_confounds.flag_scrubbing = true;
 opt.regress_confounds.thre_fd = 0.5;
 
 % multivar
