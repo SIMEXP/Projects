@@ -33,8 +33,19 @@ opt_g.type_files = 'glm_connectome'; % Specify to the grabber to prepare the fil
 opt_g.exclude_subject = {'P00004840_session1_syn','P00002012_session1_syn', 'P00004654_session1_syn','P00004663_session1_syn','P00004694_session1_syn','P00004742_session1_syn','P00004743_session1_syn','P00004501_session1_syn','P00004551_session1_syn','P00004571_session1_syn','P00004636_session1_syn','P00004648_session1_syn','P00004719_session1_syn','P00004787_session1_syn','P00004797_session1_syn','P00004805_session1_syn','P00004825_session1_syn','P00004828_session1_syn'}
 %%exclude subjects antonyms:
 opt_g.exclude_subject = {'P00004663_session1_ant','P00004694_session1_ant','P00004636_session1_ant','P00004743_session1_ant','P00004654_session1_ant','P00004819_session1_ant','P00004873_session1_ant','P00004239_session1_ant','P00004687_session1_ant','P00004639_session1_ant','P00004574_session1_ant','P00004656_session1_ant','P00004816_session1_ant','P00004742_session1_ant','P00004877_session1_ant','P00004731_session1_ant','P00004306_session1_ant','P00004721_session1_ant','P00004246_session1_ant','P00004549_session1_ant','P00004617_session1_ant','P00004794_session1_ant','P00004209_session1_ant'}
-%%exclude subjects rest:
-opt_g.exclude_subject = {'P00004829_session1_rest','P00004551_session1_rest','P00004537_session1_rest', 'P00004694_session1_rest','P00004654_session1_rest', 'P00004501_session1_rest', 'P00004719_session1_rest','P00004663_session1_rest', 'P00004687_session1_rest', 'P00004819_session1_rest','P00004657_session1_rest', 'P00004587_session1_rest', 'P00004742_session1_rest', 'P00004646_session1_rest', 'P00004835_session1_rest', 'P00004545_session1_rest', 'P00004735_session1_rest', 'P00004797_session1_rest', 'P00004809_session1_rest', 'P00004502_session1_rest', 'P00004675_session1_rest', 'P00004691_session1_rest', 'P00004757_session1_rest', 'P00004560_session1_rest', 'P00004689_session1_rest', 'P00004209_session1_rest', 'P00004724_session1_rest', 'P00004840_session1_rest', 'P00004630_session1_rest', 'P00004708_session1_rest', 'P00004356_session1_rest', 'P00004894_session1_rest', 'P00004802_session1_rest', 'P00004304_session1_rest', 'P00004703_session1_rest', 'P00004686_session1_rest', 'P00004577_session1_rest', 'P00004810_session1_rest', 'P00004261_session1_rest'}
+%%exclude subjects rest to idealy match <50yo>:
+%opt_g.exclude_subject = {'P00004847_session1_rest','P00004829_session1_rest','P00004551_session1_rest','P00004537_session1_rest', 'P00004694_session1_rest','P00004654_session1_rest', 'P00004501_session1_rest', 'P00004719_session1_rest','P00004663_session1_rest', 'P00004687_session1_rest', 'P00004819_session1_rest','P00004657_session1_rest', 'P00004587_session1_rest', 'P00004742_session1_rest', 'P00004646_session1_rest', 'P00004835_session1_rest', 'P00004545_session1_rest', 'P00004735_session1_rest', 'P00004797_session1_rest', 'P00004809_session1_rest', 'P00004502_session1_rest', 'P00004675_session1_rest', 'P00004691_session1_rest', 'P00004757_session1_rest', 'P00004560_session1_rest', 'P00004689_session1_rest', 'P00004209_session1_rest', 'P00004724_session1_rest', 'P00004840_session1_rest', 'P00004630_session1_rest', 'P00004708_session1_rest', 'P00004356_session1_rest', 'P00004894_session1_rest', 'P00004802_session1_rest', 'P00004304_session1_rest', 'P00004703_session1_rest', 'P00004686_session1_rest', 'P00004577_session1_rest', 'P00004810_session1_rest', 'P00004261_session1_rest'}
+
+%%exclude subjects rest with no BEHAV data (according to logs):
+opt_g.exclude_subject = {'P00004217_session1_rest','P00004233_session1_rest','P00004242_session1_rest','P00004252_session1_rest','P00004505_session1_rest','P00004516_session1_rest','P00004520_session1_rest','P00004524_session1_rest','P00004528_session1_rest','P00004530_session1_rest','P00004532_session1_rest','P00004537_session1_rest','P00004538_session1_rest','P00004540_session1_rest','P00004563_session1_rest','P00004570_session1_rest','P00004627_session1_rest','P00004657_session1_rest','P00004700_session1_rest','P00004703_session1_rest','P00004708_session1_rest','P00004733_session1_rest','P00004736_session1_rest','P00004759_session1_rest','P00004778_session1_rest','P00004780_session1_rest','P00004790_session1_rest','P00004804_session1_rest','P00004807_session1_rest','P00004809_session1_rest','P00004810_session1_rest','P00004846_session1_rest','P00004847_session1_rest'}
+
+%%exclude subjects rest with behav task missing ANT (according to spss files):
+%opt_g.exclude_subject = {'P00004233_session1_rest','P00004532_session1_rest','P00004537_session1_rest','P00004538_session1_rest','P00004563_session1_rest','P00004700_session1_rest','P00004736_session1_rest','P00004759_session1_rest','P00004778_session1_rest','P00004780_session1_rest','P00004809_session1_rest','P00004356_session1_rest','P00004528_session1_rest','P00004540_session1_rest','P00004627_session1_rest','P00004790_session1_rest','P00004847_session1_rest'}
+
+%%exclude subjects rest with behav task missing SYN:
+%opt_g.exclude_subject = {'P00004233_session1_rest','P00004532_session1_rest','P00004537_session1_rest','P00004538_session1_rest','P00004563_session1_rest','P00004656_session1_rest','P00004666_session1_rest','P00004687_session1_rest','P00004700_session1_rest','P00004736_session1_rest','P00004759_session1_rest','P00004778_session1_rest','P00004780_session1_rest','P00004809_session1_rest','P00004356_session1_rest','P00004528_session1_rest','P00004540_session1_rest','P00004627_session1_rest','P00004790_session1_rest','P00004847_session1_rest','P00004874_session1_rest','P00004528_session1_rest','P00004540_session1_rest','P00004627_session1_rest','P00004782_session1_rest','P00004790_session1_rest','P00004794_session1_rest','P00004847_session1_rest'}
+
+
 files_in.fmri = niak_grab_fmri_preprocess([path_data 'RANNbackup/FINAL_preprocess_test_issue100_16.03.03'],opt_g).fmri; % Replace the folder by the path where the results of the fMRI preprocessing pipeline were stored. 
 
 %%%%%%%%%%%%
@@ -108,31 +119,31 @@ opt.test.age_task1vs2.inter_run.contrast.task1vs2 = 1;
 %%%%% MAIN EFFECTS OF EDU DEPENDING ON TASK %%%%%
 
 %% 1- rest (4) vs task ant (1)
-opt.test.edu_task4vs1.group.contrast.education = 1 % define contrast of interest (age continuous only)
-opt.test.edu_task4vs1.group.contrast.age = 0; % regress out confounding variable
-opt.test.edu_task4vs1.group.contrast.genderMF = 0; % regress out confounding variable
-opt.test.edu_task4vs1.group.contrast.FD_scrubbed = 0; % regress out confounding variable
-opt.test.edu_task4vs1.inter_run.select(1).label = 'task4vs1';
-opt.test.edu_task4vs1.inter_run.select(1).values = [1 -1];
-opt.test.edu_task4vs1.inter_run.contrast.task4vs1 = 1;
+%opt.test.edu_task4vs1.group.contrast.education = 1 % define contrast of interest (age continuous only)
+%opt.test.edu_task4vs1.group.contrast.age = 0; % regress out confounding variable
+%opt.test.edu_task4vs1.group.contrast.genderMF = 0; % regress out confounding variable
+%opt.test.edu_task4vs1.group.contrast.FD_scrubbed = 0; % regress out confounding variable
+%opt.test.edu_task4vs1.inter_run.select(1).label = 'task4vs1';
+%opt.test.edu_task4vs1.inter_run.select(1).values = [1 -1];
+%opt.test.edu_task4vs1.inter_run.contrast.task4vs1 = 1;
 
 %% 2- rest (4) vs task syn (2)
-opt.test.edu_task4vs2.group.contrast.education = 1 % define contrast of interest (age continuous only)
-opt.test.edu_task4vs2.group.contrast.age = 0; % regress out confounding variable
-opt.test.edu_task4vs2.group.contrast.genderMF = 0; % regress out confounding variable
-opt.test.edu_task4vs2.group.contrast.FD_scrubbed = 0; % regress out confounding variable
-opt.test.edu_task4vs2.inter_run.select(1).label = 'task4vs2';
-opt.test.edu_task4vs2.inter_run.select(1).values = [1 -1];
-opt.test.edu_task4vs2.inter_run.contrast.task4vs2 = 1;
+%opt.test.edu_task4vs2.group.contrast.education = 1 % define contrast of interest (age continuous only)
+%opt.test.edu_task4vs2.group.contrast.age = 0; % regress out confounding variable
+%opt.test.edu_task4vs2.group.contrast.genderMF = 0; % regress out confounding variable
+%opt.test.edu_task4vs2.group.contrast.FD_scrubbed = 0; % regress out confounding variable
+%opt.test.edu_task4vs2.inter_run.select(1).label = 'task4vs2';
+%opt.test.edu_task4vs2.inter_run.select(1).values = [1 -1];
+%opt.test.edu_task4vs2.inter_run.contrast.task4vs2 = 1;
 
 %% 3- task ant (1) vs syn (2) 
-opt.test.edu_task1vs2.group.contrast.edu = 1 % define contrast of interest (age continuous only)
-opt.test.edu_task1vs2.group.contrast.age = 0; % regress out confounding variable
-opt.test.edu_task1vs2.group.contrast.genderMF = 0; % regress out confounding variable
-opt.test.edu_task1vs2.group.contrast.FD_scrubbed = 0; % regress out confounding variable
-opt.test.edu_task1vs2.inter_run.select(1).label = 'task1vs2';
-opt.test.edu_task1vs2.inter_run.select(1).values = [1 -1];
-opt.test.edu_task1vs2.inter_run.contrast.task1vs2 = 1;
+%opt.test.edu_task1vs2.group.contrast.edu = 1 % define contrast of interest (age continuous only)
+%opt.test.edu_task1vs2.group.contrast.age = 0; % regress out confounding variable
+%opt.test.edu_task1vs2.group.contrast.genderMF = 0; % regress out confounding variable
+%opt.test.edu_task1vs2.group.contrast.FD_scrubbed = 0; % regress out confounding variable
+%opt.test.edu_task1vs2.inter_run.select(1).label = 'task1vs2';
+%opt.test.edu_task1vs2.inter_run.select(1).values = [1 -1];
+%opt.test.edu_task1vs2.inter_run.contrast.task1vs2 = 1;
 
 
 %%%%% INTERACTION %%%%%
