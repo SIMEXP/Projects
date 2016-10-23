@@ -38,8 +38,8 @@ path_niak = ('/gs/project/gsf-624-aa/quarantaine/niak-issue100/');
 addpath(genpath(path_niak))
 
 %%%%%%%%%%%%%
-path_data = '/home/perrine/scratch/RANN/FINAL_preprocess_test_issue100_16.03.03/';
-path_out  = '/home/perrine/scratch/RANN/RANN_BASC_rest_and_tasks/';
+path_data = '/gs/project/gsf-624-aa/RANN/FINAL_preprocess_test_issue100_16.03.03/';
+path_out  = '/gs/project/gsf-624-aa/RANN/RANNbackup/RANN_BASC_rest_and_tasks/';
 %%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%
@@ -54,7 +54,7 @@ opt_g.min_xcorr_anat = 0; % The minimum xcorr score for an fMRI dataset to be in
 
 opt_g.type_files = 'rest'; % Specify to the grabber to prepare the files for the STABILITY_REST pipeline
 
-opt_g.filter.run = {'ant','syn','rest'};
+opt_g.filter.run = {'ant','syn','rest','pictname'};
 
 files_in = niak_grab_fmri_preprocess(path_data ,opt_g); % Replace the folder by the path where the results of the fMRI preprocessing pipeline were stored. 
 
