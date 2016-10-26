@@ -34,7 +34,7 @@ clear all
 addpath(genpath('/gs/project/gsf-624-aa/quarantaine/niak-v0.17.0/'))
 
 root_path = '/gs/project/gsf-624-aa/simons_vip/';
-path_out = '/gs/project/gsf-624-aa/simons_vip/svip_prep_test_out/';
+path_out = '/gs/project/gsf-624-aa/simons_vip/svip_prep_test_out_10_24/';
 
 path_raw = [root_path 'svip_database_all/'];
 list_subject = dir(path_raw);
@@ -57,8 +57,8 @@ end
 
 %% Pipeline options  %%
 %% General
-opt.folder_out   = '/gs/project/gsf-624-aa/simons_vip/svip_prep_test_out';      
-opt.size_output = 'quality_control';                             
+opt.folder_out   = '/gs/project/gsf-624-aa/simons_vip/svip_prep_test_out_10_24';
+opt.size_output = 'quality_control';
 
 %% Pipeline manager 
 
@@ -71,7 +71,7 @@ opt.slice_timing.flag_nu_correct  = false;                   % Apply a correctio
 opt.slice_timing.arg_nu_correct   = '-distance 200';         % The distance between control points for non-uniformity correction (in mm, lower values can capture faster varying slow spatial drifts).
 opt.slice_timing.flag_center      = 1;                       % Set the origin of the volume at the center of mass of a brain mask. This is useful only if the voxel-to-world transformation from the DICOM header has somehow been damaged. This needs to be assessed on the raw images.
 opt.slice_timing.flag_skip        = true;                    % Skip the slice timing (0: don't skip, 1 : skip). Note that only the slice timing corretion portion is skipped, not all other effects such as FLAG_CENTER or FLAG_NU_CORRECT
- 
+
 % resampling in stereotaxic space
 opt.resample_vol.interpolation = 'trilinear'; % The resampling scheme. The fastest and most robust method is trilinear. 
 opt.resample_vol.voxel_size    = [3 3 3];     % The voxel size to use in the stereotaxic space
