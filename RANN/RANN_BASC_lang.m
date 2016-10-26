@@ -39,7 +39,7 @@ addpath(genpath(path_niak))
 
 %%%%%%%%%%%%%
 path_data = '/gs/project/gsf-624-aa/RANN/RANNbackup/FINAL_preprocess_test_issue100_16.03.03/';
-path_out  = '/gs/project/gsf-624-aa/RANN/RANNbackup/RANN_BASC_lang/';
+path_out  = '/gs/project/gsf-624-aa/RANN/RANNbackup/RANN_MSTEPS_lang/';
 %%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%
@@ -92,8 +92,15 @@ files_in = niak_grab_fmri_preprocess(path_data ,opt_g); % Replace the folder by 
 opt.folder_out = path_out; % Where to store the results
 opt.region_growing.thre_size = 1000; %  the size of the regions, when they stop growing. A threshold of 1000 mm3 will give about 1000 regions on the grey matter. 
 opt.grid_scales = [10:10:100 120:20:200 240:40:500]'; % Search for stable clusters in the range 10 to 500 
-
-opt.scales_maps = repmat(opt.grid_scales,[1 3]); % The scales that will be used to generate the maps of brain clusters and stability. 
+opt.scales_maps = [10 7 6;...
+20 16 16;...
+40 36 36;...
+80 72 78;...
+120 132 135;...
+200 200 202;...
+360 324 329;...
+440 484 426];
+%opt.scales_maps = repmat(opt.grid_scales,[1 3]); % The scales that will be used to generate the maps of brain clusters and stability. 
                                                  % In this example the same number of clusters are used at the individual (first column), 
                                                  % group (second column) and consensus (third and last colum) levels.
 opt.stability_tseries.nb_samps = 100; %Number of bootstrap samples at the individual level. 100: the CI on indidividual stability is +/-0.1
