@@ -39,7 +39,7 @@ addpath(genpath(path_niak))
 
 %%%%%%%%%%%%%
 path_data = '/gs/project/gsf-624-aa/RANN/RANNbackup/FINAL_preprocess_test_issue100_16.03.03/';
-path_out  = '/gs/project/gsf-624-aa/RANN/RANNbackup/RANN_BASC_rest_and_tasks/';
+path_out  = '/gs/project/gsf-624-aa/RANN/RANNbackup/RANN_MSTEPS_rest_and_tasks/';
 %%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%
