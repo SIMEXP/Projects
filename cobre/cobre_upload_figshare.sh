@@ -20,7 +20,7 @@ do
 done
 
 # Retrieve upload tokens etc
-file_json="$(curl -i -H "Content-Type: application/json" -X GET https://api.figshare.com/v2/account/articles/$id/files?access_token=$token|tee list_files.json)"
+file_json="$(curl -i -H "Content-Type: application/json" -X GET https://api.figshare.com/v2/account/articles/$id/files?access_token=$token)"
 list_file=($(echo $file_json | grep -oP '"name": "(.*?)\"'  | grep -oP ' ".*?"$'))
 list_url=($(echo $file_json | grep -oP '"upload_url": "(.*?)\"'  | grep -oP ' ".*?"$'))
 list_id=($(echo $file_json | grep -oP '"id": (.*?),'  | grep -oP ' .*?,$'))
