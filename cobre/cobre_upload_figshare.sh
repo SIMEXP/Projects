@@ -37,7 +37,8 @@ do
   echo '  token: '$token
   echo '  url: '$url
   echo '  id: '$id
-#  thow curl -i -H "Content-Type: application/json" -X PUT --data-binary "@$file" $upload_url/1?access_token=$token
+  #  curl -i -H "Content-Type: application/json" -X GET $upload_url?access_token=$token 
+  #  curl -i -H "Content-Type: application/json" -X PUT --data-binary "@$file" $upload_url/1?access_token=$token
    curl -i --request PUT --data-binary "@$file" $upload_url/1?access_token=$token
   curl -i -H "Content-Type: application/json" -X POST https://api.figshare.com/v2/account/articles/$id/files/$id_file?access_token=$token 
 done
