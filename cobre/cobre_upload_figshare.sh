@@ -21,31 +21,23 @@ done
 
 # Retrieve upload tokens etc
 file_json="$(curl -i -H "Content-Type: application/json" -X GET https://api.figshare.com/v2/account/articles/$id/files?access_token=$token|tee list_files.json)"
-list_token=($(echo $file_json | grep -oP '"upload_token": "(.*?)\"'  | grep -oP ' ".*?"$'))
 list_file=($(echo $file_json | grep -oP '"name": "(.*?)\"'  | grep -oP ' ".*?"$'))
 list_url=($(echo $file_json | grep -oP '"upload_url": "(.*?)\"'  | grep -oP ' ".*?"$'))
-list_id=($(echo $file_json | grep -oP '"id": (.*?),'  | grep -oP ' ".*?"$'))
+list_id=($(echo $file_json | grep -oP '"id": (.*?),'  | grep -oP ' .*?,$'))
 nfiles=${#list_id[@]}
 for ((ind=0;ind<$nfiles;ind++))
 do 
   file=${list_file[ind]%\"};
   file=${file#\"};
-  token=${list_token[ind]%\"};
-  token=${token#\"};
-  url=${list_url[ind]%\"};
-  url=${url#\"};
-  id=${list_id[ind]%\,};
+  upload_url=${list_url[ind]%\"};
+  upload_url=${upload_url#\"};
+  id_file=${list_id[ind]%\,};
   
-  echo 'file: '$file'\n'
-  echo 'token: '$token'\n'
-  echo 'url: '$url'\n'
-  echo 'id: '$id'\n'
+  echo 'Uploading file: '$file
+  echo '  token: '$token
+  echo '  url: '$url
+  echo '  id: '$id
+#  curl -i -H "Content-Type: application/json" -X GET $upload_url?access_token=$token 
+  curl -i -H "Content-Type: application/octet-stream" -X PUT --data-binary "@$file" $upload_url/1?access_token=$token
+  curl -i -H "Content-Type: application/json" -X POST https://api.figshare.com/v2/account/articles/$id/files/$id_file?access_token=$token 
 done
-
-file=fmri_0040048.nii.gz
-upload_token=8a81ae47-df5f-4285-a183-2a81051713e3
-upload_url=https://fup100010.figshare.com/upload/8a81ae47-df5f-4285-a183-2a81051713e3
-id_file=6638550
-curl -i -H "Content-Type: application/json" -X GET $upload_url?access_token=$token
-curl -i -H "Content-Type: application/json" -X PUT --data-binary "@$file" $upload_url/1?access_token=$token
-curl -i -H "Content-Type: application/json" -X POST https://api.figshare.com/v2/account/articles/$id/files/$id_file?access_token=$token 
