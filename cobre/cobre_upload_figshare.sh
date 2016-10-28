@@ -13,10 +13,10 @@ echo 'An article was created with id '$id
 list_file=("$search_dir"*)
 for file in ${list_file[@]}
 do
-  md5_file="$(md5sum $file)"
-  size_file=$(stat -c%s "$file")
+  md5_file=$(md5sum $file | grep -oP '^.* ')
+  size_file=$(wc -c < "$file")
   arg='{"md5": "'$md5_file'", "name": "'$file'", "size": '$size_file'}'
-  curl -i -H "Content-Type: application/json" -X POST --data "$arg" https://api.figshare.com/v2/account/articles/$id/files?access_token=$token > /dev/null
+  curl -H "Content-Type: application/json" -X POST --data "$arg" https://api.figshare.com/v2/account/articles/$id/files?access_token=$token
 done
 
 # Retrieve upload tokens etc
@@ -37,7 +37,7 @@ do
   echo '  token: '$token
   echo '  url: '$url
   echo '  id: '$id
-#  curl -i -H "Content-Type: application/json" -X GET $upload_url?access_token=$token 
-  curl -i -H "Content-Type: application/octet-stream" -X PUT --data-binary "@$file" $upload_url/1?access_token=$token
+#  thow curl -i -H "Content-Type: application/json" -X PUT --data-binary "@$file" $upload_url/1?access_token=$token
+   curl -i --request PUT --data-binary "@$file" $upload_url/1?access_token=$token
   curl -i -H "Content-Type: application/json" -X POST https://api.figshare.com/v2/account/articles/$id/files/$id_file?access_token=$token 
 done
