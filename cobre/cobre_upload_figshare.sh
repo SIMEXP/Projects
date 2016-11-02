@@ -1,7 +1,7 @@
 # Before running this script, create a variable $token with a personal figshare identification token. This token can be generated at https://figshare.com/account/applications 
 token="XXXX"
 authors='[{"name":"Pierre Bellec"}]'
-title="a test"
+title="COBRE preprocessed with NIAK 0.17 - lightweight release"
 
 # Create a new article
 data='{"authors": '$authors',"title": "'$title'","upload_type": "dataset"}'
