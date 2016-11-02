@@ -14,6 +14,7 @@ list_file=("$search_dir"*)
 for file in ${list_file[@]}
 do
   md5_file=$(md5sum $file | grep -oP '^.* ')
+  md5_file=${md5_file%\  };
   size_file=$(wc -c < "$file")
   arg='{"md5": "'$md5_file'", "name": "'$file'", "size": '$size_file'}'
   curl -H "Content-Type: application/json" -X POST --data "$arg" https://api.figshare.com/v2/account/articles/$id/files?access_token=$token
