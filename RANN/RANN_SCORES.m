@@ -25,7 +25,7 @@ path_folder_out = [path_data 'RANNbackup/RANN_SCORES/SCORES_ant/'];
 opt.g.filter.run = {'ant'};
 opt_g.min_nb_vol = 60; % 
 %% preproc
-files_in = niak_grab_fmri_preprocess([ path_data 'RANN_backup/FINAL_preprocess_test_issue100_16.03.03/';' ],opt_g);
+files_in = niak_grab_fmri_preprocess([ path_data 'RANN_backup/FINAL_preprocess_test_issue100_16.03.03/'],opt_g);
 %% exclude subjects:
 %opt_g.exclude_subject = {''}
 %% partition (based on my sample, at a given scale of interest, out of BASC. Here scale 68 as a trial)
