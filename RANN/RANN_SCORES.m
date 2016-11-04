@@ -30,9 +30,9 @@ files_in = niak_grab_fmri_preprocess([ path_data 'RANNbackup/FINAL_preprocess_te
 %% exclude subjects:
 %opt_g.exclude_subject = {''}
 %% partition (based on my sample, at a given scale of interest, out of BASC. Here scale 68 as a trial)
-files_in.part = [path_data 'RANNbackup/MSTEPS_task_synant4/sci70_scg70_scf68/brain_partition_consensus_group_sci70_scg70_scf68.mnc.gz/']
+files_in.part = [path_data 'RANNbackup/MSTEPS_task_synant4/sci70_scg70_scf68/brain_partition_consensus_group_sci70_scg70_scf68.mnc.gz']
 %% mask (group out of my sample, extracted from preproc)
-files_in.mask = [path_data 'RANNbackup/FINAL_preprocess_test_issue100_16.03.03/quality_control/group_coregistration.nii/anat_mask_group_stereonl.nii.gz/']
+%files_in.mask = [path_data 'RANNbackup/FINAL_preprocess_test_issue100_16.03.03/quality_control/group_coregistration.nii/anat_mask_group_stereonl.nii.gz/']
 
 opt.folder_out = path_folder_out;
 opt.psom.max_queued = 300;
