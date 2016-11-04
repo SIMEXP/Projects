@@ -13,7 +13,7 @@ niak_gb_vars
 path_niak = ('/gs/project/gsf-624-aa/quarantaine/niak-issue100/');
 addpath(genpath(path_niak))
 %%%%%%%%%%%%%
-path_data = '/home/perrine/database/RANN/'; %% GUILLIMIN
+path_data = '/gs/project/gsf-624-aa/RANN/'; %% GUILLIMIN
 path_fmri = [path_data 'RANNbackup/FINAL_preprocess_test_issue100_16.03.03/fmri/'];
 path_folder_out = [path_data 'RANNbackup/RANN_SCORES/SCORES_ant/'];
 %path_folder_out = '/home/perrine/scratch/RANN/SCORES_syn/';
