@@ -30,7 +30,8 @@ opt_scores.files_out.rmap_cores = true;
 opt_scores.files_out.dual_regression = false;
 
 % note this option is missing from the documentation and have asked for this to be fixed
-opt_scores.folder_out = '/gs/project/gsf-624-aa/abadhwar/Scores';
+%opt_scores.folder_out = '/gs/project/gsf-624-aa/abadhwar/Scores';
+opt_scores.folder_out = '/gs/project/gsf-624-aa/abadhwar/Scores_test';
 
 % psom option
 opt_scores.psom.max_queued = 50;
