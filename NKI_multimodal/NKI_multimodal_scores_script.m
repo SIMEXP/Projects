@@ -25,7 +25,8 @@ opt_scores = struct;
 opt_scores.files_out.stability_maps = true;
 opt_scores.files_out.partition_cores = false;
 opt_scores.files_out.stability_intra = false;
-opt_scores.files_out.stability_inter = false;
+%opt_scores.files_out.stability_inter = false;
+opt_scores.files_out.stability_inter = true;
 opt_scores.files_out.stability_contrast = false;
 opt_scores.files_out.partition_thresh = false;
 opt_scores.files_out.rmap_part = true;
@@ -36,7 +37,8 @@ opt_scores.files_out.dual_regression = false;
 %opt_scores.folder_out = '/gs/project/gsf-624-aa/abadhwar/Scores';
 %opt_scores.folder_out = '/gs/project/gsf-624-aa/abadhwar/Scores_test';
 %opt_scores.folder_out = '/gs/project/gsf-624-aa/abadhwar/Scores_T77';
-opt_scores.folder_out = '/gs/project/gsf-624-aa/abadhwar/Scores_T77_P21_P22';
+%opt_scores.folder_out = '/gs/project/gsf-624-aa/abadhwar/Scores_T77_P21_P22';
+opt_scores.folder_out = '/gs/project/gsf-624-aa/abadhwar/Scores_T77_P21_P22_test';
 
 % psom option
 opt_scores.psom.max_queued = 50;
