@@ -17,7 +17,8 @@ files_in = struct;
 files_in.data = data.data;
 files_in.mask = '/gs/project/gsf-624-aa/database2/preventad/templates/mask.mnc.gz';
 %files_in.part = '/gs/project/gsf-624-aa/database2/preventad/templates/template_cambridge_basc_multiscale_sym_scale007.mnc.gz';
-files_in.part = '/gs/project/gsf-624-aa/database2/preventad/templates/brain_parcellation_mcinet_basc_sym_77rois.mnc.gz';
+%files_in.part = '/gs/project/gsf-624-aa/database2/preventad/templates/brain_parcellation_mcinet_basc_sym_77rois.mnc.gz';
+files_in.part = '/gs/project/gsf-624-aa/database2/preventad/templates/brain_parcellation_mcinet_basc_sym_77rois_21-22.mnc';
 
 % opt: files_out
 opt_scores = struct;
@@ -34,7 +35,8 @@ opt_scores.files_out.dual_regression = false;
 % note this option is missing from the documentation and have asked for this to be fixed
 %opt_scores.folder_out = '/gs/project/gsf-624-aa/abadhwar/Scores';
 %opt_scores.folder_out = '/gs/project/gsf-624-aa/abadhwar/Scores_test';
-opt_scores.folder_out = '/gs/project/gsf-624-aa/abadhwar/Scores_T77';
+%opt_scores.folder_out = '/gs/project/gsf-624-aa/abadhwar/Scores_T77';
+opt_scores.folder_out = '/gs/project/gsf-624-aa/abadhwar/Scores_T77_P21_P22';
 
 % psom option
 opt_scores.psom.max_queued = 50;
