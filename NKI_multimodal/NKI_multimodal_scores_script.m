@@ -17,7 +17,7 @@ files_in = struct;
 files_in.data = data.data;
 files_in.mask = '/gs/project/gsf-624-aa/database2/preventad/templates/mask.mnc.gz';
 %files_in.part = '/gs/project/gsf-624-aa/database2/preventad/templates/template_cambridge_basc_multiscale_sym_scale007.mnc.gz';
-files_in.part = '/home/abadhwar/gsf-624-aa/abadhwar/badhwar_templates/brain_parcellation_mcinet_basc_sym_77rois.mnc.gz';
+files_in.part = '/gs/project/gsf-624-aa/database2/preventad/templates/brain_parcellation_mcinet_basc_sym_77rois.mnc.gz';
 
 % opt: files_out
 opt_scores = struct;
