@@ -15,7 +15,7 @@ addpath(genpath(path_niak))
 %%%%%%%%%%%%%
 path_data = '/gs/project/gsf-624-aa/RANN/'; %% GUILLIMIN
 path_fmri = [path_data 'RANNbackup/FINAL_preprocess_test_issue100_16.03.03/fmri/'];
-path_folder_out = [path_data 'RANNbackup/RANN_SCORES/SCORES_ant/'];
+path_folder_out = [path_data 'RANNbackup/RANN_SCORES/SCORES_ant_sc184/'];
 %path_folder_out = '/home/perrine/scratch/RANN/SCORES_syn/';
 %path_folder_out = '/home/perrine/scratch/RANN/SCORES_pictname/';
 %path_folder_out = '/home/perrine/scratch/RANN/SCORES_rest/';
@@ -30,9 +30,13 @@ files_in = niak_grab_fmri_preprocess([ path_data 'RANNbackup/FINAL_preprocess_te
 %% exclude subjects:
 %opt_g.exclude_subject = {''}
 %% partition (based on my sample, at a given scale of interest, out of BASC. Here scale 68 as a trial)
-files_in.part = [path_data 'RANNbackup/MSTEPS_task_synant4/stability_group/sci70_scg70_scf68/brain_partition_consensus_group_sci70_scg70_scf68.mnc.gz']
+files_in.part = [path_data 'RANNbackup/RANN_MSTEPS_rest_and_tasks/stability_group/sci160_scg176_scf184/brain_partition_consensus_group_sci160_scg176_scf184.mnc.gz']
+%% = scale 184 rest&tasks
+
+%%scale 68 ant_syn%% 'RANNbackup/MSTEPS_task_synant4/stability_group/sci70_scg70_scf68/brain_partition_consensus_group_sci70_scg70_scf68.mnc.gz']
+
 %% mask (group out of my sample, extracted from preproc)
-%files_in.mask = [path_data 'RANNbackup/FINAL_preprocess_test_issue100_16.03.03/quality_control/group_coregistration.nii/anat_mask_group_stereonl.nii.gz/']
+files_in.mask = [path_data 'RANNbackup/FINAL_preprocess_test_issue100_16.03.03/quality_control/group_coregistration.nii/anat_mask_group_stereonl.nii.gz/']
 
 opt.folder_out = path_folder_out;
 opt.psom.max_queued = 300;
