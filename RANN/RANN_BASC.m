@@ -38,8 +38,8 @@ path_niak = ('/gs/project/gsf-624-aa/quarantaine/niak-issue100/');
 addpath(genpath(path_niak))
 
 %%%%%%%%%%%%%
-path_data = '/home/perrine/scratch/RANN/FINAL_preprocess_test_issue100_16.03.03/';
-path_out  = '/home/perrine/scratch/RANN/RANN_BASC_rest_and_tasks/';
+path_data = '/gs/project/gsf-624-aa/RANN/RANNbackup/FINAL_preprocess_test_issue100_16.03.03/';
+path_out  = '/gs/project/gsf-624-aa/RANN/RANNbackup/RANN_MSTEPS_rest_and_tasks/';
 %%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%
@@ -54,7 +54,7 @@ opt_g.min_xcorr_anat = 0; % The minimum xcorr score for an fMRI dataset to be in
 
 opt_g.type_files = 'rest'; % Specify to the grabber to prepare the files for the STABILITY_REST pipeline
 
-opt_g.filter.run = {'ant','syn','rest'};
+opt_g.filter.run = {'ant','syn','rest','pictname'};
 
 files_in = niak_grab_fmri_preprocess(path_data ,opt_g); % Replace the folder by the path where the results of the fMRI preprocessing pipeline were stored. 
 
@@ -93,9 +93,18 @@ opt.folder_out = path_out; % Where to store the results
 opt.region_growing.thre_size = 1000; %  the size of the regions, when they stop growing. A threshold of 1000 mm3 will give about 1000 regions on the grey matter. 
 opt.grid_scales = [10:10:100 120:20:200 240:40:500]'; % Search for stable clusters in the range 10 to 500 
 
-opt.scales_maps = repmat(opt.grid_scales,[1 3]); % The scales that will be used to generate the maps of brain clusters and stability. 
+%opt.scales_maps = repmat(opt.grid_scales,[1 3]); % The scales that will be used to generate the maps of brain clusters and stability. 
                                                  % In this example the same number of clusters are used at the individual (first column), 
                                                  % group (second column) and consensus (third and last colum) levels.
+opt.scales_maps = [10 7 7;...
+20 14 13;...
+30 27 29;...
+60 54 53;...
+100 100 100;...
+160 176 184;...
+280 308 311;...
+440 484 427];
+
 opt.stability_tseries.nb_samps = 100; %Number of bootstrap samples at the individual level. 100: the CI on indidividual stability is +/-0.1
 opt.stability_group.nb_samps = 500; % Number of bootstrap samples at the group level. 500: the CI on group stability is +/-0.05
 
