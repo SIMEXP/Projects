@@ -3,8 +3,8 @@
  clear 
 clc 
 
-path_raw_fmri   = '/mnt/parallel_scratch_ms2_wipe_on_august_2017/pbellec/benhajal/twins/raw_mnc_EXP2/';
-path_preprocess = '/mnt/parallel_scratch_ms2_wipe_on_august_2017/pbellec/benhajal/twins/fmri_preprocess_EXP2_niak-0.17/';
+path_raw_fmri   = '/gs/project/gsf-624-aa/twins/twins_study_raw/raw_mnc_EXP2/';
+path_preprocess = '/gs/project/gsf-624-aa/twins/fmri_preprocess_EXP2_niak-0.17/';
 
 %% Grab the raw data set
 
