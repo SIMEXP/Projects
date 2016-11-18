@@ -52,7 +52,7 @@ files_in.fmri = niak_grab_fmri_preprocess([path_data 'RANNbackup/FINAL_preproces
 %%%%%%%%%%%%
 
 %% Group:  model_group 
-files_in.model.group = [path_data 'Models/model_group_161116.csv'];
+files_in.model.group = [path_data 'Models/model_group_ant_syn.csv'];
 
 
 %% inter_run: model_interrun
