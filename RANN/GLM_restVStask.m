@@ -12,7 +12,7 @@ path_data = '/gs/project/gsf-624-aa/RANN/'; %% GUILLIMIN
 %%%%%%%%%%%%
 %% Grabbing the results from BASC: tasks to compare with task state (if we want a more general/stable? template, we could run BASC with task+rest, or (better): cambridge templates!
 %%%%%%%%%%%%
-files_in = niak_grab_stability_rest([path_data 'RANNbackup/MSTEPS_task_synant4']); 
+files_in = niak_grab_stability_rest([path_data 'RANNbackup/RANN_MSTEPS_rest_and_tasks']); 
 
 %%%%%%%%%%%%%%%%%%%%%
 %% Grabbing the results from the NIAK fMRI preprocessing pipeline
@@ -30,14 +30,13 @@ opt_g.type_files = 'glm_connectome'; % Specify to the grabber to prepare the fil
 
 %% participants excluded to obtain an FD match between age groups <50yo> and same N of participants in each age group
 %% exclude subjects syn:
-opt_g.exclude_subject = {'P00004840_session1_syn','P00002012_session1_syn', 'P00004654_session1_syn','P00004663_session1_syn','P00004694_session1_syn','P00004742_session1_syn','P00004743_session1_syn','P00004501_session1_syn','P00004551_session1_syn','P00004571_session1_syn','P00004636_session1_syn','P00004648_session1_syn','P00004719_session1_syn','P00004787_session1_syn','P00004797_session1_syn','P00004805_session1_syn','P00004825_session1_syn','P00004828_session1_syn'}
+%opt_g.exclude_subject = {'P00004840_session1_syn','P00002012_session1_syn', 'P00004654_session1_syn','P00004663_session1_syn','P00004694_session1_syn','P00004742_session1_syn','P00004743_session1_syn','P00004501_session1_syn','P00004551_session1_syn','P00004571_session1_syn','P00004636_session1_syn','P00004648_session1_syn','P00004719_session1_syn','P00004787_session1_syn','P00004797_session1_syn','P00004805_session1_syn','P00004825_session1_syn','P00004828_session1_syn'}
 %%exclude subjects antonyms:
-opt_g.exclude_subject = {'P00004663_session1_ant','P00004694_session1_ant','P00004636_session1_ant','P00004743_session1_ant','P00004654_session1_ant','P00004819_session1_ant','P00004873_session1_ant','P00004239_session1_ant','P00004687_session1_ant','P00004639_session1_ant','P00004574_session1_ant','P00004656_session1_ant','P00004816_session1_ant','P00004742_session1_ant','P00004877_session1_ant','P00004731_session1_ant','P00004306_session1_ant','P00004721_session1_ant','P00004246_session1_ant','P00004549_session1_ant','P00004617_session1_ant','P00004794_session1_ant','P00004209_session1_ant'}
+%opt_g.exclude_subject = {'P00004663_session1_ant','P00004694_session1_ant','P00004636_session1_ant','P00004743_session1_ant','P00004654_session1_ant','P00004819_session1_ant','P00004873_session1_ant','P00004239_session1_ant','P00004687_session1_ant','P00004639_session1_ant','P00004574_session1_ant','P00004656_session1_ant','P00004816_session1_ant','P00004742_session1_ant','P00004877_session1_ant','P00004731_session1_ant','P00004306_session1_ant','P00004721_session1_ant','P00004246_session1_ant','P00004549_session1_ant','P00004617_session1_ant','P00004794_session1_ant','P00004209_session1_ant'}
 %%exclude subjects rest to idealy match <50yo>:
 %opt_g.exclude_subject = {'P00004847_session1_rest','P00004829_session1_rest','P00004551_session1_rest','P00004537_session1_rest', 'P00004694_session1_rest','P00004654_session1_rest', 'P00004501_session1_rest', 'P00004719_session1_rest','P00004663_session1_rest', 'P00004687_session1_rest', 'P00004819_session1_rest','P00004657_session1_rest', 'P00004587_session1_rest', 'P00004742_session1_rest', 'P00004646_session1_rest', 'P00004835_session1_rest', 'P00004545_session1_rest', 'P00004735_session1_rest', 'P00004797_session1_rest', 'P00004809_session1_rest', 'P00004502_session1_rest', 'P00004675_session1_rest', 'P00004691_session1_rest', 'P00004757_session1_rest', 'P00004560_session1_rest', 'P00004689_session1_rest', 'P00004209_session1_rest', 'P00004724_session1_rest', 'P00004840_session1_rest', 'P00004630_session1_rest', 'P00004708_session1_rest', 'P00004356_session1_rest', 'P00004894_session1_rest', 'P00004802_session1_rest', 'P00004304_session1_rest', 'P00004703_session1_rest', 'P00004686_session1_rest', 'P00004577_session1_rest', 'P00004810_session1_rest', 'P00004261_session1_rest'}
-
 %%exclude subjects rest with no BEHAV data (according to logs):
-opt_g.exclude_subject = {'P00004217_session1_rest','P00004233_session1_rest','P00004242_session1_rest','P00004252_session1_rest','P00004505_session1_rest','P00004516_session1_rest','P00004520_session1_rest','P00004524_session1_rest','P00004528_session1_rest','P00004530_session1_rest','P00004532_session1_rest','P00004537_session1_rest','P00004538_session1_rest','P00004540_session1_rest','P00004563_session1_rest','P00004570_session1_rest','P00004627_session1_rest','P00004657_session1_rest','P00004700_session1_rest','P00004703_session1_rest','P00004708_session1_rest','P00004733_session1_rest','P00004736_session1_rest','P00004759_session1_rest','P00004778_session1_rest','P00004780_session1_rest','P00004790_session1_rest','P00004804_session1_rest','P00004807_session1_rest','P00004809_session1_rest','P00004810_session1_rest','P00004846_session1_rest','P00004847_session1_rest'}
+%opt_g.exclude_subject = {'P00004217_session1_rest','P00004233_session1_rest','P00004242_session1_rest','P00004252_session1_rest','P00004505_session1_rest','P00004516_session1_rest','P00004520_session1_rest','P00004524_session1_rest','P00004528_session1_rest','P00004530_session1_rest','P00004532_session1_rest','P00004537_session1_rest','P00004538_session1_rest','P00004540_session1_rest','P00004563_session1_rest','P00004570_session1_rest','P00004627_session1_rest','P00004657_session1_rest','P00004700_session1_rest','P00004703_session1_rest','P00004708_session1_rest','P00004733_session1_rest','P00004736_session1_rest','P00004759_session1_rest','P00004778_session1_rest','P00004780_session1_rest','P00004790_session1_rest','P00004804_session1_rest','P00004807_session1_rest','P00004809_session1_rest','P00004810_session1_rest','P00004846_session1_rest','P00004847_session1_rest'}
 
 %%exclude subjects rest with behav task missing ANT (according to spss files):
 %opt_g.exclude_subject = {'P00004233_session1_rest','P00004532_session1_rest','P00004537_session1_rest','P00004538_session1_rest','P00004563_session1_rest','P00004700_session1_rest','P00004736_session1_rest','P00004759_session1_rest','P00004778_session1_rest','P00004780_session1_rest','P00004809_session1_rest','P00004356_session1_rest','P00004528_session1_rest','P00004540_session1_rest','P00004627_session1_rest','P00004790_session1_rest','P00004847_session1_rest'}
@@ -53,13 +52,13 @@ files_in.fmri = niak_grab_fmri_preprocess([path_data 'RANNbackup/FINAL_preproces
 %%%%%%%%%%%%
 
 %% Group:  model_group 
-files_in.model.group = [path_data 'Models/BEHAV_all_filters_ant_syn.csv'];
+files_in.model.group = [path_data 'Models/model_group_161116.csv'];
 
 
 %% inter_run: model_interrun
 subject_id = fieldnames(files_in.fmri);
 for n = 1:length(subject_id)
-    files_in.model.individual.(subject_id{n}).inter_run = [path_data 'Models/filtered_IN_all_filters_alltasks.csv'];
+    files_in.model.individual.(subject_id{n}).inter_run = [path_data 'Models/model_interrun_all_tasks_161116.csv'];
 end
 
 %%2d trial:
@@ -71,7 +70,7 @@ end
 %%%%%%%%%%%%
 %% Options 
 %%%%%%%%%%%%
-opt.folder_out = [path_data 'RANNbackup/RANN_GLMconnectome/GLM_restVStask']; % Where to store the resultsb
+opt.folder_out = [path_data 'RANNbackup/RANN_GLMconnectome/GLM_restVStask161116']; % Where to store the resultsb
 opt.fdr = 0.1; % The maximal false-discovery rate that is tolerated both for individual (single-seed) maps and whole-connectome discoveries, at each particular scale (multiple comparisons across scales are addressed via permutation testing)
 opt.fwe = 0.05; % The overall family-wise error, i.e. the probablity to have the observed number of discoveries, agregated across all scales, under the global null hypothesis of no association.
 opt.nb_samps = 1000; % The number of samples in the permutation test. This number has to be multiplied by OPT.NB_BATCH below to get the effective number of samples
