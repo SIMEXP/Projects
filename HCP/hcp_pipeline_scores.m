@@ -24,10 +24,10 @@ opt_g.min_xcorr_func = 0.5; % The minimum xcorr score for an fMRI dataset to be 
 %opt_g.max_translation = 3 ; % the maximal transition (difference between two adjacent volumes) in translation motion parameters within-run (in mm)
 %opt_g.max_rotation = 3 ; % the maximal transition (difference between two adjacent volumes) in rotation motion parameters within-run (in degrees)
 opt_g.type_files = 'scores'; % Specify to the grabber to prepare the files for the stability FIR pipeline
-opt_g.template =  [path_root 'basc_MOTOR_rl-lr_niak-fix-scrub_900R/stability_group/sci10_scg7_scf7/brain_partition_consensus_group_sci10_scg7_scf7.mnc.gz'];
+opt_g.template =  [path_root 'basc_MOTOR_rl-lr_niak-fix-scrub_900R/stability_group/sci10_scg7_scf6/brain_partition_consensus_group_sci10_scg7_scf6.mnc.gz'];
 
 files_in = niak_grab_fmri_preprocess(path_preproc,opt_g);
-files_in.part = [path_root 'basc_MOTOR_rl-lr_niak-fix-scrub_900R/stability_group/sci10_scg7_scf7/brain_partition_consensus_group_sci10_scg7_scf7.mnc.gz'];
+files_in.part = [path_root 'basc_MOTOR_rl-lr_niak-fix-scrub_900R/stability_group/sci10_scg7_scf6/brain_partition_consensus_group_sci10_scg7_scf6.mnc.gz'];
 % Resample the 3mm cambridge template to 2mm
 %files_in_resamp.source =  [path_preproc '/anat/' template_name] ;
 %files_in_resamp.target = files_in.mask;
