@@ -31,17 +31,36 @@ for ind = 1:size(pheno,2)
     end
 end
 
-% for ind = 2:size(pheno,1)
-%     sub_name = [pheno{ind, go_ind}];
-%     % Get the file name and path
-% %     [start, stop] = regexp(sub_name, 'fmri_subject[0-9]*_r[0-9]_rmap_part.mnc.gz', 'match');
-%     string_name = 
-%     file_name = strcat('fmri_', sub_name, regexp(string_name, '_session1_r[0-9]_rmap_part.mnc.gz'));
-%     file_path = [path_data filesep file_name];
-%     files_in.data.(sub_name) = file_path;
-% end
+%% set up files_in structure
+%for ind = 2:size(pheno,1)
+ %   sub_name = [pheno{ind, go_ind}];
+    % Get the file name and path
+  %  file_name = sprintf('smwc1ADNI_%s_MR_MPRAGE.mnc.gz', sub_name);
+   % file_path = [path_data filesep file_name];
+    %files_in.data.(sub_name) = file_path;
+%end
 
 files = dir(path_data);
+files = {files.name};
+
+n_files = length(files);
+
+
+%% set up files_in structure
+for ind = 2:size(pheno,1)
+    for ss = 3:length(files)
+        sub_name = [pheno{ind, go_ind}];
+        % Get the file name and path
+        tmp = strsplit(files{ss},'_');
+        expression = tmp{2};
+        sub_date = tmp{4};
+        matchstr = regexp(sub_name, expression, 'match');
+            if ~isempty(matchstr)
+            files_in.data.(sub_name) = [path_data filesep sprintf('fmri_%s_session1_%s_rmap_part.mnc.gz', sub_name, sub_date)];
+        end
+    end
+end
+     
 
 %% options
 
