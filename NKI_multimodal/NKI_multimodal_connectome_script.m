@@ -25,7 +25,7 @@ files_in.part = '/gs/project/gsf-624-aa/database2/preventad/templates/template_c
 % The next step is to generate a list of seeds. This requires creating a text file.
 % We are going to use NIAK’s tool to write comma-separated values (CSV) in a file.
 
-files_in.seeds = [path_data 'list_seeds.csv'];
+files_in.seeds = [path_data filesep 'list_seeds.csv'];
 opt_csv.labels_x = { 'MOTOR' , 'DMN' }; % The labels for the network
 opt_csv.labels_y = { 'index' };
 tab = [3 ; 5];
