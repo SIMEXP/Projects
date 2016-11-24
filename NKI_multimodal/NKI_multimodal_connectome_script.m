@@ -14,7 +14,7 @@ opt_grab.exclude_subject = {'s0101463', 's0110809', 's0130716', 's0144495', 's01
 opt_grab.type_files = 'glm_connectome'; % TYPE_FILES - formating FILES based on the purpose of subsequent analysis.
 
 path_preproc = '/gs/project/gsf-624-aa/abadhwar/NKI_fiftyplus_preprocessed2_with_niakissue100/fmri_preprocess_all_scrubb05';
-data = niak_grab_fmri_preprocess(path_data, opt_grab);
+data = niak_grab_fmri_preprocess(path_preproc, opt_grab);
 
 %%% SECOND INPUT TO THE PIPELINE
 % Provide it with a set of brain parcels
