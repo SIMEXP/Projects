@@ -80,7 +80,7 @@ for num_s = 1:length(list_subject)
     files_in.(id).fmri.sess1.gambRL = [ path_raw subject '/GAMBLING/func_' subject '_GAMBLING_rl.mnc.gz']; 
     files_in.(id).fmri.sess1.gambLR = [ path_raw subject '/GAMBLING/func_' subject '_GAMBLING_lr.mnc.gz'];
     files_in.(id).fmri.sess1.motRL = [ path_raw subject '/MOTOR/func_' subject '_MOTOR_rl.mnc.gz']; 
-    files_in.(id).fmri.sess1.motLR = [ path_raw subject '/MOTOR/func_' subject '_MOTOR_rl.mnc.gz']; 
+    files_in.(id).fmri.sess1.motLR = [ path_raw subject '/MOTOR/func_' subject '_MOTOR_lr.mnc.gz']; 
 
     %files_in.(id).fmri.sess2.rest2LR = [ path_raw subject '/REST2/func_' subject '_REST2_lr.mnc.gz']; 
     %files_in.(id).fmri.sess2.rest2RL = [ path_raw subject '/REST2/func_' subject '_REST2_rl.mnc.gz'];
@@ -164,7 +164,7 @@ opt.tune(4).param.motion.session_ref  = 'sess2';
 %% Run the fmri_preprocess pipeline  %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 opt.flag_test = false;
-opt.psom.qsub_options = '-q sw -A gsf-624-aa -l nodes=1:ppn=3,walltime=36:00:00';
+opt.psom.qsub_options =  '-A gsf-624-aa -l nodes=1:ppn=12,walltime=36:00:00';
 %opt.psom.max_queued = 7;
 [pipeline,opt] = niak_pipeline_fmri_preprocess(files_in,opt);
 

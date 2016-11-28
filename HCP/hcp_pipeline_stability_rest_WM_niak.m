@@ -91,7 +91,7 @@ if psom_exist(mstep_file)
    opt.scales_maps = scales_final;
 else
    warning ('The file %s does not exist, I will use the specified scale maps',mstep_file); 
-   opt.scales_maps = []; % Usually, this is initially left empty. After the pipeline ran a first time, the results of the MSTEPS procedure are used to select the final scales 
+   opt.scales_maps = [10 7 6]; % Usually, this is initially left empty. After the pipeline ran a first time, the results of the MSTEPS procedure are used to select the final scales 
 end
 opt.stability_tseries.nb_samps = 100; % Number of bootstrap samples at the individual level. 100: the CI on indidividual stability is +/-0.1
 opt.stability_group.nb_samps = 500; % Number of bootstrap samples at the group level. 500: the CI on group stability is +/-0.05
@@ -105,6 +105,6 @@ opt.flag_group = true;  % Generate maps/time series at the group level
 %%%%%%%%%%%%%%%%%%%%%%
 opt.flag_test = false; % Put this flag to true to just generate the pipeline without running it. Otherwise the region growing will start. 
 %opt.psom.qsub_options = '-q sw -A gsf-624-aa -l nodes=1:ppn=6,pmem=3700m,walltime=36:00:00';
-%opt.psom.qsub_options = '-q xlm2 -A gsf-624-aa -l nodes=1:ppn=1,pmem=16000m,walltime=36:00:00';
+opt.psom.qsub_options = '-A gsf-624-aa -l nodes=1:ppn=12 -l walltime=36:00:00';
 %opt.psom.max_queued = 2; % Uncomment and change this parameter to set the number of parallel threads used to run the pipeline
 pipeline = niak_pipeline_stability_rest(files_in,opt); 
