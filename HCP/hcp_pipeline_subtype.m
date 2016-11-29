@@ -67,6 +67,7 @@ for num_s = 1:length(list_subject)
     files_in.data.(subject) = [path_maps filesep sprintf('%s_%s_%s_rmap_part.mnc.gz',subject,session,run)];
     mask_id = ismember(pheno_clean(2:end,1),subject(4:end));
     if sum(mask_id) == 0
+       warning(sprintf('subject %s has no entry in the csv model',subject))
        continue
     elseif  sum(mask_id) == 1
        mask_id_stack = mask_id_stack + mask_id; 
@@ -76,7 +77,7 @@ for num_s = 1:length(list_subject)
 end
 
 % Put header on the mask
-mask_id_stack= [mask_id_stack ; 1];
+mask_id_stack= [1;mask_id_stack];
 % extract correspondind subjects only 
 pheno_clean_final = pheno_clean(logical(mask_id_stack),:);
 
@@ -92,8 +93,19 @@ for ii = 1:length(scrub_clean_final)
     scrub_clean_final(ii,1)=scrub_clean_final{ii,1}(4:end-12); %keep only subject name in the ID
 end
 scrub_clean_final = [scrub_clean_header ; scrub_clean_final]; %put back the header
-
-
+merge_pheno_scrub = combine_cell_tab(pheno_clean_final,scrub_clean_final); 
+%remove extra subject id colomn
+merge_pheno_scrub = merge_pheno_scrub(:,~ismember(merge_pheno_scrub(1,:),''));
+%add HCP prefix to the subejects ID
+merge_pheno_scrub(2:end,1) = strcat('HCP',merge_pheno_scrub(2:end,1));
+%recode gender to M=1 F=0
+index = strfind(merge_pheno_scrub(1,:),'Gender');
+index = find(~cellfun(@isempty,index));
+merge_pheno_scrub(:,index) = strrep (merge_pheno_scrub(:,index),'M','1');
+merge_pheno_scrub(:,index) = strrep (merge_pheno_scrub(:,index),'F','0');
+%save final model file
+path_model_final = '/gs/project/gsf-624-aa/HCP/pheno/motor_RL_pheno_scrub.csv';
+niak_write_csv_cell(path_model_final,merge_pheno_scrub);
 
 
 
