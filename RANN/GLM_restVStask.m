@@ -52,8 +52,8 @@ files_in.fmri = niak_grab_fmri_preprocess([path_data 'RANNbackup/FINAL_preproces
 %%%%%%%%%%%%
 
 %% Group:  model_group 
-files_in.model.group = [path_data 'Models/model_group_ant_syn.csv'];
-
+files_in.model.group = [path_data 'Models/model_group_161127.csv']
+%%%%%%%%
 
 %% inter_run: model_interrun
 subject_id = fieldnames(files_in.fmri);
@@ -70,7 +70,7 @@ end
 %%%%%%%%%%%%
 %% Options 
 %%%%%%%%%%%%
-opt.folder_out = [path_data 'RANNbackup/RANN_GLMconnectome/GLM_restVStask161116']; % Where to store the resultsb
+opt.folder_out = [path_data 'RANNbackup/RANN_GLMconnectome/GLM_restVStask_test_161127']; % Where to store the resultsb
 opt.fdr = 0.1; % The maximal false-discovery rate that is tolerated both for individual (single-seed) maps and whole-connectome discoveries, at each particular scale (multiple comparisons across scales are addressed via permutation testing)
 opt.fwe = 0.05; % The overall family-wise error, i.e. the probablity to have the observed number of discoveries, agregated across all scales, under the global null hypothesis of no association.
 opt.nb_samps = 1000; % The number of samples in the permutation test. This number has to be multiplied by OPT.NB_BATCH below to get the effective number of samples
@@ -91,29 +91,39 @@ opt.flag_rand = false; % if the flag is false, the pipeline is deterministic. Ot
 %% 1- rest (4) vs task ant (1)
 opt.test.age_task4vs1.group.contrast.age = 1 % define contrast of interest (age continuous only)
 opt.test.age_task4vs1.group.contrast.education = 0; % regress out confounding variable
-opt.test.age_task4vs1.group.contrast.genderMF = 0; % regress out confounding variable
-opt.test.age_task4vs1.group.contrast.FD_scrubbed = 0; % regress out confounding variable
+opt.test.age_task4vs1.group.contrast.genderFM = 0; % regress out confounding variable
+opt.test.age_task4vs1.group.contrast.FD_restXant = 0; % regress out confounding variable
 opt.test.age_task4vs1.inter_run.select(1).label = 'task4vs1';
-opt.test.age_task4vs1.inter_run.select(1).values = [1 -1];
+opt.test.age_task4vs1.inter_run.select(1).values = [1 0];
 opt.test.age_task4vs1.inter_run.contrast.task4vs1 = 1;
 
 %% 2- rest (4) vs task syn (2)
 opt.test.age_task4vs2.group.contrast.age = 1 % define contrast of interest (age continuous only)
 opt.test.age_task4vs2.group.contrast.education = 0; % regress out confounding variable
-opt.test.age_task4vs2.group.contrast.genderMF = 0; % regress out confounding variable
-opt.test.age_task4vs2.group.contrast.FD_scrubbed = 0; % regress out confounding variable
+opt.test.age_task4vs2.group.contrast.genderFM = 0; % regress out confounding variable
+opt.test.age_task4vs2.group.contrast.FD_restXsyn = 0; % regress out confounding variable
 opt.test.age_task4vs2.inter_run.select(1).label = 'task4vs2';
-opt.test.age_task4vs2.inter_run.select(1).values = [1 -1];
+opt.test.age_task4vs2.inter_run.select(1).values = [1 0];
 opt.test.age_task4vs2.inter_run.contrast.task4vs2 = 1;
 
-%% 3- task ant (1) vs syn (2) 
-opt.test.age_task1vs2.group.contrast.age = 1 % define contrast of interest (age continuous only)
-opt.test.age_task1vs2.group.contrast.education = 0; % regress out confounding variable
-opt.test.age_task1vs2.group.contrast.genderMF = 0; % regress out confounding variable
-opt.test.age_task1vs2.group.contrast.FD_scrubbed = 0; % regress out confounding variable
-opt.test.age_task1vs2.inter_run.select(1).label = 'task1vs2';
-opt.test.age_task1vs2.inter_run.select(1).values = [1 -1];
-opt.test.age_task1vs2.inter_run.contrast.task1vs2 = 1;
+%% 3- rest (4) vs pictname (3)
+opt.test.age_task4vs3.group.contrast.age = 1 % define contrast of interest (age continuous only)
+opt.test.age_task4vs3.group.contrast.education = 0; % regress out confounding variable
+opt.test.age_task4vs3.group.contrast.genderFM = 0; % regress out confounding variable
+opt.test.age_task4vs2.group.contrast.FD_restXpictname = 0; % regress out confounding variable
+opt.test.age_task4vs3.inter_run.select(1).label = 'task4vs3';
+opt.test.age_task4vs3.inter_run.select(1).values = [1 0];
+opt.test.age_task4vs3.inter_run.contrast.task4vs3 = 1;
+
+
+%% 3- task syn (2) vs ant (1) 
+%opt.test.age_task2vs1.group.contrast.age = 1 % define contrast of interest (age continuous only)
+%opt.test.age_task2vs1.group.contrast.education = 0; % regress out confounding variable
+%opt.test.age_task2vs1.group.contrast.genderFM = 0; % regress out confounding variable
+%opt.test.age_task2vs1.group.contrast.FD_scrubbed = 0; % regress out confounding variable
+%opt.test.age_task2vs1.inter_run.select(1).label = 'task2vs1';
+%opt.test.age_task2vs1.inter_run.select(1).values = [1 0];
+%opt.test.age_task2vs1.inter_run.contrast.task2vs1 = 1;
 
 %%%%% MAIN EFFECTS OF EDU DEPENDING ON TASK %%%%%
 
