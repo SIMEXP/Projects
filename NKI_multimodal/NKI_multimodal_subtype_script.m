@@ -55,7 +55,7 @@ opt.association.TEST.contrast.BMI = 1; % scalar number for the weight of the var
 opt.association.TEST.contrast.FD_scrubbed = 0;      % scalar number for the weight of the variable in the contrast
 opt.association.TEST.contrast.Age = 0;     % scalar number for the weight of the variable in the contrast
 % type of data for visulization (options are 'continuous' or 'categorical')
-opt.association.patient.type_visu = 'continuous';
+opt.association.TEST.type_visu = 'continuous';
 
 %%It is also possible to add a single chi-square test on the relationship between subtypes and a categorical variable.
 % string name of the column in files_in.model on which the contigency table will be based.
