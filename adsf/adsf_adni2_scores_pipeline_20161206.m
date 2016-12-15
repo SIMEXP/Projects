@@ -6,10 +6,10 @@ addpath(genpath('/home/atam/git/psom'))
 
 % set up paths
 path_data = '/gs/project/gsf-624-aa/data/adni2/fmri_preprocess/';
-path_folder_out = '/home/atam/scratch/adni2/scores_20161206';
+path_folder_out = '/home/atam/scratch/adni2/scores_20161207_min30vol';
 
 % set up file structure
-opt_g.min_nb_vol = 50;     
+opt_g.min_nb_vol = 30;     
 opt_g.min_xcorr_func = 0;
 opt_g.min_xcorr_anat = 0; 
 opt_g.filter.session = {'session1'};
