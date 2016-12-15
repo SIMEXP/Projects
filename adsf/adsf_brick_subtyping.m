@@ -131,8 +131,8 @@ opt = psom_struct_defaults(opt,...
 if ~isempty(opt.folder_out)
     path_out = niak_full_path(opt.folder_out);
     files_out = psom_struct_defaults(files_out,...
-                { 'sim_fig'                          , 'den_fig'                   , 'subtype'                , 'provenance'                },...
-                { [path_out 'similarity_matrix.png'] , [path_out 'dendrogram.pdf'] , [path_out 'subtype.mat'] , [path_out 'provenance.mat'] });
+                { 'sim_fig'                          , 'den_fig'                   , 'subtype'                , 'part_fig'                   ,'provenance'                },...
+                { [path_out 'similarity_matrix.pdf'] , [path_out 'dendrogram.pdf'] , [path_out 'subtype.mat'] , [path_out 'part_matrix.pdf'] ,[path_out 'provenance.mat'] });
 else
     files_out = psom_struct_defaults(files_out,...
                 { 'sim_fig'         , 'den_fig'         , 'subtype'         , 'provenance'      },...
@@ -176,7 +176,7 @@ if ~strcmp(files_out.sim_fig, 'gb_niak_omitted')
     opt_pdf.color_map = 'hot_cold';
     fh1 = figure('Visible', 'off');
     niak_visu_matrix(rm,opt_pdf);
-    print(fh1, files_out.sim_fig,'-dpng','-r300');
+    print(fh1, files_out.sim_fig,'-dpdf','-r300');
 end
 
 if ~strcmp(files_out.den_fig, 'gb_niak_omitted')
@@ -195,6 +195,13 @@ n_vox = length(mask);
 
 %% Build the clusters by thresholding the hiearchy by the number of subtypes
 part = niak_threshold_hierarchy(hier,struct('thresh',opt.nb_subtype));
+
+if ~strcmp(files_out.part_fig, 'gb_niak_omitted')
+    % Generate and save partitioned matrix as pdf
+    fh3 = figure('Visible', 'off');
+    niak_visu_part(part(subj_order));
+    print(fh3, files_out.part_fig,'-dpdf','-r300');
+end
 
 %% Build subtype maps
 
