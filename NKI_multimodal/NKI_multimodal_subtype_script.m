@@ -28,7 +28,8 @@ files_in.mask = files_conn.network_rois;
 %%% SET PIPELINE OPTIONS
 %% Setup where to store the date.
 
-opt.folder_out = [path_root 'subtype_test'];
+%opt.folder_out = [path_root 'subtype_test'];
+opt.folder_out = [path_root 'subtype_test_5subtypes'];
 
 %% Then specify which covariates to use as confounds before the generation of subtypes.
 % A list of variable names to be regressed out. If unspecified or left empty, no confounds are regressed
@@ -38,6 +39,7 @@ opt.stack.regress_conf = {'FD_scrubbed'};
 %% Subtyping
 % The options for the subtypes themselves.
 
+%opt.subtype.nb_subtype = 3;        % the number of subtypes to extract
 opt.subtype.nb_subtype = 5;        % the number of subtypes to extract
 opt.subtype.sub_map_type = 'mean'; % the model for the subtype maps (options are 'mean' or 'median')
 
