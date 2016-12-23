@@ -38,7 +38,7 @@ opt.stack.regress_conf = {'FD_scrubbed'};
 %% Subtyping
 % The options for the subtypes themselves.
 
-opt.subtype.nb_subtype = 3;        % the number of subtypes to extract
+opt.subtype.nb_subtype = 5;        % the number of subtypes to extract
 opt.subtype.sub_map_type = 'mean'; % the model for the subtype maps (options are 'mean' or 'median')
 
 %%% Now we add an association test between subtypes.
