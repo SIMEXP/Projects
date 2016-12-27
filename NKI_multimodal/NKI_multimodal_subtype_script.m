@@ -29,9 +29,10 @@ files_in.mask = files_conn.network_rois;
 %% Setup where to store the date.
 
 %opt.folder_out = [path_root 'subtype_test'];
-%opt.folder_out = [path_root 'subtype_test_5subtypes'];
 %opt.folder_out = [path_root 'subtype_test_4subtypes'];
-opt.folder_out = [path_root 'subtype_test_6subtypes'];
+%opt.folder_out = [path_root 'subtype_test_5subtypes'];
+%opt.folder_out = [path_root 'subtype_test_6subtypes'];
+opt.folder_out = [path_root 'subtype4_FullFourSum'];
 
 %% Then specify which covariates to use as confounds before the generation of subtypes.
 % A list of variable names to be regressed out. If unspecified or left empty, no confounds are regressed
@@ -42,9 +43,9 @@ opt.stack.regress_conf = {'FD_scrubbed'};
 % The options for the subtypes themselves.
 
 %opt.subtype.nb_subtype = 3;        % the number of subtypes to extract
+opt.subtype.nb_subtype = 4;        % the number of subtypes to extract
 %opt.subtype.nb_subtype = 5;        % the number of subtypes to extract
-%opt.subtype.nb_subtype = 4;        % the number of subtypes to extract
-opt.subtype.nb_subtype = 6;        % the number of subtypes to extract
+%opt.subtype.nb_subtype = 6;        % the number of subtypes to extract
 opt.subtype.sub_map_type = 'mean'; % the model for the subtype maps (options are 'mean' or 'median')
 
 %%% Now we add an association test between subtypes.
@@ -57,7 +58,10 @@ opt.association.TEST.normalize_y = false;
 % turn on/off adding a constant covariate to the model
 opt.association.TEST.flag_intercept = true;
 % To test a main effect of a variable
-opt.association.TEST.contrast.BMI = 1; % scalar number for the weight of the variable in the contrast
+
+%opt.association.TEST.contrast.BMI = 1; % scalar number for the weight of the variable in the contrast
+
+opt.association.TEST.contrast.FullFourSum = 1; % scalar number for the weight of the variable in the contrast
 opt.association.TEST.contrast.FD_scrubbed = 0;      % scalar number for the weight of the variable in the contrast
 opt.association.TEST.contrast.Age = 0;     % scalar number for the weight of the variable in the contrast
 % type of data for visulization (options are 'continuous' or 'categorical')
