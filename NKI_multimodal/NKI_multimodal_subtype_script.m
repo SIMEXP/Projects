@@ -33,7 +33,7 @@ files_in.mask = files_conn.network_rois;
 %opt.folder_out = [path_root 'subtype_test_5subtypes'];
 %opt.folder_out = [path_root 'subtype_test_6subtypes'];
 %opt.folder_out = [path_root 'subtype4_FullFourSum'];
-opt.folder_out = [path_root 'subtype4_testing_2associations'];
+opt.folder_out = [path_root 'subtype4_testing_2bassociations'];
 
 %% Then specify which covariates to use as confounds before the generation of subtypes.
 % A list of variable names to be regressed out. If unspecified or left empty, no confounds are regressed
