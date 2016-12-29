@@ -70,21 +70,21 @@ opt.association.TEST.type_visu = 'continuous';
 
 %%% Now we add an association test between subtypes. - Block_2 begin
 % scalar number for the level of acceptable false-discovery rate (FDR) for the t-maps
-opt.association.TEST.fdr = 0.05;
+opt.association.TEST2.fdr = 0.05;
 % turn on/off normalization of covariates in model (true: apply / false: don't apply)
-opt.association.TEST.normalize_x = false;
+opt.association.TEST2.normalize_x = false;
 % turn on/off normalization of all data (true: apply / false: don't apply)
-opt.association.TEST.normalize_y = false;
+opt.association.TEST2.normalize_y = false;
 % turn on/off adding a constant covariate to the model
-opt.association.TEST.flag_intercept = true;
+opt.association.TEST2.flag_intercept = true;
 
 % To test a main effect of a variable
 %opt.association.TEST.contrast.BMI = 1; % scalar number for the weight of the variable in the contrast
-opt.association.TEST.contrast.FullFourSum = 1; % scalar number for the weight of the variable in the contrast
-opt.association.TEST.contrast.FD_scrubbed = 0;      % scalar number for the weight of the variable in the contrast
-opt.association.TEST.contrast.Age = 0;     % scalar number for the weight of the variable in the contrast
+opt.association.TEST2.contrast.FullFourSum = 1; % scalar number for the weight of the variable in the contrast
+opt.association.TEST2.contrast.FD_scrubbed = 0;      % scalar number for the weight of the variable in the contrast
+opt.association.TEST2.contrast.Age = 0;     % scalar number for the weight of the variable in the contrast
 % type of data for visulization (options are 'continuous' or 'categorical')
-opt.association.TEST.type_visu = 'continuous';
+opt.association.TEST2.type_visu = 'continuous';
 %%% Block_2 end
 
 %%It is also possible to add a single chi-square test on the relationship between subtypes and a categorical variable.
