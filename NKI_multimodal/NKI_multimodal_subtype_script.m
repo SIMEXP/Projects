@@ -34,7 +34,7 @@ files_in.mask = files_conn.network_rois;
 %opt.folder_out = [path_root 'subtype_test_6subtypes'];
 %opt.folder_out = [path_root 'subtype4_FullFourSum'];
 %opt.folder_out = [path_root 'subtype4_testing_2bassociations'];
-opt.folder_out = [path_root 'subtype4_20161229'];
+opt.folder_out = [path_root 'subtype4_20170104'];
 
 %% Then specify which covariates to use as confounds before the generation of subtypes.
 % A list of variable names to be regressed out. If unspecified or left empty, no confounds are regressed
@@ -53,172 +53,181 @@ opt.subtype.sub_map_type = 'mean'; % the model for the subtype maps (options are
 
 %%% Now we add an association test between subtypes. - Block_1 begin
 % scalar number for the level of acceptable false-discovery rate (FDR) for the t-maps
-opt.association.TEST.fdr = 0.05;
+opt.association.TEST01.fdr = 0.05;
 % turn on/off normalization of covariates in model (true: apply / false: don't apply)
-opt.association.TEST.normalize_x = false;
+opt.association.TEST01.normalize_x = false;
 % turn on/off normalization of all data (true: apply / false: don't apply)
-opt.association.TEST.normalize_y = false;
+opt.association.TEST01.normalize_y = false;
 % turn on/off adding a constant covariate to the model
-opt.association.TEST.flag_intercept = true;
+opt.association.TEST01.flag_intercept = true;
 
 % To test a main effect of a variable
-opt.association.TEST.contrast.BMI = 1; % scalar number for the weight of the variable in the contrast
-opt.association.TEST.contrast.FD_scrubbed = 0;      % scalar number for the weight of the variable in the contrast
-opt.association.TEST.contrast.Age = 0;     % scalar number for the weight of the variable in the contrast
+opt.association.TEST01.contrast.BMI = 1; % scalar number for the weight of the variable in the contrast
+opt.association.TEST01.contrast.FD_scrubbed = 0;      % scalar number for the weight of the variable in the contrast
+opt.association.TEST01.contrast.Age = 0;     % scalar number for the weight of the variable in the contrast
+opt.association.TEST01.contrast.Sex = 0;      % scalar number for the weight of the variable in the contrast
 % type of data for visulization (options are 'continuous' or 'categorical')
-opt.association.TEST.type_visu = 'continuous';
+opt.association.TEST01.type_visu = 'continuous';
 %%% Block_1 end
 
 
 %%% Now we add an association test between subtypes. - Block_2 begin
 % scalar number for the level of acceptable false-discovery rate (FDR) for the t-maps
-opt.association.TEST2.fdr = 0.05;
+opt.association.TEST02.fdr = 0.05;
 % turn on/off normalization of covariates in model (true: apply / false: don't apply)
-opt.association.TEST2.normalize_x = false;
+opt.association.TEST02.normalize_x = false;
 % turn on/off normalization of all data (true: apply / false: don't apply)
-opt.association.TEST2.normalize_y = false;
+opt.association.TEST02.normalize_y = false;
 % turn on/off adding a constant covariate to the model
-opt.association.TEST2.flag_intercept = true;
+opt.association.TEST02.flag_intercept = true;
 
 % To test a main effect of a variable
-opt.association.TEST2.contrast.FullFourSum = 1; % scalar number for the weight of the variable in the contrast
-opt.association.TEST2.contrast.FD_scrubbed = 0;      % scalar number for the weight of the variable in the contrast
-opt.association.TEST2.contrast.Age = 0;     % scalar number for the weight of the variable in the contrast
+opt.association.TEST02.contrast.FullFourSum = 1; % scalar number for the weight of the variable in the contrast
+opt.association.TEST02.contrast.FD_scrubbed = 0;      % scalar number for the weight of the variable in the contrast
+opt.association.TEST02.contrast.Age = 0;     % scalar number for the weight of the variable in the contrast
+opt.association.TEST02.contrast.Sex = 0;      % scalar number for the weight of the variable in the contrast
 % type of data for visulization (options are 'continuous' or 'categorical')
-opt.association.TEST2.type_visu = 'continuous';
+opt.association.TEST02.type_visu = 'continuous';
 %%% Block_2 end
 
 
 %%% Now we add an association test between subtypes. - Block_3 begin
 % scalar number for the level of acceptable false-discovery rate (FDR) for the t-maps
-opt.association.TEST3.fdr = 0.05;
+opt.association.TEST03.fdr = 0.05;
 % turn on/off normalization of covariates in model (true: apply / false: don't apply)
-opt.association.TEST3.normalize_x = false;
+opt.association.TEST03.normalize_x = false;
 % turn on/off normalization of all data (true: apply / false: don't apply)
-opt.association.TEST3.normalize_y = false;
+opt.association.TEST03.normalize_y = false;
 % turn on/off adding a constant covariate to the model
-opt.association.TEST3.flag_intercept = true;
+opt.association.TEST03.flag_intercept = true;
 
 % To test a main effect of a variable
-opt.association.TEST3.contrast.FullFourPerc = 1; % scalar number for the weight of the variable in the contrast
-opt.association.TEST3.contrast.FD_scrubbed = 0;      % scalar number for the weight of the variable in the contrast
-opt.association.TEST3.contrast.Age = 0;     % scalar number for the weight of the variable in the contrast
+opt.association.TEST03.contrast.FullFourPerc = 1; % scalar number for the weight of the variable in the contrast
+opt.association.TEST03.contrast.FD_scrubbed = 0;      % scalar number for the weight of the variable in the contrast
+opt.association.TEST03.contrast.Age = 0;     % scalar number for the weight of the variable in the contrast
+opt.association.TEST03.contrast.Sex = 0;      % scalar number for the weight of the variable in the contrast
 % type of data for visulization (options are 'continuous' or 'categorical')
-opt.association.TEST3.type_visu = 'continuous';
+opt.association.TEST03.type_visu = 'continuous';
 %%% Block_3 end
 
 
 %%% Now we add an association test between subtypes. - Block_4 begin
 % scalar number for the level of acceptable false-discovery rate (FDR) for the t-maps
-opt.association.TEST4.fdr = 0.05;
+opt.association.TEST04.fdr = 0.05;
 % turn on/off normalization of covariates in model (true: apply / false: don't apply)
-opt.association.TEST4.normalize_x = false;
+opt.association.TEST04.normalize_x = false;
 % turn on/off normalization of all data (true: apply / false: don't apply)
-opt.association.TEST4.normalize_y = false;
+opt.association.TEST04.normalize_y = false;
 % turn on/off adding a constant covariate to the model
-opt.association.TEST4.flag_intercept = true;
+opt.association.TEST04.flag_intercept = true;
 
 % To test a main effect of a variable
-opt.association.TEST4.contrast.Diastolic = 1; % scalar number for the weight of the variable in the contrast
-opt.association.TEST4.contrast.FD_scrubbed = 0;      % scalar number for the weight of the variable in the contrast
-opt.association.TEST4.contrast.Age = 0;     % scalar number for the weight of the variable in the contrast
+opt.association.TEST04.contrast.Diastolic = 1; % scalar number for the weight of the variable in the contrast
+opt.association.TEST04.contrast.FD_scrubbed = 0;      % scalar number for the weight of the variable in the contrast
+opt.association.TEST04.contrast.Age = 0;     % scalar number for the weight of the variable in the contrast
+opt.association.TEST04.contrast.Sex = 0;      % scalar number for the weight of the variable in the contrast
 % type of data for visulization (options are 'continuous' or 'categorical')
-opt.association.TEST4.type_visu = 'continuous';
+opt.association.TEST04.type_visu = 'continuous';
 %%% Block_4 end
 
 
 %%% Now we add an association test between subtypes. - Block_5 begin
 % scalar number for the level of acceptable false-discovery rate (FDR) for the t-maps
-opt.association.TEST5.fdr = 0.05;
+opt.association.TEST05.fdr = 0.05;
 % turn on/off normalization of covariates in model (true: apply / false: don't apply)
-opt.association.TEST5.normalize_x = false;
+opt.association.TEST05.normalize_x = false;
 % turn on/off normalization of all data (true: apply / false: don't apply)
-opt.association.TEST5.normalize_y = false;
+opt.association.TEST05.normalize_y = false;
 % turn on/off adding a constant covariate to the model
-opt.association.TEST5.flag_intercept = true;
+opt.association.TEST05.flag_intercept = true;
 
 % To test a main effect of a variable
-opt.association.TEST5.contrast.Systolic = 1; % scalar number for the weight of the variable in the contrast
-opt.association.TEST5.contrast.FD_scrubbed = 0;      % scalar number for the weight of the variable in the contrast
-opt.association.TEST5.contrast.Age = 0;     % scalar number for the weight of the variable in the contrast
+opt.association.TEST05.contrast.Systolic = 1; % scalar number for the weight of the variable in the contrast
+opt.association.TEST05.contrast.FD_scrubbed = 0;      % scalar number for the weight of the variable in the contrast
+opt.association.TEST05.contrast.Age = 0;     % scalar number for the weight of the variable in the contrast
+opt.association.TEST05.contrast.Sex = 0;      % scalar number for the weight of the variable in the contrast
 % type of data for visulization (options are 'continuous' or 'categorical')
-opt.association.TEST5.type_visu = 'continuous';
+opt.association.TEST05.type_visu = 'continuous';
 %%% Block_5 end
 
 
 %%% Now we add an association test between subtypes. - Block_6 begin
 % scalar number for the level of acceptable false-discovery rate (FDR) for the t-maps
-opt.association.TEST6.fdr = 0.05;
+opt.association.TEST06.fdr = 0.05;
 % turn on/off normalization of covariates in model (true: apply / false: don't apply)
-opt.association.TEST6.normalize_x = false;
+opt.association.TEST06.normalize_x = false;
 % turn on/off normalization of all data (true: apply / false: don't apply)
-opt.association.TEST6.normalize_y = false;
+opt.association.TEST06.normalize_y = false;
 % turn on/off adding a constant covariate to the model
-opt.association.TEST6.flag_intercept = true;
+opt.association.TEST06.flag_intercept = true;
 
 % To test a main effect of a variable
-opt.association.TEST6.contrast.Pulse = 1; % scalar number for the weight of the variable in the contrast
-opt.association.TEST6.contrast.FD_scrubbed = 0;      % scalar number for the weight of the variable in the contrast
-opt.association.TEST6.contrast.Age = 0;     % scalar number for the weight of the variable in the contrast
+opt.association.TEST06.contrast.Pulse = 1; % scalar number for the weight of the variable in the contrast
+opt.association.TEST06.contrast.FD_scrubbed = 0;      % scalar number for the weight of the variable in the contrast
+opt.association.TEST06.contrast.Age = 0;     % scalar number for the weight of the variable in the contrast
+opt.association.TEST06.contrast.Sex = 0;      % scalar number for the weight of the variable in the contrast
 % type of data for visulization (options are 'continuous' or 'categorical')
-opt.association.TEST6.type_visu = 'continuous';
+opt.association.TEST06.type_visu = 'continuous';
 %%% Block_6 end
 
 
 %%% Now we add an association test between subtypes. - Block_7 begin
 % scalar number for the level of acceptable false-discovery rate (FDR) for the t-maps
-opt.association.TEST7.fdr = 0.05;
+opt.association.TEST07.fdr = 0.05;
 % turn on/off normalization of covariates in model (true: apply / false: don't apply)
-opt.association.TEST7.normalize_x = false;
+opt.association.TEST07.normalize_x = false;
 % turn on/off normalization of all data (true: apply / false: don't apply)
-opt.association.TEST7.normalize_y = false;
+opt.association.TEST07.normalize_y = false;
 % turn on/off adding a constant covariate to the model
-opt.association.TEST7.flag_intercept = true;
+opt.association.TEST07.flag_intercept = true;
 
 % To test a main effect of a variable
-opt.association.TEST7.contrast.Neuroticism = 1; % scalar number for the weight of the variable in the contrast
-opt.association.TEST7.contrast.FD_scrubbed = 0;      % scalar number for the weight of the variable in the contrast
-opt.association.TEST7.contrast.Age = 0;     % scalar number for the weight of the variable in the contrast
+opt.association.TEST07.contrast.Neuroticism = 1; % scalar number for the weight of the variable in the contrast
+opt.association.TEST07.contrast.FD_scrubbed = 0;      % scalar number for the weight of the variable in the contrast
+opt.association.TEST07.contrast.Age = 0;     % scalar number for the weight of the variable in the contrast
+opt.association.TEST07.contrast.Sex = 0;      % scalar number for the weight of the variable in the contrast
 % type of data for visulization (options are 'continuous' or 'categorical')
-opt.association.TEST7.type_visu = 'continuous';
+opt.association.TEST07.type_visu = 'continuous';
 %%% Block_7 end
 
 
 %%% Now we add an association test between subtypes. - Block_8 begin
 % scalar number for the level of acceptable false-discovery rate (FDR) for the t-maps
-opt.association.TEST8.fdr = 0.05;
+opt.association.TEST08.fdr = 0.05;
 % turn on/off normalization of covariates in model (true: apply / false: don't apply)
-opt.association.TEST8.normalize_x = false;
+opt.association.TEST08.normalize_x = false;
 % turn on/off normalization of all data (true: apply / false: don't apply)
-opt.association.TEST8.normalize_y = false;
+opt.association.TEST08.normalize_y = false;
 % turn on/off adding a constant covariate to the model
-opt.association.TEST8.flag_intercept = true;
+opt.association.TEST08.flag_intercept = true;
 
 % To test a main effect of a variable
-opt.association.TEST8.contrast.Extraversion = 1; % scalar number for the weight of the variable in the contrast
-opt.association.TEST8.contrast.FD_scrubbed = 0;      % scalar number for the weight of the variable in the contrast
-opt.association.TEST8.contrast.Age = 0;     % scalar number for the weight of the variable in the contrast
+opt.association.TEST08.contrast.Extraversion = 1; % scalar number for the weight of the variable in the contrast
+opt.association.TEST08.contrast.FD_scrubbed = 0;      % scalar number for the weight of the variable in the contrast
+opt.association.TEST08.contrast.Age = 0;     % scalar number for the weight of the variable in the contrast
+opt.association.TEST08.contrast.Sex = 0;      % scalar number for the weight of the variable in the contrast
 % type of data for visulization (options are 'continuous' or 'categorical')
-opt.association.TEST8.type_visu = 'continuous';
+opt.association.TEST08.type_visu = 'continuous';
 %%% Block_8 end
 
 
 %%% Now we add an association test between subtypes. - Block_9 begin
 % scalar number for the level of acceptable false-discovery rate (FDR) for the t-maps
-opt.association.TEST9.fdr = 0.05;
+opt.association.TEST09.fdr = 0.05;
 % turn on/off normalization of covariates in model (true: apply / false: don't apply)
-opt.association.TEST9.normalize_x = false;
+opt.association.TEST09.normalize_x = false;
 % turn on/off normalization of all data (true: apply / false: don't apply)
-opt.association.TEST9.normalize_y = false;
+opt.association.TEST09.normalize_y = false;
 % turn on/off adding a constant covariate to the model
-opt.association.TEST9.flag_intercept = true;
+opt.association.TEST09.flag_intercept = true;
 
 % To test a main effect of a variable
-opt.association.TEST9.contrast.Openness = 1; % scalar number for the weight of the variable in the contrast
-opt.association.TEST9.contrast.FD_scrubbed = 0;      % scalar number for the weight of the variable in the contrast
-opt.association.TEST9.contrast.Age = 0;     % scalar number for the weight of the variable in the contrast
+opt.association.TEST09.contrast.Openness = 1; % scalar number for the weight of the variable in the contrast
+opt.association.TEST09.contrast.FD_scrubbed = 0;      % scalar number for the weight of the variable in the contrast
+opt.association.TEST09.contrast.Age = 0;     % scalar number for the weight of the variable in the contrast
+opt.association.TEST09.contrast.Sex = 0;      % scalar number for the weight of the variable in the contrast
 % type of data for visulization (options are 'continuous' or 'categorical')
-opt.association.TEST9.type_visu = 'continuous';
+opt.association.TEST09.type_visu = 'continuous';
 %%% Block_9 end
 
 
@@ -236,6 +245,7 @@ opt.association.TEST10.flag_intercept = true;
 opt.association.TEST10.contrast.Agreeableness = 1; % scalar number for the weight of the variable in the contrast
 opt.association.TEST10.contrast.FD_scrubbed = 0;      % scalar number for the weight of the variable in the contrast
 opt.association.TEST10.contrast.Age = 0;     % scalar number for the weight of the variable in the contrast
+opt.association.TEST10.contrast.Sex = 0;      % scalar number for the weight of the variable in the contrast
 % type of data for visulization (options are 'continuous' or 'categorical')
 opt.association.TEST10.type_visu = 'continuous';
 %%% Block_10 end
@@ -255,9 +265,47 @@ opt.association.TEST11.flag_intercept = true;
 opt.association.TEST11.contrast.Conscientiousness = 1; % scalar number for the weight of the variable in the contrast
 opt.association.TEST11.contrast.FD_scrubbed = 0;      % scalar number for the weight of the variable in the contrast
 opt.association.TEST11.contrast.Age = 0;     % scalar number for the weight of the variable in the contrast
+opt.association.TEST11.contrast.Sex = 0;      % scalar number for the weight of the variable in the contrast
 % type of data for visulization (options are 'continuous' or 'categorical')
 opt.association.TEST11.type_visu = 'continuous';
 %%% Block_11 end
+
+
+%%% Now we add an association test between subtypes. - Block_12 begin
+% scalar number for the level of acceptable false-discovery rate (FDR) for the t-maps
+opt.association.TEST12.fdr = 0.05;
+% turn on/off normalization of covariates in model (true: apply / false: don't apply)
+opt.association.TEST12.normalize_x = false;
+% turn on/off normalization of all data (true: apply / false: don't apply)
+opt.association.TEST12.normalize_y = false;
+% turn on/off adding a constant covariate to the model
+opt.association.TEST12.flag_intercept = true;
+
+% To test a main effect of a variable _ AGE
+opt.association.TEST12.contrast.FD_scrubbed = 0;      % scalar number for the weight of the variable in the contrast
+opt.association.TEST12.contrast.Sex = 0;      % scalar number for the weight of the variable in the contrast
+opt.association.TEST12.contrast.Age = 1;     % scalar number for the weight of the variable in the contrast
+% type of data for visulization (options are 'continuous' or 'categorical')
+opt.association.TEST12.type_visu = 'continuous';
+%%% Block_12 end
+
+%%% Now we add an association test between subtypes. - Block_13 begin
+% scalar number for the level of acceptable false-discovery rate (FDR) for the t-maps
+opt.association.TEST13.fdr = 0.05;
+% turn on/off normalization of covariates in model (true: apply / false: don't apply)
+opt.association.TEST13.normalize_x = false;
+% turn on/off normalization of all data (true: apply / false: don't apply)
+opt.association.TEST13.normalize_y = false;
+% turn on/off adding a constant covariate to the model
+opt.association.TEST13.flag_intercept = true;
+
+% To test a main effect of a variable _ AGE
+opt.association.TEST13.contrast.FD_scrubbed = 0;      % scalar number for the weight of the variable in the contrast
+opt.association.TEST13.contrast.Sex = 1;      % scalar number for the weight of the variable in the contrast
+opt.association.TEST13.contrast.Age = 0;     % scalar number for the weight of the variable in the contrast
+% type of data for visulization (options are 'continuous' or 'categorical')
+opt.association.TEST13.type_visu = 'continuous';
+%%% Block_13 end
 
 
 %%It is also possible to add a single chi-square test on the relationship between subtypes and a categorical variable.
