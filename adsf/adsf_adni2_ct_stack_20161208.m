@@ -6,13 +6,13 @@ path_c = '/Users/AngelaTam/Desktop/adsf/ct_subtypes/';
 
 files_in.data = [path_c 'adni2/adni2_civet_vertex_qc_20161207.mat'];
 files_in.partition = [path_c 'mask_whole_brain.mat'];
-files_in.model = [path_c 'adni2/adni2_model_civet.csv'];
+files_in.model = [path_c 'adni2/adni2_cognition_20161115.csv'];
 
-files_out = [path_c 'adni2/adni2_civet_vertex_stack_r_20161209.mat'];
+files_out = [path_c 'adni2/adni2_civet_vertex_stack_r_20161220.mat'];
 
 opt.folder_out = [path_c 'adni2/'];
 opt.nb_network = 1;
-opt.regress_conf = {'age','gender','mtladni2sites'};
+opt.regress_conf = {'age','gender','mtladni2sites','mean_ct'};
 
 %% load the data
 data = load(files_in.data);
