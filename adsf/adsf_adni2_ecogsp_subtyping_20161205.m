@@ -69,9 +69,9 @@ clear all
 path_data = '/Users/AngelaTam/Desktop/adsf/';
 files_in.data = [path_data 'cognitive_subtypes/adni2_ecogsp_stack_r_20161205.mat'];
 files_out = struct;
-opt.folder_out = 'adni_cog/ecogsp_20161205';
+opt.folder_out = 'adni_cog/ecogsp_20170116';
 psom_mkdir(opt.folder_out);
-opt.nb_subtype = 4;
+opt.nb_subtype = 3;
 
 adsf_brick_cog_subtyping(files_in,files_out,opt);
 
@@ -81,9 +81,33 @@ clear all
 
 path_data = '/Users/AngelaTam/Desktop/adsf/';
 files_in.data.network1 = [path_data 'cognitive_subtypes/adni2_ecogsp_stack_r_20161205.mat'];
-files_in.subtype.network1 = [path_data 'cognitive_subtypes/adni_cog/ecogsp_20161205/subtype.mat'];
+files_in.subtype.network1 = [path_data 'cognitive_subtypes/adni_cog/ecogsp_20170116/subtype.mat'];
 files_out = struct;
-opt.folder_out = [path_data 'cognitive_subtypes/adni_cog/ecogsp_20161205/'];
+opt.folder_out = [path_data 'cognitive_subtypes/adni_cog/ecogsp_20170116/'];
 opt.scales = 1;
 
 adsf_brick_cog_sub_weight(files_in,files_out,opt);
+
+%% glms
+
+clear all
+path_data = '/Users/AngelaTam/Desktop/adsf/';
+files_in.weight = [path_data 'cognitive_subtypes/adni_cog/ecogsp_20170116/subtype_weights.mat'];
+files_in.model = [path_data 'rsfmri_subtypes/adni_weights_po/adni2_model_20161202.csv'];
+files_out = struct;
+opt.folder_out = [path_data 'cognitive_subtypes/adni_cog/ecogsp_20170116/glm_dx'];
+psom_mkdir(opt.folder_out);
+opt.scale = 1;
+opt.contrast.diagnosis = 1;
+opt.contrast.age = 0;
+opt.contrast.gender = 0;
+niak_brick_association_test(files_in,files_out,opt);
+
+
+
+
+
+
+
+
+

@@ -4,30 +4,30 @@ clear all
 
 path_c = '/Users/AngelaTam/Desktop/adsf/ct_subtypes/';
 
-files_in.data = [path_c 'adni2/adni2_civet_vertex_qc_20161207.mat'];
+files_in.data = [path_c 'adni2_civet_data/thickness_vertices/adni2_raw_ct_vertex_20170122.mat'];
 files_in.partition = [path_c 'mask_whole_brain.mat'];
-files_in.model = [path_c 'adni2/adni2_cognition_20161115.csv'];
+files_in.model = '/Users/AngelaTam/Desktop/adsf/adni2_weights_vbm_rs_ct_model.csv';
 
-files_out = [path_c 'adni2/adni2_civet_vertex_stack_r_20161220.mat'];
+files_out = [path_c 'adni2/adni2_civet_vertex_stack_r_20170122.mat'];
 
 opt.folder_out = [path_c 'adni2/'];
 opt.nb_network = 1;
-opt.regress_conf = {'age','gender','mtladni2sites','mean_ct'};
+opt.regress_conf = {'age','gender','mtladni2sites','mean_ct_wb'};
 
 %% load the data
 data = load(files_in.data);
 ct = data.ct;
-list_data = data.subjects;
+list_data = data.list_subject;
 
 % load the basc parcellations
 part = load(files_in.partition);
-part = part.part';
+part = part.part;
 
 %% filter out those with failed QC in model
 [conf_model,list_subject,cat_names] = niak_read_csv(files_in.model);
-mask_qc = logical(conf_model(:,1));
-conf_model = conf_model(mask_qc,:);
-list_subject = list_subject(mask_qc);
+mask_qc = logical(conf_model(:,8));  %% column for exclusion
+conf_model = conf_model(~mask_qc,:);
+list_subject = list_subject(~mask_qc);
 
 %% prepare the confounds
 
@@ -44,7 +44,7 @@ end
 conf_model = conf_model(mask_data,:);
 list_subject = list_subject(mask_data,:);
 
-% Remove subjects with NaN from the model and data
+% Remove subjects with NaN in the model from the model and data
 mask_nan = max(isnan(conf_model),[],2);
 if any(mask_nan)
     list_subject(mask_nan)
@@ -53,6 +53,16 @@ end
 conf_model = conf_model(~mask_nan,:);
 list_subject = list_subject(~mask_nan,:);
 ct = ct(~mask_nan,:);
+
+% Remove subjects with NaN in their imaging data
+mask_ct = max(isnan(ct),[],2);
+if any(mask_ct)
+    list_subject(mask_ct)
+    warning(sprintf('I had to remove %i subjects (listed above) who had missing values in their imaging data.',sum(mask_ct)));
+end
+ct = ct(~mask_ct,:);
+conf_model = conf_model(~mask_ct,:);
+list_subject = list_subject(~mask_ct,:);
 
 %% grab dimensions of the data
 n_sub = size(ct,1); % get number of subjects
