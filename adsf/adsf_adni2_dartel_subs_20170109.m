@@ -5,13 +5,13 @@ clear all
 %% set the paths
 path_data = '/gs/project/gsf-624-aa/data/adni2/dartel_20170105/';
 path_subj = [path_data 'smwc_subjects/'];
-path_model = '/home/atam/scratch/dartel_subtypes/adni2_dartel/adni2_rs_model_20170111.csv';
+path_model = '/home/atam/scratch/adni2/adni2_weights_vbm_rs_ct_model.csv';
 
-path_results = '/home/atam/scratch/dartel_subtypes/adni2_dartel/adni2_vbm_subtypes_20170111';
+path_results = '/home/atam/scratch/dartel_subtypes/adni2_dartel/adni2_vbm_subtypes_20170123';
 
 %% set up files_in structure
 
-files_in.mask = [path_data 'mask_GM.nii'];
+files_in.mask = '/home/atam/scratch/dartel_subtypes/adni_dartel/mask/mask_gm_dartel_adni.mnc.gz';
 files_in.model = path_model;
 
 files = dir(path_subj);
@@ -52,6 +52,15 @@ opt.association.pt_group.contrast.mean_gm = 0;
 opt.association.pt_group.contrast.mtladni2sites = 0;
 opt.association.pt_group.type_visu = 'categorical';
 
+% apoe4
+opt.association.APOE4_status.contrast.APOE4_status = 1;
+opt.association.APOE4_status.contrast.age = 0;
+opt.association.APOE4_status.contrast.gender = 0;
+opt.association.APOE4_status.contrast.TIV = 0;
+opt.association.APOE4_status.contrast.mean_gm = 0;
+opt.association.APOE4_status.contrast.mtladni2sites = 0;
+opt.association.APOE4_status.type_visu = 'categorical';
+
 % adas11
 opt.association.ADAS11.contrast.ADAS11 = 1;
 opt.association.ADAS11.contrast.age = 0;
@@ -89,6 +98,25 @@ opt.association.MMSE_dx.contrast.mean_gm = 0;
 opt.association.MMSE_dx.contrast.mtladni2sites = 0;
 opt.association.MMSE_dx.contrast.diagnosis = 0;
 opt.association.MMSE_dx.type_visu = 'continuous';
+
+% moca
+opt.association.MOCA.contrast.MOCA = 1;
+opt.association.MOCA.contrast.age = 0;
+opt.association.MOCA.contrast.gender = 0;
+opt.association.MOCA.contrast.TIV = 0;
+opt.association.MOCA.contrast.mean_gm = 0;
+opt.association.MOCA.contrast.mtladni2sites = 0;
+opt.association.MOCA.type_visu = 'continuous';
+
+% moca
+opt.association.MOCA_dx.contrast.MOCA = 1;
+opt.association.MOCA_dx.contrast.age = 0;
+opt.association.MOCA_dx.contrast.gender = 0;
+opt.association.MOCA_dx.contrast.TIV = 0;
+opt.association.MOCA_dx.contrast.mean_gm = 0;
+opt.association.MOCA_dx.contrast.mtladni2sites = 0;
+opt.association.MOCA_dx.contrast.diagnosis = 0;
+opt.association.MOCA_dx.type_visu = 'continuous';
 
 opt.chi2 = 'pt_group';
 
