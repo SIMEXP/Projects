@@ -5,11 +5,11 @@ clear all
 %% set up paths
 path_data = '/home/atam/scratch/adni2/scores_20161207_min30vol/rmap_part/rmap_3d/';
 path_sub = '/gs/project/gsf-624-aa/database2/preventad/results/subtype_admci_s07_gui_20160705/';
-path_out = '/home/atam/scratch/rs_subtypes/adni2_subtype_20161207_min30vol/';
+path_out = '/home/atam/scratch/rs_subtypes/adni2_subtype_20170115_min30vol/';
 
 %% set up files_in structure
  
-files_in.model = '/home/atam/scratch/rs_subtypes/adni2_model_multi_site_scanner_fd_snr_20161123.csv';
+files_in.model = '/home/atam/scratch/rs_subtypes/adni2_weights_vbm_rs_model.csv';
 files_in.mask = '/gs/project/gsf-624-aa/database2/preventad/mask_mnc/mask.mnc';
 files_in.subtype.network_0001 = [path_sub 'network_1/network_1_subtype.mat'];
 files_in.subtype.network_0002 = [path_sub 'network_2/network_2_subtype.mat'];
@@ -41,8 +41,67 @@ end
 
 opt.folder_out = path_out;
 opt.scale = 7;
-opt.stack.regress_conf = {'age','gender','fd'};
+opt.stack.regress_conf = {'age','gender','fd','mtladni2sites'};
 opt.subtype.nb_subtype = 3;
+
+% glms
+% diagnosis
+opt.association.diagnosis.contrast.diagnosis = 1;
+opt.association.diagnosis.contrast.age = 0;
+opt.association.diagnosis.contrast.gender = 0;
+opt.association.diagnosis.contrast.TIV = 0;
+opt.association.diagnosis.contrast.mean_gm = 0;
+opt.association.diagnosis.contrast.mtladni2sites = 0;
+opt.association.diagnosis.type_visu = 'categorical';
+
+% patient group (CN vs ad/mci)
+opt.association.pt_group.contrast.pt_group = 1;
+opt.association.pt_group.contrast.age = 0;
+opt.association.pt_group.contrast.gender = 0;
+opt.association.pt_group.contrast.TIV = 0;
+opt.association.pt_group.contrast.mean_gm = 0;
+opt.association.pt_group.contrast.mtladni2sites = 0;
+opt.association.pt_group.type_visu = 'categorical';
+
+% adas11
+opt.association.ADAS11.contrast.ADAS11 = 1;
+opt.association.ADAS11.contrast.age = 0;
+opt.association.ADAS11.contrast.gender = 0;
+opt.association.ADAS11.contrast.TIV = 0;
+opt.association.ADAS11.contrast.mean_gm = 0;
+opt.association.ADAS11.contrast.mtladni2sites = 0;
+opt.association.ADAS11.type_visu = 'continuous';
+
+% adas11
+opt.association.ADAS11_dx.contrast.ADAS11 = 1;
+opt.association.ADAS11_dx.contrast.age = 0;
+opt.association.ADAS11_dx.contrast.gender = 0;
+opt.association.ADAS11_dx.contrast.TIV = 0;
+opt.association.ADAS11_dx.contrast.mean_gm = 0;
+opt.association.ADAS11_dx.contrast.mtladni2sites = 0;
+opt.association.ADAS11_dx.contrast.diagnosis = 0;
+opt.association.ADAS11_dx.type_visu = 'continuous';
+
+% mmse
+opt.association.MMSE.contrast.MMSE = 1;
+opt.association.MMSE.contrast.age = 0;
+opt.association.MMSE.contrast.gender = 0;
+opt.association.MMSE.contrast.TIV = 0;
+opt.association.MMSE.contrast.mean_gm = 0;
+opt.association.MMSE.contrast.mtladni2sites = 0;
+opt.association.MMSE.type_visu = 'continuous';
+
+% mmse
+opt.association.MMSE_dx.contrast.MMSE = 1;
+opt.association.MMSE_dx.contrast.age = 0;
+opt.association.MMSE_dx.contrast.gender = 0;
+opt.association.MMSE_dx.contrast.TIV = 0;
+opt.association.MMSE_dx.contrast.mean_gm = 0;
+opt.association.MMSE_dx.contrast.mtladni2sites = 0;
+opt.association.MMSE_dx.contrast.diagnosis = 0;
+opt.association.MMSE_dx.type_visu = 'continuous';
+
+opt.chi2 = 'pt_group';
 
 
 %% run pipeline

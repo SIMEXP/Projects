@@ -4,30 +4,49 @@ clear all
 
 path_c = '/Users/AngelaTam/Desktop/adsf/ct_subtypes/';
 
-files_in.data = [path_c 'adni2_civet_data/thickness_vertices/adni2_raw_ct_vertex_20170122.mat'];
+files_in.data = [path_c 'adni2/adni2_civet_vertex_native_raw_rms_rsl_20170228.mat'];
 files_in.partition = [path_c 'mask_whole_brain.mat'];
-files_in.model = '/Users/AngelaTam/Desktop/adsf/adni2_weights_vbm_rs_ct_model.csv';
+files_in.model = '/Users/AngelaTam/Desktop/adsf/adni2_csv/adni2_t1_niak_model.csv';
 
-files_out = [path_c 'adni2/adni2_civet_vertex_stack_r_20170122.mat'];
+files_out = [path_c 'adni2/adni2_civet_vertex_stack_r_sites_20170301.mat'];
 
 opt.folder_out = [path_c 'adni2/'];
 opt.nb_network = 1;
-opt.regress_conf = {'age','gender','mtladni2sites','mean_ct_wb'};
+opt.regress_conf = {'age','gender','mean_ct_wb','site2','site6','site9','site11','site12','site13','site14',...
+                    'site18','site19','site22','site23','site24','site31','site32','site35','site36','site37',...
+                	'site41','site53','site67','site68','site72','site73','site82','site99','site100','site116',...
+                	'site123','site128','site130','site135','site136','site137','site141','site153','site941'};
+                	 % confounds to be regressed out
+                     
+qc_label = 'civet_qc'; % name of column in csv for qc mask
+% sites to be excluded
+exc_sites = {'site10','site20','site33','site51','site57','site70','site98','site114','site129','site131'};
 
 %% load the data
 data = load(files_in.data);
 ct = data.ct;
-list_data = data.list_subject;
+list_data = data.subject;
 
 % load the basc parcellations
 part = load(files_in.partition);
-part = part.part;
+part = part.part';
 
 %% filter out those with failed QC in model
 [conf_model,list_subject,cat_names] = niak_read_csv(files_in.model);
-mask_qc = logical(conf_model(:,8));  %% column for exclusion
-conf_model = conf_model(~mask_qc,:);
-list_subject = list_subject(~mask_qc);
+qc_col = find(strcmp(qc_label,cat_names));
+mask_qc = logical(conf_model(:,qc_col));
+conf_model = conf_model(mask_qc,:);
+list_subject = list_subject(mask_qc);
+
+%% filter out subjects in excluded sites
+
+for ss = 1:length(exc_sites)
+    site_col = find(strcmp(exc_sites{ss},cat_names));
+    mask_site = logical(conf_model(:,site_col));
+    conf_model = conf_model(~mask_site,:);
+    list_subject = list_subject(~mask_site);
+end
+
 
 %% prepare the confounds
 
@@ -44,7 +63,7 @@ end
 conf_model = conf_model(mask_data,:);
 list_subject = list_subject(mask_data,:);
 
-% Remove subjects with NaN in the model from the model and data
+% Remove subjects with NaN from the model and data
 mask_nan = max(isnan(conf_model),[],2);
 if any(mask_nan)
     list_subject(mask_nan)
@@ -53,16 +72,6 @@ end
 conf_model = conf_model(~mask_nan,:);
 list_subject = list_subject(~mask_nan,:);
 ct = ct(~mask_nan,:);
-
-% Remove subjects with NaN in their imaging data
-mask_ct = max(isnan(ct),[],2);
-if any(mask_ct)
-    list_subject(mask_ct)
-    warning(sprintf('I had to remove %i subjects (listed above) who had missing values in their imaging data.',sum(mask_ct)));
-end
-ct = ct(~mask_ct,:);
-conf_model = conf_model(~mask_ct,:);
-list_subject = list_subject(~mask_ct,:);
 
 %% grab dimensions of the data
 n_sub = size(ct,1); % get number of subjects
@@ -90,12 +99,3 @@ provenance.model.confounds = opt.regress_conf;
 
 % Save the stack matrix
 save(files_out, 'stack', 'provenance');
-
-
-
-
-
-
-
-
-
