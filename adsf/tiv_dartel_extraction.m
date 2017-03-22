@@ -3,11 +3,7 @@
 clear all
 
 path_data = '/gs/project/gsf-624-aa/data/adni2_t1/dartel_gmd_yasser/';
-path_model = '/gs/project/gsf-624-aa/data/adni2_t1/models/yasser_subjects_dartel.csv';
-
-path_results = '/gs/project/gsf-624-aa/data/adni2_t1/yasser_masks/tissue_masks_first_session/';  
-
-%% set up files_in structure
+path_model = '/gs/project/gsf-624-aa/data/adni2_t1/models/yasser_subjects_dartel.csv'; 
  
 files_in.model = path_model;
 
@@ -18,12 +14,21 @@ mask_qc = logical(conf_model(:,qc_col));
 conf_model = conf_model(mask_qc,:);
 list_subject = list_subject(mask_qc);
 
-%% grab oldest processed T1s (c1,c2,c3) from each subject's folder & write brain mask
-
 folds = dir(path_data);
 folds = {folds.name};
 folds = folds(~ismember(folds,{'.','..'}));
 
+%% set up the csv
+
+labels = cell(length(folds)+1,2);
+labels{1,1} = 'subject';
+labels{1,2} = 'TIV';
+
+csvname = '/gs/project/gsf-624-aa/data/adni2_t1/yasser_masks/yasser_dartel_tiv.csv';
+fid = fopen(csvname,'w');
+fprintf(fid, '%s, %s\n', labels{1,:});
+
+%% grab oldest processed T1s (c1,c2,c3) from each subject's folder 
 for ss = 1:length(folds)
     % From folder name, grab subject ID
     sub_fold = folds{ss};
@@ -65,67 +70,21 @@ for ss = 1:length(folds)
             CSF_name = [path_data sub_fold filesep csf_session];
             [hdr_csf, CSF] = niak_read_vol(CSF_name);
             
-            %% create the brain mask
-            contrastt = 1;
-            None = 1 - (GM + WM + CSF);
-            indGM = find((GM > WM) & (GM > CSF) & (GM > None));
-            indWM = find((WM > GM) & (WM > CSF) & (WM > None));
-            indCSF = find((CSF > WM) & (CSF > GM) & (CSF > None));
+            %% sum the volumes to get TIV
+            gm_vol = sum(GM(:));
+            wm_vol = sum(WM(:));
+            csf_vol = sum(CSF(:));
+            tiv = sum(gm_vol+wm_vol+csf_vol);
             
-            Mask_GM  = zeros(size(GM));
-            Mask_WM  = zeros(size(GM));
-            Mask_CSF = zeros(size(GM));
-            Mask_GM(indGM) = 1;
-            Mask_WM(indWM) = 1;
-            Mask_CSF(indCSF) = 1;
-            Mask_GM = imfill(Mask_GM,'holes');
-            Mask_WM = imfill(Mask_WM,'holes');
-            indGM = find(Mask_GM);
-            indWM = find(Mask_WM);
-            Mask_huecos = zeros(size(GM));
-            Mask_huecos(unique([indGM; indWM])) = 1;
-            Mask_WM_GM = Mask_huecos;
-            Mask_Brain = Mask_WM_GM;
-            Mask_Brain(indCSF) = 1;
-            Mask_WM_GM = ((contrastt*WM + GM)/max(max(max((contrastt*WM + GM))))).*Mask_huecos;
-            
-            [path_m,name_m,ext_m] = niak_fileparts(GM_name);
-            
-            % write the mask
-            hdr_gm.file_name = [path_results filesep sub_name '_mask_brain' ext_m];
-            niak_write_vol(hdr_gm,Mask_Brain);
-            
+            % write to csv
+            labels{ss+1,1} = sub_name;
+            labels{ss+1,2} = tiv;
+            fprintf(fid, '%s, %f\n', labels{ss+1,1}, labels{ss+1,2});
         end        
     end    
 end
 
-%% get TIV for each subject
-
-clear all
-path_data = '/gs/project/gsf-624-aa/data/adni2_t1/yasser_masks/tissue_masks_first_session/'; 
-
-folds = dir(path_data);
-folds = {folds.name};
-folds = folds(~ismember(folds,{'.','..'}));
-
-%% set up the csv
-%%%%%%%%%%%%%%
-
-for ss = 1:length(folds)
-    % From folder name, grab subject ID
-    sub_fold = folds{ss};
-    tmp = strsplit(folds{ss},'_');
-    % Store id of subject
-    rid = tmp{1};
-    % Set up subject id for fieldname
-    tmp_vol = strcat(rid,'_mask_brain.nii.gz');
-    % read volume
-    [hdr,vol] = niak_read_vol(tmp_vol);
-    % sum the voxels in the volume
-    tiv = sum(vol(:));
-    % write to csv
-    %%%%%%%%%%%%%
-end
+fclose(fid)
     
 
 
