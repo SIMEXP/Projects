@@ -6,7 +6,7 @@ path_data = '/gs/project/gsf-624-aa/data/adni2_t1/dartel_gmd_yasser/';
 path_model = '/gs/project/gsf-624-aa/data/adni2_t1/models/yasser_subjects_dartel.csv';
 path_mask = '/gs/project/gsf-624-aa/data/adni2_t1/yasser_masks/template_6_gm.nii'; 
 
-path_results = '/home/atam/scratch/dartel_subtypes/adnit1_dartel_20170315/';  
+path_results = '/home/atam/scratch/dartel_subtypes/adnit1_dartel_20170315_3/';  
 
 %% set up files_in structure
 
@@ -58,15 +58,17 @@ opt.subtype.nb_subtype = 3;
 
 % glms
 % diagnosis
-opt.association.diagnosis.contrast.diagnosis = 1;
-opt.association.diagnosis.contrast.age = 0;
-opt.association.diagnosis.contrast.gender = 0;
+opt.association.diagnosis.contrast.dx_bl_3 = 1;
+opt.association.diagnosis.contrast.age_bl = 0;
+opt.association.diagnosis.contrast.sex = 0;
 %opt.association.diagnosis.contrast.TIV = 0;
 opt.association.diagnosis.contrast.mean_gmd_wb = 0;
 opt.association.diagnosis.contrast.site = 0;
 opt.association.diagnosis.type_visu = 'categorical';
 
 %% run the pipeline
+opt.psom.qsub_options = '-A gsf-624-aa -q sw -l nodes=1:ppn=2,pmem=3700m,walltime=36:00:00';
+
 opt.flag_test = false;
 [pipe,opt] = niak_pipeline_subtype(files_in,opt);
 

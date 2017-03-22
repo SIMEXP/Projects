@@ -66,9 +66,9 @@ opt.subtype.nb_subtype = 3;
 
 % glms
 % diagnosis
-opt.association.diagnosis.contrast.diagnosis = 1;
-opt.association.diagnosis.contrast.age = 0;
-opt.association.diagnosis.contrast.gender = 0;
+opt.association.diagnosis.contrast.dx_bl_3 = 1;
+opt.association.diagnosis.contrast.age_bl = 0;
+opt.association.diagnosis.contrast.sex = 0;
 %opt.association.diagnosis.contrast.TIV = 0;
 opt.association.diagnosis.contrast.mean_gmd_wb = 0;
 opt.association.diagnosis.contrast.site2 = 0;
