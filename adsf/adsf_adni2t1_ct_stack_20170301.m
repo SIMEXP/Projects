@@ -8,19 +8,16 @@ files_in.data = [path_c 'adni2/adni2_civet_vertex_native_raw_rms_rsl_20170228.ma
 files_in.partition = [path_c 'mask_whole_brain.mat'];
 files_in.model = '/Users/AngelaTam/Desktop/adsf/adni2_csv/adni2_t1_niak_model.csv';
 
-files_out = [path_c 'adni2/adni2_civet_vertex_stack_r_sites_20170301.mat'];
+files_out = [path_c 'adni2/adni2_civet_vertex_stack_r_sites_20170326.mat'];
 
 opt.folder_out = [path_c 'adni2/'];
 opt.nb_network = 1;
-opt.regress_conf = {'age','gender','mean_ct_wb','site2','site6','site9','site11','site12','site13','site14',...
-                    'site18','site19','site22','site23','site24','site31','site32','site35','site36','site37',...
-                	'site41','site53','site67','site68','site72','site73','site82','site99','site100','site116',...
-                	'site123','site128','site130','site135','site136','site137','site141','site153','site941'};
+opt.regress_conf = {'age','gender','mean_ct_wb','manufacturer'};
                 	 % confounds to be regressed out
                      
 qc_label = 'civet_qc'; % name of column in csv for qc mask
 % sites to be excluded
-exc_sites = {'site10','site20','site33','site51','site57','site70','site98','site114','site129','site131'};
+%exc_sites = {'site10','site20','site33','site51','site57','site70','site98','site114','site129','site131'};
 
 %% load the data
 data = load(files_in.data);
@@ -38,14 +35,14 @@ mask_qc = logical(conf_model(:,qc_col));
 conf_model = conf_model(mask_qc,:);
 list_subject = list_subject(mask_qc);
 
-%% filter out subjects in excluded sites
-
-for ss = 1:length(exc_sites)
-    site_col = find(strcmp(exc_sites{ss},cat_names));
-    mask_site = logical(conf_model(:,site_col));
-    conf_model = conf_model(~mask_site,:);
-    list_subject = list_subject(~mask_site);
-end
+% %% filter out subjects in excluded sites
+% 
+% for ss = 1:length(exc_sites)
+%     site_col = find(strcmp(exc_sites{ss},cat_names));
+%     mask_site = logical(conf_model(:,site_col));
+%     conf_model = conf_model(~mask_site,:);
+%     list_subject = list_subject(~mask_site);
+% end
 
 
 %% prepare the confounds
