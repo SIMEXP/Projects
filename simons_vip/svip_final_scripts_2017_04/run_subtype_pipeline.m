@@ -1,4 +1,4 @@
-%%% test session1
+
 clear
 addpath(genpath('/gs/project/gsf-624-aa/quarantaine/niak_issue263/'))
 
