@@ -126,8 +126,13 @@ opt = psom_struct_defaults(opt,...
 if ~isempty(opt.folder_out)
     path_out = niak_full_path(opt.folder_out);
     files_out = psom_struct_defaults(files_out,...
+<<<<<<< HEAD
                 { 'sim_fig'                          , 'den_fig'                   , 'subtype'                , 'provenance'                },...
                 { [path_out 'similarity_matrix.png'] , [path_out 'dendrogram.pdf'] , [path_out 'subtype.mat'] , [path_out 'provenance.mat'] });
+=======
+                { 'sim_fig'                          , 'den_fig'                   , 'part_fig'            , 'plot_fig'                                                    , 'subtype'                , 'provenance'                },...
+                { [path_out 'similarity_matrix.png'] , [path_out 'dendrogram.pdf'] , [path_out 'part.pdf'] , make_paths(path_out, 'plot_subtype_%d.pdf', 1:opt.nb_subtype) , [path_out 'subtype.mat'] , [path_out 'provenance.mat'] });
+>>>>>>> a28e7155eae62d441030e74f3ab67a7f86be8563
 else
     files_out = psom_struct_defaults(files_out,...
                 { 'sim_fig'         , 'den_fig'         , 'subtype'         , 'provenance'      },...
@@ -151,6 +156,7 @@ end
 %% Load the data
 data = load(files_in.data);
 provenance = data.provenance; % loading provenance from the data file
+<<<<<<< HEAD
 data = data.stack; % get the stack data
 
 %% Build the similarity matrix
@@ -163,14 +169,42 @@ hier = niak_hierarchical_clustering(sim_matrix);
 subj_order = niak_hier2order(hier);
 % Generate re-ordered matrix
 rm = sim_matrix(subj_order,subj_order);
+=======
+var_names = provenance.var_names; % get the variable names
+data = data.stack; % get the stack data
+
+% Get the size of the data
+n_var = size(data,2); % number of variables
+
+%% Perform the clustering
+
+% Normalize the data
+data = niak_normalize_tseries(data');
+
+D = niak_build_distance(data);
+
+% Compute the hierarchy
+hier = niak_hierarchical_clustering(-D);
+% Reorder subjects based on clustering
+subj_order = niak_hier2order(hier);
+% Build the matrix
+sim_matrix = 1-D(subj_order,subj_order)/(2*sqrt(6));
+>>>>>>> a28e7155eae62d441030e74f3ab67a7f86be8563
 
 %% Saving the clustering and matrix
 if ~strcmp(files_out.sim_fig, 'gb_niak_omitted')
     % Save the similarity matrix as pdf
+<<<<<<< HEAD
     opt_pdf.limits = [-0.6 0.6];
     opt_pdf.color_map = 'hot_cold';
     fh1 = figure('Visible', 'off');
     niak_visu_matrix(rm,opt_pdf);
+=======
+    opt_pdf.limits = [-1 1];
+    opt_pdf.color_map = 'hot_cold';
+    fh1 = figure('Visible', 'off');
+    niak_visu_matrix(sim_matrix,opt_pdf);
+>>>>>>> a28e7155eae62d441030e74f3ab67a7f86be8563
     print(fh1, files_out.sim_fig,'-dpng','-r300');
 end
 
@@ -181,10 +215,51 @@ if ~strcmp(files_out.den_fig, 'gb_niak_omitted')
     print(fh2, files_out.den_fig,'-dpdf','-r300');
 end
 
+<<<<<<< HEAD
 
 %% Build the clusters by thresholding the hiearchy by the number of subtypes
 part = niak_threshold_hierarchy(hier,struct('thresh',opt.nb_subtype));
 
+=======
+%% Build the clusters by thresholding the hiearchy by the number of subtypes
+part = niak_threshold_hierarchy(hier,struct('thresh',opt.nb_subtype));
+
+if ~strcmp(files_out.part_fig, 'gb_niak_omitted')
+    % Generate and save partitioned matrix as pdf
+    fh3 = figure('Visible', 'off');
+    niak_visu_part(part(subj_order));
+    print(fh3, files_out.part_fig,'-dpdf','-r300');
+end
+
+%% Compute the subgroups
+
+sub.map = zeros(opt.nb_subtype,n_var);
+data_i = data';
+for ss = 1:opt.nb_subtype
+    if strcmp(opt.sub_map_type, 'mean')
+        % Construct the subtype map as the mean map of the subgroup
+        sub.map(ss,:) = mean(data_i(part==ss,:),1);
+    elseif strcmp(opt.sub_map_type, 'median')
+        % Construct the subtype map as the median map of the subgroup
+        sub.map(ss,:) = median(data_i(part==ss,:),1);
+    end
+end
+
+%% Plot the subtypes
+
+for ss = 1:opt.nb_subtype
+    fh = figure('Visible', 'off');
+    errorbar(mean(data_i(part==ss,:),1)',std(data_i(part==ss,:),[],1)')
+    % setting the x tick labels
+    set(gca,'XTick',1:length(var_names));
+    xtick = 1:length(var_names);
+    xlab = var_names;
+    set(gca,'XTickLabel',xlab);
+    xticklabel_rotate(xtick, 45, xlab);
+    print(fh, files_out.plot_fig{ss},'-dpdf','-r300');
+end
+    
+>>>>>>> a28e7155eae62d441030e74f3ab67a7f86be8563
 
 %% Saving subtyping results and statistics
 if ~strcmp(files_out.subtype, 'gb_niak_omitted')

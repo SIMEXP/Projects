@@ -152,6 +152,11 @@ for net_id = 1:n_networks
     % Get the network stack data
     tmp_data = load(files_in.data.(network));
     data = tmp_data.stack;
+<<<<<<< HEAD
+=======
+    list_subject = tmp_data.provenance.subjects(:,1);
+    
+>>>>>>> a28e7155eae62d441030e74f3ab67a7f86be8563
     % Get the network subtype maps (i.e. for each subtype one)
     tmp_sbt = load(files_in.subtype.(network));
     sbt = tmp_sbt.sub.map;
@@ -169,7 +174,11 @@ for net_id = 1:n_networks
 end
 
 % Save the weight matrix
+<<<<<<< HEAD
 save(files_out.weights, 'weight_mat');
+=======
+save(files_out.weights, 'weight_mat','list_subject');
+>>>>>>> a28e7155eae62d441030e74f3ab67a7f86be8563
 
 %% Write the weight matrix for each network as a csv
 
