@@ -4,7 +4,6 @@ clear all
 
 load preventad_civet_vertex_bl_20160216
 
-<<<<<<< HEAD
 labels = cell(223,2);
 labels{1,1} = 'subject';
 labels{1,2} = 'mean_ct';
@@ -18,22 +17,6 @@ for ss = 1:222
     labels{ss+1,2} = mean(ct(ss,:));
     fprintf(fid, '%s, %d\n', labels{ss+1,:});
 end
-=======
-labels = cell(length(subject),2);
-labels{1,1} = 'subject';
-labels{1,2} = 'mean_ct';
-
-csvname = 'adni2_raw_whole_brain_mean_ct.csv';
-fid = fopen(csvname,'w');
-fprintf(fid, '%s, %s\n', labels{1,:});
-
-for ss = 1:length(subject)
-    labels{ss+1,1} = subject{ss};
-    labels{ss+1,2} = mean(ct(ss,:));
-    fprintf(fid, '%s, %d\n', labels{ss+1,:});
-end
-fclose(fid)
->>>>>>> a28e7155eae62d441030e74f3ab67a7f86be8563
 
 %% calculate mean thickness for one network per subject
 
